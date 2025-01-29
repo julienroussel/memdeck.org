@@ -1,8 +1,8 @@
-import { AppShell, Burger, Group, Image, Skeleton } from '@mantine/core';
+import { AppShell, Burger, Group, Image, Skeleton, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useState, useMemo, useCallback } from 'react';
 import { Effect } from 'effect';
-import viteLogo from '/vite.svg';
+import memdeckLogo from '/memdeck.webp';
 
 export const MemDeckAppShell = () => {
   const [opened, { toggle }] = useDisclosure();
@@ -25,7 +25,10 @@ export const MemDeckAppShell = () => {
       <AppShell.Header>
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          <Image radius="md" h={30} w="auto" fit="contain" src={viteLogo} />
+          <Image radius="md" h={30} w="auto" fit="contain" src={memdeckLogo} />
+          <Text c="#2a2a2a" fw={700} tt="uppercase">
+            MemDeck
+          </Text>
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">

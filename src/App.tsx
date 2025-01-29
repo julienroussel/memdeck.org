@@ -6,8 +6,8 @@ import { MemDeckAppShell } from './MemDeckAppShell';
 function App() {
   return (
     <>
-      <ColorSchemeScript defaultColorScheme="auto" />
-      <MantineProvider defaultColorScheme="auto">
+      <ColorSchemeScript defaultColorScheme="light" />
+      <MantineProvider defaultColorScheme="light">
         <MemDeckAppShell />
       </MantineProvider>
     </>
