@@ -2,7 +2,7 @@ import { AppShell, Burger, Group, Image, Skeleton, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useState, useMemo, useCallback } from 'react';
 import { Effect } from 'effect';
-import memdeckLogo from '/memdeck.webp';
+import memdeckLogo from '/memdeck.png';
 
 export const MemDeckAppShell = () => {
   const [opened, { toggle }] = useDisclosure();
