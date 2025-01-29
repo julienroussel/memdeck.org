@@ -1,18 +1,18 @@
-import { useState, useMemo, useCallback } from "react"
-import reactLogo from "./assets/react.svg"
-import viteLogo from "/vite.svg"
-import "./App.css"
-import { Effect } from "effect"
+import { useState, useMemo, useCallback } from 'react';
+import reactLogo from './assets/react.svg';
+import viteLogo from '/vite.svg';
+import './App.css';
+import { Effect } from 'effect';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   const task = useMemo(
     () => Effect.sync(() => setCount((current) => current + 1)),
-    [setCount]
-  )
+    [setCount],
+  );
 
-  const increment = useCallback(() => Effect.runSync(task), [task])
+  const increment = useCallback(() => Effect.runSync(task), [task]);
 
   return (
     <>
@@ -35,7 +35,7 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
