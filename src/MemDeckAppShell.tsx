@@ -1,4 +1,5 @@
-import { AppShell, Burger, Group, Image, Skeleton, Text } from '@mantine/core';
+import { IconChevronRight, IconSchool } from '@tabler/icons-react';
+import { AppShell, Burger, Group, Image, NavLink, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import memdeckLogo from '/memdeck.png';
 
@@ -21,12 +22,20 @@ export const MemDeckAppShell = () => {
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">
-        Navbar
-        {Array(15)
-          .fill(0)
-          .map((_, index) => (
-            <Skeleton key={index} h={28} mt="sm" animate={false} />
-          ))}
+        <NavLink
+          href="#required-for-focus"
+          label="Train"
+          leftSection={<IconSchool size={16} stroke={1.5} />}
+          rightSection={
+            <IconChevronRight
+              size={12}
+              stroke={1.5}
+              className="mantine-rotate-rtl"
+            />
+          }
+          variant="subtle"
+          active
+        />
       </AppShell.Navbar>
       <AppShell.Main></AppShell.Main>
     </AppShell>
