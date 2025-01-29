@@ -1,20 +1,9 @@
 import { AppShell, Burger, Group, Image, Skeleton, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useState, useMemo, useCallback } from 'react';
-import { Effect } from 'effect';
 import memdeckLogo from '/memdeck.png';
 
 export const MemDeckAppShell = () => {
   const [opened, { toggle }] = useDisclosure();
-
-  const [count, setCount] = useState(0);
-
-  const task = useMemo(
-    () => Effect.sync(() => setCount((current) => current + 1)),
-    [setCount],
-  );
-
-  const increment = useCallback(() => Effect.runSync(task), [task]);
 
   return (
     <AppShell
@@ -39,9 +28,7 @@ export const MemDeckAppShell = () => {
             <Skeleton key={index} h={28} mt="sm" animate={false} />
           ))}
       </AppShell.Navbar>
-      <AppShell.Main>
-        <button onClick={increment}>{count}</button>
-      </AppShell.Main>
+      <AppShell.Main></AppShell.Main>
     </AppShell>
   );
 };
