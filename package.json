@@ -1,0 +1,17 @@
+{
+  "name": "memdeck.org",
+  "version": "1.0.0",
+  "description": "Memorized Deck Tools",
+  "homepage": "https://github.com/julienroussel/memdeck.org#readme",
+  "bugs": {
+    "url": "https://github.com/julienroussel/memdeck.org/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/julienroussel/memdeck.org.git"
+  },
+  "author": "Julien Roussel",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
