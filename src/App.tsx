@@ -3,7 +3,7 @@ import '@mantine/core/styles.css';
 import { MantineProvider, ColorSchemeScript, Switch } from '@mantine/core';
 import { AppShell, Burger, Group, Image, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { BrowserRouter } from 'react-router';
+import { HashRouter } from 'react-router';
 
 import { Routes } from './Routes';
 import { NavBar } from './NavBar';
@@ -64,12 +64,12 @@ export const App = () => {
               </Group>
             </Group>
           </AppShell.Header>
-          <BrowserRouter>
+          <HashRouter>
             <NavBar />
             <AppShell.Main>
               <Routes />
             </AppShell.Main>
-          </BrowserRouter>
+          </HashRouter>
         </AppShell>
       </MantineProvider>
     </>
