@@ -15,3 +15,17 @@ updates:
     target-branch: 'main'
     labels:
       - 'dependencies'
+    # Groups enable us to have one PR for all related dependencies instead of n PRs.
+    groups:
+      mantine:
+        patterns:
+          - '@mantine/*'
+      react:
+        patterns:
+          - '@types/react'
+          - '@types/react-dom'
+          - 'react'
+          - 'react-dom'
+      react-router:
+        patterns:
+          - '@react-router/*'
