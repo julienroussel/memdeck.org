@@ -1,5 +1,6 @@
 import { Button, Group, Space, Stack, Text, Title } from '@mantine/core';
 import { useState } from 'react';
+import ReactGA from 'react-ga4';
 import { getRandomMnemonicaPlayingCard, PlayingCardPosition } from '../stacks';
 import { usePageTracking } from '../hooks/usePageTracking';
 
@@ -18,10 +19,20 @@ export const Quiz = () => {
 
     const newDisplay = TOGGLE[Math.floor(Math.random() * TOGGLE.length)];
     setDisplay(newDisplay ?? 'card');
+
+    ReactGA.event({
+      category: 'Quiz',
+      action: 'Clicked next button',
+    });
   };
 
   const toggleDisplay = () => {
     setDisplay(display === 'card' ? 'index' : 'card');
+
+    ReactGA.event({
+      category: 'Quiz',
+      action: 'Clicked turn button',
+    });
   };
 
   return (
