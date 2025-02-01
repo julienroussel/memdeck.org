@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@eslint/js": "9.19.0",
-    "@react-router/dev": "7.1.4",
+    "@react-router/dev": "7.1.5",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
     "@vitejs/plugin-react": "4.3.4",
@@ -40,8 +40,8 @@
   "dependencies": {
     "@mantine/core": "7.16.2",
     "@mantine/hooks": "7.16.2",
-    "@react-router/node": "7.1.4",
-    "@react-router/serve": "7.1.4",
+    "@react-router/node": "7.1.5",
+    "@react-router/serve": "7.1.5",
     "@tabler/icons-react": "3.29.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
