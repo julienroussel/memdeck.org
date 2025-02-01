@@ -1,21 +1,36 @@
 import '@mantine/core/styles.css';
 
 import { MantineProvider, ColorSchemeScript, Switch } from '@mantine/core';
-import { AppShell, Burger, Group, Image, Text } from '@mantine/core';
+import {
+  AppShell,
+  Burger,
+  Group,
+  Image,
+  Text,
+  NavLink,
+  ScrollArea,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import {
+  IconChevronRight,
+  IconHome2,
+  IconSchool,
+  IconMoonStars,
+  IconSun,
+} from '@tabler/icons-react';
 import ReactGA from 'react-ga4';
 import { HashRouter } from 'react-router';
+import { Link } from 'react-router';
 
+import { NavBarFooter } from './NavBarFooter';
 import { Routes } from './Routes';
-import { NavBar } from './NavBar';
 
 import memdeckLogo from '/memdeck.png';
-import { IconMoonStars, IconSun } from '@tabler/icons-react';
 
 ReactGA.initialize('G-36CZ6GEMKQ');
 
 export const App = () => {
-  const [opened, { toggle }] = useDisclosure();
+  const [opened, { toggle, close }] = useDisclosure();
 
   return (
     <>
@@ -68,7 +83,42 @@ export const App = () => {
             </Group>
           </AppShell.Header>
           <HashRouter>
-            <NavBar />
+            <AppShell.Navbar p="md">
+              <AppShell.Section grow component={ScrollArea}>
+                <NavLink
+                  component={Link}
+                  to="/"
+                  label="Home"
+                  onClick={() => close()}
+                  onClickCapture={() => close()}
+                  leftSection={<IconHome2 size={16} stroke={1.5} />}
+                  rightSection={
+                    <IconChevronRight
+                      size={12}
+                      stroke={1.5}
+                      className="mantine-rotate-rtl"
+                    />
+                  }
+                />
+                <NavLink
+                  component={Link}
+                  to="/quiz"
+                  label="Quiz"
+                  onClick={close}
+                  leftSection={<IconSchool size={16} stroke={1.5} />}
+                  rightSection={
+                    <IconChevronRight
+                      size={12}
+                      stroke={1.5}
+                      className="mantine-rotate-rtl"
+                    />
+                  }
+                />
+              </AppShell.Section>
+              <AppShell.Section>
+                <NavBarFooter />
+              </AppShell.Section>
+            </AppShell.Navbar>
             <AppShell.Main>
               <Routes />
             </AppShell.Main>
