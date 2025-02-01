@@ -44,6 +44,7 @@
     "@react-router/serve": "7.1.4",
     "@tabler/icons-react": "3.29.0",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "react-ga4": "2.1.0"
   }
 }

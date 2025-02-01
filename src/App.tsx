@@ -3,6 +3,7 @@ import '@mantine/core/styles.css';
 import { MantineProvider, ColorSchemeScript, Switch } from '@mantine/core';
 import { AppShell, Burger, Group, Image, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import ReactGA from 'react-ga4';
 import { HashRouter } from 'react-router';
 
 import { Routes } from './Routes';
@@ -10,6 +11,8 @@ import { NavBar } from './NavBar';
 
 import memdeckLogo from '/memdeck.png';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
+
+ReactGA.initialize('G-36CZ6GEMKQ');
 
 export const App = () => {
   const [opened, { toggle }] = useDisclosure();

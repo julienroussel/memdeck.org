@@ -1,6 +1,9 @@
 import { Title, Text, Paper, Space } from '@mantine/core';
+import { usePageTracking } from '../hooks/usePageTracking';
 
 export const Home = () => {
+  usePageTracking();
+
   return (
     <div>
       <Title order={1}>What is MemDeck?</Title>

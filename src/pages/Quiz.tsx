@@ -1,6 +1,7 @@
 import { Button, Group, Space, Stack, Text, Title } from '@mantine/core';
 import { useState } from 'react';
 import { getRandomMnemonicaPlayingCard, PlayingCardPosition } from '../stacks';
+import { usePageTracking } from '../hooks/usePageTracking';
 
 const TOGGLE = ['card', 'index'] as const;
 
@@ -9,6 +10,8 @@ export const Quiz = () => {
     getRandomMnemonicaPlayingCard(),
   );
   const [display, setDisplay] = useState<'card' | 'index'>('card');
+
+  usePageTracking();
 
   const getNextRandomCard = () => {
     setCard(getRandomMnemonicaPlayingCard());
