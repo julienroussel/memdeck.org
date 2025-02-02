@@ -11,7 +11,7 @@ import {
   NavLink,
   ScrollArea,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useLocalStorage } from '@mantine/hooks';
 import {
   IconChevronRight,
   IconHome2,
@@ -32,6 +32,10 @@ ReactGA.initialize('G-36CZ6GEMKQ');
 export const App = () => {
   const [opened, { toggle, close }] = useDisclosure();
   const { setColorScheme, colorScheme } = useMantineColorScheme();
+  const [stack] = useLocalStorage({
+    key: 'stack',
+    defaultValue: '',
+  });
 
   return (
     <>
@@ -105,6 +109,7 @@ export const App = () => {
               />
               <NavLink
                 component={Link}
+                disabled={stack === ''}
                 to="/quiz"
                 label="Quiz"
                 onClick={close}

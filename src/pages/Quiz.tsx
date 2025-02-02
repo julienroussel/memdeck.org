@@ -1,21 +1,27 @@
 import { Button, Group, Space, Stack, Text, Title } from '@mantine/core';
 import { useState } from 'react';
 import ReactGA from 'react-ga4';
-import { getRandomMnemonicaPlayingCard, PlayingCardPosition } from '../stacks';
+import { getRandomPlayingCard, PlayingCardPosition, stacks } from '../stacks';
 import { usePageTracking } from '../hooks/usePageTracking';
+import { readLocalStorageValue, useLocalStorage } from '@mantine/hooks';
 
 const TOGGLE = ['card', 'index'] as const;
 
 export const Quiz = () => {
+  const [stack] = useLocalStorage({
+    key: 'stack',
+    defaultValue: readLocalStorageValue({ key: 'stack' }) ?? 'mnemonica',
+  });
+  console.log(stack);
   const [card, setCard] = useState<PlayingCardPosition>(
-    getRandomMnemonicaPlayingCard(),
+    getRandomPlayingCard(stacks[stack].order),
   );
   const [display, setDisplay] = useState<'card' | 'index'>('card');
 
   usePageTracking();
 
   const getNextRandomCard = () => {
-    setCard(getRandomMnemonicaPlayingCard());
+    setCard(getRandomPlayingCard(stacks[stack].order));
 
     const newDisplay = TOGGLE[Math.floor(Math.random() * TOGGLE.length)];
     setDisplay(newDisplay ?? 'card');
