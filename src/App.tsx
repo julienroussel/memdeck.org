@@ -1,7 +1,8 @@
 import '@mantine/core/styles.css';
 
-import { Switch, useMantineColorScheme } from '@mantine/core';
 import {
+  Switch,
+  useMantineColorScheme,
   AppShell,
   Burger,
   Group,
@@ -19,13 +20,12 @@ import {
   IconSun,
 } from '@tabler/icons-react';
 import ReactGA from 'react-ga4';
-import { HashRouter } from 'react-router';
-import { Link } from 'react-router';
+import { HashRouter, Link } from 'react-router';
 
 import { NavBarFooter } from './NavBarFooter';
 import { Routes } from './Routes';
 
-import memdeckLogo from '/memdeck.png';
+import memdeckLogo from '../public/memdeck.png';
 
 ReactGA.initialize('G-36CZ6GEMKQ');
 
