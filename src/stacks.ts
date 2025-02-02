@@ -37,6 +37,7 @@ import {
   NineOfSpades,
   Nines,
   Ones,
+  PlayingCard,
   QueenOfClubs,
   QueenOfDiamonds,
   QueenOfHeart,
@@ -70,7 +71,17 @@ import {
   Twos,
 } from './cards';
 
-export const mnemonica = [
+// from https://mstn.github.io/2018/06/08/fixed-size-arrays-in-typescript/
+type FixedSizeArray<N extends number, T> = N extends 0
+  ? never[]
+  : {
+      0: T;
+      length: N;
+    } & ReadonlyArray<T>;
+
+type MemDeck = FixedSizeArray<52, PlayingCard>;
+
+export const mnemonica: MemDeck = [
   FourOfClubs,
   TwoOfHeart,
   SevenOfDiamonds,
@@ -127,18 +138,22 @@ export const mnemonica = [
 
 export type PlayingCardPosition = {
   index: number;
-  card: (typeof mnemonica)[number];
+  card: MemDeck[number];
 };
 
-export const getRandomMnemonicaPlayingCard = (): PlayingCardPosition => {
+export const getRandomMnemonicaPlayingCard = (
+  stack: MemDeck = mnemonica,
+): PlayingCardPosition => {
   const randomIndex = Math.floor(Math.random() * mnemonica.length);
   return {
     index: randomIndex + 1,
-    card: mnemonica[randomIndex] ?? mnemonica[0],
+    card: stack[randomIndex] ?? stack[0],
   };
 };
 
-export const getRandomMnemonicaPlayingSuit = (): PlayingCardPosition[] => {
+export const getRandomMnemonicaPlayingSuit = (
+  stack: MemDeck = mnemonica,
+): PlayingCardPosition[] => {
   const randomIndex = Math.floor(Math.random() * 4);
   const suit =
     randomIndex === 0
@@ -149,12 +164,14 @@ export const getRandomMnemonicaPlayingSuit = (): PlayingCardPosition[] => {
           ? Hearts
           : Spades;
   return suit.map((card) => ({
-    index: mnemonica.indexOf(card) + 1,
-    card: mnemonica[mnemonica.indexOf(card)] ?? mnemonica[0],
+    index: stack.indexOf(card) + 1,
+    card: stack[stack.indexOf(card)] ?? stack[0],
   }));
 };
 
-export const getRandomMnemonicaPlayingValues = (): PlayingCardPosition[] => {
+export const getRandomMnemonicaPlayingValues = (
+  stack: MemDeck = mnemonica,
+): PlayingCardPosition[] => {
   const randomValue = Math.floor(Math.random() * 13);
   const suit =
     randomValue === 0
@@ -183,7 +200,7 @@ export const getRandomMnemonicaPlayingValues = (): PlayingCardPosition[] => {
                             ? Queens
                             : Kings;
   return suit.map((card) => ({
-    index: mnemonica.indexOf(card) + 1,
-    card: mnemonica[mnemonica.indexOf(card)] ?? mnemonica[0],
+    index: stack.indexOf(card) + 1,
+    card: stack[stack.indexOf(card)] ?? stack[0],
   }));
 };

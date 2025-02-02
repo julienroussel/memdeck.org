@@ -71,7 +71,7 @@ export const Hearts = [
   JackOfHeart,
   QueenOfHeart,
   KingOfHeart,
-];
+] as const;
 export const Diamonds = [
   AceOfDiamonds,
   TwoOfDiamonds,
@@ -86,7 +86,7 @@ export const Diamonds = [
   JackOfDiamonds,
   QueenOfDiamonds,
   KingOfDiamonds,
-];
+] as const;
 export const Clubs = [
   AceOfClubs,
   TwoOfClubs,
@@ -101,7 +101,7 @@ export const Clubs = [
   JackOfClubs,
   QueenOfClubs,
   KingOfClubs,
-];
+] as const;
 export const Spades = [
   AceOfSpades,
   TwoOfSpades,
@@ -116,41 +116,86 @@ export const Spades = [
   JackOfSpades,
   QueenOfSpades,
   KingOfSpades,
-];
+] as const;
 
-export const Ones = [AceOfSpades, AceOfHeart, AceOfClubs, AceOfDiamonds];
-export const Twos = [TwoOfSpades, TwoOfHeart, TwoOfClubs, TwoOfDiamonds];
+export const Ones = [
+  AceOfSpades,
+  AceOfHeart,
+  AceOfClubs,
+  AceOfDiamonds,
+] as const;
+export const Twos = [
+  TwoOfSpades,
+  TwoOfHeart,
+  TwoOfClubs,
+  TwoOfDiamonds,
+] as const;
 export const Threes = [
   ThreeOfSpades,
   ThreeOfHeart,
   ThreeOfClubs,
   ThreeOfDiamonds,
-];
-export const Fours = [FourOfSpades, FourOfHeart, FourOfClubs, FourOfDiamonds];
-export const Fives = [FiveOfSpades, FiveOfHeart, FiveOfClubs, FiveOfDiamonds];
-export const Sixes = [SixOfSpades, SixOfHeart, SixOfClubs, SixOfDiamonds];
+] as const;
+export const Fours = [
+  FourOfSpades,
+  FourOfHeart,
+  FourOfClubs,
+  FourOfDiamonds,
+] as const;
+export const Fives = [
+  FiveOfSpades,
+  FiveOfHeart,
+  FiveOfClubs,
+  FiveOfDiamonds,
+] as const;
+export const Sixes = [
+  SixOfSpades,
+  SixOfHeart,
+  SixOfClubs,
+  SixOfDiamonds,
+] as const;
 export const Sevens = [
   SevenOfSpades,
   SevenOfHeart,
   SevenOfClubs,
   SevenOfDiamonds,
-];
+] as const;
 export const Eights = [
   EightOfSpades,
   EightOfHeart,
   EightOfClubs,
   EightOfDiamonds,
-];
-export const Nines = [NineOfSpades, NineOfHeart, NineOfClubs, NineOfDiamonds];
-export const Tens = [TenOfSpades, TenOfHeart, TenOfClubs, TenOfDiamonds];
-export const Jacks = [JackOfSpades, JackOfHeart, JackOfClubs, JackOfDiamonds];
+] as const;
+export const Nines = [
+  NineOfSpades,
+  NineOfHeart,
+  NineOfClubs,
+  NineOfDiamonds,
+] as const;
+export const Tens = [
+  TenOfSpades,
+  TenOfHeart,
+  TenOfClubs,
+  TenOfDiamonds,
+] as const;
+export const Jacks = [
+  JackOfSpades,
+  JackOfHeart,
+  JackOfClubs,
+  JackOfDiamonds,
+] as const;
 export const Queens = [
   QueenOfSpades,
   QueenOfHeart,
   QueenOfClubs,
   QueenOfDiamonds,
-];
-export const Kings = [KingOfSpades, KingOfHeart, KingOfClubs, KingOfDiamonds];
+] as const;
+export const Kings = [
+  KingOfSpades,
+  KingOfHeart,
+  KingOfClubs,
+  KingOfDiamonds,
+] as const;
 
 export type PlayingCard =
   | typeof AceOfSpades
