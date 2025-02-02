@@ -80,61 +80,72 @@ type FixedSizeArray<N extends number, T> = N extends 0
     } & ReadonlyArray<T>;
 
 type MemDeck = FixedSizeArray<52, PlayingCard>;
+type Stacks = {
+  [key: string]: {
+    name: string;
+    order: MemDeck;
+  };
+};
 
-export const mnemonica: MemDeck = [
-  FourOfClubs,
-  TwoOfHeart,
-  SevenOfDiamonds,
-  ThreeOfClubs,
-  FourOfHeart,
-  SixOfDiamonds,
-  AceOfSpades,
-  FiveOfHeart,
-  NineOfSpades,
-  TwoOfSpades,
-  QueenOfHeart,
-  ThreeOfDiamonds,
-  QueenOfClubs,
-  EightOfHeart,
-  SixOfSpades,
-  FiveOfSpades,
-  NineOfHeart,
-  KingOfClubs,
-  TwoOfDiamonds,
-  JackOfHeart,
-  ThreeOfSpades,
-  EightOfSpades,
-  SixOfHeart,
-  TenOfClubs,
-  FiveOfDiamonds,
-  KingOfDiamonds,
-  TwoOfClubs,
-  ThreeOfHeart,
-  EightOfDiamonds,
-  FiveOfClubs,
-  KingOfSpades,
-  JackOfDiamonds,
-  EightOfClubs,
-  TenOfSpades,
-  KingOfHeart,
-  JackOfClubs,
-  SevenOfSpades,
-  TenOfHeart,
-  AceOfDiamonds,
-  FourOfSpades,
-  SevenOfHeart,
-  FourOfDiamonds,
-  AceOfClubs,
-  NineOfClubs,
-  JackOfSpades,
-  QueenOfDiamonds,
-  SevenOfClubs,
-  QueenOfSpades,
-  TenOfDiamonds,
-  SixOfClubs,
-  AceOfHeart,
-  NineOfDiamonds,
-] as const;
+export const stacks: Stacks = {
+  mnemonica: {
+    name: 'Mnemonica',
+    order: [
+      FourOfClubs,
+      TwoOfHeart,
+      SevenOfDiamonds,
+      ThreeOfClubs,
+      FourOfHeart,
+      SixOfDiamonds,
+      AceOfSpades,
+      FiveOfHeart,
+      NineOfSpades,
+      TwoOfSpades,
+      QueenOfHeart,
+      ThreeOfDiamonds,
+      QueenOfClubs,
+      EightOfHeart,
+      SixOfSpades,
+      FiveOfSpades,
+      NineOfHeart,
+      KingOfClubs,
+      TwoOfDiamonds,
+      JackOfHeart,
+      ThreeOfSpades,
+      EightOfSpades,
+      SixOfHeart,
+      TenOfClubs,
+      FiveOfDiamonds,
+      KingOfDiamonds,
+      TwoOfClubs,
+      ThreeOfHeart,
+      EightOfDiamonds,
+      FiveOfClubs,
+      KingOfSpades,
+      JackOfDiamonds,
+      EightOfClubs,
+      TenOfSpades,
+      KingOfHeart,
+      JackOfClubs,
+      SevenOfSpades,
+      TenOfHeart,
+      AceOfDiamonds,
+      FourOfSpades,
+      SevenOfHeart,
+      FourOfDiamonds,
+      AceOfClubs,
+      NineOfClubs,
+      JackOfSpades,
+      QueenOfDiamonds,
+      SevenOfClubs,
+      QueenOfSpades,
+      TenOfDiamonds,
+      SixOfClubs,
+      AceOfHeart,
+      NineOfDiamonds,
+    ] as const,
+  },
+};
 
 export type PlayingCardPosition = {
   index: number;
@@ -142,9 +153,9 @@ export type PlayingCardPosition = {
 };
 
 export const getRandomMnemonicaPlayingCard = (
-  stack: MemDeck = mnemonica,
+  stack: MemDeck = stacks.mnemonica.order,
 ): PlayingCardPosition => {
-  const randomIndex = Math.floor(Math.random() * mnemonica.length);
+  const randomIndex = Math.floor(Math.random() * stacks.mnemonica.order.length);
   return {
     index: randomIndex + 1,
     card: stack[randomIndex] ?? stack[0],
@@ -152,7 +163,7 @@ export const getRandomMnemonicaPlayingCard = (
 };
 
 export const getRandomMnemonicaPlayingSuit = (
-  stack: MemDeck = mnemonica,
+  stack: MemDeck = stacks.mnemonica.order,
 ): PlayingCardPosition[] => {
   const randomIndex = Math.floor(Math.random() * 4);
   const suit =
@@ -170,7 +181,7 @@ export const getRandomMnemonicaPlayingSuit = (
 };
 
 export const getRandomMnemonicaPlayingValues = (
-  stack: MemDeck = mnemonica,
+  stack: MemDeck = stacks.mnemonica.order,
 ): PlayingCardPosition[] => {
   const randomValue = Math.floor(Math.random() * 13);
   const suit =
