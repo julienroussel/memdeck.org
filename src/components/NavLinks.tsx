@@ -5,7 +5,7 @@ import {
   IconHome2,
   IconMenuOrder,
   IconNumber,
-  IconSchool,
+  IconPlayCardStar,
   IconTools,
 } from '@tabler/icons-react';
 import { Link, useLocation } from 'react-router';
@@ -49,7 +49,7 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
           to="/flashcard"
           label="Flashcard"
           onClick={onClick}
-          leftSection={<IconSchool size={16} stroke={1.5} />}
+          leftSection={<IconPlayCardStar size={16} stroke={1.5} />}
           active={location.pathname === '/flashcard'}
         />
         <NavLink
