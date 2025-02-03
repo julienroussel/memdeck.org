@@ -1,4 +1,12 @@
-import { Button, Group, Space, Stack, Text, Title } from '@mantine/core';
+import {
+  Button,
+  Center,
+  Group,
+  Space,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import { useState } from 'react';
 import ReactGA from 'react-ga4';
 import {
@@ -51,11 +59,13 @@ export const Flashcard = () => {
     <div>
       <Title order={1}>Flashcard</Title>
       <Stack align="center" justify="center" gap="xl">
-        {display === 'card' ? (
-          <Text size="30vw">{card.card}</Text>
-        ) : (
-          <Text size="30vw">{card.index}</Text>
-        )}
+        <Center mah={400} maw={400}>
+          {display === 'card' ? (
+            <Text size="14em">{card.card}</Text>
+          ) : (
+            <Text size="8em">{card.index}</Text>
+          )}
+        </Center>
         <Group>
           <Button variant="default" onClick={toggleDisplay}>
             Turn
