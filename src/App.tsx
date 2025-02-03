@@ -20,7 +20,9 @@ import { StackPicker } from './components/StackPicker';
 import { Routes } from './Routes';
 
 // eslint-disable-next-line import/no-unresolved
-import memdeckLogo from '/memdeck.png';
+import memdeckLightLogo from '/memdeck-white.png';
+// eslint-disable-next-line import/no-unresolved
+import memdeckDarkLogo from '/memdeck-black.png';
 import { Help } from './components/Help';
 import { GITHUB_URL } from './constants';
 import { NavLinks } from './components/NavLinks';
@@ -51,18 +53,27 @@ export const App = () => {
                 hiddenFrom="sm"
                 size="sm"
               />
-              <Image
-                radius="md"
-                h={30}
-                w="auto"
-                fit="contain"
-                src={memdeckLogo}
-              />
               <Anchor href="/" underline="never">
-                <Text c="#2a2a2a" fw={700} tt="uppercase">
-                  MemDeck{' '}
-                </Text>
+                <Image
+                  radius="md"
+                  h={30}
+                  w="auto"
+                  fit="contain"
+                  src={memdeckLightLogo}
+                  darkHidden
+                />
+                <Image
+                  radius="md"
+                  h={30}
+                  w="auto"
+                  fit="contain"
+                  src={memdeckDarkLogo}
+                  lightHidden
+                />
               </Anchor>
+              <Text fw={700} tt="uppercase">
+                MemDeck
+              </Text>
             </Group>
             <Group>
               <Help />
