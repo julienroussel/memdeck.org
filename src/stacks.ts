@@ -79,7 +79,7 @@ type FixedSizeArray<N extends number, T> = N extends 0
       length: N;
     } & ReadonlyArray<T>;
 
-type MemDeck = FixedSizeArray<52, PlayingCard>;
+export type MemDeck = FixedSizeArray<52, PlayingCard>;
 type Stacks = {
   [key: string]: {
     name: string;

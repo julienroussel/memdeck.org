@@ -13,19 +13,22 @@ import {
 } from '@mantine/core';
 import { useDisclosure, useLocalStorage } from '@mantine/hooks';
 import {
-  IconChevronRight,
   IconHome2,
   IconSchool,
   IconMoonStars,
   IconSun,
+  IconArrowsShuffle,
+  IconMenuOrder,
+  IconNumber,
 } from '@tabler/icons-react';
 import ReactGA from 'react-ga4';
-import { HashRouter, Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
 import { NavBarFooter } from './NavBarFooter';
 import { Routes } from './Routes';
 
-import memdeckLogo from '../public/memdeck.png';
+// eslint-disable-next-line import/no-unresolved
+import memdeckLogo from '/memdeck.png';
 
 ReactGA.initialize('G-36CZ6GEMKQ');
 
@@ -36,6 +39,7 @@ export const App = () => {
     key: 'stack',
     defaultValue: '',
   });
+  const location = useLocation();
 
   return (
     <>
@@ -89,48 +93,62 @@ export const App = () => {
             </Group>
           </Group>
         </AppShell.Header>
-        <HashRouter>
-          <AppShell.Navbar p="md">
-            <AppShell.Section grow component={ScrollArea}>
-              <NavLink
-                component={Link}
-                to="/"
-                label="Home"
-                onClick={() => close()}
-                onClickCapture={() => close()}
-                leftSection={<IconHome2 size={16} stroke={1.5} />}
-                rightSection={
-                  <IconChevronRight
-                    size={12}
-                    stroke={1.5}
-                    className="mantine-rotate-rtl"
-                  />
-                }
-              />
-              <NavLink
-                component={Link}
-                disabled={stack === ''}
-                to="/quiz"
-                label="Quiz"
-                onClick={close}
-                leftSection={<IconSchool size={16} stroke={1.5} />}
-                rightSection={
-                  <IconChevronRight
-                    size={12}
-                    stroke={1.5}
-                    className="mantine-rotate-rtl"
-                  />
-                }
-              />
-            </AppShell.Section>
-            <AppShell.Section>
-              <NavBarFooter />
-            </AppShell.Section>
-          </AppShell.Navbar>
-          <AppShell.Main>
-            <Routes />
-          </AppShell.Main>
-        </HashRouter>
+
+        <AppShell.Navbar p="md">
+          <AppShell.Section grow component={ScrollArea}>
+            <NavLink
+              component={Link}
+              to="/"
+              label="Home"
+              onClick={() => close()}
+              onClickCapture={() => close()}
+              leftSection={<IconHome2 size={16} stroke={1.5} />}
+              active={location.pathname === '/'}
+            />
+            <NavLink
+              component={Link}
+              disabled={stack === ''}
+              to="/flashcard"
+              label="Flashcard"
+              onClick={close}
+              leftSection={<IconSchool size={16} stroke={1.5} />}
+              active={location.pathname === '/flashcard'}
+            />
+            <NavLink
+              component={Link}
+              disabled={stack === ''}
+              to="/nextprevious"
+              label="Next / Previous"
+              onClick={close}
+              leftSection={<IconMenuOrder size={16} stroke={1.5} />}
+              active={location.pathname === '/nextprevious'}
+            />
+            <NavLink
+              component={Link}
+              disabled={stack === ''}
+              to="/shuffle"
+              label="Shuffle"
+              onClick={close}
+              leftSection={<IconArrowsShuffle size={16} stroke={1.5} />}
+              active={location.pathname === '/shuffle'}
+            />
+            <NavLink
+              component={Link}
+              disabled={stack === ''}
+              to="/acaan"
+              label="ACAAN"
+              onClick={close}
+              leftSection={<IconNumber size={16} stroke={1.5} />}
+              active={location.pathname === '/acaan'}
+            />
+          </AppShell.Section>
+          <AppShell.Section>
+            <NavBarFooter />
+          </AppShell.Section>
+        </AppShell.Navbar>
+        <AppShell.Main>
+          <Routes />
+        </AppShell.Main>
       </AppShell>
     </>
   );

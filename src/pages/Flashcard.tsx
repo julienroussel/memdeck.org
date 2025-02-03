@@ -7,12 +7,11 @@ import { readLocalStorageValue, useLocalStorage } from '@mantine/hooks';
 
 const TOGGLE = ['card', 'index'] as const;
 
-export const Quiz = () => {
+export const Flashcard = () => {
   const [stack] = useLocalStorage({
     key: 'stack',
     defaultValue: readLocalStorageValue({ key: 'stack' }) ?? 'mnemonica',
   });
-  console.log(stack);
   const [card, setCard] = useState<PlayingCardPosition>(
     getRandomPlayingCard(stacks[stack].order),
   );
@@ -27,7 +26,7 @@ export const Quiz = () => {
     setDisplay(newDisplay ?? 'card');
 
     ReactGA.event({
-      category: 'Quiz',
+      category: 'Flashcard',
       action: 'Clicked next button',
     });
   };
@@ -36,14 +35,14 @@ export const Quiz = () => {
     setDisplay(display === 'card' ? 'index' : 'card');
 
     ReactGA.event({
-      category: 'Quiz',
+      category: 'Flashcard',
       action: 'Clicked turn button',
     });
   };
 
   return (
     <div>
-      <Title order={1}>Quiz</Title>
+      <Title order={1}>Flashcard</Title>
       <Stack align="center" justify="center" gap="xl">
         {display === 'card' ? (
           <Text size="30vw">{card.card}</Text>

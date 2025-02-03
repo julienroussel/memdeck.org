@@ -4,6 +4,7 @@ import {
   MantineProvider,
 } from '@mantine/core';
 import { useColorScheme } from '@mantine/hooks';
+import { HashRouter } from 'react-router';
 import { App } from './App';
 
 const colorSchemeManager = localStorageColorSchemeManager({
@@ -20,7 +21,9 @@ export const Provider = () => {
         defaultColorScheme={colorScheme}
         colorSchemeManager={colorSchemeManager}
       >
-        <App />
+        <HashRouter>
+          <App />
+        </HashRouter>
       </MantineProvider>
     </>
   );
