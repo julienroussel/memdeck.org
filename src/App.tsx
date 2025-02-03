@@ -23,6 +23,8 @@ import {
   IconMenuOrder,
   IconNumber,
   IconBrandGithub,
+  IconTools,
+  IconExternalLink,
 } from '@tabler/icons-react';
 import ReactGA from 'react-ga4';
 import { Link, useLocation } from 'react-router';
@@ -125,40 +127,56 @@ export const App = () => {
             />
             <NavLink
               component={Link}
-              disabled={stack === ''}
-              to="/flashcard"
-              label="Flashcard"
-              onClick={close}
-              leftSection={<IconSchool size={16} stroke={1.5} />}
-              active={location.pathname === '/flashcard'}
+              to="/resources"
+              label="Resources"
+              onClick={() => close()}
+              onClickCapture={() => close()}
+              leftSection={<IconExternalLink size={16} stroke={1.5} />}
+              active={location.pathname === '/resources'}
             />
+
             <NavLink
-              component={Link}
-              disabled={stack === ''}
-              to="/nextprevious"
-              label="Next / Previous"
-              onClick={close}
-              leftSection={<IconMenuOrder size={16} stroke={1.5} />}
-              active={location.pathname === '/nextprevious'}
-            />
-            <NavLink
-              component={Link}
-              disabled={stack === ''}
-              to="/shuffle"
-              label="Shuffle"
-              onClick={close}
-              leftSection={<IconArrowsShuffle size={16} stroke={1.5} />}
-              active={location.pathname === '/shuffle'}
-            />
-            <NavLink
-              component={Link}
-              disabled={stack === ''}
-              to="/acaan"
-              label="ACAAN"
-              onClick={close}
-              leftSection={<IconNumber size={16} stroke={1.5} />}
-              active={location.pathname === '/acaan'}
-            />
+              label="Tools"
+              leftSection={<IconTools size={16} stroke={1.5} />}
+              defaultOpened
+            >
+              <NavLink
+                component={Link}
+                disabled={stack === ''}
+                to="/flashcard"
+                label="Flashcard"
+                onClick={close}
+                leftSection={<IconSchool size={16} stroke={1.5} />}
+                active={location.pathname === '/flashcard'}
+              />
+              <NavLink
+                component={Link}
+                disabled={stack === ''}
+                to="/nextprevious"
+                label="Next / Previous"
+                onClick={close}
+                leftSection={<IconMenuOrder size={16} stroke={1.5} />}
+                active={location.pathname === '/nextprevious'}
+              />
+              <NavLink
+                component={Link}
+                disabled={stack === ''}
+                to="/shuffle"
+                label="Shuffle"
+                onClick={close}
+                leftSection={<IconArrowsShuffle size={16} stroke={1.5} />}
+                active={location.pathname === '/shuffle'}
+              />
+              <NavLink
+                component={Link}
+                disabled={stack === ''}
+                to="/acaan"
+                label="ACAAN"
+                onClick={close}
+                leftSection={<IconNumber size={16} stroke={1.5} />}
+                active={location.pathname === '/acaan'}
+              />
+            </NavLink>
           </AppShell.Section>
           <AppShell.Section>
             <StackPicker />
