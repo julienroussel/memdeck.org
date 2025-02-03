@@ -10,6 +10,8 @@ import {
   Text,
   NavLink,
   ScrollArea,
+  ActionIcon,
+  Anchor,
 } from '@mantine/core';
 import { useDisclosure, useLocalStorage } from '@mantine/hooks';
 import {
@@ -20,15 +22,18 @@ import {
   IconArrowsShuffle,
   IconMenuOrder,
   IconNumber,
+  IconBrandGithub,
 } from '@tabler/icons-react';
 import ReactGA from 'react-ga4';
 import { Link, useLocation } from 'react-router';
 
-import { NavBarFooter } from './NavBarFooter';
+import { StackPicker } from './components/StackPicker';
 import { Routes } from './Routes';
 
 // eslint-disable-next-line import/no-unresolved
 import memdeckLogo from '/memdeck.png';
+import { Help } from './components/Help';
+import { GITHUB_URL } from './constants';
 
 ReactGA.initialize('G-36CZ6GEMKQ');
 
@@ -36,7 +41,7 @@ export const App = () => {
   const [opened, { toggle, close }] = useDisclosure();
   const { setColorScheme, colorScheme } = useMantineColorScheme();
   const [stack] = useLocalStorage({
-    key: 'stack',
+    key: 'memdeck-app-stack',
     defaultValue: '',
   });
   const location = useLocation();
@@ -68,11 +73,24 @@ export const App = () => {
                 fit="contain"
                 src={memdeckLogo}
               />
-              <Text c="#2a2a2a" fw={700} tt="uppercase">
-                MemDeck
-              </Text>
+              <Anchor href="/" underline="never">
+                <Text c="#2a2a2a" fw={700} tt="uppercase">
+                  MemDeck{' '}
+                </Text>
+              </Anchor>
             </Group>
             <Group>
+              <Help />
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                aria-label="Github"
+                component="a"
+                target="_blank"
+                href={GITHUB_URL}
+              >
+                <IconBrandGithub />
+              </ActionIcon>
               <Switch
                 size="md"
                 color="dark.4"
@@ -143,7 +161,7 @@ export const App = () => {
             />
           </AppShell.Section>
           <AppShell.Section>
-            <NavBarFooter />
+            <StackPicker />
           </AppShell.Section>
         </AppShell.Navbar>
         <AppShell.Main>

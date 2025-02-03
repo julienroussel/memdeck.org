@@ -9,7 +9,7 @@ const TOGGLE = ['card', 'index'] as const;
 
 export const Flashcard = () => {
   const [stack] = useLocalStorage({
-    key: 'stack',
+    key: 'memdeck-app-stack',
     defaultValue: readLocalStorageValue({ key: 'stack' }) ?? 'mnemonica',
   });
   const [card, setCard] = useState<PlayingCardPosition>(
