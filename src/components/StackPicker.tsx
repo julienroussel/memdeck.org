@@ -1,10 +1,11 @@
 import { Center, NativeSelect } from '@mantine/core';
-import { stacks } from '../stacks';
+import { stacks } from '../types/stacks';
 import { useLocalStorage } from '@mantine/hooks';
+import { SELECTED_STACK_LOCAL_STORAGE_KEY } from '../constants';
 
 export const StackPicker = () => {
   const [stack, setStack] = useLocalStorage({
-    key: 'memdeck-app-stack',
+    key: SELECTED_STACK_LOCAL_STORAGE_KEY,
     defaultValue: '',
   });
 

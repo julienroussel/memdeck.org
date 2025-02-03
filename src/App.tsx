@@ -8,26 +8,13 @@ import {
   Group,
   Image,
   Text,
-  NavLink,
   ScrollArea,
   ActionIcon,
   Anchor,
 } from '@mantine/core';
-import { useDisclosure, useLocalStorage } from '@mantine/hooks';
-import {
-  IconHome2,
-  IconSchool,
-  IconMoonStars,
-  IconSun,
-  IconArrowsShuffle,
-  IconMenuOrder,
-  IconNumber,
-  IconBrandGithub,
-  IconTools,
-  IconExternalLink,
-} from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
+import { IconMoonStars, IconSun, IconBrandGithub } from '@tabler/icons-react';
 import ReactGA from 'react-ga4';
-import { Link, useLocation } from 'react-router';
 
 import { StackPicker } from './components/StackPicker';
 import { Routes } from './Routes';
@@ -36,17 +23,13 @@ import { Routes } from './Routes';
 import memdeckLogo from '/memdeck.png';
 import { Help } from './components/Help';
 import { GITHUB_URL } from './constants';
+import { NavLinks } from './components/NavLinks';
 
 ReactGA.initialize('G-36CZ6GEMKQ');
 
 export const App = () => {
   const [opened, { toggle, close }] = useDisclosure();
   const { setColorScheme, colorScheme } = useMantineColorScheme();
-  const [stack] = useLocalStorage({
-    key: 'memdeck-app-stack',
-    defaultValue: '',
-  });
-  const location = useLocation();
 
   return (
     <>
@@ -116,67 +99,7 @@ export const App = () => {
 
         <AppShell.Navbar p="md">
           <AppShell.Section grow component={ScrollArea}>
-            <NavLink
-              component={Link}
-              to="/"
-              label="Home"
-              onClick={() => close()}
-              onClickCapture={() => close()}
-              leftSection={<IconHome2 size={16} stroke={1.5} />}
-              active={location.pathname === '/'}
-            />
-            <NavLink
-              component={Link}
-              to="/resources"
-              label="Resources"
-              onClick={() => close()}
-              onClickCapture={() => close()}
-              leftSection={<IconExternalLink size={16} stroke={1.5} />}
-              active={location.pathname === '/resources'}
-            />
-
-            <NavLink
-              label="Tools"
-              leftSection={<IconTools size={16} stroke={1.5} />}
-              defaultOpened
-            >
-              <NavLink
-                component={Link}
-                disabled={stack === ''}
-                to="/flashcard"
-                label="Flashcard"
-                onClick={close}
-                leftSection={<IconSchool size={16} stroke={1.5} />}
-                active={location.pathname === '/flashcard'}
-              />
-              <NavLink
-                component={Link}
-                disabled={stack === ''}
-                to="/nextprevious"
-                label="Next / Previous"
-                onClick={close}
-                leftSection={<IconMenuOrder size={16} stroke={1.5} />}
-                active={location.pathname === '/nextprevious'}
-              />
-              <NavLink
-                component={Link}
-                disabled={stack === ''}
-                to="/shuffle"
-                label="Shuffle"
-                onClick={close}
-                leftSection={<IconArrowsShuffle size={16} stroke={1.5} />}
-                active={location.pathname === '/shuffle'}
-              />
-              <NavLink
-                component={Link}
-                disabled={stack === ''}
-                to="/acaan"
-                label="ACAAN"
-                onClick={close}
-                leftSection={<IconNumber size={16} stroke={1.5} />}
-                active={location.pathname === '/acaan'}
-              />
-            </NavLink>
+            <NavLinks onClick={close} />
           </AppShell.Section>
           <AppShell.Section>
             <StackPicker />

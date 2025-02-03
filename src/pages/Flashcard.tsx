@@ -1,16 +1,23 @@
 import { Button, Group, Space, Stack, Text, Title } from '@mantine/core';
 import { useState } from 'react';
 import ReactGA from 'react-ga4';
-import { getRandomPlayingCard, PlayingCardPosition, stacks } from '../stacks';
+import {
+  getRandomPlayingCard,
+  PlayingCardPosition,
+  stacks,
+} from '../types/stacks';
 import { usePageTracking } from '../hooks/usePageTracking';
 import { readLocalStorageValue, useLocalStorage } from '@mantine/hooks';
+import { SELECTED_STACK_LOCAL_STORAGE_KEY } from '../constants';
 
 const TOGGLE = ['card', 'index'] as const;
 
 export const Flashcard = () => {
   const [stack] = useLocalStorage({
-    key: 'memdeck-app-stack',
-    defaultValue: readLocalStorageValue({ key: 'stack' }) ?? 'mnemonica',
+    key: SELECTED_STACK_LOCAL_STORAGE_KEY,
+    defaultValue:
+      readLocalStorageValue({ key: SELECTED_STACK_LOCAL_STORAGE_KEY }) ??
+      'mnemonica',
   });
   const [card, setCard] = useState<PlayingCardPosition>(
     getRandomPlayingCard(stacks[stack].order),

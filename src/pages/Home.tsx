@@ -2,12 +2,12 @@ import { Title, Text, Space, Anchor } from '@mantine/core';
 import { usePageTracking } from '../hooks/usePageTracking';
 import { StackPicker } from '../components/StackPicker';
 import { useLocalStorage } from '@mantine/hooks';
-import { stacks } from '../stacks';
-import { GITHUB_URL } from '../constants';
+import { stacks } from '../types/stacks';
+import { GITHUB_URL, SELECTED_STACK_LOCAL_STORAGE_KEY } from '../constants';
 
 export const Home = () => {
   const [stack] = useLocalStorage({
-    key: 'memdeck-app-stack',
+    key: SELECTED_STACK_LOCAL_STORAGE_KEY,
     defaultValue: '',
   });
 
