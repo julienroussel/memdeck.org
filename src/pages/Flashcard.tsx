@@ -59,11 +59,15 @@ export const Flashcard = () => {
     <div>
       <Title order={1}>Flashcard</Title>
       <Stack align="center" justify="center" gap="xl">
-        <Center mah={400} maw={400}>
+        <Center h={300}>
           {display === 'card' ? (
-            <Text size="14em">{card.card}</Text>
+            <Text span inline size="14em">
+              {card.card}
+            </Text>
           ) : (
-            <Text size="8em">{card.index}</Text>
+            <Text span inline size="8em">
+              {card.index}
+            </Text>
           )}
         </Center>
         <Group>
