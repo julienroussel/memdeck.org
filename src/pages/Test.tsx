@@ -66,8 +66,9 @@ const CARDS = shuffle([
 ]);
 
 export const Test = () => {
-  const clickOnCard = (card: string) => {
+  const clickOnCard = (card: string, index: number) => {
     setSelected(card);
+    CARDS.splice(index, 1);
   };
   const [selected, setSelected] = useState('');
 
@@ -89,7 +90,7 @@ export const Test = () => {
             className="card"
             style={{ '--i': index - CARDS.length / 2 } as VarCSSProperty}
             src={card}
-            onClick={() => clickOnCard(card)}
+            onClick={() => clickOnCard(card, index)}
           />
         ))}
       </div>
