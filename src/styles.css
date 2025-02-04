@@ -23,7 +23,9 @@
   transform: rotate(calc(var(--i) * 0.5deg)) translate(calc(var(--i) * 15px), 0px);
 }
 
+/*
 .ribbonCard:hover {
   translate: calc(var(--i) * 1px) -25px;
   z-index: 100;
 }
+*/
