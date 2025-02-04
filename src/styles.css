@@ -9,7 +9,7 @@
   display: flex;
   justify-content: center;
   align-items: end;
-  min-height: 40vh;
+  min-height: 30vh;
 }
 
 .ribbonCard {
@@ -20,7 +20,8 @@
   cursor: pointer;
   transition: 0.5s;
   transform-origin: 50% 100%;
-  transform: rotate(calc(var(--i) * 0.5deg)) translate(calc(var(--i) * 15px), 0px);
+  transform: rotate(calc(var(--i) * 0.5deg))
+    translate(calc(var(--i) * 15px), 0px);
 }
 
 /*

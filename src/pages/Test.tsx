@@ -1,4 +1,4 @@
-import { Center, Title } from '@mantine/core';
+import { Center, Space, Title } from '@mantine/core';
 import { VarCSSProperty } from '../utils/style';
 import { useState } from 'react';
 
@@ -75,6 +75,7 @@ export const Test = () => {
   return (
     <>
       <Title order={1}>TEST</Title>
+      <Space h="lg" />
       <Center>
         {' '}
         <img
