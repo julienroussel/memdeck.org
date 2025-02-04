@@ -78,8 +78,7 @@ export const Test = () => {
       <Center>
         {' '}
         <img
-          className="card"
-          style={{ '--i': 0, 'width': '80px' } as VarCSSProperty}
+          className="singleCard"
           src={selected === '' ? 'cards/blank_card.svg' : selected}
         />
       </Center>
@@ -87,8 +86,8 @@ export const Test = () => {
         {CARDS.map((card, index) => (
           <img
             key={card}
-            className="card"
-            style={{ '--i': index - CARDS.length / 2 } as VarCSSProperty}
+            className="ribbonCard singleCard"
+            style={{ '--i': index + 1 - CARDS.length / 2 } as VarCSSProperty}
             src={card}
             onClick={() => clickOnCard(card, index)}
           />
