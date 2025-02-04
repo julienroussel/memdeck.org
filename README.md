@@ -53,6 +53,8 @@ This project is open-source and available under the [GPL-3.0 License](LICENSE).
 
 A huge shout-out to all memory enthusiasts and magicians who inspired this project!
 
+Cards SVG images are from https://tekeye.uk/playing_cards/svg-playing-cards
+
 ---
 
 _Ready to master your stack?_ 🃏🔥

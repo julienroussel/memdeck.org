@@ -1,0 +1,29 @@
+
+.cardContainer {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 30vh;
+}
+
+.cardContainer .card {
+  position: absolute;
+  width: 80px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.5s;
+  transform-origin: 50% 100%;
+  transform: rotate(calc(var(--i) * 2deg)) translate(calc(var(--i) * 60px), -50px);
+  color: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+}
+
+.cardContainer .card:active {
+  translate: calc(var(--i) * 10px) -50px;
+  z-index: 100;
+}
