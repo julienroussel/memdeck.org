@@ -6,7 +6,7 @@ export const AceOfSpades = {
 export const TwoOfSpades = {
   suit: 'spades' as const,
   rank: '2' as const,
-  image: 'cards/spaces_2.svg' as const,
+  image: 'cards/spades_2.svg' as const,
 };
 export const ThreeOfSpades = {
   suit: 'spades' as const,
