@@ -48,7 +48,7 @@ export const Home = () => {
             </Text>
           </Text>
           <Space h="lg" />
-          <Ribbon stack={[...stacks[stack].order]} />
+          <Ribbon cards={[...stacks[stack].order]} />
         </>
       )}
     </div>
