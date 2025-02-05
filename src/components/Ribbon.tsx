@@ -1,16 +1,16 @@
 import { Flex, Image } from '@mantine/core';
-import { MemDeck } from '../types/stacks';
 import { VarCSSProperty } from '../utils/style';
+import { PlayingCard } from '../types/playingcard';
 
-export const Ribbon = ({ stack }: { stack: MemDeck }) => {
+export const Ribbon = ({ stack }: { stack: PlayingCard[] }) => {
   return (
     <Flex mih="40vh" justify="center" align="center">
-      {stack.order.map((card, index) => (
+      {stack.map((card, index) => (
         <Image
           w={80}
           key={`${card.suit}_${card.rank}`}
           className="ribbonCard cardShadow"
-          style={{ '--i': index + 1 - 52 / 2 } as VarCSSProperty}
+          style={{ '--i': index + 1 - stack.length / 2 } as VarCSSProperty}
           src={card.image}
         />
       ))}
