@@ -18,9 +18,9 @@ export const Ribbon = ({ cards }: { cards: PlayingCard[] }) => {
 
   return (
     <Flex
-      mih="50vh"
+      mih="50svh"
       justify="center"
-      align="center"
+      align="start"
       className="ribbonContainer"
       onMouseMove={(e) => {
         if (e.buttons === 1) {
