@@ -18,7 +18,7 @@ export const Ribbon = ({ cards }: { cards: PlayingCard[] }) => {
 
   return (
     <Flex
-      mih="60vh"
+      mih="50vh"
       justify="center"
       align="center"
       className="ribbonContainer"
