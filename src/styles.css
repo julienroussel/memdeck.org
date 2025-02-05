@@ -3,32 +3,9 @@
   border-radius: 3%;
 }
 
-.cardContainer {
-  position: relative;
-  /* background-color: darkgray; */
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 40vh;
-  overflow: hidden;
-}
-
 .ribbonCard {
   position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: 0.5s;
   transform-origin: 50% 100%;
   transform: rotate(calc(var(--i) * 0.5deg))
     translate(calc(var(--i) * 15px), 0px);
 }
-
-/*
-.ribbonCard:hover {
-  translate: calc(var(--i) * 1px) -25px;
-  z-index: 100;
-}
-*/

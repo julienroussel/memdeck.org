@@ -4,6 +4,7 @@ import { StackPicker } from '../components/StackPicker';
 import { useLocalStorage } from '@mantine/hooks';
 import { stacks } from '../types/stacks';
 import { GITHUB_URL, SELECTED_STACK_LOCAL_STORAGE_KEY } from '../constants';
+import { Ribbon } from '../components/Ribbon';
 
 export const Home = () => {
   const [stack] = useLocalStorage({
@@ -46,6 +47,8 @@ export const Home = () => {
               {stacks[stack]?.name}
             </Text>
           </Text>
+          <Space h="lg" />
+          <Ribbon stack={stacks[stack]} />
         </>
       )}
     </div>

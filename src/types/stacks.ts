@@ -14,12 +14,13 @@ type FixedSizeArray<N extends number, T> = N extends 0
     } & ReadonlyArray<T>;
 
 export type Stack = FixedSizeArray<52, PlayingCard>;
+export type MemDeck = {
+  name: string;
+  order: Stack;
+};
 
-type MemDecks = {
-  [key: string]: {
-    name: string;
-    order: Stack;
-  };
+export type MemDecks = {
+  [key: string]: MemDeck;
 };
 
 export const stacks: MemDecks = {

@@ -5,7 +5,6 @@ import { Shuffle } from './pages/Shuffle';
 import { NextPrevious } from './pages/NextPrevious';
 import { Acaan } from './pages/ACANN';
 import { Resources } from './pages/Resources';
-import { Test } from './pages/Test';
 
 export const Routes = () => (
   <RouterRoutes>
@@ -15,6 +14,5 @@ export const Routes = () => (
     <RouterRoute path="/nextprevious" element={<NextPrevious />} />
     <RouterRoute path="/shuffle" element={<Shuffle />} />
     <RouterRoute path="/acaan" element={<Acaan />} />
-    <RouterRoute path="/test" element={<Test />} />
   </RouterRoutes>
 );
