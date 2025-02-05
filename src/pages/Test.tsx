@@ -77,7 +77,6 @@ export const Test = () => {
       <Title order={1}>TEST</Title>
       <Space h="lg" />
       <Center>
-        {' '}
         <img
           className="singleCard"
           src={selected === '' ? 'cards/blank_card.svg' : selected}

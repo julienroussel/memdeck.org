@@ -5,11 +5,13 @@
 
 .cardContainer {
   position: relative;
+  /* background-color: darkgray; */
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: end;
-  min-height: 30vh;
+  align-items: center;
+  min-height: 40vh;
+  overflow: hidden;
 }
 
 .ribbonCard {
