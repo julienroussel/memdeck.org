@@ -1,6 +1,6 @@
-import { MemDeck, stacks } from './stacks';
+import { Stack } from './stacks';
 
-export const shuffle = (stack: MemDeck) => {
+export const shuffle = (stack: Stack) => {
   const array = [...stack];
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -8,6 +8,3 @@ export const shuffle = (stack: MemDeck) => {
   }
   return array;
 };
-
-const shuffledStack = shuffle(stacks.mnemonica.order);
-console.log(shuffledStack);

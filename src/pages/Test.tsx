@@ -1,4 +1,4 @@
-import { Center, Space, Title } from '@mantine/core';
+import { Center, Image, Space, Title } from '@mantine/core';
 import { VarCSSProperty } from '../utils/style';
 import { useState } from 'react';
 
@@ -77,16 +77,18 @@ export const Test = () => {
       <Title order={1}>TEST</Title>
       <Space h="lg" />
       <Center>
-        <img
-          className="singleCard"
+        <Image
+          w={80}
+          className="cardShadow"
           src={selected === '' ? 'cards/blank_card.svg' : selected}
         />
       </Center>
       <div className="cardContainer">
         {CARDS.map((card, index) => (
-          <img
+          <Image
+            w={80}
             key={card}
-            className="ribbonCard singleCard"
+            className="ribbonCard cardShadow"
             style={{ '--i': index + 1 - CARDS.length / 2 } as VarCSSProperty}
             src={card}
             onClick={() => clickOnCard(card, index)}

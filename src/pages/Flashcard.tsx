@@ -2,6 +2,7 @@ import {
   Button,
   Center,
   Group,
+  Image,
   Space,
   Stack,
   Text,
@@ -59,11 +60,10 @@ export const Flashcard = () => {
     <div>
       <Title order={1}>Flashcard</Title>
       <Stack align="center" justify="center" gap="xl">
+        <Space h="md" />
         <Center h={300}>
           {display === 'card' ? (
-            <Text span inline size="14em">
-              {card.card}
-            </Text>
+            <Image w="20vh" className="cardShadow" src={card.card.image} />
           ) : (
             <Text span inline size="8em">
               {card.index}
