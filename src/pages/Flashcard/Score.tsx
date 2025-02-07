@@ -10,10 +10,10 @@ export const Score = ({
 }) => {
   return (
     <Group>
-      <Badge leftSection={<IconThumbUp size={16} />} size="xl" bg="green.6">
+      <Badge leftSection={<IconThumbUp size={12} />} size="md" bg="green.6">
         {successes}
       </Badge>
-      <Badge leftSection={<IconThumbDown size={16} />} size="xl" bg="red.6">
+      <Badge leftSection={<IconThumbDown size={12} />} size="md" bg="red.6">
         {fails}
       </Badge>
     </Group>
