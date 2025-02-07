@@ -1,5 +1,5 @@
 import { ActionIcon, Center, Group, Image, Space, Title } from '@mantine/core';
-import { CSSProperties, useState } from 'react';
+import { useState } from 'react';
 import {
   getRandomPlayingCard,
   PlayingCardPosition,
@@ -10,7 +10,6 @@ import { useDisclosure } from '@mantine/hooks';
 import {
   FLASHCARD_NEXT_TURN_DELAY,
   FLASHCARD_OPTION_LSK,
-  NOTIFICATION_CLOSE_TIMEOUT,
   SELECTED_STACK_LSK,
 } from '../../constants';
 import { CardSpread } from '../../components/CardSpread/CardSpread';
@@ -23,13 +22,12 @@ import { isPlayingCard } from '../../types/typeguards';
 import { addFourDistinctRandomCards } from './pickcards';
 import { shuffle } from '../../types/shuffle';
 import { notifications } from '@mantine/notifications';
-
-const TOGGLE = ['card', 'index'] as const;
-
-const cardShadow: CSSProperties = {
-  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.25)',
-  borderRadius: '3%',
-};
+import {
+  cardShadow,
+  correctAnswerNotification,
+  TOGGLE,
+  wrongAnswerNotification,
+} from './utils';
 
 export const Flashcard = () => {
   const [selectedStack] = useLocalDb(SELECTED_STACK_LSK, 'mnemonica');
@@ -51,19 +49,9 @@ export const Flashcard = () => {
       : item === card.index;
 
     if (correctAnswer === false) {
-      notifications.show({
-        color: 'red',
-        title: 'Wrong answer',
-        message: 'Try again!',
-        autoClose: NOTIFICATION_CLOSE_TIMEOUT,
-      });
+      notifications.show(wrongAnswerNotification);
     } else {
-      notifications.show({
-        color: 'green',
-        title: 'Correct answer',
-        message: 'Keep going!',
-        autoClose: NOTIFICATION_CLOSE_TIMEOUT,
-      });
+      notifications.show(correctAnswerNotification);
       setTimeout(() => {
         const newCard = getRandomPlayingCard(stacks[selectedStack].order);
         setCard(newCard);
@@ -84,7 +72,7 @@ export const Flashcard = () => {
   usePageTracking();
 
   return (
-    <div>
+    <>
       <Group justify="space-between" gap="xl">
         <Title order={1}>Flashcard</Title>
         <ActionIcon variant="subtle" color="gray" onClick={open}>
@@ -113,6 +101,6 @@ export const Flashcard = () => {
       />
 
       <FlashcardOptions opened={options} close={close} />
-    </div>
+    </>
   );
 };
