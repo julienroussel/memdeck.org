@@ -28,9 +28,13 @@ import {
   TOGGLE,
   wrongAnswerNotification,
 } from './utils';
+import { Score } from './Score';
 
 export const Flashcard = () => {
   const [selectedStack] = useLocalDb(SELECTED_STACK_LSK, 'mnemonica');
+
+  const [successes, setSuccesses] = useState(0);
+  const [fails, setFails] = useState(0);
 
   const [card, setCard] = useState<PlayingCardPosition>(
     getRandomPlayingCard(stacks[selectedStack].order),
@@ -50,8 +54,10 @@ export const Flashcard = () => {
 
     if (correctAnswer === false) {
       notifications.show(wrongAnswerNotification);
+      setFails(fails + 1);
     } else {
       notifications.show(correctAnswerNotification);
+      setSuccesses(successes + 1);
       setTimeout(() => {
         const newCard = getRandomPlayingCard(stacks[selectedStack].order);
         setCard(newCard);
@@ -75,9 +81,12 @@ export const Flashcard = () => {
     <>
       <Group justify="space-between" gap="xl">
         <Title order={1}>Flashcard</Title>
-        <ActionIcon variant="subtle" color="gray" onClick={open}>
-          <IconSettings />
-        </ActionIcon>
+        <Group>
+          <Score successes={successes} fails={fails} />
+          <ActionIcon variant="subtle" color="gray" onClick={open}>
+            <IconSettings />
+          </ActionIcon>
+        </Group>
       </Group>
       <Space h="xl" />
       <Center>
