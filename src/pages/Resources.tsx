@@ -12,7 +12,7 @@ import {
 import { GITHUB_URL } from '../constants';
 import { IconExternalLink } from '@tabler/icons-react';
 
-const resources = [
+const primaryResources = [
   {
     title: 'Mnemonica',
     author: 'Juan Tamariz',
@@ -30,39 +30,72 @@ const resources = [
     category: 'book',
   },
   {
-    title: 'Online Course: Mastering Memorization',
-    author: '',
+    title: 'Bound to Please',
+    author: 'Simon Aronson',
     description:
-      'Enroll in this comprehensive online course to master the art of memorizing decks quickly.',
-    link: '',
+      'Compilation of Aronson’s early works, essential for stack work.',
+    link: 'https://www.vanishingincmagic.com/card-magic/bound-to-please/',
     category: 'book',
   },
   {
-    title: 'Community Forum',
-    author: '',
+    title: 'Memories Are Made of This',
+    author: 'Simon Aronson',
     description:
-      'Join a community of memory enthusiasts to exchange tips, strategies, and experiences.',
-    link: 'https://example.com/forum',
-    category: 'book',
+      'A shorter work that provides practical applications for the memorized deck.',
+    link: 'http://simonaronson.com/Memories%20Are%20Made%20of%20This.pdf',
+    category: 'pdf',
   },
 ];
 
-const secondaryResources = [
+const otherResources = [
   {
-    title: 'Memory Palace Technique',
-    link: 'https://example.com/memory-palace',
+    title: 'The Magic Rainbow',
+    author: 'Juan Tamariz',
+    link: 'https://www.vanishingincmagic.com/magic-theory/tamariz-magic-rainbow/',
+    description:
+      'Not just about memorized decks, but essential for deepening magical thinking.',
   },
   {
-    title: 'Speed Memorization Tips',
-    link: 'https://example.com/speed-memorization',
+    title: 'In Order To Amaze',
+    author: 'Pit Hartling',
+    link: 'https://pithartling.com/shop/#in-order-to-amaze',
+    description:
+      'Brilliant routines and effects with memorized deck techniques',
   },
   {
-    title: 'Interactive Memory Games',
-    link: 'https://example.com/memory-games',
+    title: 'Memorandum',
+    author: 'Woody Aragón',
+    link: 'https://www.vanishingincmagic.com/card-magic/memorandum/',
+    description:
+      'Unique memorized deck with powerful effects and deep insights.',
   },
   {
-    title: 'Memory Training Podcast',
-    link: 'https://example.com/memory-podcast',
+    title: 'Temporarily Out of Order',
+    author: 'Patrick Redford',
+    link: 'https://www.murphysmagic.com/product.aspx?id=59497',
+    description:
+      'A deep dive into the Redford stack with versatile routines and stack-independent principles.',
+  },
+  {
+    title: 'Applesauce',
+    author: 'Patrick Redford',
+    link: 'https://patrickredford.com/product/applesauce/',
+    description:
+      'Expands on the Redford stack with new effects, ideas, and applications for stack work.',
+  },
+  {
+    title: 'Sleightly Out of Order',
+    author: 'Patrick Redford',
+    link: 'https://patrickredford.com/product/sleightly-out-of-order/',
+    description:
+      'Advanced techniques and effects using a memorized stack with sleight-of-hand integrations.',
+  },
+  {
+    title: 'Particle System',
+    author: 'Joshua Jay',
+    link: 'https://www.vanishingincmagic.com/magic-books/particle-system/',
+    description:
+      'New memorized deck that allows magicians to cut to any named card without looking, featuring built-in benefits and a variety of powerful routines.',
   },
 ];
 
@@ -74,7 +107,7 @@ export const Resources = () => {
       </Title>
       <Text mb="xl">
         Explore a curated collection of resources to help you master the art of
-        memorizing decks. Missing a resource? Give me a shout or drop a pull
+        memorized decks. Missing a resource? Give me a shout or drop a pull
         request on{' '}
         <Anchor href={GITHUB_URL} target="_blank" underline="never">
           Github
@@ -82,11 +115,10 @@ export const Resources = () => {
         .
       </Text>
       <SimpleGrid cols={2} spacing="lg">
-        {resources.map((resource, index) => (
+        {primaryResources.map((resource, index) => (
           <Card key={index} shadow="sm" padding="lg" radius="md" withBorder>
             <Group>
               <Title order={3}>{resource.title}</Title>
-
               <Badge color="blue" variant="light">
                 {resource.category}
               </Badge>
@@ -104,9 +136,8 @@ export const Resources = () => {
         ))}
       </SimpleGrid>
 
-      {/* Secondary Resources Section */}
       <Title order={2} mt="xl" mb="md">
-        Secondary Resources
+        Other Resources
       </Title>
       <List
         spacing="sm"
@@ -118,11 +149,16 @@ export const Resources = () => {
           </ThemeIcon>
         }
       >
-        {secondaryResources.map((resource, index) => (
+        {otherResources.map((resource, index) => (
           <List.Item key={index}>
             <Anchor href={resource.link} target="_blank">
               {resource.title}
-            </Anchor>
+            </Anchor>{' '}
+            (
+            <Text size="sm" c="dimmed" fs="italic" span>
+              {resource.author}
+            </Text>
+            ) : <Text span>{resource.description}</Text>
           </List.Item>
         ))}
       </List>
