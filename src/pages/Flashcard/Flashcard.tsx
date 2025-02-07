@@ -1,4 +1,4 @@
-import { ActionIcon, Center, Group, Image, Title } from '@mantine/core';
+import { ActionIcon, Center, Group, Image, Space, Title } from '@mantine/core';
 import { CSSProperties, useState } from 'react';
 import {
   getRandomPlayingCard,
@@ -91,14 +91,16 @@ export const Flashcard = () => {
           <IconSettings />
         </ActionIcon>
       </Group>
-
-      <Center h={300}>
+      <Space h="xl" />
+      <Center>
         {mode === 'cardonly' || (mode === 'bothmodes' && display === 'card') ? (
           <Image w="120px" style={cardShadow} src={card.card.image} />
         ) : (
-          <NumberCard number={card.index} />
+          <NumberCard number={card.index} width={120} fontSize={60} />
         )}
       </Center>
+      <Space h="xl" />
+      <Space h="xl" />
       <CardSpread
         items={
           mode === 'cardonly' || (mode === 'bothmodes' && display === 'card')
@@ -106,7 +108,7 @@ export const Flashcard = () => {
             : choices.map((c) => c.card)
         }
         canMove={false}
-        height="250px"
+        height="200px"
         onItemClick={clickOnCard}
       />
 
