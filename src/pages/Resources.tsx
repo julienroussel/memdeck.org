@@ -14,32 +14,36 @@ import { IconExternalLink } from '@tabler/icons-react';
 
 const resources = [
   {
-    title: 'Beginner Guide to Memorizing a Deck',
+    title: 'Mnemonica',
+    author: 'Juan Tamariz',
     description:
-      'An introductory guide covering basic techniques and methods for memorizing a deck of cards.',
-    link: 'https://example.com/beginner-guide',
-    category: 'Guide',
+      'The definitive work on the Mnemonica stack with tricks, principles, and deep theories.',
+    link: 'https://www.vanishingincmagic.com/card-magic/mnemonica/',
+    category: 'book',
   },
   {
-    title: 'Advanced Memory Techniques',
+    title: 'The Aronson Approach',
+    author: 'Simon Aronson',
     description:
-      'Explore advanced strategies and mnemonic devices to boost your card memorization skills.',
-    link: 'https://example.com/advanced-memory',
-    category: 'Tutorial',
+      'Introduces the Aronson Stack, its applications, and several powerful routines.',
+    link: 'https://www.vanishingincmagic.com/card-magic/the-aronson-approach/',
+    category: 'book',
   },
   {
     title: 'Online Course: Mastering Memorization',
+    author: '',
     description:
       'Enroll in this comprehensive online course to master the art of memorizing decks quickly.',
-    link: 'https://example.com/memorization-course',
-    category: 'Course',
+    link: '',
+    category: 'book',
   },
   {
     title: 'Community Forum',
+    author: '',
     description:
       'Join a community of memory enthusiasts to exchange tips, strategies, and experiences.',
     link: 'https://example.com/forum',
-    category: 'Community',
+    category: 'book',
   },
 ];
 
@@ -80,13 +84,17 @@ export const Resources = () => {
       <SimpleGrid cols={2} spacing="lg">
         {resources.map((resource, index) => (
           <Card key={index} shadow="sm" padding="lg" radius="md" withBorder>
-            <Group mb="xs">
+            <Group>
               <Title order={3}>{resource.title}</Title>
+
               <Badge color="blue" variant="light">
                 {resource.category}
               </Badge>
             </Group>
-            <Text size="sm" color="dimmed" mb="md">
+            <Text size="sm" c="dimmed" fs="italic" mb="xs">
+              {resource.author}
+            </Text>
+            <Text size="sm" c="dimmed" mb="md">
               {resource.description}
             </Text>
             <Anchor href={resource.link} target="_blank" size="sm">
