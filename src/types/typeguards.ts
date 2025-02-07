@@ -14,7 +14,7 @@ export const isPlayingCard = (
   return (item as PlayingCard).suit !== undefined;
 };
 
-export const isNumber = (item: PlayingCard | number): item is number => {
+const isNumber = (item: PlayingCard | number): item is number => {
   return typeof item === 'number';
 };
 
