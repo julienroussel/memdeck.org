@@ -15,7 +15,7 @@ This is a side project, built with one goal in mind: **keeping things simple**. 
 
 ## 🛠 Tech Stack
 
-MemDeck is built using Typescript, React, Mantine and Effect.
+MemDeck is built using Typescript, React and Mantine.
 
 ## 📦 Installation
 
