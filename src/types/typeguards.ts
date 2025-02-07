@@ -6,6 +6,7 @@ export type CardSpreadProps = {
   height?: string;
   degree?: number;
   onItemClick?: (item: PlayingCard | number, index: number) => void;
+  hasCursor?: boolean;
 };
 
 export const isPlayingCard = (

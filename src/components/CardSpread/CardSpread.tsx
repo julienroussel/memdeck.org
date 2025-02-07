@@ -14,12 +14,13 @@ const cardSpreadStyle: CSSProperties = {
   width: '100%',
 };
 
-const cardStyle = (degree: number): CSSProperties => ({
+const cardStyle = (degree: number, hasCursor: boolean): CSSProperties => ({
   position: 'absolute',
   transformOrigin: '50% 100%',
   transform: `rotate(calc(var(--i) * ${degree}deg)) translate(calc(var(--i) * 15px), 10px)`,
   boxShadow: '0 2px 5px rgba(0, 0, 0, 0.25)',
   borderRadius: '3%',
+  cursor: hasCursor ? 'pointer' : 'default',
 });
 
 export const CardSpread = ({
@@ -28,6 +29,7 @@ export const CardSpread = ({
   height = '40svh',
   degree = 15,
   onItemClick = () => {},
+  hasCursor = false,
 }: CardSpreadProps) => {
   const [offset, setOffset] = useState(0);
   const [touchLastPosition, setTouchLastPosition] = useState(0);
@@ -66,7 +68,7 @@ export const CardSpread = ({
             w={80}
             key={`${item.suit}_${item.rank}`}
             style={{
-              ...cardStyle(degree),
+              ...cardStyle(degree, hasCursor),
               ...cssVarCounterStyle(index, items.length / 2, offset),
             }}
             src={item.image}
@@ -78,7 +80,7 @@ export const CardSpread = ({
           <div
             key={`number_${item}`}
             style={{
-              ...cardStyle(degree),
+              ...cardStyle(degree, hasCursor),
               ...cssVarCounterStyle(index, items.length / 2, offset),
             }}
             onClick={() => onItemClick(item, index)}

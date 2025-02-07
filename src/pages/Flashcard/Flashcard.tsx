@@ -98,6 +98,7 @@ export const Flashcard = () => {
         canMove={false}
         height="200px"
         onItemClick={clickOnCard}
+        hasCursor={true}
       />
 
       <FlashcardOptions opened={options} close={close} />
