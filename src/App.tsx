@@ -1,5 +1,5 @@
 import '@mantine/core/styles.css';
-import './styles.css';
+import '@mantine/notifications/styles.css';
 
 import {
   Switch,

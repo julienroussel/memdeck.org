@@ -43,3 +43,13 @@ export const getRandomPlayingCard = (stack: Stack): PlayingCardPosition => {
     card: stack[randomIndex] ?? stack[0],
   };
 };
+
+export const getUniqueRandomCard = (
+  stack: Stack,
+  choices: PlayingCardPosition[],
+): PlayingCardPosition => {
+  const randomCard = getRandomPlayingCard(stack);
+  return choices.some((c) => c.index === randomCard.index)
+    ? getUniqueRandomCard(stack, choices)
+    : randomCard;
+};

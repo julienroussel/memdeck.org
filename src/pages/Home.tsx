@@ -1,16 +1,13 @@
 import { Title, Text, Space, Anchor } from '@mantine/core';
 import { usePageTracking } from '../hooks/usePageTracking';
 import { StackPicker } from '../components/StackPicker';
-import { useLocalStorage } from '@mantine/hooks';
 import { stacks } from '../types/stacks';
-import { GITHUB_URL, SELECTED_STACK_LOCAL_STORAGE_KEY } from '../constants';
-import { Ribbon } from '../components/Ribbon';
+import { GITHUB_URL, SELECTED_STACK_LSK } from '../constants';
+import { CardSpread } from '../components/CardSpread/CardSpread';
+import { useLocalDb } from '../utils/localstorage';
 
 export const Home = () => {
-  const [stack] = useLocalStorage({
-    key: SELECTED_STACK_LOCAL_STORAGE_KEY,
-    defaultValue: '',
-  });
+  const [stack] = useLocalDb(SELECTED_STACK_LSK);
 
   usePageTracking();
 
@@ -48,7 +45,7 @@ export const Home = () => {
             </Text>
           </Text>
           <Space h="lg" />
-          <Ribbon cards={[...stacks[stack].order]} />
+          <CardSpread items={[...stacks[stack].order]} degree={0.5} />
         </>
       )}
     </div>

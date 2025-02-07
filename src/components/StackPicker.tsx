@@ -1,13 +1,10 @@
 import { Center, NativeSelect } from '@mantine/core';
 import { stacks } from '../types/stacks';
-import { useLocalStorage } from '@mantine/hooks';
-import { SELECTED_STACK_LOCAL_STORAGE_KEY } from '../constants';
+import { SELECTED_STACK_LSK } from '../constants';
+import { useLocalDb } from '../utils/localstorage';
 
 export const StackPicker = () => {
-  const [stack, setStack] = useLocalStorage({
-    key: SELECTED_STACK_LOCAL_STORAGE_KEY,
-    defaultValue: '',
-  });
+  const [stack, setStack] = useLocalDb(SELECTED_STACK_LSK);
 
   const availableStacks = Object.entries(stacks)
     .map(([key, stack]) => ({

@@ -9,14 +9,11 @@ import {
   IconTools,
 } from '@tabler/icons-react';
 import { Link, useLocation } from 'react-router';
-import { SELECTED_STACK_LOCAL_STORAGE_KEY } from '../constants';
-import { useLocalStorage } from '@mantine/hooks';
+import { SELECTED_STACK_LSK } from '../constants';
+import { useLocalDb } from '../utils/localstorage';
 
 export const NavLinks = ({ onClick }: { onClick: () => void }) => {
-  const [stack] = useLocalStorage({
-    key: SELECTED_STACK_LOCAL_STORAGE_KEY,
-    defaultValue: '',
-  });
+  const [stack] = useLocalDb(SELECTED_STACK_LSK);
   const location = useLocation();
 
   return (

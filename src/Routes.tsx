@@ -1,5 +1,5 @@
 import { Routes as RouterRoutes, Route as RouterRoute } from 'react-router';
-import { Flashcard } from './pages/Flashcard';
+import { Flashcard } from './pages/Flashcard/Flashcard';
 import { Home } from './pages/Home';
 import { Shuffle } from './pages/Shuffle';
 import { NextPrevious } from './pages/NextPrevious';
