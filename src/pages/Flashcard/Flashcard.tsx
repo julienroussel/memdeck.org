@@ -79,9 +79,9 @@ export const Flashcard = () => {
 
   return (
     <>
-      <Group justify="space-between" gap="xl">
+      <Group justify="space-between" gap="xs">
         <Title order={1}>Flashcard</Title>
-        <Group>
+        <Group gap="xs">
           <Score successes={successes} fails={fails} />
           <ActionIcon variant="subtle" color="gray" onClick={open}>
             <IconSettings />
