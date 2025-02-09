@@ -9,7 +9,7 @@ export const Score = ({
   successes: number;
 }) => {
   return (
-    <Group>
+    <Group gap="xs">
       <Badge leftSection={<IconThumbUp size={12} />} size="md" bg="green.6">
         {successes}
       </Badge>
