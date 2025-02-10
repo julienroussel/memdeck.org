@@ -8,13 +8,6 @@ export const cardShadow: CSSProperties = {
   borderRadius: '3%',
 };
 
-export const correctAnswerNotification = {
-  color: 'green',
-  title: 'Correct answer',
-  message: 'Keep going!',
-  autoClose: NOTIFICATION_CLOSE_TIMEOUT,
-};
-
 export const wrongAnswerNotification = {
   color: 'red',
   title: 'Wrong answer',
