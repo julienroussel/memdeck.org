@@ -7,11 +7,7 @@ import {
 } from '../../types/stacks';
 import { usePageTracking } from '../../hooks/usePageTracking';
 import { useDisclosure } from '@mantine/hooks';
-import {
-  FLASHCARD_NEXT_TURN_DELAY,
-  FLASHCARD_OPTION_LSK,
-  SELECTED_STACK_LSK,
-} from '../../constants';
+import { FLASHCARD_OPTION_LSK, SELECTED_STACK_LSK } from '../../constants';
 import { CardSpread } from '../../components/CardSpread/CardSpread';
 import { IconSettings } from '@tabler/icons-react';
 import { FlashcardOptions } from './FlashcardOptions';
@@ -22,12 +18,7 @@ import { isPlayingCard } from '../../types/typeguards';
 import { addFourDistinctRandomCards } from './pickcards';
 import { shuffle } from '../../types/shuffle';
 import { notifications } from '@mantine/notifications';
-import {
-  cardShadow,
-  correctAnswerNotification,
-  TOGGLE,
-  wrongAnswerNotification,
-} from './utils';
+import { cardShadow, TOGGLE, wrongAnswerNotification } from './utils';
 import { Score } from './Score';
 
 export const Flashcard = () => {
@@ -56,22 +47,20 @@ export const Flashcard = () => {
       notifications.show(wrongAnswerNotification);
       setFails(fails + 1);
     } else {
-      notifications.show(correctAnswerNotification);
       setSuccesses(successes + 1);
-      setTimeout(() => {
-        const newCard = getRandomPlayingCard(stacks[selectedStack].order);
-        setCard(newCard);
-        setChoices(
-          shuffle(
-            addFourDistinctRandomCards(stacks[selectedStack].order, [newCard]),
-          ),
-        );
 
-        if (mode === 'bothmodes') {
-          const newDisplay = TOGGLE[Math.floor(Math.random() * TOGGLE.length)];
-          setDisplay(newDisplay ?? 'card');
-        }
-      }, FLASHCARD_NEXT_TURN_DELAY);
+      const newCard = getRandomPlayingCard(stacks[selectedStack].order);
+      setCard(newCard);
+      setChoices(
+        shuffle(
+          addFourDistinctRandomCards(stacks[selectedStack].order, [newCard]),
+        ),
+      );
+
+      if (mode === 'bothmodes') {
+        const newDisplay = TOGGLE[Math.floor(Math.random() * TOGGLE.length)];
+        setDisplay(newDisplay ?? 'card');
+      }
     }
   };
 
