@@ -16,6 +16,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { IconMoonStars, IconSun, IconBrandGithub } from '@tabler/icons-react';
 import ReactGA from 'react-ga4';
+import { onCLS, onINP, onLCP } from 'web-vitals';
 
 import { StackPicker } from './components/StackPicker';
 import { Routes } from './Routes';
@@ -29,6 +30,28 @@ import { GITHUB_URL } from './constants';
 import { NavLinks } from './components/NavLinks';
 
 ReactGA.initialize('G-36CZ6GEMKQ');
+
+const sendToGoogleAnalytics = ({
+  id,
+  name,
+  value,
+}: {
+  id: string;
+  name: string;
+  value: number;
+}) => {
+  ReactGA.send({
+    eventCategory: 'Web Vitals',
+    eventAction: name,
+    eventValue: Math.round(name === 'CLS' ? value * 1000 : value),
+    eventLabel: id,
+    nonInteraction: true,
+  });
+};
+
+onCLS(sendToGoogleAnalytics);
+onINP(sendToGoogleAnalytics);
+onLCP(sendToGoogleAnalytics);
 
 export const App = () => {
   const [opened, { toggle, close }] = useDisclosure();
