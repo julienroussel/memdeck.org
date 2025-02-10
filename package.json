@@ -54,5 +54,17 @@
     "react-dom": "19.0.0",
     "react-ga4": "2.1.0",
     "web-vitals": "4.2.4"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
