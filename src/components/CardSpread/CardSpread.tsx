@@ -1,5 +1,5 @@
 import { Flex, Image } from '@mantine/core';
-import { CSSProperties, useState } from 'react';
+import { useState } from 'react';
 import { cssVarCounterStyle } from '../../utils/style';
 import {
   CardSpreadProps,
@@ -7,21 +7,6 @@ import {
   isPlayingCardArray,
 } from '../../types/typeguards';
 import { NumberCard } from '../NumberCard';
-
-const cardSpreadStyle: CSSProperties = {
-  overflow: 'hidden',
-  position: 'relative',
-  width: '100%',
-};
-
-const cardStyle = (degree: number, hasCursor: boolean): CSSProperties => ({
-  position: 'absolute',
-  transformOrigin: '50% 100%',
-  transform: `rotate(calc(var(--i) * ${degree}deg)) translate(calc(var(--i) * 15px), 10px)`,
-  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.25)',
-  borderRadius: '3%',
-  cursor: hasCursor ? 'pointer' : 'default',
-});
 
 export const CardSpread = ({
   items,
@@ -48,7 +33,8 @@ export const CardSpread = ({
       mih={height}
       justify="center"
       align="start"
-      style={cardSpreadStyle}
+      className="cardSpreadContainer"
+      style={{ '--degree': `${degree}deg` }}
       onMouseMove={(e) => {
         if (canMove && e.buttons === 1) {
           updateOffset(e.nativeEvent.movementX);
@@ -67,8 +53,9 @@ export const CardSpread = ({
           <Image
             w={80}
             key={`${item.suit}_${item.rank}`}
+            className="cardSpreadCard"
             style={{
-              ...cardStyle(degree, hasCursor),
+              ...{ cursor: hasCursor ? 'pointer' : 'default' },
               ...cssVarCounterStyle(index, items.length / 2, offset),
             }}
             src={item.image}
@@ -79,8 +66,9 @@ export const CardSpread = ({
         items.map((item, index) => (
           <div
             key={`number_${item}`}
+            className="cardSpreadCard"
             style={{
-              ...cardStyle(degree, hasCursor),
+              ...{ cursor: hasCursor ? 'pointer' : 'default' },
               ...cssVarCounterStyle(index, items.length / 2, offset),
             }}
             onClick={() => onItemClick(item, index)}

@@ -1,0 +1,70 @@
+/* Card spread */
+.cardSpreadContainer {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.cardSpreadCard {
+  position: absolute;
+  transform-origin: 50% 100%;
+  transform: rotate(calc(var(--i) * var(--degree)))
+    translate(calc(var(--i) * 15px), 10px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  border-radius: 3%;
+}
+
+.cardShadow {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  border-radius: 3%;
+}
+
+/* Number card */
+.numberCardContainer {
+  position: relative;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  border-radius: 3%;
+}
+
+.numberCardTopLeft {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+}
+
+.numberCardCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: black;
+}
+
+.numberCardBottomRight {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  transform: scale(-1, -1);
+}
+
+/* Options */
+.optionsRadioCard {
+  position: relative;
+  padding: var(--mantine-spacing-md);
+  transition: border-color 150ms ease;
+}
+
+.optionsLabel {
+  font-family: var(--mantine-font-family-monospace);
+  font-weight: bold;
+  font-size: var(--mantine-font-size-md);
+  line-height: 1.3;
+  color: var(--mantine-color-bright);
+}
+
+.optionsDescription {
+  margin-top: 8px;
+  color: var(--mantine-color-dimmed);
+  font-size: var(--mantine-font-size-xs);
+}
