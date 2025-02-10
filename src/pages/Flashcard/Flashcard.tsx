@@ -18,7 +18,7 @@ import { isPlayingCard } from '../../types/typeguards';
 import { addFourDistinctRandomCards } from './pickcards';
 import { shuffle } from '../../types/shuffle';
 import { notifications } from '@mantine/notifications';
-import { cardShadow, TOGGLE, wrongAnswerNotification } from './utils';
+import { TOGGLE, wrongAnswerNotification } from './utils';
 import { Score } from './Score';
 
 export const Flashcard = () => {
@@ -80,7 +80,7 @@ export const Flashcard = () => {
       <Space h="xl" />
       <Center>
         {mode === 'cardonly' || (mode === 'bothmodes' && display === 'card') ? (
-          <Image w="120px" style={cardShadow} src={card.card.image} />
+          <Image w="120px" className="cardShadow" src={card.card.image} />
         ) : (
           <NumberCard number={card.index} width={120} fontSize={60} />
         )}
