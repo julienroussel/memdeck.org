@@ -3,7 +3,6 @@ import {
   IconArrowsShuffle,
   IconExternalLink,
   IconHome2,
-  IconMenuOrder,
   IconNumber,
   IconPlayCardStar,
   IconTools,
@@ -48,15 +47,6 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
           onClick={onClick}
           leftSection={<IconPlayCardStar size={16} stroke={1.5} />}
           active={location.pathname === '/flashcard'}
-        />
-        <NavLink
-          component={Link}
-          disabled={stack === ''}
-          to="/nextprevious"
-          label="Next / Previous"
-          onClick={onClick}
-          leftSection={<IconMenuOrder size={16} stroke={1.5} />}
-          active={location.pathname === '/nextprevious'}
         />
         <NavLink
           component={Link}
