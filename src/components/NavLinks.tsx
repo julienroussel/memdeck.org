@@ -66,6 +66,15 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
           leftSection={<IconNumber size={16} stroke={1.5} />}
           active={location.pathname === '/acaan'}
         />
+        <NavLink
+          component={Link}
+          disabled={stack === ''}
+          to="/toolbox"
+          label="Toolbox"
+          onClick={onClick}
+          leftSection={<IconTools size={16} stroke={1.5} />}
+          active={location.pathname === '/toolbox'}
+        />
       </NavLink>
     </>
   );
