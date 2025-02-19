@@ -11,7 +11,7 @@ import { NumberCard } from '../NumberCard';
 export const CardSpread = ({
   items,
   canMove = true,
-  height = '40svh',
+  height = '100%',
   degree = 15,
   onItemClick = () => {},
   hasCursor = false,

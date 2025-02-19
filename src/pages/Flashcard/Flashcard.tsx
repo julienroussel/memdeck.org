@@ -1,4 +1,12 @@
-import { ActionIcon, Center, Group, Image, Space, Title } from '@mantine/core';
+import {
+  ActionIcon,
+  Center,
+  Grid,
+  Group,
+  Image,
+  Space,
+  Title,
+} from '@mantine/core';
 import { useState } from 'react';
 import {
   getRandomPlayingCard,
@@ -67,39 +75,53 @@ export const Flashcard = () => {
   usePageTracking();
 
   return (
-    <>
-      <Group justify="space-between" gap="xs">
-        <Title order={1}>Flashcard</Title>
-        <Group gap="xs">
-          <Score successes={successes} fails={fails} />
-          <ActionIcon variant="subtle" color="gray" onClick={open}>
-            <IconSettings />
-          </ActionIcon>
-        </Group>
-      </Group>
-      <Space h="xl" />
-      <Center>
-        {mode === 'cardonly' || (mode === 'bothmodes' && display === 'card') ? (
-          <Image w="120px" className="cardShadow" src={card.card.image} />
-        ) : (
-          <NumberCard number={card.index} width={120} fontSize={60} />
-        )}
-      </Center>
-      <Space h="xl" />
-      <Space h="xl" />
-      <CardSpread
-        items={
-          mode === 'cardonly' || (mode === 'bothmodes' && display === 'card')
-            ? choices.map((c) => c.index)
-            : choices.map((c) => c.card)
-        }
-        canMove={false}
-        height="200px"
-        onItemClick={clickOnCard}
-        hasCursor={true}
-      />
-
-      <FlashcardOptions opened={options} close={close} />
-    </>
+    <div className="fullMantineContainerHeight">
+      <Grid
+        gutter={0}
+        overflow="hidden"
+        style={{
+          display: 'grid',
+          height: '100%',
+        }}
+      >
+        <Grid.Col span={12}>
+          <Group justify="space-between" gap="xs">
+            <Title order={1}>Flashcard</Title>
+            <Group gap="xs">
+              <Score successes={successes} fails={fails} />
+              <ActionIcon variant="subtle" color="gray" onClick={open}>
+                <IconSettings />
+              </ActionIcon>
+            </Group>
+          </Group>
+        </Grid.Col>
+        <Grid.Col span={12}>
+          <Space h="xl" />
+          <Center>
+            {mode === 'cardonly' ||
+            (mode === 'bothmodes' && display === 'card') ? (
+              <Image w="120px" className="cardShadow" src={card.card.image} />
+            ) : (
+              <NumberCard number={card.index} width={120} fontSize={60} />
+            )}
+          </Center>
+          <Space h="xl" />
+        </Grid.Col>
+        <Grid.Col span={12} style={{ height: '100%' }}>
+          <CardSpread
+            items={
+              mode === 'cardonly' ||
+              (mode === 'bothmodes' && display === 'card')
+                ? choices.map((c) => c.index)
+                : choices.map((c) => c.card)
+            }
+            canMove={false}
+            onItemClick={clickOnCard}
+            hasCursor={true}
+          />
+          <FlashcardOptions opened={options} close={close} />
+        </Grid.Col>
+      </Grid>
+    </div>
   );
 };
