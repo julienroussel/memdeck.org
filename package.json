@@ -35,7 +35,7 @@
     "fta-cli": "2.0.1",
     "globals": "15.15.0",
     "knip": "5.44.2",
-    "postcss": "8.5.2",
+    "postcss": "8.5.3",
     "postcss-preset-mantine": "1.17.0",
     "postcss-simple-vars": "7.0.1",
     "prettier": "3.5.1",
