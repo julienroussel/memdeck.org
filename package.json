@@ -49,7 +49,7 @@
     "@mantine/notifications": "8.1.2",
     "@react-router/node": "7.6.3",
     "@react-router/serve": "7.6.3",
-    "@tabler/icons-react": "3.34.0",
+    "@tabler/icons-react": "3.35.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-ga4": "2.1.0",
