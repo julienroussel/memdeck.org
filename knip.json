@@ -1,4 +1,4 @@
 {
-  "ignoreDependencies": ["prettier", "react-router", "@react-router/.+"],
+  "ignoreDependencies": ["prettier", "react-router", "@react-router/.+", "isbot"],
   "ignore": ["src/vite-env.d.ts"]
 }
