@@ -46,9 +46,9 @@
     "vite": "7.2.1"
   },
   "dependencies": {
-    "@mantine/core": "8.3.6",
-    "@mantine/hooks": "8.3.6",
-    "@mantine/notifications": "8.3.6",
+    "@mantine/core": "8.3.7",
+    "@mantine/hooks": "8.3.7",
+    "@mantine/notifications": "8.3.7",
     "@react-router/node": "7.9.5",
     "@react-router/serve": "7.9.5",
     "@tabler/icons-react": "3.35.0",
