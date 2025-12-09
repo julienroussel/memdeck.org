@@ -1,13 +1,12 @@
 import { Title, Text, Space, Anchor, Grid } from '@mantine/core';
 import { usePageTracking } from '../hooks/usePageTracking';
 import { StackPicker } from '../components/StackPicker';
-import { stacks } from '../types/stacks';
-import { GITHUB_URL, SELECTED_STACK_LSK } from '../constants';
+import { GITHUB_URL } from '../constants';
 import { CardSpread } from '../components/CardSpread/CardSpread';
-import { useLocalDb } from '../utils/localstorage';
+import { useSelectedStack } from '../hooks/useSelectedStack';
 
 export const Home = () => {
-  const [stack] = useLocalDb(SELECTED_STACK_LSK);
+  const { stackKey, stack, stackName } = useSelectedStack();
 
   usePageTracking();
 
@@ -32,7 +31,7 @@ export const Home = () => {
             </Anchor>
             !
           </Text>
-          {stack === '' && (
+          {stackKey === '' && (
             <>
               <Space h="lg" />
               <Text>
@@ -46,17 +45,17 @@ export const Home = () => {
           )}
         </Grid.Col>
         <Grid.Col span={12} style={{ height: '100%' }}>
-          {stack !== '' && (
+          {stackKey !== '' && (
             <>
               <Space h="lg" />
               <Text>
                 Your selected stack is{' '}
                 <Text span fw={700}>
-                  {stacks[stack]?.name}
+                  {stackName}
                 </Text>
               </Text>
               <Space h="lg" />{' '}
-              <CardSpread items={[...stacks[stack].order]} degree={0.5} />
+              <CardSpread items={[...stack.order]} degree={0.5} />
             </>
           )}
         </Grid.Col>

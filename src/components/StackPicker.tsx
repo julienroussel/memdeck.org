@@ -1,10 +1,9 @@
 import { Center, NativeSelect } from '@mantine/core';
 import { stacks } from '../types/stacks';
-import { SELECTED_STACK_LSK } from '../constants';
-import { useLocalDb } from '../utils/localstorage';
+import { useSelectedStack } from '../hooks/useSelectedStack';
 
 export const StackPicker = () => {
-  const [stack, setStack] = useLocalDb(SELECTED_STACK_LSK);
+  const { stackKey, setStackKey } = useSelectedStack();
 
   const availableStacks = Object.entries(stacks)
     .map(([key, stack]) => ({
@@ -14,15 +13,15 @@ export const StackPicker = () => {
     .sort((a, b) => a.label.localeCompare(b.label));
 
   const stackSelection =
-    stack !== ''
+    stackKey !== ''
       ? availableStacks
       : [{ label: 'Please choose a stack', value: '' }, ...availableStacks];
 
   return (
     <Center>
       <NativeSelect
-        value={stack}
-        onChange={(event) => setStack(event.currentTarget.value)}
+        value={stackKey}
+        onChange={(event) => setStackKey(event.currentTarget.value)}
         data={stackSelection}
       />
     </Center>

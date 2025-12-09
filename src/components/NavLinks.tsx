@@ -8,11 +8,10 @@ import {
   IconTools,
 } from '@tabler/icons-react';
 import { Link, useLocation } from 'react-router';
-import { SELECTED_STACK_LSK } from '../constants';
-import { useLocalDb } from '../utils/localstorage';
+import { useSelectedStack } from '../hooks/useSelectedStack';
 
 export const NavLinks = ({ onClick }: { onClick: () => void }) => {
-  const [stack] = useLocalDb(SELECTED_STACK_LSK);
+  const { stackKey } = useSelectedStack();
   const location = useLocation();
 
   return (
@@ -41,7 +40,7 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
       >
         <NavLink
           component={Link}
-          disabled={stack === ''}
+          disabled={stackKey === ''}
           to="/flashcard"
           label="Flashcard"
           onClick={onClick}
@@ -50,7 +49,7 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
         />
         <NavLink
           component={Link}
-          disabled={stack === ''}
+          disabled={stackKey === ''}
           to="/shuffle"
           label="Shuffle"
           onClick={onClick}
@@ -59,7 +58,7 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
         />
         <NavLink
           component={Link}
-          disabled={stack === ''}
+          disabled={stackKey === ''}
           to="/acaan"
           label="ACAAN"
           onClick={onClick}
@@ -68,7 +67,7 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
         />
         <NavLink
           component={Link}
-          disabled={stack === ''}
+          disabled={stackKey === ''}
           to="/toolbox"
           label="Toolbox"
           onClick={onClick}
