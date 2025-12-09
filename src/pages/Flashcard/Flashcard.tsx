@@ -11,11 +11,12 @@ import { useState } from 'react';
 import {
   getRandomPlayingCard,
   PlayingCardPosition,
-  stacks,
+  Stack,
 } from '../../types/stacks';
 import { usePageTracking } from '../../hooks/usePageTracking';
 import { useDisclosure } from '@mantine/hooks';
-import { FLASHCARD_OPTION_LSK, SELECTED_STACK_LSK } from '../../constants';
+import { FLASHCARD_OPTION_LSK } from '../../constants';
+import { useSelectedStack } from '../../hooks/useSelectedStack';
 import { CardSpread } from '../../components/CardSpread/CardSpread';
 import { IconSettings } from '@tabler/icons-react';
 import { FlashcardOptions } from './FlashcardOptions';
@@ -29,48 +30,70 @@ import { notifications } from '@mantine/notifications';
 import { TOGGLE, wrongAnswerNotification } from './utils';
 import { Score } from './Score';
 
+const generateNewCardAndChoices = (
+  stackOrder: Stack,
+): { card: PlayingCardPosition; choices: PlayingCardPosition[] } => {
+  const newCard = getRandomPlayingCard(stackOrder);
+  const newChoices = shuffle(
+    addFourDistinctRandomCards(stackOrder, [newCard]),
+  );
+  return { card: newCard, choices: newChoices };
+};
+
+const isCorrectAnswer = (
+  item: PlayingCard | number,
+  card: PlayingCardPosition,
+): boolean => {
+  return isPlayingCard(item)
+    ? item.suit === card.card.suit && item.rank === card.card.rank
+    : item === card.index;
+};
+
 export const Flashcard = () => {
-  const [selectedStack] = useLocalDb(SELECTED_STACK_LSK, 'mnemonica');
+  const { stackOrder } = useSelectedStack();
 
   const [successes, setSuccesses] = useState(0);
   const [fails, setFails] = useState(0);
 
-  const [card, setCard] = useState<PlayingCardPosition>(
-    getRandomPlayingCard(stacks[selectedStack].order),
-  );
+  const initial = generateNewCardAndChoices(stackOrder);
+  const [card, setCard] = useState<PlayingCardPosition>(initial.card);
   const [choices, setChoices] = useState<PlayingCardPosition[]>(
-    shuffle(addFourDistinctRandomCards(stacks[selectedStack].order, [card])),
+    initial.choices,
   );
 
   const [display, setDisplay] = useState<'card' | 'index'>('card');
   const [mode] = useLocalDb(FLASHCARD_OPTION_LSK, 'bothmodes');
   const [options, { open, close }] = useDisclosure(false);
 
-  const clickOnCard = (item: PlayingCard | number) => {
-    const correctAnswer = isPlayingCard(item)
-      ? item.suit === card.card.suit && item.rank === card.card.rank
-      : item === card.index;
+  const handleWrongAnswer = () => {
+    notifications.show(wrongAnswerNotification);
+    setFails(fails + 1);
+  };
 
-    if (correctAnswer === false) {
-      notifications.show(wrongAnswerNotification);
-      setFails(fails + 1);
-    } else {
-      setSuccesses(successes + 1);
+  const handleCorrectAnswer = () => {
+    setSuccesses(successes + 1);
 
-      const newCard = getRandomPlayingCard(stacks[selectedStack].order);
-      setCard(newCard);
-      setChoices(
-        shuffle(
-          addFourDistinctRandomCards(stacks[selectedStack].order, [newCard]),
-        ),
-      );
+    const { card: newCard, choices: newChoices } =
+      generateNewCardAndChoices(stackOrder);
+    setCard(newCard);
+    setChoices(newChoices);
 
-      if (mode === 'bothmodes') {
-        const newDisplay = TOGGLE[Math.floor(Math.random() * TOGGLE.length)];
-        setDisplay(newDisplay ?? 'card');
-      }
+    if (mode === 'bothmodes') {
+      const newDisplay = TOGGLE[Math.floor(Math.random() * TOGGLE.length)];
+      setDisplay(newDisplay ?? 'card');
     }
   };
+
+  const clickOnCard = (item: PlayingCard | number) => {
+    if (isCorrectAnswer(item, card)) {
+      handleCorrectAnswer();
+    } else {
+      handleWrongAnswer();
+    }
+  };
+
+  const shouldShowCard =
+    mode === 'cardonly' || (mode === 'bothmodes' && display === 'card');
 
   usePageTracking();
 
@@ -98,8 +121,7 @@ export const Flashcard = () => {
         <Grid.Col span={12}>
           <Space h="xl" />
           <Center>
-            {mode === 'cardonly' ||
-            (mode === 'bothmodes' && display === 'card') ? (
+            {shouldShowCard ? (
               <Image w="120px" className="cardShadow" src={card.card.image} />
             ) : (
               <NumberCard number={card.index} width={120} fontSize={60} />
@@ -110,8 +132,7 @@ export const Flashcard = () => {
         <Grid.Col span={12} style={{ height: '100%' }}>
           <CardSpread
             items={
-              mode === 'cardonly' ||
-              (mode === 'bothmodes' && display === 'card')
+              shouldShowCard
                 ? choices.map((c) => c.index)
                 : choices.map((c) => c.card)
             }
