@@ -45,9 +45,9 @@
     "vite": "7.2.6"
   },
   "dependencies": {
-    "@mantine/core": "8.3.9",
-    "@mantine/hooks": "8.3.9",
-    "@mantine/notifications": "8.3.9",
+    "@mantine/core": "8.3.10",
+    "@mantine/hooks": "8.3.10",
+    "@mantine/notifications": "8.3.10",
     "@tabler/icons-react": "3.35.0",
     "react": "19.2.1",
     "react-dom": "19.2.1",
