@@ -1,4 +1,4 @@
-import { PlayingCard } from './playingcard';
+import type { PlayingCard } from "./playingcard";
 
 export type CardSpreadProps = {
   items: PlayingCard[] | number[];
@@ -10,23 +10,16 @@ export type CardSpreadProps = {
 };
 
 export const isPlayingCard = (
-  item: PlayingCard | number,
-): item is PlayingCard => {
-  return (item as PlayingCard).suit !== undefined;
-};
+  item: PlayingCard | number
+): item is PlayingCard => (item as PlayingCard).suit !== undefined;
 
-const isNumber = (item: PlayingCard | number): item is number => {
-  return typeof item === 'number';
-};
+const isNumber = (item: PlayingCard | number): item is number =>
+  typeof item === "number";
 
 export const isPlayingCardArray = (
-  items: PlayingCard[] | number[],
-): items is PlayingCard[] => {
-  return items.every(isPlayingCard);
-};
+  items: PlayingCard[] | number[]
+): items is PlayingCard[] => items.every(isPlayingCard);
 
 export const isNumberArray = (
-  items: PlayingCard[] | number[],
-): items is number[] => {
-  return items.every(isNumber);
-};
+  items: PlayingCard[] | number[]
+): items is number[] => items.every(isNumber);

@@ -1,7 +1,7 @@
-import { readLocalStorageValue, useLocalStorage } from '@mantine/hooks';
+import { readLocalStorageValue, useLocalStorage } from "@mantine/hooks";
 
-export const useLocalDb = (key: string, defaultValue = '') =>
+export const useLocalDb = (key: string, defaultValue = "") =>
   useLocalStorage({
-    key: key,
-    defaultValue: readLocalStorageValue({ key: key }) ?? defaultValue,
+    key,
+    defaultValue: readLocalStorageValue({ key }) ?? defaultValue,
   });

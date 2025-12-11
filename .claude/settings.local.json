@@ -4,7 +4,12 @@
       "Bash(npm run lint)",
       "Bash(npm install:*)",
       "Bash(npm run knip:*)",
-      "Bash(npm run typecheck:*)"
+      "Bash(npm run typecheck:*)",
+      "Bash(npx ultracite check)",
+      "Bash(git mv:*)",
+      "Bash(rm:*)",
+      "Bash(git checkout:*)",
+      "Bash(mv:*)"
     ],
     "deny": [],
     "ask": []

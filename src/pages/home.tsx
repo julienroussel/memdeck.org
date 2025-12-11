@@ -1,9 +1,9 @@
-import { Title, Text, Space, Anchor, Grid } from '@mantine/core';
-import { usePageTracking } from '../hooks/usePageTracking';
-import { StackPicker } from '../components/StackPicker';
-import { GITHUB_URL } from '../constants';
-import { CardSpread } from '../components/CardSpread/CardSpread';
-import { useSelectedStack } from '../hooks/useSelectedStack';
+import { Anchor, Grid, Space, Text, Title } from "@mantine/core";
+import { CardSpread } from "../components/card-spread/card-spread";
+import { StackPicker } from "../components/stack-picker";
+import { GITHUB_URL } from "../constants";
+import { usePageTracking } from "../hooks/use-page-tracking";
+import { useSelectedStack } from "../hooks/use-selected-stack";
 
 export const Home = () => {
   const { stackKey, stack, stackName } = useSelectedStack();
@@ -16,8 +16,8 @@ export const Home = () => {
         gutter={0}
         overflow="hidden"
         style={{
-          display: 'grid',
-          height: '100%',
+          display: "grid",
+          height: "100%",
         }}
       >
         <Grid.Col span={12}>
@@ -25,13 +25,13 @@ export const Home = () => {
           <Space h="lg" />
           <Text>
             Hope these tools help you level up your memorized deck stack
-            learning. Need a hand or think something's missing? Hit me up on{' '}
+            learning. Need a hand or think something's missing? Hit me up on{" "}
             <Anchor href={GITHUB_URL} target="_blank" underline="never">
               Github
             </Anchor>
             !
           </Text>
-          {stackKey === '' && (
+          {stackKey === "" && (
             <>
               <Space h="lg" />
               <Text>
@@ -44,18 +44,18 @@ export const Home = () => {
             </>
           )}
         </Grid.Col>
-        <Grid.Col span={12} style={{ height: '100%' }}>
-          {stackKey !== '' && (
+        <Grid.Col span={12} style={{ height: "100%" }}>
+          {stackKey !== "" && (
             <>
               <Space h="lg" />
               <Text>
-                Your selected stack is{' '}
-                <Text span fw={700}>
+                Your selected stack is{" "}
+                <Text fw={700} span>
                   {stackName}
                 </Text>
               </Text>
-              <Space h="lg" />{' '}
-              <CardSpread items={[...stack.order]} degree={0.5} />
+              <Space h="lg" />{" "}
+              <CardSpread degree={0.5} items={[...stack.order]} />
             </>
           )}
         </Grid.Col>
