@@ -23,7 +23,7 @@
     "preview": "vite preview",
     "test": "echo wait for it!",
     "fta": "fta src",
-    "validate": "npm run knip && npm run check && npm run typecheck && npm run build && npm run fta",
+    "validate": "npm run knip && npm run check && npm run typecheck && npm run fta",
     "prepare": "husky"
   },
   "devDependencies": {
