@@ -11,10 +11,6 @@ updates:
     labels:
       - 'dependencies'
     groups:
-      eslint:
-        patterns:
-          - '@eslint/*'
-          - 'eslint'
       mantine:
         patterns:
           - '@mantine/*'

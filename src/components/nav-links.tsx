@@ -1,4 +1,4 @@
-import { NavLink } from '@mantine/core';
+import { NavLink } from "@mantine/core";
 import {
   IconArrowsShuffle,
   IconExternalLink,
@@ -6,9 +6,9 @@ import {
   IconNumber,
   IconPlayCardStar,
   IconTools,
-} from '@tabler/icons-react';
-import { Link, useLocation } from 'react-router';
-import { useSelectedStack } from '../hooks/useSelectedStack';
+} from "@tabler/icons-react";
+import { Link, useLocation } from "react-router";
+import { useSelectedStack } from "../hooks/use-selected-stack";
 
 export const NavLinks = ({ onClick }: { onClick: () => void }) => {
   const { stackKey } = useSelectedStack();
@@ -17,62 +17,62 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
   return (
     <>
       <NavLink
+        active={location.pathname === "/"}
         component={Link}
-        to="/"
         label="Home"
-        onClick={onClick}
         leftSection={<IconHome2 size={16} stroke={1.5} />}
-        active={location.pathname === '/'}
+        onClick={onClick}
+        to="/"
       />
       <NavLink
+        active={location.pathname === "/resources"}
         component={Link}
-        to="/resources"
         label="Resources"
-        onClick={onClick}
         leftSection={<IconExternalLink size={16} stroke={1.5} />}
-        active={location.pathname === '/resources'}
+        onClick={onClick}
+        to="/resources"
       />
 
       <NavLink
+        defaultOpened
         label="Tools"
         leftSection={<IconTools size={16} stroke={1.5} />}
-        defaultOpened
       >
         <NavLink
+          active={location.pathname === "/flashcard"}
           component={Link}
-          disabled={stackKey === ''}
-          to="/flashcard"
+          disabled={stackKey === ""}
           label="Flashcard"
-          onClick={onClick}
           leftSection={<IconPlayCardStar size={16} stroke={1.5} />}
-          active={location.pathname === '/flashcard'}
+          onClick={onClick}
+          to="/flashcard"
         />
         <NavLink
+          active={location.pathname === "/shuffle"}
           component={Link}
-          disabled={stackKey === ''}
-          to="/shuffle"
+          disabled={stackKey === ""}
           label="Shuffle"
-          onClick={onClick}
           leftSection={<IconArrowsShuffle size={16} stroke={1.5} />}
-          active={location.pathname === '/shuffle'}
+          onClick={onClick}
+          to="/shuffle"
         />
         <NavLink
+          active={location.pathname === "/acaan"}
           component={Link}
-          disabled={stackKey === ''}
-          to="/acaan"
+          disabled={stackKey === ""}
           label="ACAAN"
-          onClick={onClick}
           leftSection={<IconNumber size={16} stroke={1.5} />}
-          active={location.pathname === '/acaan'}
+          onClick={onClick}
+          to="/acaan"
         />
         <NavLink
+          active={location.pathname === "/toolbox"}
           component={Link}
-          disabled={stackKey === ''}
-          to="/toolbox"
+          disabled={stackKey === ""}
           label="Toolbox"
-          onClick={onClick}
           leftSection={<IconTools size={16} stroke={1.5} />}
-          active={location.pathname === '/toolbox'}
+          onClick={onClick}
+          to="/toolbox"
         />
       </NavLink>
     </>

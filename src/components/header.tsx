@@ -1,20 +1,20 @@
 import {
+  ActionIcon,
   Anchor,
   Burger,
-  Image,
   Group,
-  Text,
-  ActionIcon,
+  Image,
   Switch,
+  Text,
   useMantineColorScheme,
-} from '@mantine/core';
-import { Help } from './Help';
-import { GITHUB_URL } from '../constants';
-import { IconBrandGithub, IconMoonStars, IconSun } from '@tabler/icons-react';
+} from "@mantine/core";
+import { IconBrandGithub, IconMoonStars, IconSun } from "@tabler/icons-react";
 // eslint-disable-next-line import/no-unresolved
-import memdeckLightLogo from '/memdeck-white.png';
+import memdeckDarkLogo from "/memdeck-black.png";
 // eslint-disable-next-line import/no-unresolved
-import memdeckDarkLogo from '/memdeck-black.png';
+import memdeckLightLogo from "/memdeck-white.png";
+import { GITHUB_URL } from "../constants";
+import { Help } from "./help";
 
 type HeaderProps = {
   opened: boolean;
@@ -25,25 +25,25 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
   const { setColorScheme, colorScheme } = useMantineColorScheme();
 
   return (
-    <Group h="100%" px="md" justify="space-between">
+    <Group h="100%" justify="space-between" px="md">
       <Group>
-        <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+        <Burger hiddenFrom="sm" onClick={toggle} opened={opened} size="sm" />
         <Anchor href="/" underline="never">
           <Image
-            radius="md"
-            h={30}
-            w="auto"
-            fit="contain"
-            src={memdeckLightLogo}
             darkHidden
+            fit="contain"
+            h={30}
+            radius="md"
+            src={memdeckLightLogo}
+            w="auto"
           />
           <Image
-            radius="md"
-            h={30}
-            w="auto"
             fit="contain"
-            src={memdeckDarkLogo}
+            h={30}
             lightHidden
+            radius="md"
+            src={memdeckDarkLogo}
+            w="auto"
           />
         </Anchor>
         <Text fw={700} tt="uppercase">
@@ -53,26 +53,26 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
       <Group>
         <Help />
         <ActionIcon
-          variant="subtle"
-          color="gray"
           aria-label="Github"
+          color="gray"
           component="a"
-          target="_blank"
           href={GITHUB_URL}
+          target="_blank"
+          variant="subtle"
         >
           <IconBrandGithub />
         </ActionIcon>
         <Switch
-          size="md"
+          checked={colorScheme === "light"}
           color="dark.4"
-          onLabel={<IconSun size={16} color="var(--mantine-color-yellow-4)" />}
           offLabel={
-            <IconMoonStars size={16} color="var(--mantine-color-blue-6)" />
+            <IconMoonStars color="var(--mantine-color-blue-6)" size={16} />
           }
-          checked={colorScheme === 'light'}
           onChange={(event) =>
-            setColorScheme(event.currentTarget.checked ? 'light' : 'dark')
+            setColorScheme(event.currentTarget.checked ? "light" : "dark")
           }
+          onLabel={<IconSun color="var(--mantine-color-yellow-4)" size={16} />}
+          size="md"
         />
       </Group>
     </Group>

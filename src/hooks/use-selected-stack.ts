@@ -1,11 +1,11 @@
-import { SELECTED_STACK_LSK } from '../constants';
-import { stacks } from '../types/stacks';
-import { useLocalDb } from '../utils/localstorage';
+import { SELECTED_STACK_LSK } from "../constants";
+import { stacks } from "../types/stacks";
+import { useLocalDb } from "../utils/localstorage";
 
 export const useSelectedStack = () => {
   const [selectedStackKey, setSelectedStackKey] = useLocalDb(
     SELECTED_STACK_LSK,
-    'mnemonica',
+    "mnemonica"
   );
   const selectedStack = stacks[selectedStackKey];
 

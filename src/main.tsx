@@ -1,9 +1,12 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { Provider } from './Provider';
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { Provider } from "./provider";
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <Provider />
-  </StrictMode>,
-);
+const rootElement = document.getElementById("root");
+if (rootElement) {
+  createRoot(rootElement).render(
+    <StrictMode>
+      <Provider />
+    </StrictMode>
+  );
+}

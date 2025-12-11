@@ -2,14 +2,14 @@ import {
   ColorSchemeScript,
   localStorageColorSchemeManager,
   MantineProvider,
-} from '@mantine/core';
-import { Notifications } from '@mantine/notifications';
-import { useColorScheme } from '@mantine/hooks';
-import { HashRouter } from 'react-router';
-import { App } from './App';
+} from "@mantine/core";
+import { useColorScheme } from "@mantine/hooks";
+import { Notifications } from "@mantine/notifications";
+import { HashRouter } from "react-router";
+import { App } from "./app";
 
 const colorSchemeManager = localStorageColorSchemeManager({
-  key: 'memdeck-app-color-scheme',
+  key: "memdeck-app-color-scheme",
 });
 
 export const Provider = () => {
@@ -19,8 +19,8 @@ export const Provider = () => {
     <>
       <ColorSchemeScript defaultColorScheme={colorScheme} />
       <MantineProvider
-        defaultColorScheme={colorScheme}
         colorSchemeManager={colorSchemeManager}
+        defaultColorScheme={colorScheme}
       >
         <Notifications />
         <HashRouter>

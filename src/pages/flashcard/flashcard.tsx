@@ -6,48 +6,45 @@ import {
   Image,
   Space,
   Title,
-} from '@mantine/core';
-import { useState } from 'react';
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { IconSettings } from "@tabler/icons-react";
+import { useState } from "react";
+import { CardSpread } from "../../components/card-spread/card-spread";
+import { NumberCard } from "../../components/number-card";
+import { FLASHCARD_OPTION_LSK } from "../../constants";
+import { usePageTracking } from "../../hooks/use-page-tracking";
+import { useSelectedStack } from "../../hooks/use-selected-stack";
+import type { PlayingCard } from "../../types/playingcard";
+import { shuffle } from "../../types/shuffle";
 import {
   getRandomPlayingCard,
-  PlayingCardPosition,
-  Stack,
-} from '../../types/stacks';
-import { usePageTracking } from '../../hooks/usePageTracking';
-import { useDisclosure } from '@mantine/hooks';
-import { FLASHCARD_OPTION_LSK } from '../../constants';
-import { useSelectedStack } from '../../hooks/useSelectedStack';
-import { CardSpread } from '../../components/CardSpread/CardSpread';
-import { IconSettings } from '@tabler/icons-react';
-import { FlashcardOptions } from './FlashcardOptions';
-import { PlayingCard } from '../../types/playingcard';
-import { NumberCard } from '../../components/NumberCard';
-import { useLocalDb } from '../../utils/localstorage';
-import { isPlayingCard } from '../../types/typeguards';
-import { addFourDistinctRandomCards } from './pickcards';
-import { shuffle } from '../../types/shuffle';
-import { notifications } from '@mantine/notifications';
-import { TOGGLE, wrongAnswerNotification } from './utils';
-import { Score } from './Score';
+  type PlayingCardPosition,
+  type Stack,
+} from "../../types/stacks";
+import { isPlayingCard } from "../../types/typeguards";
+import { useLocalDb } from "../../utils/localstorage";
+import { FlashcardOptions } from "./flashcard-options";
+import { addFourDistinctRandomCards } from "./pickcards";
+import { Score } from "./score";
+import { TOGGLE, wrongAnswerNotification } from "./utils";
 
 const generateNewCardAndChoices = (
-  stackOrder: Stack,
+  stackOrder: Stack
 ): { card: PlayingCardPosition; choices: PlayingCardPosition[] } => {
   const newCard = getRandomPlayingCard(stackOrder);
-  const newChoices = shuffle(
-    addFourDistinctRandomCards(stackOrder, [newCard]),
-  );
+  const newChoices = shuffle(addFourDistinctRandomCards(stackOrder, [newCard]));
   return { card: newCard, choices: newChoices };
 };
 
 const isCorrectAnswer = (
   item: PlayingCard | number,
-  card: PlayingCardPosition,
-): boolean => {
-  return isPlayingCard(item)
+  card: PlayingCardPosition
+): boolean =>
+  isPlayingCard(item)
     ? item.suit === card.card.suit && item.rank === card.card.rank
     : item === card.index;
-};
 
 export const Flashcard = () => {
   const { stackOrder } = useSelectedStack();
@@ -58,11 +55,11 @@ export const Flashcard = () => {
   const initial = generateNewCardAndChoices(stackOrder);
   const [card, setCard] = useState<PlayingCardPosition>(initial.card);
   const [choices, setChoices] = useState<PlayingCardPosition[]>(
-    initial.choices,
+    initial.choices
   );
 
-  const [display, setDisplay] = useState<'card' | 'index'>('card');
-  const [mode] = useLocalDb(FLASHCARD_OPTION_LSK, 'bothmodes');
+  const [display, setDisplay] = useState<"card" | "index">("card");
+  const [mode] = useLocalDb(FLASHCARD_OPTION_LSK, "bothmodes");
   const [options, { open, close }] = useDisclosure(false);
 
   const handleWrongAnswer = () => {
@@ -78,9 +75,9 @@ export const Flashcard = () => {
     setCard(newCard);
     setChoices(newChoices);
 
-    if (mode === 'bothmodes') {
+    if (mode === "bothmodes") {
       const newDisplay = TOGGLE[Math.floor(Math.random() * TOGGLE.length)];
-      setDisplay(newDisplay ?? 'card');
+      setDisplay(newDisplay ?? "card");
     }
   };
 
@@ -93,7 +90,7 @@ export const Flashcard = () => {
   };
 
   const shouldShowCard =
-    mode === 'cardonly' || (mode === 'bothmodes' && display === 'card');
+    mode === "cardonly" || (mode === "bothmodes" && display === "card");
 
   usePageTracking();
 
@@ -103,16 +100,16 @@ export const Flashcard = () => {
         gutter={0}
         overflow="hidden"
         style={{
-          display: 'grid',
-          height: '100%',
+          display: "grid",
+          height: "100%",
         }}
       >
         <Grid.Col span={12}>
-          <Group justify="space-between" gap="xs">
+          <Group gap="xs" justify="space-between">
             <Title order={1}>Flashcard</Title>
             <Group gap="xs">
-              <Score successes={successes} fails={fails} />
-              <ActionIcon variant="subtle" color="gray" onClick={open}>
+              <Score fails={fails} successes={successes} />
+              <ActionIcon color="gray" onClick={open} variant="subtle">
                 <IconSettings />
               </ActionIcon>
             </Group>
@@ -122,25 +119,25 @@ export const Flashcard = () => {
           <Space h="xl" />
           <Center>
             {shouldShowCard ? (
-              <Image w="120px" className="cardShadow" src={card.card.image} />
+              <Image className="cardShadow" src={card.card.image} w="120px" />
             ) : (
-              <NumberCard number={card.index} width={120} fontSize={60} />
+              <NumberCard fontSize={60} number={card.index} width={120} />
             )}
           </Center>
           <Space h="xl" />
         </Grid.Col>
-        <Grid.Col span={12} style={{ height: '100%' }}>
+        <Grid.Col span={12} style={{ height: "100%" }}>
           <CardSpread
+            canMove={false}
+            hasCursor={true}
             items={
               shouldShowCard
                 ? choices.map((c) => c.index)
                 : choices.map((c) => c.card)
             }
-            canMove={false}
             onItemClick={clickOnCard}
-            hasCursor={true}
           />
-          <FlashcardOptions opened={options} close={close} />
+          <FlashcardOptions close={close} opened={options} />
         </Grid.Col>
       </Grid>
     </div>

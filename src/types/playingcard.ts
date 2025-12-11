@@ -1,4 +1,4 @@
-import {
+import type {
   AceOfClubs,
   EightOfClubs,
   FiveOfClubs,
@@ -12,8 +12,8 @@ import {
   TenOfClubs,
   ThreeOfClubs,
   TwoOfClubs,
-} from './suits/clubs';
-import {
+} from "./suits/clubs";
+import type {
   AceOfDiamonds,
   EightOfDiamonds,
   FiveOfDiamonds,
@@ -27,8 +27,8 @@ import {
   TenOfDiamonds,
   ThreeOfDiamonds,
   TwoOfDiamonds,
-} from './suits/diamonds';
-import {
+} from "./suits/diamonds";
+import type {
   AceOfHearts,
   EightOfHearts,
   FiveOfHearts,
@@ -42,8 +42,8 @@ import {
   TenOfHearts,
   ThreeOfHearts,
   TwoOfHearts,
-} from './suits/hearts';
-import {
+} from "./suits/hearts";
+import type {
   AceOfSpades,
   EightOfSpades,
   FiveOfSpades,
@@ -57,7 +57,7 @@ import {
   TenOfSpades,
   ThreeOfSpades,
   TwoOfSpades,
-} from './suits/spades';
+} from "./suits/spades";
 
 export type PlayingCard =
   | typeof AceOfHearts

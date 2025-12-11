@@ -1,9 +1,9 @@
-import { PlayingCard } from './playingcard';
-import { aronson } from './stacks/aronson';
-import { memorandum } from './stacks/memorandum';
-import { mnemonica } from './stacks/mnemonica';
-import { particle } from './stacks/particle';
-import { redford } from './stacks/redford';
+import type { PlayingCard } from "./playingcard";
+import { aronson } from "./stacks/aronson";
+import { memorandum } from "./stacks/memorandum";
+import { mnemonica } from "./stacks/mnemonica";
+import { particle } from "./stacks/particle";
+import { redford } from "./stacks/redford";
 
 // from https://mstn.github.io/2018/06/08/fixed-size-arrays-in-typescript/
 type FixedSizeArray<N extends number, T> = N extends 0
@@ -11,7 +11,7 @@ type FixedSizeArray<N extends number, T> = N extends 0
   : {
       0: T;
       length: N;
-    } & ReadonlyArray<T>;
+    } & readonly T[];
 
 export type Stack = FixedSizeArray<52, PlayingCard>;
 type MemDeck = {
@@ -46,7 +46,7 @@ export const getRandomPlayingCard = (stack: Stack): PlayingCardPosition => {
 
 export const getUniqueRandomCard = (
   stack: Stack,
-  choices: PlayingCardPosition[],
+  choices: PlayingCardPosition[]
 ): PlayingCardPosition => {
   const randomCard = getRandomPlayingCard(stack);
   return choices.some((c) => c.index === randomCard.index)

@@ -1,7 +1,7 @@
-import { ActionIcon, Modal, Space, Title, Text, Anchor } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { IconHelp } from '@tabler/icons-react';
-import { GITHUB_URL } from '../constants';
+import { ActionIcon, Anchor, Modal, Space, Text, Title } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { IconHelp } from "@tabler/icons-react";
+import { GITHUB_URL } from "../constants";
 
 export const Help = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -9,10 +9,10 @@ export const Help = () => {
   return (
     <>
       <Modal
-        opened={opened}
         onClose={close}
-        withCloseButton={false}
+        opened={opened}
         size="auto"
+        withCloseButton={false}
       >
         <Title order={1}>What is MemDeck?</Title>
         <Space h="lg" />
@@ -24,10 +24,10 @@ export const Help = () => {
         </Text>
         <Space h="lg" />
         <Text>
-          Swing by the project's{' '}
+          Swing by the project's{" "}
           <Anchor href={GITHUB_URL} target="_blank" underline="never">
             GitHub page
-          </Anchor>{' '}
+          </Anchor>{" "}
           if you need help or have a feature request. Just a heads-up: this tool
           is all about simplicity, and it's a side project built in my spare
           time.
@@ -35,10 +35,10 @@ export const Help = () => {
       </Modal>
 
       <ActionIcon
-        variant="subtle"
-        color="gray"
         aria-label="Help"
+        color="gray"
         onClick={open}
+        variant="subtle"
       >
         <IconHelp />
       </ActionIcon>

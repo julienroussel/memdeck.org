@@ -12,7 +12,7 @@ import {
   TenOfClubs,
   ThreeOfClubs,
   TwoOfClubs,
-} from '../suits/clubs';
+} from "../suits/clubs";
 import {
   AceOfDiamonds,
   EightOfDiamonds,
@@ -27,7 +27,7 @@ import {
   TenOfDiamonds,
   ThreeOfDiamonds,
   TwoOfDiamonds,
-} from '../suits/diamonds';
+} from "../suits/diamonds";
 import {
   AceOfHearts,
   EightOfHearts,
@@ -42,7 +42,7 @@ import {
   TenOfHearts,
   ThreeOfHearts,
   TwoOfHearts,
-} from '../suits/hearts';
+} from "../suits/hearts";
 import {
   AceOfSpades,
   EightOfSpades,
@@ -57,10 +57,10 @@ import {
   TenOfSpades,
   ThreeOfSpades,
   TwoOfSpades,
-} from '../suits/spades';
+} from "../suits/spades";
 
 export const particle = {
-  name: 'Particle System',
+  name: "Particle System",
   order: [
     AceOfHearts,
     KingOfSpades,

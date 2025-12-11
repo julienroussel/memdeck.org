@@ -1,8 +1,11 @@
 /* General */
 .fullMantineContainerHeight {
   height: calc(
-    100dvh - var(--app-shell-header-offset, 0rem) -
-      var(--app-shell-footer-offset, 0rem) - 2 * var(--app-shell-padding, 0rem)
+    100dvh -
+    var(--app-shell-header-offset, 0rem) -
+    var(--app-shell-footer-offset, 0rem) -
+    2 *
+    var(--app-shell-padding, 0rem)
   );
 }
 
