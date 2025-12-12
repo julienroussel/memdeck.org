@@ -50,8 +50,8 @@
     "@mantine/hooks": "8.3.10",
     "@mantine/notifications": "8.3.10",
     "@tabler/icons-react": "3.35.0",
-    "react": "19.2.1",
-    "react-dom": "19.2.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
     "react-ga4": "2.1.0",
     "react-router": "7.10.1",
     "web-vitals": "5.1.0"
