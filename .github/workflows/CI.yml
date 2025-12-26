@@ -23,7 +23,7 @@ jobs:
         run: npm ci
 
       - name: Validate
-        run: npm run validate
+        run: pnpm run validate
 
       - name: Build static files
-        run: npm run build
+        run: pnpm run build

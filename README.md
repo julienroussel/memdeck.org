@@ -22,17 +22,22 @@ MemDeck is built using Typescript, React and Mantine.
 If you want to run MemDeck locally, follow these steps:
 
 1. Clone the repository:
+
    ```sh
    git clone https://github.com/julienroussel/memdeck.org
    cd memdeck.org
    ```
+
 2. Install dependencies:
+
    ```sh
    npm install
    ```
+
 3. Start the app:
+
    ```sh
-   npm run dev
+   pnpm run dev
    ```
 
 ## 🎯 Roadmap
@@ -53,7 +58,7 @@ This project is open-source and available under the [GPL-3.0 License](LICENSE).
 
 A huge shout-out to all memory enthusiasts and magicians who inspired this project!
 
-Cards SVG images are from https://tekeye.uk/playing_cards/svg-playing-cards
+Cards SVG images are from <https://tekeye.uk/playing_cards/svg-playing-cards>
 
 ---
 

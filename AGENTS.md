@@ -12,25 +12,25 @@ The project is a React SPA using TypeScript, Mantine UI, and Vite. It runs entir
 
 ```bash
 # Start development server
-npm run dev
+pnpm run dev
 
 # Run linter
-npm run lint
+pnpm run lint
 
 # Type checking
-npm run typecheck
+pnpm run typecheck
 
 # Check for unused dependencies/exports
-npm run knip
+pnpm run knip
 
 # Build for production (runs knip, eslint, typecheck, and vite build)
-npm run build
+pnpm run build
 
 # Preview production build
-npm run preview
+pnpm run preview
 
 # Analyze bundle (after build)
-npm run fta
+pnpm run fta
 ```
 
 ## Code Architecture
@@ -49,6 +49,7 @@ This approach ensures compile-time safety for card operations and prevents inval
 ### Stack System
 
 All memorized decks are centralized in `src/types/stacks.ts`:
+
 - Imported and exported via the `stacks` object
 - Each stack has a display name and ordered array of 52 cards
 - Helper functions like `getRandomPlayingCard()` and `getUniqueRandomCard()` operate on stacks
@@ -81,6 +82,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 ## Local Storage Keys
 
 Defined in `src/constants.ts`:
+
 - `SELECTED_STACK_LSK`: Currently selected memorized deck
 - `FLASHCARD_OPTION_LSK`: Flashcard mode preference
 
