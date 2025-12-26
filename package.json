@@ -13,7 +13,7 @@
     "url": "git+https://github.com/julienroussel/memdeck.org.git"
   },
   "author": "Julien Roussel",
-  "packageManager": "npm@11.7.0",
+  "packageManager": "pnpm@10.17.0",
   "scripts": {
     "knip": "knip",
     "check": "ultracite check",
@@ -23,7 +23,7 @@
     "preview": "vite preview",
     "test": "echo wait for it!",
     "fta": "fta src",
-    "validate": "npm run knip && npm run check && npm run typecheck && npm run fta",
+    "validate": "pnpm run knip && pnpm run check && pnpm run typecheck && pnpm run fta",
     "prepare": "husky"
   },
   "devDependencies": {
