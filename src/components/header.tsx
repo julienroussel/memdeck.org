@@ -57,6 +57,7 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
           color="gray"
           component="a"
           href={GITHUB_URL}
+          rel="noopener"
           target="_blank"
           variant="subtle"
         >

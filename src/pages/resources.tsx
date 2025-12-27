@@ -108,7 +108,12 @@ export const Resources = () => (
       Explore a curated collection of resources to help you master the art of
       memorized decks. Missing a resource? Give me a shout or drop a pull
       request on{" "}
-      <Anchor href={GITHUB_URL} target="_blank" underline="never">
+      <Anchor
+        href={GITHUB_URL}
+        rel="noopener"
+        target="_blank"
+        underline="never"
+      >
         Github
       </Anchor>
       .
@@ -134,7 +139,7 @@ export const Resources = () => (
           <Text c="dimmed" mb="md" size="sm">
             {resource.description}
           </Text>
-          <Anchor href={resource.link} size="sm" target="_blank">
+          <Anchor href={resource.link} rel="noopener" size="sm" target="_blank">
             Learn more
           </Anchor>
         </Card>
@@ -156,7 +161,7 @@ export const Resources = () => (
     >
       {otherResources.map((resource) => (
         <List.Item key={resource.title}>
-          <Anchor href={resource.link} target="_blank">
+          <Anchor href={resource.link} rel="noopener" target="_blank">
             {resource.title}
           </Anchor>{" "}
           (

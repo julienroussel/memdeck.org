@@ -25,7 +25,12 @@ export const Help = () => {
         <Space h="lg" />
         <Text>
           Swing by the project's{" "}
-          <Anchor href={GITHUB_URL} target="_blank" underline="never">
+          <Anchor
+            href={GITHUB_URL}
+            rel="noopener"
+            target="_blank"
+            underline="never"
+          >
             GitHub page
           </Anchor>{" "}
           if you need help or have a feature request. Just a heads-up: this tool
