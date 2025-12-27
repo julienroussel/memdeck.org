@@ -26,7 +26,12 @@ export const Home = () => {
           <Text>
             Hope these tools help you level up your memorized deck stack
             learning. Need a hand or think something's missing? Hit me up on{" "}
-            <Anchor href={GITHUB_URL} target="_blank" underline="never">
+            <Anchor
+              href={GITHUB_URL}
+              rel="noopener"
+              target="_blank"
+              underline="never"
+            >
               Github
             </Anchor>
             !
