@@ -37,7 +37,7 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "5.1.2",
     "fta-cli": "3.0.0",
-    "globals": "16.5.0",
+    "globals": "17.0.0",
     "husky": "9.1.7",
     "knip": "5.78.0",
     "lefthook": "2.0.13",
