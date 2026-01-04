@@ -53,7 +53,7 @@
     "@mantine/core": "8.3.10",
     "@mantine/hooks": "8.3.10",
     "@mantine/notifications": "8.3.10",
-    "@tabler/icons-react": "3.36.0",
+    "@tabler/icons-react": "3.36.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-ga4": "2.1.0",
