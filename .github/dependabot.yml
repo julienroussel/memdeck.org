@@ -6,7 +6,7 @@ updates:
       interval: 'daily'
       time: '04:00'
       timezone: 'Europe/Paris'
-    open-pull-requests-limit: 6
+    open-pull-requests-limit: 4
     target-branch: 'main'
     labels:
       - 'dependencies'
