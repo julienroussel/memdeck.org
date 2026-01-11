@@ -2,7 +2,13 @@ import { Group, Modal, Radio, Stack, Text, Title } from "@mantine/core";
 import { FLASHCARD_OPTION_LSK } from "../../constants";
 import { useLocalDb } from "../../utils/localstorage";
 
-const FLASHCARD_MODE_OPTIONS = [
+export type FlashcardMode = "cardonly" | "bothmodes" | "numberonly";
+
+const FLASHCARD_MODE_OPTIONS: readonly {
+  value: FlashcardMode;
+  label: string;
+  description: string;
+}[] = [
   {
     value: "cardonly",
     label: "Card only",
@@ -21,7 +27,7 @@ const FLASHCARD_MODE_OPTIONS = [
     description:
       "In this mode, you'll see a number and need to pick the corresponding card from 5 options.",
   },
-] as const;
+];
 
 export const FlashcardOptions = ({
   opened,
@@ -30,12 +36,23 @@ export const FlashcardOptions = ({
   opened: boolean;
   close: () => void;
 }) => {
-  const [option, setOption] = useLocalDb(FLASHCARD_OPTION_LSK, "bothmodes");
+  const [option, setOption] = useLocalDb<FlashcardMode>(
+    FLASHCARD_OPTION_LSK,
+    "bothmodes"
+  );
+
+  const handleModeChange = (value: string) => {
+    setOption(value as FlashcardMode);
+  };
 
   return (
     <Modal onClose={close} opened={opened} size="auto" withCloseButton={false}>
       <Title order={2}>Flashcard options</Title>
-      <Radio.Group label="Pick one mode" onChange={setOption} value={option}>
+      <Radio.Group
+        label="Pick one mode"
+        onChange={handleModeChange}
+        value={option}
+      >
         <Stack gap="xs" pt="md">
           {FLASHCARD_MODE_OPTIONS.map((opt) => (
             <Radio.Card

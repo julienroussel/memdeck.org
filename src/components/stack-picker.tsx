@@ -1,6 +1,6 @@
 import { Center, NativeSelect } from "@mantine/core";
 import { useSelectedStack } from "../hooks/use-selected-stack";
-import { stacks } from "../types/stacks";
+import { type StackKey, stacks } from "../types/stacks";
 
 export const StackPicker = () => {
   const { stackKey, setStackKey } = useSelectedStack();
@@ -12,16 +12,18 @@ export const StackPicker = () => {
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
-  const stackSelection =
-    stackKey !== ""
-      ? availableStacks
-      : [{ label: "Please choose a stack", value: "" }, ...availableStacks];
+  const handleStackChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.currentTarget.value;
+    if (value in stacks) {
+      setStackKey(value as StackKey);
+    }
+  };
 
   return (
     <Center>
       <NativeSelect
-        data={stackSelection}
-        onChange={(event) => setStackKey(event.currentTarget.value)}
+        data={availableStacks}
+        onChange={handleStackChange}
         value={stackKey}
       />
     </Center>

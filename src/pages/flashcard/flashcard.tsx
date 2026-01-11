@@ -14,7 +14,6 @@ import { useState } from "react";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { NumberCard } from "../../components/number-card";
 import { FLASHCARD_OPTION_LSK } from "../../constants";
-import { usePageTracking } from "../../hooks/use-page-tracking";
 import { useSelectedStack } from "../../hooks/use-selected-stack";
 import type { PlayingCard } from "../../types/playingcard";
 import { shuffle } from "../../types/shuffle";
@@ -24,9 +23,9 @@ import {
   type Stack,
 } from "../../types/stacks";
 import { isPlayingCard } from "../../types/typeguards";
+import { generateUniqueCardChoices } from "../../utils/card-selection";
 import { useLocalDb } from "../../utils/localstorage";
-import { FlashcardOptions } from "./flashcard-options";
-import { addFourDistinctRandomCards } from "./pickcards";
+import { type FlashcardMode, FlashcardOptions } from "./flashcard-options";
 import { Score } from "./score";
 import { TOGGLE, wrongAnswerNotification } from "./utils";
 
@@ -34,7 +33,7 @@ const generateNewCardAndChoices = (
   stackOrder: Stack
 ): { card: PlayingCardPosition; choices: PlayingCardPosition[] } => {
   const newCard = getRandomPlayingCard(stackOrder);
-  const newChoices = shuffle(addFourDistinctRandomCards(stackOrder, [newCard]));
+  const newChoices = shuffle(generateUniqueCardChoices(stackOrder, [newCard]));
   return { card: newCard, choices: newChoices };
 };
 
@@ -59,7 +58,7 @@ export const Flashcard = () => {
   );
 
   const [display, setDisplay] = useState<"card" | "index">("card");
-  const [mode] = useLocalDb(FLASHCARD_OPTION_LSK, "bothmodes");
+  const [mode] = useLocalDb<FlashcardMode>(FLASHCARD_OPTION_LSK, "bothmodes");
   const [options, { open, close }] = useDisclosure(false);
 
   const handleWrongAnswer = () => {
@@ -91,8 +90,6 @@ export const Flashcard = () => {
 
   const shouldShowCard =
     mode === "cardonly" || (mode === "bothmodes" && display === "card");
-
-  usePageTracking();
 
   return (
     <div className="fullMantineContainerHeight">

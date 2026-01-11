@@ -9,7 +9,13 @@
       "Bash(git mv:*)",
       "Bash(rm:*)",
       "Bash(git checkout:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(pnpm run lint)",
+      "Bash(pnpm run typecheck:*)",
+      "Bash(cat:*)",
+      "Bash(pnpm run check:*)",
+      "Bash(grep:*)",
+      "Bash(pnpm run validate:*)"
     ],
     "deny": [],
     "ask": []

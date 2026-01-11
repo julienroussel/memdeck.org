@@ -11,7 +11,12 @@ export type CardSpreadProps = {
 
 export const isPlayingCard = (
   item: PlayingCard | number
-): item is PlayingCard => (item as PlayingCard).suit !== undefined;
+): item is PlayingCard =>
+  typeof item === "object" &&
+  item !== null &&
+  "suit" in item &&
+  "rank" in item &&
+  "image" in item;
 
 const isNumber = (item: PlayingCard | number): item is number =>
   typeof item === "number";

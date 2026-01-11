@@ -8,10 +8,13 @@ import {
   IconTools,
 } from "@tabler/icons-react";
 import { Link, useLocation } from "react-router";
-import { useSelectedStack } from "../hooks/use-selected-stack";
 
-export const NavLinks = ({ onClick }: { onClick: () => void }) => {
-  const { stackKey } = useSelectedStack();
+type NavLinksProps = {
+  /** Callback fired when a navigation link is clicked */
+  onClick: () => void;
+};
+
+export const NavLinks = ({ onClick }: NavLinksProps) => {
   const location = useLocation();
 
   return (
@@ -41,7 +44,6 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
         <NavLink
           active={location.pathname === "/flashcard"}
           component={Link}
-          disabled={stackKey === ""}
           label="Flashcard"
           leftSection={<IconPlayCardStar size={16} stroke={1.5} />}
           onClick={onClick}
@@ -50,7 +52,6 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
         <NavLink
           active={location.pathname === "/shuffle"}
           component={Link}
-          disabled={stackKey === ""}
           label="Shuffle"
           leftSection={<IconArrowsShuffle size={16} stroke={1.5} />}
           onClick={onClick}
@@ -59,7 +60,6 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
         <NavLink
           active={location.pathname === "/acaan"}
           component={Link}
-          disabled={stackKey === ""}
           label="ACAAN"
           leftSection={<IconNumber size={16} stroke={1.5} />}
           onClick={onClick}
@@ -68,7 +68,6 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
         <NavLink
           active={location.pathname === "/toolbox"}
           component={Link}
-          disabled={stackKey === ""}
           label="Toolbox"
           leftSection={<IconTools size={16} stroke={1.5} />}
           onClick={onClick}
