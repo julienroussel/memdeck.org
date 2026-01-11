@@ -4,7 +4,9 @@ import "./styles.css";
 
 import { AppShell, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { useEffect } from "react";
 import ReactGA from "react-ga4";
+import { useLocation } from "react-router";
 import { onCLS, onINP, onLCP } from "web-vitals";
 import { Header } from "./components/header";
 import { NavLinks } from "./components/nav-links";
@@ -37,6 +39,11 @@ onLCP(sendToGoogleAnalytics);
 
 export const App = () => {
   const [opened, { toggle, close }] = useDisclosure();
+  const location = useLocation();
+
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: location.pathname });
+  }, [location.pathname]);
 
   return (
     <AppShell

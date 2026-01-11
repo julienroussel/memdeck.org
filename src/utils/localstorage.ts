@@ -1,7 +1,18 @@
 import { readLocalStorageValue, useLocalStorage } from "@mantine/hooks";
 
-export const useLocalDb = (key: string, defaultValue = "") =>
+const getStoredValue = <T extends string>(key: string, defaultValue: T): T => {
+  try {
+    return (readLocalStorageValue({ key }) as T | undefined) ?? defaultValue;
+  } catch {
+    return defaultValue;
+  }
+};
+
+export const useLocalDb = <T extends string = string>(
+  key: string,
+  defaultValue: T
+): [T, (value: T | ((prevState: T) => T)) => void, () => void] =>
   useLocalStorage({
     key,
-    defaultValue: readLocalStorageValue({ key }) ?? defaultValue,
+    defaultValue: getStoredValue(key, defaultValue),
   });
