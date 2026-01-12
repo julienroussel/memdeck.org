@@ -1,4 +1,5 @@
 import { Anchor, Grid, Space, Text, Title } from "@mantine/core";
+import { useMemo } from "react";
 import { CardSpread } from "../components/card-spread/card-spread";
 import { StackPicker } from "../components/stack-picker";
 import { GITHUB_URL } from "../constants";
@@ -7,6 +8,11 @@ import { cardItems } from "../types/typeguards";
 
 export const Home = () => {
   const { stackKey, stack, stackName } = useSelectedStack();
+
+  const stackCards = useMemo(
+    () => (stack ? cardItems([...stack.order]) : null),
+    [stack]
+  );
 
   return (
     <div className="fullMantineContainerHeight">
@@ -48,7 +54,7 @@ export const Home = () => {
           )}
         </Grid.Col>
         <Grid.Col span={12} style={{ height: "100%" }}>
-          {stackKey !== "" && (
+          {stackKey !== "" && stackCards && (
             <>
               <Space h="lg" />
               <Text>
@@ -58,7 +64,7 @@ export const Home = () => {
                 </Text>
               </Text>
               <Space h="lg" />
-              <CardSpread degree={0.5} items={cardItems([...stack.order])} />
+              <CardSpread degree={0.5} items={stackCards} />
             </>
           )}
         </Grid.Col>

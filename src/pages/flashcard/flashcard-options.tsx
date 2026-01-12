@@ -43,6 +43,9 @@ export const FlashcardOptions = ({
 
   const handleModeChange = (value: string) => {
     setOption(value as FlashcardMode);
+    import("../../services/analytics").then(({ analytics }) => {
+      analytics.trackFlashcardModeChanged(value);
+    });
   };
 
   return (

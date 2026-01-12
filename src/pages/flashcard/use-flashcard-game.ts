@@ -1,5 +1,5 @@
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+import { useReducer } from "react";
 import { FLASHCARD_OPTION_LSK } from "../../constants";
 import type { PlayingCard } from "../../types/playingcard";
 import { shuffle } from "../../types/shuffle";
@@ -13,6 +13,31 @@ import { generateUniqueCardChoices } from "../../utils/card-selection";
 import { useLocalDb } from "../../utils/localstorage";
 import type { FlashcardMode } from "./flashcard-options";
 import { getRandomDisplayMode, wrongAnswerNotification } from "./utils";
+
+// --- Types ---
+
+type DisplayMode = "card" | "index";
+
+type GameState = {
+  successes: number;
+  fails: number;
+  card: PlayingCardPosition;
+  choices: PlayingCardPosition[];
+  display: DisplayMode;
+};
+
+type GameAction =
+  | {
+      type: "CORRECT_ANSWER";
+      payload: {
+        newCard: PlayingCardPosition;
+        newChoices: PlayingCardPosition[];
+        newDisplay: DisplayMode;
+      };
+    }
+  | { type: "WRONG_ANSWER" };
+
+// --- Pure Functions ---
 
 export const generateNewCardAndChoices = (
   stackOrder: Stack
@@ -30,52 +55,80 @@ export const isCorrectAnswer = (
     ? item.suit === card.card.suit && item.rank === card.card.rank
     : item === card.index;
 
-export const useFlashcardGame = (stackOrder: Stack) => {
-  const [successes, setSuccesses] = useState(0);
-  const [fails, setFails] = useState(0);
+const createInitialState = (stackOrder: Stack): GameState => {
+  const { card, choices } = generateNewCardAndChoices(stackOrder);
+  return {
+    successes: 0,
+    fails: 0,
+    card,
+    choices,
+    display: "card",
+  };
+};
 
-  const initial = generateNewCardAndChoices(stackOrder);
-  const [card, setCard] = useState<PlayingCardPosition>(initial.card);
-  const [choices, setChoices] = useState<PlayingCardPosition[]>(
-    initial.choices
+// --- Reducer ---
+
+const gameReducer = (state: GameState, action: GameAction): GameState => {
+  switch (action.type) {
+    case "CORRECT_ANSWER":
+      return {
+        ...state,
+        successes: state.successes + 1,
+        card: action.payload.newCard,
+        choices: action.payload.newChoices,
+        display: action.payload.newDisplay,
+      };
+    case "WRONG_ANSWER":
+      return {
+        ...state,
+        fails: state.fails + 1,
+      };
+    default:
+      return state;
+  }
+};
+
+// --- Hook ---
+
+export const useFlashcardGame = (stackOrder: Stack, stackName: string) => {
+  const [state, dispatch] = useReducer(
+    gameReducer,
+    stackOrder,
+    createInitialState
   );
-
-  const [display, setDisplay] = useState<"card" | "index">("card");
   const [mode] = useLocalDb<FlashcardMode>(FLASHCARD_OPTION_LSK, "bothmodes");
 
-  const handleWrongAnswer = () => {
-    notifications.show(wrongAnswerNotification);
-    setFails((f) => f + 1);
-  };
-
-  const handleCorrectAnswer = () => {
-    setSuccesses((s) => s + 1);
-
-    const { card: newCard, choices: newChoices } =
-      generateNewCardAndChoices(stackOrder);
-    setCard(newCard);
-    setChoices(newChoices);
-
-    if (mode === "bothmodes") {
-      setDisplay(getRandomDisplayMode());
-    }
-  };
-
   const submitAnswer = (item: PlayingCard | number) => {
-    if (isCorrectAnswer(item, card)) {
-      handleCorrectAnswer();
+    const correct = isCorrectAnswer(item, state.card);
+
+    if (correct) {
+      const { card: newCard, choices: newChoices } =
+        generateNewCardAndChoices(stackOrder);
+      const newDisplay =
+        mode === "bothmodes" ? getRandomDisplayMode() : state.display;
+
+      dispatch({
+        type: "CORRECT_ANSWER",
+        payload: { newCard, newChoices, newDisplay },
+      });
     } else {
-      handleWrongAnswer();
+      notifications.show(wrongAnswerNotification);
+      dispatch({ type: "WRONG_ANSWER" });
     }
+
+    // Lazy import analytics to avoid circular deps and keep hook testable
+    import("../../services/analytics").then(({ analytics }) => {
+      analytics.trackFlashcardAnswer(correct, stackName);
+    });
   };
 
   const shouldShowCard =
-    mode === "cardonly" || (mode === "bothmodes" && display === "card");
+    mode === "cardonly" || (mode === "bothmodes" && state.display === "card");
 
   return {
-    score: { successes, fails },
-    card,
-    choices,
+    score: { successes: state.successes, fails: state.fails },
+    card: state.card,
+    choices: state.choices,
     shouldShowCard,
     submitAnswer,
   };

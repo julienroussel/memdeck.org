@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSettings } from "@tabler/icons-react";
+import { useMemo } from "react";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { NumberCard } from "../../components/number-card";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
@@ -19,10 +20,19 @@ import { Score } from "./score";
 import { useFlashcardGame } from "./use-flashcard-game";
 
 export const Flashcard = () => {
-  const { stackOrder } = useRequiredStack();
+  const { stackOrder, stackName } = useRequiredStack();
   const { score, card, choices, shouldShowCard, submitAnswer } =
-    useFlashcardGame(stackOrder);
+    useFlashcardGame(stackOrder, stackName);
   const [options, { open, close }] = useDisclosure(false);
+
+  const numberChoices = useMemo(
+    () => numberItems(choices.map((c) => c.index)),
+    [choices]
+  );
+  const cardChoices = useMemo(
+    () => cardItems(choices.map((c) => c.card)),
+    [choices]
+  );
 
   return (
     <div className="fullMantineContainerHeight">
@@ -61,14 +71,14 @@ export const Flashcard = () => {
             <CardSpread
               canMove={false}
               hasCursor={true}
-              items={numberItems(choices.map((c) => c.index))}
+              items={numberChoices}
               onItemClick={(item: number) => submitAnswer(item)}
             />
           ) : (
             <CardSpread
               canMove={false}
               hasCursor={true}
-              items={cardItems(choices.map((c) => c.card))}
+              items={cardChoices}
               onItemClick={(item: PlayingCard) => submitAnswer(item)}
             />
           )}

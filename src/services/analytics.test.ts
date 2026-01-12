@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 const mockInitialize = vi.fn();
 const mockSend = vi.fn();
+const mockEvent = vi.fn();
 const mockOnCLS = vi.fn();
 const mockOnINP = vi.fn();
 const mockOnLCP = vi.fn();
@@ -10,6 +11,7 @@ vi.mock("react-ga4", () => ({
   default: {
     initialize: (id: string) => mockInitialize(id),
     send: (data: unknown) => mockSend(data),
+    event: (data: unknown) => mockEvent(data),
   },
 }));
 
@@ -213,6 +215,215 @@ describe("analytics", () => {
           eventValue: 10_000,
         })
       );
+    });
+  });
+
+  describe("trackEvent", () => {
+    it("sends custom event with category and action", () => {
+      analytics.trackEvent("TestCategory", "TestAction");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "TestCategory",
+        action: "TestAction",
+        label: undefined,
+      });
+    });
+
+    it("sends custom event with label", () => {
+      analytics.trackEvent("TestCategory", "TestAction", "TestLabel");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "TestCategory",
+        action: "TestAction",
+        label: "TestLabel",
+      });
+    });
+  });
+
+  describe("trackStackSelected", () => {
+    it("sends stack selection event", () => {
+      analytics.trackStackSelected("Mnemonica");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Stack",
+        action: "Selected",
+        label: "Mnemonica",
+      });
+    });
+
+    it("handles different stack names", () => {
+      analytics.trackStackSelected("Aronson");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Stack",
+        action: "Selected",
+        label: "Aronson",
+      });
+    });
+  });
+
+  describe("trackFlashcardAnswer", () => {
+    it("sends correct answer event", () => {
+      analytics.trackFlashcardAnswer(true, "Mnemonica");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Flashcard",
+        action: "Correct Answer",
+        label: "Mnemonica",
+      });
+    });
+
+    it("sends wrong answer event", () => {
+      analytics.trackFlashcardAnswer(false, "Mnemonica");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Flashcard",
+        action: "Wrong Answer",
+        label: "Mnemonica",
+      });
+    });
+
+    it("includes stack name in label", () => {
+      analytics.trackFlashcardAnswer(true, "Aronson");
+
+      expect(mockEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          label: "Aronson",
+        })
+      );
+    });
+  });
+
+  describe("trackFlashcardModeChanged", () => {
+    it("sends mode change event for cardonly", () => {
+      analytics.trackFlashcardModeChanged("cardonly");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Flashcard",
+        action: "Mode Changed",
+        label: "cardonly",
+      });
+    });
+
+    it("sends mode change event for indexonly", () => {
+      analytics.trackFlashcardModeChanged("indexonly");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Flashcard",
+        action: "Mode Changed",
+        label: "indexonly",
+      });
+    });
+
+    it("sends mode change event for bothmodes", () => {
+      analytics.trackFlashcardModeChanged("bothmodes");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Flashcard",
+        action: "Mode Changed",
+        label: "bothmodes",
+      });
+    });
+  });
+
+  describe("trackFeatureUsed", () => {
+    it("sends feature usage event for ACAAN", () => {
+      analytics.trackFeatureUsed("ACAAN");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Feature",
+        action: "Used",
+        label: "ACAAN",
+      });
+    });
+
+    it("sends feature usage event for Shuffle", () => {
+      analytics.trackFeatureUsed("Shuffle");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Feature",
+        action: "Used",
+        label: "Shuffle",
+      });
+    });
+
+    it("sends feature usage event for Toolbox", () => {
+      analytics.trackFeatureUsed("Toolbox");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Feature",
+        action: "Used",
+        label: "Toolbox",
+      });
+    });
+  });
+
+  describe("trackError", () => {
+    it("sends error event with error name and message", () => {
+      const error = new TypeError("Cannot read property 'foo' of undefined");
+
+      analytics.trackError(error);
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Error",
+        action: "TypeError",
+        label: "Cannot read property 'foo' of undefined",
+      });
+    });
+
+    it("sends exception hit type", () => {
+      const error = new Error("Test error");
+
+      analytics.trackError(error);
+
+      expect(mockSend).toHaveBeenCalledWith({
+        hitType: "exception",
+        exDescription: "Error: Test error",
+        exFatal: false,
+      });
+    });
+
+    it("includes component stack in exception description", () => {
+      const error = new Error("Component error");
+      const componentStack = "at MyComponent (app.tsx:10)";
+
+      analytics.trackError(error, componentStack);
+
+      expect(mockSend).toHaveBeenCalledWith({
+        hitType: "exception",
+        exDescription: "Error: Component error | at MyComponent (app.tsx:10)",
+        exFatal: false,
+      });
+    });
+
+    it("truncates long component stack to 100 characters", () => {
+      const error = new Error("Error");
+      const longStack = "a".repeat(200);
+
+      analytics.trackError(error, longStack);
+
+      expect(mockSend).toHaveBeenCalledWith({
+        hitType: "exception",
+        exDescription: `Error: Error | ${"a".repeat(100)}`,
+        exFatal: false,
+      });
+    });
+
+    it("handles error without component stack", () => {
+      const error = new ReferenceError("x is not defined");
+
+      analytics.trackError(error);
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Error",
+        action: "ReferenceError",
+        label: "x is not defined",
+      });
+      expect(mockSend).toHaveBeenCalledWith({
+        hitType: "exception",
+        exDescription: "ReferenceError: x is not defined",
+        exFatal: false,
+      });
     });
   });
 });

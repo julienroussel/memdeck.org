@@ -1,45 +1,88 @@
+import { Center, Loader } from "@mantine/core";
+import { lazy, Suspense } from "react";
 import { Route as RouterRoute, Routes as RouterRoutes } from "react-router";
 import { RequireStack } from "./components/require-stack";
-import { Acaan } from "./pages/acaan";
-import { Flashcard } from "./pages/flashcard/flashcard";
-import { Home } from "./pages/home";
-import { Resources } from "./pages/resources";
-import { Shuffle } from "./pages/shuffle";
-import { Toolbox } from "./pages/toolbox";
+
+const Home = lazy(() =>
+  import("./pages/home").then((m) => ({ default: m.Home }))
+);
+const Resources = lazy(() =>
+  import("./pages/resources").then((m) => ({ default: m.Resources }))
+);
+const Flashcard = lazy(() =>
+  import("./pages/flashcard/flashcard").then((m) => ({ default: m.Flashcard }))
+);
+const Shuffle = lazy(() =>
+  import("./pages/shuffle").then((m) => ({ default: m.Shuffle }))
+);
+const Acaan = lazy(() =>
+  import("./pages/acaan").then((m) => ({ default: m.Acaan }))
+);
+const Toolbox = lazy(() =>
+  import("./pages/toolbox").then((m) => ({ default: m.Toolbox }))
+);
+
+const PageLoader = () => (
+  <Center h="100%">
+    <Loader size="lg" />
+  </Center>
+);
 
 export const Routes = () => (
   <RouterRoutes>
-    <RouterRoute element={<Home />} path="/" />
-    <RouterRoute element={<Resources />} path="/resources" />
     <RouterRoute
       element={
-        <RequireStack>
-          <Flashcard />
-        </RequireStack>
+        <Suspense fallback={<PageLoader />}>
+          <Home />
+        </Suspense>
+      }
+      path="/"
+    />
+    <RouterRoute
+      element={
+        <Suspense fallback={<PageLoader />}>
+          <Resources />
+        </Suspense>
+      }
+      path="/resources"
+    />
+    <RouterRoute
+      element={
+        <Suspense fallback={<PageLoader />}>
+          <RequireStack>
+            <Flashcard />
+          </RequireStack>
+        </Suspense>
       }
       path="/flashcard"
     />
     <RouterRoute
       element={
-        <RequireStack>
-          <Shuffle />
-        </RequireStack>
+        <Suspense fallback={<PageLoader />}>
+          <RequireStack>
+            <Shuffle />
+          </RequireStack>
+        </Suspense>
       }
       path="/shuffle"
     />
     <RouterRoute
       element={
-        <RequireStack>
-          <Acaan />
-        </RequireStack>
+        <Suspense fallback={<PageLoader />}>
+          <RequireStack>
+            <Acaan />
+          </RequireStack>
+        </Suspense>
       }
       path="/acaan"
     />
     <RouterRoute
       element={
-        <RequireStack>
-          <Toolbox />
-        </RequireStack>
+        <Suspense fallback={<PageLoader />}>
+          <RequireStack>
+            <Toolbox />
+          </RequireStack>
+        </Suspense>
       }
       path="/toolbox"
     />

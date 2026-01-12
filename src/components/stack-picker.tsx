@@ -1,29 +1,45 @@
 import { Center, NativeSelect } from "@mantine/core";
+import { memo, useMemo } from "react";
 import { useSelectedStack } from "../hooks/use-selected-stack";
 import { stacks } from "../types/stacks";
 
-export const StackPicker = () => {
+const availableStacks = Object.entries(stacks)
+  .map(([key, stack]) => ({
+    label: stack.name,
+    value: key,
+  }))
+  .sort((a, b) => a.label.localeCompare(b.label));
+
+export const StackPicker = memo(function StackPicker() {
   const { stackKey, setStackKey } = useSelectedStack();
 
-  const availableStacks = Object.entries(stacks)
-    .map(([key, stack]) => ({
-      label: stack.name,
-      value: key,
-    }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+  const stackSelection = useMemo(
+    () =>
+      stackKey !== ""
+        ? availableStacks
+        : [{ label: "Please choose a stack", value: "" }, ...availableStacks],
+    [stackKey]
+  );
 
-  const stackSelection =
-    stackKey !== ""
-      ? availableStacks
-      : [{ label: "Please choose a stack", value: "" }, ...availableStacks];
+  const handleStackChange = (value: string) => {
+    setStackKey(value);
+    if (value) {
+      const selectedStack = availableStacks.find((s) => s.value === value);
+      if (selectedStack) {
+        import("../services/analytics").then(({ analytics }) => {
+          analytics.trackStackSelected(selectedStack.label);
+        });
+      }
+    }
+  };
 
   return (
     <Center>
       <NativeSelect
         data={stackSelection}
-        onChange={(event) => setStackKey(event.currentTarget.value)}
+        onChange={(event) => handleStackChange(event.currentTarget.value)}
         value={stackKey}
       />
     </Center>
   );
-};
+});
