@@ -26,9 +26,16 @@ export const stacks = {
 export type StackKey = keyof typeof stacks;
 export type StackValue = (typeof stacks)[StackKey];
 
+/**
+ * Represents a playing card's position within a memorized stack.
+ * @property index - 1-based position in the stack (1-52)
+ * @property card - The playing card at this position
+ */
 export type PlayingCardPosition = {
+  /** 1-based position in the stack (1-52) */
   index: number;
-  card: Stack[number];
+  /** The playing card at this position */
+  card: PlayingCard;
 };
 
 export const getRandomPlayingCard = (stack: Stack): PlayingCardPosition => {
@@ -41,10 +48,25 @@ export const getRandomPlayingCard = (stack: Stack): PlayingCardPosition => {
 
 export const getUniqueRandomCard = (
   stack: Stack,
-  choices: PlayingCardPosition[]
+  existingChoices: PlayingCardPosition[]
 ): PlayingCardPosition => {
-  const randomCard = getRandomPlayingCard(stack);
-  return choices.some((c) => c.index === randomCard.index)
-    ? getUniqueRandomCard(stack, choices)
-    : randomCard;
+  const existingIndices = new Set(existingChoices.map((c) => c.index));
+
+  // Try random selection up to 100 times
+  for (let attempt = 0; attempt < 100; attempt++) {
+    const randomCard = getRandomPlayingCard(stack);
+    if (!existingIndices.has(randomCard.index)) {
+      return randomCard;
+    }
+  }
+
+  // Fallback: linear search for guaranteed unique card
+  for (let i = 0; i < 52; i++) {
+    const index = i + 1;
+    if (!existingIndices.has(index)) {
+      return { index, card: stack[i] ?? stack[0] };
+    }
+  }
+
+  throw new Error("Unable to find unique card - all 52 cards already selected");
 };
