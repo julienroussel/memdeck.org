@@ -26,6 +26,7 @@
     "typecheck": "tsc -b",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "fta": "fta src",
     "validate": "pnpm run knip && pnpm run lint && pnpm run typecheck && pnpm run fta",
     "prepare": "husky"
@@ -36,6 +37,7 @@
     "@types/react": "19.2.8",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "5.1.2",
+    "@vitest/coverage-v8": "4.0.16",
     "fta-cli": "3.0.0",
     "globals": "17.0.0",
     "husky": "9.1.7",

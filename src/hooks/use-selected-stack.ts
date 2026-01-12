@@ -2,6 +2,8 @@ import { SELECTED_STACK_LSK } from "../constants";
 import { type StackKey, type StackValue, stacks } from "../types/stacks";
 import { useLocalDb } from "../utils/localstorage";
 
+export const isStackKey = (key: string): key is StackKey => key in stacks;
+
 type RequiredStackResult = {
   stackKey: StackKey;
   stack: StackValue;
@@ -32,7 +34,11 @@ export const useSelectedStack = (): SelectedStackResult => {
   );
 
   const setStackKey = (key: string) => {
-    setSelectedStackKey(key as StackKey);
+    if (isStackKey(key)) {
+      setSelectedStackKey(key);
+    } else {
+      setSelectedStackKey("");
+    }
   };
 
   // Validate that the key exists in stacks
@@ -64,14 +70,14 @@ export const useSelectedStack = (): SelectedStackResult => {
 export const useRequiredStack = (): RequiredStackResult => {
   const result = useSelectedStack();
 
-  if (!result.stack) {
+  if (result.stackKey === "") {
     throw new Error(
       "useRequiredStack must be used within a RequireStack-protected route"
     );
   }
 
   return {
-    stackKey: result.stackKey as StackKey,
+    stackKey: result.stackKey,
     stack: result.stack,
     stackOrder: result.stackOrder,
     stackName: result.stackName,
