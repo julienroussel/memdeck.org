@@ -1,7 +1,9 @@
 pre-commit:
+  parallel: true
   jobs:
-    - run: npx ultracite fix
-      glob: 
+    - name: lint
+      run: npx ultracite fix
+      glob:
         - "*.js"
         - "*.jsx"
         - "*.ts"
@@ -10,3 +12,6 @@ pre-commit:
         - "*.jsonc"
         - "*.css"
       stage_fixed: true
+    - name: test
+      run: pnpm run test
+      glob: "*.{ts,tsx}"
