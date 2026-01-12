@@ -1,6 +1,5 @@
 import {
   ActionIcon,
-  Anchor,
   Burger,
   Group,
   Image,
@@ -9,6 +8,7 @@ import {
   useMantineColorScheme,
 } from "@mantine/core";
 import { IconBrandGithub, IconMoonStars, IconSun } from "@tabler/icons-react";
+import { Link } from "react-router";
 // eslint-disable-next-line import/no-unresolved
 import memdeckDarkLogo from "/memdeck-black.png";
 // eslint-disable-next-line import/no-unresolved
@@ -28,7 +28,7 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
     <Group h="100%" justify="space-between" px="md">
       <Group>
         <Burger hiddenFrom="sm" onClick={toggle} opened={opened} size="sm" />
-        <Anchor href="/" underline="never">
+        <Link to="/">
           <Image
             darkHidden
             fit="contain"
@@ -45,7 +45,7 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
             src={memdeckDarkLogo}
             w="auto"
           />
-        </Anchor>
+        </Link>
         <Text fw={700} tt="uppercase">
           MemDeck
         </Text>
