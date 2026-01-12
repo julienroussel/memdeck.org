@@ -27,7 +27,15 @@
       "Bash(git stash:*)",
       "Bash(git pull:*)",
       "Bash(pnpm run test)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(find:*)",
+      "Bash(wc:*)",
+      "Bash(pnpm vitest:*)",
+      "Bash(pnpm run test:coverage:*)",
+      "Bash(pnpm test:coverage:*)",
+      "Bash(ls:*)",
+      "Bash(pnpm run fta:*)",
+      "Bash(pnpm test:*)"
     ],
     "deny": [],
     "ask": []
