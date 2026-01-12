@@ -24,6 +24,7 @@ export const stacks = {
 } as const;
 
 export type StackKey = keyof typeof stacks;
+export type StackValue = (typeof stacks)[StackKey];
 
 export type PlayingCardPosition = {
   index: number;

@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import ReactGA from "react-ga4";
 import { useLocation } from "react-router";
 import { onCLS, onINP, onLCP } from "web-vitals";
+import { ErrorBoundary } from "./components/error-boundary";
 import { Header } from "./components/header";
 import { NavLinks } from "./components/nav-links";
 import { StackPicker } from "./components/stack-picker";
@@ -68,7 +69,9 @@ export const App = () => {
         </AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main>
-        <Routes />
+        <ErrorBoundary>
+          <Routes />
+        </ErrorBoundary>
       </AppShell.Main>
     </AppShell>
   );

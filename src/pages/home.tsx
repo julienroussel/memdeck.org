@@ -1,10 +1,11 @@
 import { Anchor, Grid, Space, Text, Title } from "@mantine/core";
 import { CardSpread } from "../components/card-spread/card-spread";
+import { StackPicker } from "../components/stack-picker";
 import { GITHUB_URL } from "../constants";
 import { useSelectedStack } from "../hooks/use-selected-stack";
 
 export const Home = () => {
-  const { stack, stackName } = useSelectedStack();
+  const { stackKey, stack, stackName } = useSelectedStack();
 
   return (
     <div className="fullMantineContainerHeight">
@@ -32,17 +33,33 @@ export const Home = () => {
             </Anchor>
             !
           </Text>
+          {stackKey === "" && (
+            <>
+              <Space h="lg" />
+              <Text>
+                Hey there, first-timer! Pick your favorite memorized deck stack
+                below to unlock all the cool features. You can switch it up
+                anytime using the selector at the bottom of the menu.
+              </Text>
+              <Space h="lg" />
+              <StackPicker />
+            </>
+          )}
         </Grid.Col>
         <Grid.Col span={12} style={{ height: "100%" }}>
-          <Space h="lg" />
-          <Text>
-            Your selected stack is{" "}
-            <Text fw={700} span>
-              {stackName}
-            </Text>
-          </Text>
-          <Space h="lg" />
-          <CardSpread degree={0.5} items={[...stack.order]} />
+          {stackKey !== "" && (
+            <>
+              <Space h="lg" />
+              <Text>
+                Your selected stack is{" "}
+                <Text fw={700} span>
+                  {stackName}
+                </Text>
+              </Text>
+              <Space h="lg" />{" "}
+              <CardSpread degree={0.5} items={[...stack.order]} />
+            </>
+          )}
         </Grid.Col>
       </Grid>
     </div>

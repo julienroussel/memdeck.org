@@ -26,6 +26,9 @@ importers:
       react-dom:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
+      react-error-boundary:
+        specifier: 6.0.3
+        version: 6.0.3(react@19.2.3)
       react-ga4:
         specifier: 2.1.0
         version: 2.1.0
@@ -1254,6 +1257,11 @@ packages:
     resolution: {integrity: sha512-yELu4WmLPw5Mr/lmeEpox5rw3RETacE++JgHqQzd2dg+YbJuat3jH4ingc+WPZhxaoFzdv9y33G+F7Nl5O0GBg==}
     peerDependencies:
       react: ^19.2.3
+
+  react-error-boundary@6.0.3:
+    resolution: {integrity: sha512-5guqn2UYpCFjE8UDMA8J7Kke+YSGBFrKQRJb3XdcaGZXYINZfQXgBt3ifY6MvjkN7QROc5A8zclyoSCwrcRUKw==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
 
   react-ga4@2.1.0:
     resolution: {integrity: sha512-ZKS7PGNFqqMd3PJ6+C2Jtz/o1iU9ggiy8Y8nUeksgVuvNISbmrQtJiZNvC/TjDsqD0QlU5Wkgs7i+w9+OjHhhQ==}
@@ -2600,6 +2608,10 @@ snapshots:
     dependencies:
       react: 19.2.3
       scheduler: 0.27.0
+
+  react-error-boundary@6.0.3(react@19.2.3):
+    dependencies:
+      react: 19.2.3
 
   react-ga4@2.1.0: {}
 
