@@ -1,8 +1,3 @@
-import { Title } from "@mantine/core";
+import { ComingSoon } from "../components/coming-soon";
 
-export const Shuffle = () => (
-  <>
-    <Title order={1}>Shuffle</Title>
-    <p>Yet to come...</p>
-  </>
-);
+export const Shuffle = () => <ComingSoon title="Shuffle" />;

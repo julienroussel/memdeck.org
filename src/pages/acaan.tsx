@@ -1,8 +1,3 @@
-import { Title } from "@mantine/core";
+import { ComingSoon } from "../components/coming-soon";
 
-export const Acaan = () => (
-  <>
-    <Title order={1}>ACAAN</Title>
-    <p>Yet to come...</p>
-  </>
-);
+export const Acaan = () => <ComingSoon title="ACAAN" />;

@@ -5,45 +5,22 @@ import "./styles.css";
 import { AppShell, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
-import ReactGA from "react-ga4";
 import { useLocation } from "react-router";
-import { onCLS, onINP, onLCP } from "web-vitals";
 import { ErrorBoundary } from "./components/error-boundary";
 import { Header } from "./components/header";
 import { NavLinks } from "./components/nav-links";
 import { StackPicker } from "./components/stack-picker";
 import { Routes } from "./routes";
+import { analytics } from "./services/analytics";
 
-ReactGA.initialize("G-36CZ6GEMKQ");
-
-const sendToGoogleAnalytics = ({
-  id,
-  name,
-  value,
-}: {
-  id: string;
-  name: string;
-  value: number;
-}) => {
-  ReactGA.send({
-    eventCategory: "Web Vitals",
-    eventAction: name,
-    eventValue: Math.round(name === "CLS" ? value * 1000 : value),
-    eventLabel: id,
-    nonInteraction: true,
-  });
-};
-
-onCLS(sendToGoogleAnalytics);
-onINP(sendToGoogleAnalytics);
-onLCP(sendToGoogleAnalytics);
+analytics.initialize();
 
 export const App = () => {
   const [opened, { toggle, close }] = useDisclosure();
   const location = useLocation();
 
   useEffect(() => {
-    ReactGA.send({ hitType: "pageview", page: location.pathname });
+    analytics.trackPageView(location.pathname);
   }, [location.pathname]);
 
   return (

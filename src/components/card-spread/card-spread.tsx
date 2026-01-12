@@ -46,20 +46,21 @@ export const CardSpread = ({
     }
     if (isNumberArray(items)) {
       return items.map((item, index) => (
-        // biome-ignore lint/a11y/useKeyWithClickEvents: we don't need a key with click events here
-        // biome-ignore lint/a11y/noNoninteractiveElementInteractions: we don't need a non-interactive element here
-        // biome-ignore lint/a11y/noStaticElementInteractions: we don't need a static element here
-        <div
+        <button
           className="cardSpreadCard"
           key={`number_${item}`}
           onClick={() => onItemClick?.(item, index)}
           style={{
-            ...{ cursor: hasCursor ? "pointer" : "default" },
+            cursor: hasCursor ? "pointer" : "default",
+            background: "none",
+            border: "none",
+            padding: 0,
             ...cssVarCounterStyle(index, items.length / 2, offset),
           }}
+          type="button"
         >
           <NumberCard number={item} />
-        </div>
+        </button>
       ));
     }
     return <p>Error: invalid parameters</p>;

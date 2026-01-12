@@ -1,8 +1,3 @@
-import { Title } from "@mantine/core";
+import { ComingSoon } from "../components/coming-soon";
 
-export const Toolbox = () => (
-  <>
-    <Title order={1}>Toolbox</Title>
-    <p>Yet to come...</p>
-  </>
-);
+export const Toolbox = () => <ComingSoon title="Toolbox" />;
