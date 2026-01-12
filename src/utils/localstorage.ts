@@ -5,7 +5,7 @@ import { readLocalStorageValue, useLocalStorage } from "@mantine/hooks";
  * Returns defaultValue if the key doesn't exist or on any error.
  * Logs errors in development mode for debugging.
  */
-const getStoredValue = <T>(key: string, defaultValue: T): T => {
+export const getStoredValue = <T>(key: string, defaultValue: T): T => {
   try {
     return (readLocalStorageValue({ key }) as T | undefined) ?? defaultValue;
   } catch (error) {

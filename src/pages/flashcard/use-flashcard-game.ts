@@ -14,7 +14,7 @@ import { useLocalDb } from "../../utils/localstorage";
 import type { FlashcardMode } from "./flashcard-options";
 import { getRandomDisplayMode, wrongAnswerNotification } from "./utils";
 
-const generateNewCardAndChoices = (
+export const generateNewCardAndChoices = (
   stackOrder: Stack
 ): { card: PlayingCardPosition; choices: PlayingCardPosition[] } => {
   const newCard = getRandomPlayingCard(stackOrder);
@@ -22,7 +22,7 @@ const generateNewCardAndChoices = (
   return { card: newCard, choices: newChoices };
 };
 
-const isCorrectAnswer = (
+export const isCorrectAnswer = (
   item: PlayingCard | number,
   card: PlayingCardPosition
 ): boolean =>
