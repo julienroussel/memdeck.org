@@ -22,5 +22,8 @@ jobs:
       - name: Validate
         run: pnpm run validate
 
+      - name: Run tests
+        run: pnpm run test
+
       - name: Build static files
         run: pnpm run build
