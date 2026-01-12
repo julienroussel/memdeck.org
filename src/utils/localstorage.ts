@@ -3,11 +3,15 @@ import { readLocalStorageValue, useLocalStorage } from "@mantine/hooks";
 /**
  * Retrieves a stored value from localStorage with error handling.
  * Returns defaultValue if the key doesn't exist or on any error.
+ * Logs errors in development mode for debugging.
  */
 const getStoredValue = <T>(key: string, defaultValue: T): T => {
   try {
     return (readLocalStorageValue({ key }) as T | undefined) ?? defaultValue;
-  } catch {
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn(`[localStorage] Failed to read key "${key}":`, error);
+    }
     return defaultValue;
   }
 };
