@@ -21,7 +21,13 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(gh pr create:*)"
+      "Bash(gh pr create:*)",
+      "Bash(pnpm run knip:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(git stash:*)",
+      "Bash(git pull:*)",
+      "Bash(pnpm run test)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []
