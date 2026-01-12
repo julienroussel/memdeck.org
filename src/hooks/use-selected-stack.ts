@@ -1,27 +1,50 @@
 import { SELECTED_STACK_LSK } from "../constants";
-import { type StackKey, stacks } from "../types/stacks";
+import { type StackKey, type StackValue, stacks } from "../types/stacks";
 import { useLocalDb } from "../utils/localstorage";
 
-const DEFAULT_STACK_KEY: StackKey = "mnemonica";
+type SelectedStackResult =
+  | {
+      stackKey: StackKey;
+      stack: StackValue;
+      stackOrder: StackValue["order"];
+      stackName: StackValue["name"];
+      setStackKey: (key: string) => void;
+    }
+  | {
+      stackKey: "";
+      stack: null;
+      stackOrder: null;
+      stackName: null;
+      setStackKey: (key: string) => void;
+    };
 
-export const useSelectedStack = () => {
-  const [selectedStackKey, setSelectedStackKey] = useLocalDb<StackKey>(
+export const useSelectedStack = (): SelectedStackResult => {
+  const [selectedStackKey, setSelectedStackKey] = useLocalDb<StackKey | "">(
     SELECTED_STACK_LSK,
-    DEFAULT_STACK_KEY
+    ""
   );
 
-  // Validate that the key exists in stacks, otherwise fall back to default
-  const validStackKey: StackKey =
-    selectedStackKey in stacks ? selectedStackKey : DEFAULT_STACK_KEY;
-  const selectedStack = stacks[validStackKey];
+  const setStackKey = (key: string) => {
+    setSelectedStackKey(key as StackKey);
+  };
+
+  // Validate that the key exists in stacks
+  if (selectedStackKey !== "" && selectedStackKey in stacks) {
+    const stack = stacks[selectedStackKey];
+    return {
+      stackKey: selectedStackKey,
+      stack,
+      stackOrder: stack.order,
+      stackName: stack.name,
+      setStackKey,
+    };
+  }
 
   return {
-    stackKey: validStackKey,
-    setStackKey: (key: StackKey) => {
-      setSelectedStackKey(key);
-    },
-    stack: selectedStack,
-    stackOrder: selectedStack.order,
-    stackName: selectedStack.name,
+    stackKey: "",
+    stack: null,
+    stackOrder: null,
+    stackName: null,
+    setStackKey,
   };
 };

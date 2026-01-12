@@ -1,4 +1,4 @@
-import { NavLink } from "@mantine/core";
+import { NavLink, Tooltip } from "@mantine/core";
 import {
   IconArrowsShuffle,
   IconExternalLink,
@@ -8,14 +8,14 @@ import {
   IconTools,
 } from "@tabler/icons-react";
 import { Link, useLocation } from "react-router";
+import { useSelectedStack } from "../hooks/use-selected-stack";
 
-type NavLinksProps = {
-  /** Callback fired when a navigation link is clicked */
-  onClick: () => void;
-};
+const DISABLED_TOOLTIP = "Select a stack first";
 
-export const NavLinks = ({ onClick }: NavLinksProps) => {
+export const NavLinks = ({ onClick }: { onClick: () => void }) => {
+  const { stackKey } = useSelectedStack();
   const location = useLocation();
+  const isDisabled = stackKey === "";
 
   return (
     <>
@@ -41,38 +41,66 @@ export const NavLinks = ({ onClick }: NavLinksProps) => {
         label="Tools"
         leftSection={<IconTools size={16} stroke={1.5} />}
       >
-        <NavLink
-          active={location.pathname === "/flashcard"}
-          component={Link}
-          label="Flashcard"
-          leftSection={<IconPlayCardStar size={16} stroke={1.5} />}
-          onClick={onClick}
-          to="/flashcard"
-        />
-        <NavLink
-          active={location.pathname === "/shuffle"}
-          component={Link}
-          label="Shuffle"
-          leftSection={<IconArrowsShuffle size={16} stroke={1.5} />}
-          onClick={onClick}
-          to="/shuffle"
-        />
-        <NavLink
-          active={location.pathname === "/acaan"}
-          component={Link}
-          label="ACAAN"
-          leftSection={<IconNumber size={16} stroke={1.5} />}
-          onClick={onClick}
-          to="/acaan"
-        />
-        <NavLink
-          active={location.pathname === "/toolbox"}
-          component={Link}
-          label="Toolbox"
-          leftSection={<IconTools size={16} stroke={1.5} />}
-          onClick={onClick}
-          to="/toolbox"
-        />
+        <Tooltip
+          disabled={!isDisabled}
+          label={DISABLED_TOOLTIP}
+          position="right"
+        >
+          <NavLink
+            active={location.pathname === "/flashcard"}
+            component={Link}
+            disabled={isDisabled}
+            label="Flashcard"
+            leftSection={<IconPlayCardStar size={16} stroke={1.5} />}
+            onClick={onClick}
+            to="/flashcard"
+          />
+        </Tooltip>
+        <Tooltip
+          disabled={!isDisabled}
+          label={DISABLED_TOOLTIP}
+          position="right"
+        >
+          <NavLink
+            active={location.pathname === "/shuffle"}
+            component={Link}
+            disabled={isDisabled}
+            label="Shuffle"
+            leftSection={<IconArrowsShuffle size={16} stroke={1.5} />}
+            onClick={onClick}
+            to="/shuffle"
+          />
+        </Tooltip>
+        <Tooltip
+          disabled={!isDisabled}
+          label={DISABLED_TOOLTIP}
+          position="right"
+        >
+          <NavLink
+            active={location.pathname === "/acaan"}
+            component={Link}
+            disabled={isDisabled}
+            label="ACAAN"
+            leftSection={<IconNumber size={16} stroke={1.5} />}
+            onClick={onClick}
+            to="/acaan"
+          />
+        </Tooltip>
+        <Tooltip
+          disabled={!isDisabled}
+          label={DISABLED_TOOLTIP}
+          position="right"
+        >
+          <NavLink
+            active={location.pathname === "/toolbox"}
+            component={Link}
+            disabled={isDisabled}
+            label="Toolbox"
+            leftSection={<IconTools size={16} stroke={1.5} />}
+            onClick={onClick}
+            to="/toolbox"
+          />
+        </Tooltip>
       </NavLink>
     </>
   );
