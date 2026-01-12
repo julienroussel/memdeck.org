@@ -12,6 +12,8 @@ import { IconSettings } from "@tabler/icons-react";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { NumberCard } from "../../components/number-card";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
+import type { PlayingCard } from "../../types/playingcard";
+import { cardItems, numberItems } from "../../types/typeguards";
 import { FlashcardOptions } from "./flashcard-options";
 import { Score } from "./score";
 import { useFlashcardGame } from "./use-flashcard-game";
@@ -55,16 +57,21 @@ export const Flashcard = () => {
           <Space h="xl" />
         </Grid.Col>
         <Grid.Col span={12} style={{ height: "100%" }}>
-          <CardSpread
-            canMove={false}
-            hasCursor={true}
-            items={
-              shouldShowCard
-                ? choices.map((c) => c.index)
-                : choices.map((c) => c.card)
-            }
-            onItemClick={submitAnswer}
-          />
+          {shouldShowCard ? (
+            <CardSpread
+              canMove={false}
+              hasCursor={true}
+              items={numberItems(choices.map((c) => c.index))}
+              onItemClick={(item: number) => submitAnswer(item)}
+            />
+          ) : (
+            <CardSpread
+              canMove={false}
+              hasCursor={true}
+              items={cardItems(choices.map((c) => c.card))}
+              onItemClick={(item: PlayingCard) => submitAnswer(item)}
+            />
+          )}
           <FlashcardOptions close={close} opened={options} />
         </Grid.Col>
       </Grid>

@@ -12,7 +12,7 @@ import { isPlayingCard } from "../../types/typeguards";
 import { generateUniqueCardChoices } from "../../utils/card-selection";
 import { useLocalDb } from "../../utils/localstorage";
 import type { FlashcardMode } from "./flashcard-options";
-import { TOGGLE, wrongAnswerNotification } from "./utils";
+import { getRandomDisplayMode, wrongAnswerNotification } from "./utils";
 
 const generateNewCardAndChoices = (
   stackOrder: Stack
@@ -57,8 +57,7 @@ export const useFlashcardGame = (stackOrder: Stack) => {
     setChoices(newChoices);
 
     if (mode === "bothmodes") {
-      const newDisplay = TOGGLE[Math.floor(Math.random() * TOGGLE.length)];
-      setDisplay(newDisplay ?? "card");
+      setDisplay(getRandomDisplayMode());
     }
   };
 

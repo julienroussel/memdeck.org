@@ -3,6 +3,7 @@ import { CardSpread } from "../components/card-spread/card-spread";
 import { StackPicker } from "../components/stack-picker";
 import { GITHUB_URL } from "../constants";
 import { useSelectedStack } from "../hooks/use-selected-stack";
+import { cardItems } from "../types/typeguards";
 
 export const Home = () => {
   const { stackKey, stack, stackName } = useSelectedStack();
@@ -56,8 +57,8 @@ export const Home = () => {
                   {stackName}
                 </Text>
               </Text>
-              <Space h="lg" />{" "}
-              <CardSpread degree={0.5} items={[...stack.order]} />
+              <Space h="lg" />
+              <CardSpread degree={0.5} items={cardItems([...stack.order])} />
             </>
           )}
         </Grid.Col>

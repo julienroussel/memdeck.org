@@ -1,13 +1,37 @@
 import type { PlayingCard } from "./playingcard";
 
-export type CardSpreadProps = {
-  items: PlayingCard[] | number[];
+type BaseCardSpreadProps = {
   canMove?: boolean;
   height?: string;
   degree?: number;
-  onItemClick?: (item: PlayingCard | number, index: number) => void;
   hasCursor?: boolean;
 };
+
+export type CardSpreadCardsProps = BaseCardSpreadProps & {
+  items: { type: "cards"; data: PlayingCard[] };
+  onItemClick?: (item: PlayingCard, index: number) => void;
+};
+
+type CardSpreadNumbersProps = BaseCardSpreadProps & {
+  items: { type: "numbers"; data: number[] };
+  onItemClick?: (item: number, index: number) => void;
+};
+
+export type CardSpreadProps = CardSpreadCardsProps | CardSpreadNumbersProps;
+
+export const cardItems = (
+  data: PlayingCard[]
+): { type: "cards"; data: PlayingCard[] } => ({
+  type: "cards",
+  data,
+});
+
+export const numberItems = (
+  data: number[]
+): { type: "numbers"; data: number[] } => ({
+  type: "numbers",
+  data,
+});
 
 export const isPlayingCard = (
   item: PlayingCard | number
@@ -17,14 +41,3 @@ export const isPlayingCard = (
   "suit" in item &&
   "rank" in item &&
   "image" in item;
-
-const isNumber = (item: PlayingCard | number): item is number =>
-  typeof item === "number";
-
-export const isPlayingCardArray = (
-  items: PlayingCard[] | number[]
-): items is PlayingCard[] => items.every(isPlayingCard);
-
-export const isNumberArray = (
-  items: PlayingCard[] | number[]
-): items is number[] => items.every(isNumber);
