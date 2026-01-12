@@ -9,27 +9,15 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSettings } from "@tabler/icons-react";
-import { Navigate } from "react-router";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { NumberCard } from "../../components/number-card";
-import { useSelectedStack } from "../../hooks/use-selected-stack";
-import type { Stack } from "../../types/stacks";
+import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { FlashcardOptions } from "./flashcard-options";
 import { Score } from "./score";
 import { useFlashcardGame } from "./use-flashcard-game";
 
 export const Flashcard = () => {
-  const { stackOrder } = useSelectedStack();
-
-  // Protected by RequireStack, but TypeScript needs explicit narrowing
-  if (!stackOrder) {
-    return <Navigate replace to="/" />;
-  }
-
-  return <FlashcardGame stackOrder={stackOrder} />;
-};
-
-const FlashcardGame = ({ stackOrder }: { stackOrder: Stack }) => {
+  const { stackOrder } = useRequiredStack();
   const { score, card, choices, shouldShowCard, submitAnswer } =
     useFlashcardGame(stackOrder);
   const [options, { open, close }] = useDisclosure(false);
