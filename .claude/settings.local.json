@@ -15,7 +15,11 @@
       "Bash(cat:*)",
       "Bash(pnpm run check:*)",
       "Bash(grep:*)",
-      "Bash(pnpm run validate:*)"
+      "Bash(pnpm run validate:*)",
+      "Bash(pnpm run build)",
+      "Bash(pnpm add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
