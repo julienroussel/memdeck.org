@@ -25,7 +25,7 @@
     "build": "vite build",
     "typecheck": "tsc -b",
     "preview": "vite preview",
-    "test": "echo wait for it!",
+    "test": "vitest run",
     "fta": "fta src",
     "validate": "pnpm run knip && pnpm run lint && pnpm run typecheck && pnpm run fta",
     "prepare": "husky"
@@ -47,7 +47,8 @@
     "postcss-simple-vars": "7.0.1",
     "typescript": "5.9.3",
     "ultracite": "7.0.11",
-    "vite": "7.3.1"
+    "vite": "7.3.1",
+    "vitest": "4.0.16"
   },
   "dependencies": {
     "@mantine/core": "8.3.12",
