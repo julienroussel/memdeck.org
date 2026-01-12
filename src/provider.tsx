@@ -1,22 +1,53 @@
 import {
+  Button,
+  Center,
   ColorSchemeScript,
   localStorageColorSchemeManager,
   MantineProvider,
+  Stack,
+  Text,
+  Title,
 } from "@mantine/core";
 import { useColorScheme } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
+import { ErrorBoundary } from "react-error-boundary";
 import { HashRouter } from "react-router";
 import { App } from "./app";
+import { analytics } from "./services/analytics";
 
 const colorSchemeManager = localStorageColorSchemeManager({
   key: "memdeck-app-color-scheme",
 });
 
+const RootErrorFallback = ({ error }: { error: Error }) => (
+  <Center h="100vh" p="md">
+    <Stack align="center" gap="md">
+      <Title order={2}>Application Error</Title>
+      <Text c="dimmed" maw={400} ta="center">
+        A critical error occurred. Please refresh the page to continue.
+      </Text>
+      <Text c="red" ff="monospace" size="sm">
+        {error.message}
+      </Text>
+      <Button onClick={() => window.location.reload()} variant="light">
+        Refresh Page
+      </Button>
+    </Stack>
+  </Center>
+);
+
+const handleRootError = (error: Error) => {
+  analytics.trackError(error, "Root");
+};
+
 export const Provider = () => {
   const colorScheme = useColorScheme();
 
   return (
-    <>
+    <ErrorBoundary
+      FallbackComponent={RootErrorFallback}
+      onError={handleRootError}
+    >
       <ColorSchemeScript defaultColorScheme={colorScheme} />
       <MantineProvider
         colorSchemeManager={colorSchemeManager}
@@ -27,6 +58,6 @@ export const Provider = () => {
           <App />
         </HashRouter>
       </MantineProvider>
-    </>
+    </ErrorBoundary>
   );
 };

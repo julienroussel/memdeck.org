@@ -3,3 +3,12 @@ export const SELECTED_STACK_LSK = "memdeck-app-stack";
 export const FLASHCARD_OPTION_LSK = "memdeck-app-flashcard-option";
 export const BLANK_CARD_IMAGE = "cards/blank_card.svg";
 export const NOTIFICATION_CLOSE_TIMEOUT = 2000;
+
+/** Total number of cards in a standard deck */
+export const DECK_SIZE = 52;
+
+/** Maximum attempts to find a unique random card before falling back to linear search */
+export const MAX_RANDOM_ATTEMPTS = 100;
+
+/** Default number of choices shown in flashcard exercises */
+export const DEFAULT_CHOICES_COUNT = 5;

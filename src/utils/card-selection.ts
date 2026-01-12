@@ -1,3 +1,4 @@
+import { DEFAULT_CHOICES_COUNT } from "../constants";
 import {
   getUniqueRandomCard,
   type PlayingCardPosition,
@@ -10,13 +11,13 @@ import {
  *
  * @param stack - The memorized deck stack to pick cards from
  * @param initialChoices - Cards to include in the result (e.g., the target card)
- * @param totalChoices - Total number of choices to generate (default: 5)
+ * @param totalChoices - Total number of choices to generate (default: DEFAULT_CHOICES_COUNT)
  * @returns Array of unique card positions
  */
 export const generateUniqueCardChoices = (
   stack: Stack,
   initialChoices: PlayingCardPosition[] = [],
-  totalChoices = 5
+  totalChoices = DEFAULT_CHOICES_COUNT
 ): PlayingCardPosition[] => {
   const choices = [...initialChoices];
 

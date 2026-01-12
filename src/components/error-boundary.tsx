@@ -1,6 +1,7 @@
 import { Button, Center, Stack, Text, Title } from "@mantine/core";
 import type { ReactNode } from "react";
 import { ErrorBoundary as ReactErrorBoundary } from "react-error-boundary";
+import { analytics } from "../services/analytics";
 
 const ErrorFallback = ({
   error,
@@ -25,8 +26,15 @@ const ErrorFallback = ({
   </Center>
 );
 
+const handleError = (
+  error: Error,
+  info: { componentStack?: string | null }
+) => {
+  analytics.trackError(error, info.componentStack ?? undefined);
+};
+
 export const ErrorBoundary = ({ children }: { children: ReactNode }) => (
-  <ReactErrorBoundary FallbackComponent={ErrorFallback}>
+  <ReactErrorBoundary FallbackComponent={ErrorFallback} onError={handleError}>
     {children}
   </ReactErrorBoundary>
 );

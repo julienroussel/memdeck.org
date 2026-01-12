@@ -1,16 +1,20 @@
 import { Flex, Image } from "@mantine/core";
-import { useState } from "react";
+import type { KeyboardEvent } from "react";
+import { memo, useState } from "react";
 import type {
   CardSpreadCardsProps,
   CardSpreadProps,
 } from "../../types/typeguards";
+import { formatCardName } from "../../utils/card-formatting";
 import { cssVarCounterStyle } from "../../utils/style";
 import { NumberCard } from "../number-card";
 
 const isCardsProps = (props: CardSpreadProps): props is CardSpreadCardsProps =>
   props.items.type === "cards";
 
-export const CardSpread = (props: CardSpreadProps) => {
+const KEYBOARD_STEP = 3;
+
+export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
   const {
     items,
     canMove = true,
@@ -30,10 +34,31 @@ export const CardSpread = (props: CardSpreadProps) => {
     }
   };
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!canMove) {
+      return;
+    }
+
+    const maxOffset = items.data.length / 2;
+    switch (event.key) {
+      case "ArrowLeft":
+        event.preventDefault();
+        setOffset((prev) => Math.max(prev - KEYBOARD_STEP, -maxOffset));
+        break;
+      case "ArrowRight":
+        event.preventDefault();
+        setOffset((prev) => Math.min(prev + KEYBOARD_STEP, maxOffset));
+        break;
+      default:
+        break;
+    }
+  };
+
   const renderItems = () => {
     if (isCardsProps(props)) {
       return props.items.data.map((item, index) => (
         <Image
+          alt={formatCardName(item)}
           className="cardSpreadCard"
           key={`${item.suit}_${item.rank}`}
           onClick={() => props.onItemClick?.(item, index)}
@@ -48,6 +73,7 @@ export const CardSpread = (props: CardSpreadProps) => {
     }
     return props.items.data.map((item, index) => (
       <button
+        aria-label={`Select position ${item}`}
         className="cardSpreadCard"
         key={`number_${item}`}
         onClick={() => props.onItemClick?.(item, index)}
@@ -68,9 +94,11 @@ export const CardSpread = (props: CardSpreadProps) => {
   return (
     <Flex
       align="start"
+      aria-label="Card spread - use arrow keys to navigate"
       className="cardSpreadContainer"
       justify="center"
       mih={height}
+      onKeyDown={handleKeyDown}
       onMouseMove={(e) => {
         if (canMove === true && e.buttons === 1) {
           updateOffset(e.nativeEvent.movementX);
@@ -83,9 +111,11 @@ export const CardSpread = (props: CardSpreadProps) => {
           setTouchLastPosition(touchPosition);
         }
       }}
+      role="listbox"
       style={{ "--degree": `${degree}deg` }}
+      tabIndex={canMove ? 0 : undefined}
     >
       {renderItems()}
     </Flex>
   );
-};
+});

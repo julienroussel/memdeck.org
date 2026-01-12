@@ -1,3 +1,4 @@
+import { DECK_SIZE, MAX_RANDOM_ATTEMPTS } from "../constants";
 import type { PlayingCard } from "./playingcard";
 import { aronson } from "./stacks/aronson";
 import { memorandum } from "./stacks/memorandum";
@@ -39,7 +40,7 @@ export type PlayingCardPosition = {
 };
 
 export const getRandomPlayingCard = (stack: Stack): PlayingCardPosition => {
-  const randomIndex = Math.floor(Math.random() * 52);
+  const randomIndex = Math.floor(Math.random() * DECK_SIZE);
   return {
     index: randomIndex + 1,
     card: stack[randomIndex] ?? stack[0],
@@ -52,8 +53,8 @@ export const getUniqueRandomCard = (
 ): PlayingCardPosition => {
   const existingIndices = new Set(existingChoices.map((c) => c.index));
 
-  // Try random selection up to 100 times
-  for (let attempt = 0; attempt < 100; attempt++) {
+  // Try random selection before falling back to linear search
+  for (let attempt = 0; attempt < MAX_RANDOM_ATTEMPTS; attempt++) {
     const randomCard = getRandomPlayingCard(stack);
     if (!existingIndices.has(randomCard.index)) {
       return randomCard;
@@ -61,12 +62,14 @@ export const getUniqueRandomCard = (
   }
 
   // Fallback: linear search for guaranteed unique card
-  for (let i = 0; i < 52; i++) {
+  for (let i = 0; i < DECK_SIZE; i++) {
     const index = i + 1;
     if (!existingIndices.has(index)) {
       return { index, card: stack[i] ?? stack[0] };
     }
   }
 
-  throw new Error("Unable to find unique card - all 52 cards already selected");
+  throw new Error(
+    `Unable to find unique card - all ${DECK_SIZE} cards already selected`
+  );
 };

@@ -30,4 +30,58 @@ export const analytics = {
   trackPageView: (path: string) => {
     ReactGA.send({ hitType: "pageview", page: path });
   },
+
+  trackEvent: (category: string, action: string, label?: string) => {
+    ReactGA.event({ category, action, label });
+  },
+
+  // Stack selection events
+  trackStackSelected: (stackName: string) => {
+    ReactGA.event({
+      category: "Stack",
+      action: "Selected",
+      label: stackName,
+    });
+  },
+
+  // Flashcard game events
+  trackFlashcardAnswer: (correct: boolean, stackName: string) => {
+    ReactGA.event({
+      category: "Flashcard",
+      action: correct ? "Correct Answer" : "Wrong Answer",
+      label: stackName,
+    });
+  },
+
+  trackFlashcardModeChanged: (mode: string) => {
+    ReactGA.event({
+      category: "Flashcard",
+      action: "Mode Changed",
+      label: mode,
+    });
+  },
+
+  // Feature usage events
+  trackFeatureUsed: (feature: string) => {
+    ReactGA.event({
+      category: "Feature",
+      action: "Used",
+      label: feature,
+    });
+  },
+
+  // Error tracking
+  trackError: (error: Error, componentStack?: string) => {
+    ReactGA.event({
+      category: "Error",
+      action: error.name,
+      label: error.message,
+    });
+    // Also send as exception for better GA4 error tracking
+    ReactGA.send({
+      hitType: "exception",
+      exDescription: `${error.name}: ${error.message}${componentStack ? ` | ${componentStack.slice(0, 100)}` : ""}`,
+      exFatal: false,
+    });
+  },
 };

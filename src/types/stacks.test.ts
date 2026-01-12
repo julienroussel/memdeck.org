@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { DECK_SIZE } from "../constants";
 import {
   getRandomPlayingCard,
   getUniqueRandomCard,
@@ -13,7 +14,7 @@ describe("getRandomPlayingCard", () => {
     const result = getRandomPlayingCard(testStack);
 
     expect(result.index).toBeGreaterThanOrEqual(1);
-    expect(result.index).toBeLessThanOrEqual(52);
+    expect(result.index).toBeLessThanOrEqual(DECK_SIZE);
     expect(result.card).toBeDefined();
     expect(result.card.suit).toBeDefined();
     expect(result.card.rank).toBeDefined();
@@ -35,7 +36,7 @@ describe("getUniqueRandomCard", () => {
     const result = getUniqueRandomCard(testStack, []);
 
     expect(result.index).toBeGreaterThanOrEqual(1);
-    expect(result.index).toBeLessThanOrEqual(52);
+    expect(result.index).toBeLessThanOrEqual(DECK_SIZE);
     expect(result.card).toBeDefined();
   });
 
@@ -84,14 +85,14 @@ describe("getUniqueRandomCard", () => {
     vi.restoreAllMocks();
   });
 
-  it("throws error when all 52 cards are already selected", () => {
+  it("throws error when all cards are already selected", () => {
     const allCards: PlayingCardPosition[] = [];
-    for (let i = 1; i <= 52; i++) {
+    for (let i = 1; i <= DECK_SIZE; i++) {
       allCards.push({ index: i, card: testStack[i - 1] });
     }
 
     expect(() => getUniqueRandomCard(testStack, allCards)).toThrow(
-      "Unable to find unique card - all 52 cards already selected"
+      `Unable to find unique card - all ${DECK_SIZE} cards already selected`
     );
   });
 
@@ -99,14 +100,14 @@ describe("getUniqueRandomCard", () => {
     vi.spyOn(Math, "random").mockReturnValue(0);
 
     const existingChoices: PlayingCardPosition[] = [];
-    for (let i = 1; i <= 51; i++) {
+    for (let i = 1; i <= DECK_SIZE - 1; i++) {
       existingChoices.push({ index: i, card: testStack[i - 1] });
     }
 
     const result = getUniqueRandomCard(testStack, existingChoices);
 
-    expect(result.index).toBe(52);
-    expect(result.card).toBe(testStack[51]);
+    expect(result.index).toBe(DECK_SIZE);
+    expect(result.card).toBe(testStack[DECK_SIZE - 1]);
 
     vi.restoreAllMocks();
   });
