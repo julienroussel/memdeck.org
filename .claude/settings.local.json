@@ -35,7 +35,14 @@
       "Bash(pnpm test:coverage:*)",
       "Bash(ls:*)",
       "Bash(pnpm run fta:*)",
-      "Bash(pnpm test:*)"
+      "Bash(pnpm test:*)",
+      "Bash(npx playwright config)",
+      "Bash(npx playwright --version)",
+      "Bash(pnpm list:*)",
+      "Bash(pnpm run test:e2e:*)",
+      "Bash(pnpm exec playwright test:*)",
+      "Bash(curl:*)",
+      "Bash(pnpm run dev:*)"
     ],
     "deny": [],
     "ask": []
