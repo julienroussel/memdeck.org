@@ -19,7 +19,7 @@ const colorSchemeManager = localStorageColorSchemeManager({
   key: "memdeck-app-color-scheme",
 });
 
-const RootErrorFallback = ({ error }: { error: Error }) => (
+const RootErrorFallback = ({ error }: { error: unknown }) => (
   <Center h="100vh" p="md">
     <Stack align="center" gap="md">
       <Title order={2}>Application Error</Title>
@@ -27,7 +27,7 @@ const RootErrorFallback = ({ error }: { error: Error }) => (
         A critical error occurred. Please refresh the page to continue.
       </Text>
       <Text c="red" ff="monospace" size="sm">
-        {error.message}
+        {error instanceof Error ? error.message : String(error)}
       </Text>
       <Button onClick={() => window.location.reload()} variant="light">
         Refresh Page
@@ -36,8 +36,9 @@ const RootErrorFallback = ({ error }: { error: Error }) => (
   </Center>
 );
 
-const handleRootError = (error: Error) => {
-  analytics.trackError(error, "Root");
+const handleRootError = (error: unknown) => {
+  const errorObj = error instanceof Error ? error : new Error(String(error));
+  analytics.trackError(errorObj, "Root");
 };
 
 export const Provider = () => {
