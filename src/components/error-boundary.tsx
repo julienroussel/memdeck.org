@@ -7,7 +7,7 @@ const ErrorFallback = ({
   error,
   resetErrorBoundary,
 }: {
-  error: Error;
+  error: unknown;
   resetErrorBoundary: () => void;
 }) => (
   <Center h="100%">
@@ -17,7 +17,7 @@ const ErrorFallback = ({
         An unexpected error occurred. Please try again or refresh the page.
       </Text>
       <Text c="red" ff="monospace" size="sm">
-        {error.message}
+        {error instanceof Error ? error.message : String(error)}
       </Text>
       <Button onClick={resetErrorBoundary} variant="light">
         Try again
@@ -27,10 +27,11 @@ const ErrorFallback = ({
 );
 
 const handleError = (
-  error: Error,
+  error: unknown,
   info: { componentStack?: string | null }
 ) => {
-  analytics.trackError(error, info.componentStack ?? undefined);
+  const errorObj = error instanceof Error ? error : new Error(String(error));
+  analytics.trackError(errorObj, info.componentStack ?? undefined);
 };
 
 export const ErrorBoundary = ({ children }: { children: ReactNode }) => (
