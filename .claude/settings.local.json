@@ -42,7 +42,10 @@
       "Bash(pnpm run test:e2e:*)",
       "Bash(pnpm exec playwright test:*)",
       "Bash(curl:*)",
-      "Bash(pnpm run dev:*)"
+      "Bash(pnpm run dev:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh run view:*)",
+      "Bash(git fetch:*)"
     ],
     "deny": [],
     "ask": []
