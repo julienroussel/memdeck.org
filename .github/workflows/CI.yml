@@ -27,3 +27,6 @@ jobs:
 
       - name: Build static files
         run: pnpm run build
+
+      - name: Run Lighthouse CI
+        run: pnpm run lighthouse
