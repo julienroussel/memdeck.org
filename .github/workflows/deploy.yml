@@ -34,6 +34,8 @@ jobs:
 
       - name: Run Lighthouse CI
         run: pnpm run lighthouse
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload static files as artifact
         id: deployment
