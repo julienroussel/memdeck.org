@@ -1,6 +1,7 @@
 import { notifications } from "@mantine/notifications";
 import { useReducer } from "react";
 import { FLASHCARD_OPTION_LSK } from "../../constants";
+import { eventBus } from "../../services/event-bus";
 import type { PlayingCard } from "../../types/playingcard";
 import { shuffle } from "../../types/shuffle";
 import {
@@ -116,10 +117,7 @@ export const useFlashcardGame = (stackOrder: Stack, stackName: string) => {
       dispatch({ type: "WRONG_ANSWER" });
     }
 
-    // Lazy import analytics to avoid circular deps and keep hook testable
-    import("../../services/analytics").then(({ analytics }) => {
-      analytics.trackFlashcardAnswer(correct, stackName);
-    });
+    eventBus.emit.FLASHCARD_ANSWER({ correct, stackName });
   };
 
   const shouldShowCard =

@@ -1,6 +1,7 @@
 import { Center, NativeSelect } from "@mantine/core";
 import { memo, useMemo } from "react";
 import { useSelectedStack } from "../hooks/use-selected-stack";
+import { eventBus } from "../services/event-bus";
 import { stacks } from "../types/stacks";
 
 const availableStacks = Object.entries(stacks)
@@ -26,9 +27,7 @@ export const StackPicker = memo(function StackPicker() {
     if (value) {
       const selectedStack = availableStacks.find((s) => s.value === value);
       if (selectedStack) {
-        import("../services/analytics").then(({ analytics }) => {
-          analytics.trackStackSelected(selectedStack.label);
-        });
+        eventBus.emit.STACK_SELECTED({ stackName: selectedStack.label });
       }
     }
   };
