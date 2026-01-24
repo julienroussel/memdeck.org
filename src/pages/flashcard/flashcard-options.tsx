@@ -1,5 +1,6 @@
 import { Group, Modal, Radio, Stack, Text, Title } from "@mantine/core";
 import { FLASHCARD_OPTION_LSK } from "../../constants";
+import { eventBus } from "../../services/event-bus";
 import { useLocalDb } from "../../utils/localstorage";
 
 export type FlashcardMode = "cardonly" | "bothmodes" | "numberonly";
@@ -43,9 +44,7 @@ export const FlashcardOptions = ({
 
   const handleModeChange = (value: string) => {
     setOption(value as FlashcardMode);
-    import("../../services/analytics").then(({ analytics }) => {
-      analytics.trackFlashcardModeChanged(value);
-    });
+    eventBus.emit.FLASHCARD_MODE_CHANGED({ mode: value });
   };
 
   return (

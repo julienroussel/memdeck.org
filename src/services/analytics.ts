@@ -1,5 +1,6 @@
 import ReactGA from "react-ga4";
 import { onCLS, onINP, onLCP } from "web-vitals";
+import { eventBus } from "./event-bus";
 
 const TRACKING_ID = "G-36CZ6GEMKQ";
 
@@ -19,12 +20,27 @@ const trackWebVital = ({ id, name, value }: WebVitalMetric) => {
   });
 };
 
+const subscribeToEvents = () => {
+  eventBus.subscribe.STACK_SELECTED(({ stackName }) => {
+    analytics.trackStackSelected(stackName);
+  });
+
+  eventBus.subscribe.FLASHCARD_ANSWER(({ correct, stackName }) => {
+    analytics.trackFlashcardAnswer(correct, stackName);
+  });
+
+  eventBus.subscribe.FLASHCARD_MODE_CHANGED(({ mode }) => {
+    analytics.trackFlashcardModeChanged(mode);
+  });
+};
+
 export const analytics = {
   initialize: () => {
     ReactGA.initialize(TRACKING_ID);
     onCLS(trackWebVital);
     onINP(trackWebVital);
     onLCP(trackWebVital);
+    subscribeToEvents();
   },
 
   trackPageView: (path: string) => {
