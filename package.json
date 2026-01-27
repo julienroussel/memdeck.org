@@ -13,7 +13,7 @@
     "url": "git+https://github.com/julienroussel/memdeck.org.git"
   },
   "author": "Julien Roussel",
-  "packageManager": "pnpm@10.28.1",
+  "packageManager": "pnpm@10.28.2",
   "engines": {
     "node": ">=25",
     "pnpm": ">=10"
@@ -49,13 +49,13 @@
     "globals": "17.1.0",
     "husky": "9.1.7",
     "knip": "5.82.1",
-    "lefthook": "2.0.15",
+    "lefthook": "2.0.16",
     "lint-staged": "16.2.7",
     "postcss": "8.5.6",
     "postcss-preset-mantine": "1.18.0",
     "postcss-simple-vars": "7.0.1",
     "typescript": "5.9.3",
-    "ultracite": "7.0.12",
+    "ultracite": "7.1.1",
     "vite": "7.3.1",
     "vitest": "4.0.18"
   },
