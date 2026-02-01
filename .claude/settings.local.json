@@ -45,7 +45,8 @@
       "Bash(pnpm run dev:*)",
       "Bash(gh pr view:*)",
       "Bash(gh run view:*)",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "Bash(gh pr checks:*)"
     ],
     "deny": [],
     "ask": []
