@@ -1,6 +1,10 @@
 import { Center, Loader } from "@mantine/core";
 import { lazy, Suspense } from "react";
-import { Route as RouterRoute, Routes as RouterRoutes } from "react-router";
+import {
+  Navigate,
+  Route as RouterRoute,
+  Routes as RouterRoutes,
+} from "react-router";
 import { RequireStack } from "./components/require-stack";
 
 const Home = lazy(() =>
@@ -73,5 +77,6 @@ export const Routes = () => (
       }
       path="/toolbox"
     />
+    <RouterRoute element={<Navigate replace to="/" />} path="*" />
   </RouterRoutes>
 );
