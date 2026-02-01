@@ -4,7 +4,6 @@ import { test } from "./fixtures/test-setup";
 // URL patterns
 const HOME_URL_PATTERN = /#\/$/;
 const RESOURCES_URL_PATTERN = /#\/resources$/;
-const SHUFFLE_URL_PATTERN = /#\/shuffle$/;
 const ACAAN_URL_PATTERN = /#\/acaan$/;
 const TOOLBOX_URL_PATTERN = /#\/toolbox$/;
 
@@ -28,29 +27,6 @@ test.describe("Pages & Features", () => {
     await expect(page).toHaveURL(RESOURCES_URL_PATTERN);
 
     // Verify page content loads (may contain links or content)
-    await expect(page.locator("body")).toBeVisible();
-  });
-
-  test("should load shuffle page", async ({ page }) => {
-    // Navigate to shuffle
-    await page.locator("a:has-text('Shuffle')").first().click();
-    await page.waitForLoadState("networkidle");
-
-    // Verify URL changed
-    await expect(page).toHaveURL(SHUFFLE_URL_PATTERN);
-
-    // Verify page is not empty
-    await expect(page.locator("body")).toBeVisible();
-  });
-
-  test("should display coming soon message on shuffle page", async ({
-    page,
-  }) => {
-    // Navigate to shuffle
-    await page.locator("a:has-text('Shuffle')").first().click();
-    await page.waitForLoadState("networkidle");
-
-    // Page should load successfully
     await expect(page.locator("body")).toBeVisible();
   });
 

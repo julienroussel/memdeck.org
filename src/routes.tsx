@@ -12,9 +12,6 @@ const Resources = lazy(() =>
 const Flashcard = lazy(() =>
   import("./pages/flashcard/flashcard").then((m) => ({ default: m.Flashcard }))
 );
-const Shuffle = lazy(() =>
-  import("./pages/shuffle").then((m) => ({ default: m.Shuffle }))
-);
 const Acaan = lazy(() =>
   import("./pages/acaan").then((m) => ({ default: m.Acaan }))
 );
@@ -55,16 +52,6 @@ export const Routes = () => (
         </Suspense>
       }
       path="/flashcard"
-    />
-    <RouterRoute
-      element={
-        <Suspense fallback={<PageLoader />}>
-          <RequireStack>
-            <Shuffle />
-          </RequireStack>
-        </Suspense>
-      }
-      path="/shuffle"
     />
     <RouterRoute
       element={
