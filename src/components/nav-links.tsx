@@ -1,6 +1,5 @@
 import { NavLink, Tooltip } from "@mantine/core";
 import {
-  IconArrowsShuffle,
   IconExternalLink,
   IconHome2,
   IconNumber,
@@ -54,21 +53,6 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
             leftSection={<IconPlayCardStar size={16} stroke={1.5} />}
             onClick={onClick}
             to="/flashcard"
-          />
-        </Tooltip>
-        <Tooltip
-          disabled={!isDisabled}
-          label={DISABLED_TOOLTIP}
-          position="right"
-        >
-          <NavLink
-            active={location.pathname === "/shuffle"}
-            component={Link}
-            disabled={isDisabled}
-            label="Shuffle"
-            leftSection={<IconArrowsShuffle size={16} stroke={1.5} />}
-            onClick={onClick}
-            to="/shuffle"
           />
         </Tooltip>
         <Tooltip

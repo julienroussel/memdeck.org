@@ -5,7 +5,6 @@ import { test } from "./fixtures/test-setup";
 const HOME_URL_PATTERN = /#\/$/;
 const RESOURCES_URL_PATTERN = /#\/resources$/;
 const FLASHCARD_URL_PATTERN = /#\/flashcard$/;
-const SHUFFLE_URL_PATTERN = /#\/shuffle$/;
 const ACAAN_URL_PATTERN = /#\/acaan$/;
 const TOOLBOX_URL_PATTERN = /#\/toolbox$/;
 
@@ -24,14 +23,7 @@ test.describe("Navigation", () => {
   test("should display navbar with all main navigation links", async ({
     page,
   }) => {
-    const navLinks = [
-      "Home",
-      "Resources",
-      "Flashcard",
-      "Shuffle",
-      "ACAAN",
-      "Toolbox",
-    ];
+    const navLinks = ["Home", "Resources", "Flashcard", "ACAAN", "Toolbox"];
 
     for (const link of navLinks) {
       const linkElement = page.locator(`a:has-text("${link}")`);
@@ -74,21 +66,6 @@ test.describe("Navigation", () => {
     // Verify we're on flashcard page
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
     await expect(page.locator("text=Flashcard")).toBeVisible();
-  });
-
-  test("should navigate to shuffle page when stack is selected", async ({
-    page,
-  }) => {
-    // Select a stack first
-    await page.locator("select").first().selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
-
-    // Click on shuffle link
-    await page.locator("a:has-text('Shuffle')").first().click();
-    await page.waitForLoadState("networkidle");
-
-    // Verify we're on shuffle page
-    await expect(page).toHaveURL(SHUFFLE_URL_PATTERN);
   });
 
   test("should navigate to ACAAN page when stack is selected", async ({
