@@ -32,3 +32,6 @@ blob-report/
 
 # Lighthouse CI
 .lighthouseci/
+
+# Task/PRD files
+tasks/
