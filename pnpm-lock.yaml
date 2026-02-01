@@ -94,8 +94,8 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
       ultracite:
-        specifier: 7.1.1
-        version: 7.1.1(oxlint@1.38.0)
+        specifier: 7.1.2
+        version: 7.1.2(oxlint@1.38.0)
       vite:
         specifier: 7.3.1
         version: 7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.6))(yaml@2.8.2)
@@ -1210,6 +1210,10 @@ packages:
     resolution: {integrity: sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==}
     engines: {node: '>=20'}
 
+  commander@14.0.3:
+    resolution: {integrity: sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==}
+    engines: {node: '>=20'}
+
   compressible@2.0.18:
     resolution: {integrity: sha512-AF3r7P5dWxL8MxyITRMlORQNaOA2IkAFaTr4k7BUumjPtRpGDTZpl0Pb1XCO6JeDCBdp126Cgs9sMxqSjgYyRg==}
     engines: {node: '>= 0.6'}
@@ -1853,8 +1857,8 @@ packages:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
 
-  lru-cache@11.2.4:
-    resolution: {integrity: sha512-B5Y16Jr9LB9dHVkh6ZevG+vAbOsNOYCX+sXvFWFu7B3Iz5mijW3zdbMyhsh8ANd2mSWBYdJgnqi+mL7/LrOPYg==}
+  lru-cache@11.2.5:
+    resolution: {integrity: sha512-vFrFJkWtJvJnD5hg+hJvVE8Lh/TcMzKnTgCWmtBipwI5yLX/iX+5UB2tfuyODF5E7k9xEzMdYgGqaSb1c0c5Yw==}
     engines: {node: 20 || >=22}
 
   lru-cache@5.1.1:
@@ -2600,8 +2604,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  ultracite@7.1.1:
-    resolution: {integrity: sha512-9qScPB2/8XobaC5Xf99Z9ZP1oFWNihzT1tteKkPGkKyWevSXaWVRS9oFGUxXW/pxrmHEwIU9b03NJgrHZn6P+Q==}
+  ultracite@7.1.2:
+    resolution: {integrity: sha512-9V3vh65wUljbm7KZsZIwmNldzO0T0ESe5YULgH8i80mM8O34+cTCYTELpQLVl4F06QAjwIGTUTHXGUK9UwZWcg==}
     hasBin: true
     peerDependencies:
       oxlint: ^1.0.0
@@ -3897,6 +3901,8 @@ snapshots:
 
   commander@14.0.2: {}
 
+  commander@14.0.3: {}
+
   compressible@2.0.18:
     dependencies:
       mime-db: 1.54.0
@@ -4597,7 +4603,7 @@ snapshots:
     dependencies:
       js-tokens: 4.0.0
 
-  lru-cache@11.2.4: {}
+  lru-cache@11.2.5: {}
 
   lru-cache@5.1.1:
     dependencies:
@@ -4812,7 +4818,7 @@ snapshots:
 
   path-scurry@2.0.1:
     dependencies:
-      lru-cache: 11.2.4
+      lru-cache: 11.2.5
       minipass: 7.1.2
 
   path-to-regexp@0.1.12: {}
@@ -5359,10 +5365,10 @@ snapshots:
 
   typescript@5.9.3: {}
 
-  ultracite@7.1.1(oxlint@1.38.0):
+  ultracite@7.1.2(oxlint@1.38.0):
     dependencies:
       '@clack/prompts': 0.11.0
-      commander: 14.0.2
+      commander: 14.0.3
       deepmerge: 4.3.1
       glob: 13.0.0
       jsonc-parser: 3.3.1
