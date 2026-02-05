@@ -7,13 +7,15 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { useAcaanTimer } from "../../hooks/use-acaan-timer";
+import { type TimerDuration, useAcaanTimer } from "../../hooks/use-acaan-timer";
 
-const TIMER_DURATION_OPTIONS: { label: string; value: string }[] = [
-  { label: "10s", value: "10" },
-  { label: "15s", value: "15" },
-  { label: "30s", value: "30" },
-];
+const VALID_DURATIONS: readonly TimerDuration[] = [10, 15, 30];
+
+const TIMER_DURATION_OPTIONS: { label: string; value: string }[] =
+  VALID_DURATIONS.map((d) => ({ label: `${d}s`, value: String(d) }));
+
+const isValidDuration = (value: number): value is TimerDuration =>
+  VALID_DURATIONS.includes(value as TimerDuration);
 
 export const AcaanOptions = ({
   opened,
@@ -30,7 +32,7 @@ export const AcaanOptions = ({
 
   const handleDurationChange = (value: string) => {
     const numValue = Number(value);
-    if (numValue === 10 || numValue === 15 || numValue === 30) {
+    if (isValidDuration(numValue)) {
       setTimerDuration(numValue);
     }
   };

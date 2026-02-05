@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { ACAAN_TRAINER_TIMER_LSK } from "../constants";
 import { useLocalDb } from "../utils/localstorage";
 
-type TimerDuration = 10 | 15 | 30;
+export type TimerDuration = 10 | 15 | 30;
 
 type TimerSettings = {
   enabled: boolean;

@@ -21,6 +21,9 @@ import { Score } from "../flashcard/score";
 import { AcaanOptions } from "./acaan-options";
 import { useAcaanGame } from "./use-acaan-game";
 
+/** Maximum valid cut depth (deck size - 1) */
+const MAX_CUT_DEPTH = DECK_SIZE - 1;
+
 const getTimerColor = (timeRemaining: number): string => {
   if (timeRemaining <= 3) {
     return "red";
@@ -30,6 +33,10 @@ const getTimerColor = (timeRemaining: number): string => {
   }
   return "blue";
 };
+
+/** Validates that cut depth is within valid range (0 to 51) */
+const isValidCutDepth = (value: number): boolean =>
+  Number.isInteger(value) && value >= 0 && value <= MAX_CUT_DEPTH;
 
 export const Acaan = () => {
   const { stackOrder } = useRequiredStack();
@@ -42,14 +49,20 @@ export const Acaan = () => {
     submitAnswer,
   } = useAcaanGame(stackOrder);
   const [options, { open, close }] = useDisclosure(false);
-  const [cutDepth, setCutDepth] = useState<number | string>("");
+  const [cutDepth, setCutDepth] = useState<number | "">("");
+
+  const handleCutDepthChange = useCallback((value: string | number) => {
+    setCutDepth(value === "" ? "" : Number(value));
+  }, []);
 
   const handleCheckAnswer = useCallback(() => {
     if (cutDepth === "") {
       return;
     }
-    const answer = typeof cutDepth === "string" ? Number(cutDepth) : cutDepth;
-    submitAnswer(answer);
+    if (!isValidCutDepth(cutDepth)) {
+      return;
+    }
+    submitAnswer(cutDepth);
     setCutDepth("");
   }, [cutDepth, submitAnswer]);
 
@@ -132,9 +145,9 @@ export const Acaan = () => {
               <NumberInput
                 allowDecimal={false}
                 allowNegative={false}
-                max={DECK_SIZE}
-                min={1}
-                onChange={setCutDepth}
+                max={MAX_CUT_DEPTH}
+                min={0}
+                onChange={handleCutDepthChange}
                 onKeyDown={handleKeyDown}
                 placeholder="Cut depth"
                 size="md"

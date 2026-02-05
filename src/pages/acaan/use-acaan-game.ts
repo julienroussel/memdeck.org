@@ -1,5 +1,5 @@
 import { notifications } from "@mantine/notifications";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
 import { useAcaanTimer } from "../../hooks/use-acaan-timer";
 import type { Stack } from "../../types/stacks";
@@ -98,6 +98,10 @@ export const gameReducer = (
 export const useAcaanGame = (stackOrder: Stack) => {
   const { timerSettings } = useAcaanTimer();
 
+  // Use ref to avoid stackOrder in effect dependencies (prevents unnecessary re-runs)
+  const stackOrderRef = useRef(stackOrder);
+  stackOrderRef.current = stackOrder;
+
   const [state, dispatch] = useReducer(
     gameReducer,
     { stackOrder, timerDuration: timerSettings.duration },
@@ -126,7 +130,7 @@ export const useAcaanGame = (stackOrder: Stack) => {
     return () => clearInterval(interval);
   }, [timerSettings.enabled, state.timeRemaining]);
 
-  // Handle timeout
+  // Handle timeout - only triggers when timer reaches 0
   useEffect(() => {
     if (!timerSettings.enabled || state.timeRemaining > 0) {
       return;
@@ -150,14 +154,13 @@ export const useAcaanGame = (stackOrder: Stack) => {
 
     dispatch({
       type: "TIMEOUT",
-      payload: { newScenario: generateAcaanScenario(stackOrder) },
+      payload: { newScenario: generateAcaanScenario(stackOrderRef.current) },
     });
   }, [
     timerSettings.enabled,
     state.timeRemaining,
     state.scenario.cardPosition,
     state.scenario.targetPosition,
-    stackOrder,
   ]);
 
   const submitAnswer = (userAnswer: number) => {
@@ -180,7 +183,7 @@ export const useAcaanGame = (stackOrder: Stack) => {
       });
       dispatch({
         type: "CORRECT_ANSWER",
-        payload: { newScenario: generateAcaanScenario(stackOrder) },
+        payload: { newScenario: generateAcaanScenario(stackOrderRef.current) },
       });
     } else {
       notifications.show({
@@ -195,7 +198,7 @@ export const useAcaanGame = (stackOrder: Stack) => {
       });
       dispatch({
         type: "WRONG_ANSWER",
-        payload: { newScenario: generateAcaanScenario(stackOrder) },
+        payload: { newScenario: generateAcaanScenario(stackOrderRef.current) },
       });
     }
   };
