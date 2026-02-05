@@ -17,12 +17,11 @@ const Flashcard = lazy(() =>
   import("./pages/flashcard/flashcard").then((m) => ({ default: m.Flashcard }))
 );
 const Acaan = lazy(() =>
-  import("./pages/acaan").then((m) => ({ default: m.Acaan }))
+  import("./pages/acaan/acaan").then((m) => ({ default: m.Acaan }))
 );
 const Toolbox = lazy(() =>
   import("./pages/toolbox").then((m) => ({ default: m.Toolbox }))
 );
-
 const PageLoader = () => (
   <Center h="100%">
     <Loader size="lg" />

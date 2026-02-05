@@ -48,7 +48,7 @@ export const FlashcardOptions = ({
   };
 
   return (
-    <Modal onClose={close} opened={opened} size="auto" withCloseButton={false}>
+    <Modal onClose={close} opened={opened} size="xl" withCloseButton={false}>
       <Title order={2}>Flashcard options</Title>
       <Radio.Group
         label="Pick one mode"
