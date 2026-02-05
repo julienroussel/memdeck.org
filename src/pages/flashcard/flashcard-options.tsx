@@ -1,5 +1,7 @@
-import { Group, Modal, Radio, Stack, Text, Title } from "@mantine/core";
+import { Group, Modal, Radio, Space, Stack, Text, Title } from "@mantine/core";
+import { TimerSettingsControl } from "../../components/timer-settings-control";
 import { FLASHCARD_OPTION_LSK } from "../../constants";
+import { useFlashcardTimer } from "../../hooks/use-flashcard-timer";
 import { eventBus } from "../../services/event-bus";
 import { useLocalDb } from "../../utils/localstorage";
 
@@ -41,6 +43,8 @@ export const FlashcardOptions = ({
     FLASHCARD_OPTION_LSK,
     "bothmodes"
   );
+  const { timerSettings, setTimerEnabled, setTimerDuration } =
+    useFlashcardTimer();
 
   const handleModeChange = (value: string) => {
     setOption(value as FlashcardMode);
@@ -74,6 +78,12 @@ export const FlashcardOptions = ({
           ))}
         </Stack>
       </Radio.Group>
+      <Space h="xl" />
+      <TimerSettingsControl
+        onDurationChange={setTimerDuration}
+        onEnabledChange={setTimerEnabled}
+        timerSettings={timerSettings}
+      />
     </Modal>
   );
 };
