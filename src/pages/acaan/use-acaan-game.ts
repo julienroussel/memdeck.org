@@ -1,7 +1,8 @@
 import { notifications } from "@mantine/notifications";
-import { useEffect, useReducer, useRef } from "react";
+import { useCallback, useReducer, useRef } from "react";
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
 import { useAcaanTimer } from "../../hooks/use-acaan-timer";
+import { timerReducerCases, useGameTimer } from "../../hooks/use-game-timer";
 import type { Stack } from "../../types/stacks";
 import {
   type AcaanScenario,
@@ -19,10 +20,15 @@ export type GameState = {
   timerDuration: number;
 };
 
+type TimeoutAction = {
+  type: "TIMEOUT";
+  payload: { newScenario: AcaanScenario };
+};
+
 export type GameAction =
   | { type: "CORRECT_ANSWER"; payload: { newScenario: AcaanScenario } }
   | { type: "WRONG_ANSWER"; payload: { newScenario: AcaanScenario } }
-  | { type: "TIMEOUT"; payload: { newScenario: AcaanScenario } }
+  | TimeoutAction
   | { type: "TICK" }
   | { type: "RESET_TIMER"; payload: { duration: number } };
 
@@ -78,16 +84,9 @@ export const gameReducer = (
         timeRemaining: state.timerDuration,
       };
     case "TICK":
-      return {
-        ...state,
-        timeRemaining: Math.max(0, state.timeRemaining - 1),
-      };
+      return timerReducerCases.TICK(state);
     case "RESET_TIMER":
-      return {
-        ...state,
-        timeRemaining: action.payload.duration,
-        timerDuration: action.payload.duration,
-      };
+      return timerReducerCases.RESET_TIMER(state, action.payload.duration);
     default:
       return state;
   }
@@ -109,33 +108,21 @@ export const useAcaanGame = (stackOrder: Stack) => {
       createInitialState(stackOrder, timerDuration)
   );
 
-  // Handle timer duration changes from settings
-  useEffect(() => {
-    dispatch({
-      type: "RESET_TIMER",
-      payload: { duration: timerSettings.duration },
-    });
-  }, [timerSettings.duration]);
+  // Memoize dispatch to satisfy useGameTimer's stable reference requirement
+  const stableDispatch = useCallback(
+    (action: GameAction) => dispatch(action),
+    []
+  );
 
-  // Timer tick effect
-  useEffect(() => {
-    if (!timerSettings.enabled || state.timeRemaining <= 0) {
-      return;
-    }
+  const createTimeoutAction = useCallback(
+    (): TimeoutAction => ({
+      type: "TIMEOUT",
+      payload: { newScenario: generateAcaanScenario(stackOrderRef.current) },
+    }),
+    []
+  );
 
-    const interval = setInterval(() => {
-      dispatch({ type: "TICK" });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [timerSettings.enabled, state.timeRemaining]);
-
-  // Handle timeout - only triggers when timer reaches 0
-  useEffect(() => {
-    if (!timerSettings.enabled || state.timeRemaining > 0) {
-      return;
-    }
-
+  const handleTimeout = useCallback(() => {
     const correctAnswer = calculateCutDepth(
       state.scenario.cardPosition,
       state.scenario.targetPosition
@@ -151,17 +138,15 @@ export const useAcaanGame = (stackOrder: Stack) => {
       ),
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
     });
+  }, [state.scenario.cardPosition, state.scenario.targetPosition]);
 
-    dispatch({
-      type: "TIMEOUT",
-      payload: { newScenario: generateAcaanScenario(stackOrderRef.current) },
-    });
-  }, [
-    timerSettings.enabled,
-    state.timeRemaining,
-    state.scenario.cardPosition,
-    state.scenario.targetPosition,
-  ]);
+  useGameTimer({
+    timerSettings,
+    timeRemaining: state.timeRemaining,
+    dispatch: stableDispatch,
+    createTimeoutAction,
+    onTimeout: handleTimeout,
+  });
 
   const submitAnswer = (userAnswer: number) => {
     const correctAnswer = calculateCutDepth(

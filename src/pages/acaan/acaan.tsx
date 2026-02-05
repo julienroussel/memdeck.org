@@ -6,15 +6,14 @@ import {
   Group,
   Image,
   NumberInput,
-  Progress,
   Space,
-  Text,
   Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSettings } from "@tabler/icons-react";
 import { useCallback, useState } from "react";
 import { NumberCard } from "../../components/number-card";
+import { TimerDisplay } from "../../components/timer-display";
 import { DECK_SIZE } from "../../constants";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { Score } from "../flashcard/score";
@@ -23,16 +22,6 @@ import { useAcaanGame } from "./use-acaan-game";
 
 /** Maximum valid cut depth (deck size - 1) */
 const MAX_CUT_DEPTH = DECK_SIZE - 1;
-
-const getTimerColor = (timeRemaining: number): string => {
-  if (timeRemaining <= 3) {
-    return "red";
-  }
-  if (timeRemaining <= 5) {
-    return "yellow";
-  }
-  return "blue";
-};
 
 /** Validates that cut depth is within valid range (0 to 51) */
 const isValidCutDepth = (value: number): boolean =>
@@ -75,9 +64,6 @@ export const Acaan = () => {
     [cutDepth, handleCheckAnswer]
   );
 
-  const timerProgress = (timeRemaining / timerDuration) * 100;
-  const timerColor = getTimerColor(timeRemaining);
-
   return (
     <div className="fullMantineContainerHeight">
       <Grid
@@ -102,27 +88,10 @@ export const Acaan = () => {
         <Grid.Col span={12}>
           <Space h="xl" />
           {timerEnabled && (
-            <>
-              <Center>
-                <div style={{ width: 300 }}>
-                  <Group gap="xs" justify="space-between">
-                    <Text c={timerColor} fw={500} size="sm">
-                      Time remaining
-                    </Text>
-                    <Text c={timerColor} fw={700} size="lg">
-                      {timeRemaining}s
-                    </Text>
-                  </Group>
-                  <Progress
-                    animated={timeRemaining > 0}
-                    color={timerColor}
-                    size="lg"
-                    value={timerProgress}
-                  />
-                </div>
-              </Center>
-              <Space h="lg" />
-            </>
+            <TimerDisplay
+              timeRemaining={timeRemaining}
+              timerDuration={timerDuration}
+            />
           )}
           <Center>
             <Group align="center" gap="xl">

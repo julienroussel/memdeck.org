@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { ACAAN_TRAINER_TIMER_LSK } from "../constants";
+import { FLASHCARD_TIMER_LSK } from "../constants";
 
 vi.mock("./use-timer-settings", () => ({
   useTimerSettings: vi.fn((key: string) => ({
@@ -11,17 +11,17 @@ vi.mock("./use-timer-settings", () => ({
 }));
 
 const { useTimerSettings } = await import("./use-timer-settings");
-const { useAcaanTimer } = await import("./use-acaan-timer");
+const { useFlashcardTimer } = await import("./use-flashcard-timer");
 
-describe("useAcaanTimer", () => {
-  it("calls useTimerSettings with the ACAAN storage key", () => {
-    useAcaanTimer();
+describe("useFlashcardTimer", () => {
+  it("calls useTimerSettings with the Flashcard storage key", () => {
+    useFlashcardTimer();
 
-    expect(useTimerSettings).toHaveBeenCalledWith(ACAAN_TRAINER_TIMER_LSK);
+    expect(useTimerSettings).toHaveBeenCalledWith(FLASHCARD_TIMER_LSK);
   });
 
   it("returns the result from useTimerSettings", () => {
-    const result = useAcaanTimer();
+    const result = useFlashcardTimer();
 
     expect(result).toHaveProperty("timerSettings");
     expect(result).toHaveProperty("setTimerEnabled");

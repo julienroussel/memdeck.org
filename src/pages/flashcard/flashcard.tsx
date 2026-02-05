@@ -12,6 +12,7 @@ import { IconSettings } from "@tabler/icons-react";
 import { useMemo } from "react";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { NumberCard } from "../../components/number-card";
+import { TimerDisplay } from "../../components/timer-display";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import type { PlayingCard } from "../../types/playingcard";
 import { cardItems, numberItems } from "../../types/typeguards";
@@ -21,8 +22,16 @@ import { useFlashcardGame } from "./use-flashcard-game";
 
 export const Flashcard = () => {
   const { stackOrder, stackName } = useRequiredStack();
-  const { score, card, choices, shouldShowCard, submitAnswer } =
-    useFlashcardGame(stackOrder, stackName);
+  const {
+    score,
+    card,
+    choices,
+    shouldShowCard,
+    timeRemaining,
+    timerEnabled,
+    timerDuration,
+    submitAnswer,
+  } = useFlashcardGame(stackOrder, stackName);
   const [options, { open, close }] = useDisclosure(false);
 
   const numberChoices = useMemo(
@@ -57,6 +66,12 @@ export const Flashcard = () => {
         </Grid.Col>
         <Grid.Col span={12}>
           <Space h="xl" />
+          {timerEnabled && (
+            <TimerDisplay
+              timeRemaining={timeRemaining}
+              timerDuration={timerDuration}
+            />
+          )}
           <Center>
             {shouldShowCard ? (
               <Image className="cardShadow" src={card.card.image} w="120px" />
