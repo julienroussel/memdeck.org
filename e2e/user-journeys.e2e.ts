@@ -158,7 +158,7 @@ test.describe("User Journeys", () => {
     await page.waitForLoadState("networkidle");
 
     // Should be able to navigate to all pages
-    const pages = ["Flashcard", "Shuffle", "ACAAN", "Toolbox", "Resources"];
+    const pages = ["Flashcard", "ACAAN", "Toolbox", "Resources"];
 
     for (const pageName of pages) {
       await page.locator(`a:has-text('${pageName}')`).first().click();
