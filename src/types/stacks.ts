@@ -6,7 +6,12 @@ import { mnemonica } from "./stacks/mnemonica";
 import { particle } from "./stacks/particle";
 import { redford } from "./stacks/redford";
 
-// from https://mstn.github.io/2018/06/08/fixed-size-arrays-in-typescript/
+/**
+ * Approximation of a fixed-size array type. Asserts `length: N` and that index 0 exists,
+ * but does not structurally prevent arrays of different lengths at runtime.
+ * Compile-time safety relies on stack definitions using `as const` tuples.
+ * @see https://mstn.github.io/2018/06/08/fixed-size-arrays-in-typescript/
+ */
 type FixedSizeArray<N extends number, T> = N extends 0
   ? never[]
   : {
@@ -27,6 +32,9 @@ export const stacks = {
 export type StackKey = keyof typeof stacks;
 export type StackValue = (typeof stacks)[StackKey];
 
+/** A 1-based position in a 52-card deck (1-52) */
+export type DeckPosition = number;
+
 /**
  * Represents a playing card's position within a memorized stack.
  * @property index - 1-based position in the stack (1-52)
@@ -34,7 +42,7 @@ export type StackValue = (typeof stacks)[StackKey];
  */
 export type PlayingCardPosition = {
   /** 1-based position in the stack (1-52) */
-  index: number;
+  index: DeckPosition;
   /** The playing card at this position */
   card: PlayingCard;
 };

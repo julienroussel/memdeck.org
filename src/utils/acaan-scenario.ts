@@ -1,6 +1,6 @@
 import { DECK_SIZE } from "../constants";
 import type { PlayingCard } from "../types/playingcard";
-import type { Stack } from "../types/stacks";
+import type { DeckPosition, Stack } from "../types/stacks";
 
 /**
  * Represents an ACAAN (Any Card At Any Number) training scenario.
@@ -12,9 +12,9 @@ export type AcaanScenario = {
   /** The playing card to be placed */
   card: PlayingCard;
   /** The card's actual position in the stack (1-52) */
-  cardPosition: number;
+  cardPosition: DeckPosition;
   /** The target position where the card should appear (1-52) */
-  targetPosition: number;
+  targetPosition: DeckPosition;
 };
 
 /**
@@ -35,7 +35,7 @@ export const getRandomTargetPosition = (excludePosition: number): number => {
 export const generateAcaanScenario = (stack: Stack): AcaanScenario => {
   const randomIndex = Math.floor(Math.random() * DECK_SIZE);
   const cardPosition = randomIndex + 1;
-  const card = stack[randomIndex];
+  const card = stack[randomIndex] ?? stack[0];
   const targetPosition = getRandomTargetPosition(cardPosition);
 
   return {

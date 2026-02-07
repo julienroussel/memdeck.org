@@ -106,9 +106,12 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
       }}
       onTouchMove={(e) => {
         if (canMove === true && e.touches.length === 1) {
-          const touchPosition = e.nativeEvent.touches[0].screenX;
-          updateOffset(touchPosition - touchLastPosition);
-          setTouchLastPosition(touchPosition);
+          const touch = e.nativeEvent.touches[0];
+          if (!touch) {
+            return;
+          }
+          updateOffset(touch.screenX - touchLastPosition);
+          setTouchLastPosition(touch.screenX);
         }
       }}
       role="listbox"

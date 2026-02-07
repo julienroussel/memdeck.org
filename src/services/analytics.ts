@@ -1,16 +1,11 @@
 import ReactGA from "react-ga4";
-import { onCLS, onINP, onLCP } from "web-vitals";
+import { type Metric, onCLS, onINP, onLCP } from "web-vitals";
+import type { FlashcardMode } from "../types/flashcard";
 import { eventBus } from "./event-bus";
 
 const TRACKING_ID = "G-36CZ6GEMKQ";
 
-interface WebVitalMetric {
-  id: string;
-  name: string;
-  value: number;
-}
-
-const trackWebVital = ({ id, name, value }: WebVitalMetric) => {
+const trackWebVital = ({ id, name, value }: Metric) => {
   ReactGA.send({
     eventCategory: "Web Vitals",
     eventAction: name,
@@ -69,7 +64,7 @@ export const analytics = {
     });
   },
 
-  trackFlashcardModeChanged: (mode: string) => {
+  trackFlashcardModeChanged: (mode: FlashcardMode) => {
     ReactGA.event({
       category: "Flashcard",
       action: "Mode Changed",

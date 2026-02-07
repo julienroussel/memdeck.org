@@ -12,7 +12,18 @@ import {
 import { IconExternalLink } from "@tabler/icons-react";
 import { GITHUB_URL } from "../constants";
 
-const primaryResources = [
+type Resource = {
+  title: string;
+  author: string;
+  description: string;
+  link: string;
+};
+
+type PrimaryResource = Resource & {
+  category: "book" | "pdf";
+};
+
+const primaryResources: PrimaryResource[] = [
   {
     title: "Mnemonica",
     author: "Juan Tamariz",
@@ -47,7 +58,7 @@ const primaryResources = [
   },
 ];
 
-const otherResources = [
+const otherResources: Resource[] = [
   {
     title: "The Magic Rainbow",
     author: "Juan Tamariz",

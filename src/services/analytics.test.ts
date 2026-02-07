@@ -305,13 +305,13 @@ describe("analytics", () => {
       });
     });
 
-    it("sends mode change event for indexonly", () => {
-      analytics.trackFlashcardModeChanged("indexonly");
+    it("sends mode change event for numberonly", () => {
+      analytics.trackFlashcardModeChanged("numberonly");
 
       expect(mockEvent).toHaveBeenCalledWith({
         category: "Flashcard",
         action: "Mode Changed",
-        label: "indexonly",
+        label: "numberonly",
       });
     });
 

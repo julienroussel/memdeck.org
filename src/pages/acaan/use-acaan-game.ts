@@ -94,7 +94,16 @@ export const gameReducer = (
 
 // --- Hook ---
 
-export const useAcaanGame = (stackOrder: Stack) => {
+type UseAcaanGameResult = {
+  scenario: AcaanScenario;
+  score: { successes: number; fails: number };
+  timeRemaining: number;
+  timerEnabled: boolean;
+  timerDuration: number;
+  submitAnswer: (userAnswer: number) => void;
+};
+
+export const useAcaanGame = (stackOrder: Stack): UseAcaanGameResult => {
   const { timerSettings } = useAcaanTimer();
 
   // Use ref to avoid stackOrder in effect dependencies (prevents unnecessary re-runs)

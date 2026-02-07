@@ -3,34 +3,12 @@ import { TimerSettingsControl } from "../../components/timer-settings-control";
 import { FLASHCARD_OPTION_LSK } from "../../constants";
 import { useFlashcardTimer } from "../../hooks/use-flashcard-timer";
 import { eventBus } from "../../services/event-bus";
+import {
+  FLASHCARD_MODE_OPTIONS,
+  type FlashcardMode,
+  isFlashcardMode,
+} from "../../types/flashcard";
 import { useLocalDb } from "../../utils/localstorage";
-
-export type FlashcardMode = "cardonly" | "bothmodes" | "numberonly";
-
-const FLASHCARD_MODE_OPTIONS: readonly {
-  value: FlashcardMode;
-  label: string;
-  description: string;
-}[] = [
-  {
-    value: "cardonly",
-    label: "Card only",
-    description:
-      "In this mode, you'll see a card and need to guess its position in the stack from 5 options.",
-  },
-  {
-    value: "bothmodes",
-    label: "Both modes",
-    description:
-      "In this mode, you'll be randomly shown either a card or a number, guess its match from 5 options.",
-  },
-  {
-    value: "numberonly",
-    label: "Number only",
-    description:
-      "In this mode, you'll see a number and need to pick the corresponding card from 5 options.",
-  },
-];
 
 export const FlashcardOptions = ({
   opened,
@@ -47,7 +25,10 @@ export const FlashcardOptions = ({
     useFlashcardTimer();
 
   const handleModeChange = (value: string) => {
-    setOption(value as FlashcardMode);
+    if (!isFlashcardMode(value)) {
+      return;
+    }
+    setOption(value);
     eventBus.emit.FLASHCARD_MODE_CHANGED({ mode: value });
   };
 

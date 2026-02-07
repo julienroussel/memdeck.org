@@ -1,6 +1,6 @@
-import type { PlayingCard } from "../types/playingcard";
+import type { PlayingCard, Rank, Suit } from "../types/playingcard";
 
-const RANK_NAMES: Record<string, string> = {
+const RANK_NAMES: Record<Rank, string> = {
   A: "Ace",
   "2": "2",
   "3": "3",
@@ -16,7 +16,7 @@ const RANK_NAMES: Record<string, string> = {
   K: "King",
 };
 
-const SUIT_NAMES: Record<string, string> = {
+const SUIT_NAMES: Record<Suit, string> = {
   hearts: "Hearts",
   diamonds: "Diamonds",
   clubs: "Clubs",
@@ -24,7 +24,7 @@ const SUIT_NAMES: Record<string, string> = {
 };
 
 export const formatCardName = (card: PlayingCard): string => {
-  const rankName = RANK_NAMES[card.rank] ?? card.rank;
-  const suitName = SUIT_NAMES[card.suit] ?? card.suit;
+  const rankName = RANK_NAMES[card.rank];
+  const suitName = SUIT_NAMES[card.suit];
   return `${rankName} of ${suitName}`;
 };
