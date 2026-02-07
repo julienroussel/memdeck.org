@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { type PlayingCardPosition, stacks } from "../types/stacks";
+import {
+  createDeckPosition,
+  type PlayingCardPosition,
+  stacks,
+} from "../types/stacks";
 import { generateUniqueCardChoices } from "./card-selection";
 
 const testStack = stacks.mnemonica.order;
@@ -19,8 +23,8 @@ describe("generateUniqueCardChoices", () => {
 
   it("includes initial choices in the result", () => {
     const initialChoices: PlayingCardPosition[] = [
-      { index: 1, card: testStack[0] },
-      { index: 2, card: testStack[1] },
+      { index: createDeckPosition(1), card: testStack[0] },
+      { index: createDeckPosition(2), card: testStack[1] },
     ];
 
     const choices = generateUniqueCardChoices(testStack, initialChoices, 5);
@@ -51,9 +55,9 @@ describe("generateUniqueCardChoices", () => {
 
   it("returns initial choices unchanged when already meeting totalChoices", () => {
     const initialChoices: PlayingCardPosition[] = [
-      { index: 1, card: testStack[0] },
-      { index: 2, card: testStack[1] },
-      { index: 3, card: testStack[2] },
+      { index: createDeckPosition(1), card: testStack[0] },
+      { index: createDeckPosition(2), card: testStack[1] },
+      { index: createDeckPosition(3), card: testStack[2] },
     ];
 
     const choices = generateUniqueCardChoices(testStack, initialChoices, 3);
@@ -64,11 +68,11 @@ describe("generateUniqueCardChoices", () => {
 
   it("returns initial choices unchanged when exceeding totalChoices", () => {
     const initialChoices: PlayingCardPosition[] = [
-      { index: 1, card: testStack[0] },
-      { index: 2, card: testStack[1] },
-      { index: 3, card: testStack[2] },
-      { index: 4, card: testStack[3] },
-      { index: 5, card: testStack[4] },
+      { index: createDeckPosition(1), card: testStack[0] },
+      { index: createDeckPosition(2), card: testStack[1] },
+      { index: createDeckPosition(3), card: testStack[2] },
+      { index: createDeckPosition(4), card: testStack[3] },
+      { index: createDeckPosition(5), card: testStack[4] },
     ];
 
     const choices = generateUniqueCardChoices(testStack, initialChoices, 3);
@@ -117,8 +121,8 @@ describe("generateUniqueCardChoices", () => {
 
   it("preserves order of initial choices at the start", () => {
     const initialChoices: PlayingCardPosition[] = [
-      { index: 10, card: testStack[9] },
-      { index: 20, card: testStack[19] },
+      { index: createDeckPosition(10), card: testStack[9] },
+      { index: createDeckPosition(20), card: testStack[19] },
     ];
 
     const choices = generateUniqueCardChoices(testStack, initialChoices, 5);

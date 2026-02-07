@@ -14,13 +14,21 @@ export type UseTimerSettingsResult = {
 };
 
 /**
+ * Union of valid timer storage keys.
+ * Matches the localStorage key constants for timer settings.
+ */
+type TimerStorageKey =
+  | "memdeck-app-flashcard-timer"
+  | "memdeck-app-acaan-trainer-timer";
+
+/**
  * Generic hook for managing timer settings.
  * Settings are stored in localStorage and persist across sessions.
  *
  * @param storageKey - The localStorage key to use for persisting settings
  */
 export const useTimerSettings = (
-  storageKey: string
+  storageKey: TimerStorageKey
 ): UseTimerSettingsResult => {
   const [timerSettings, setTimerSettings] = useLocalDb<TimerSettings>(
     storageKey,

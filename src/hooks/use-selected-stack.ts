@@ -12,13 +12,9 @@ type RequiredStackResult = {
 };
 
 type SelectedStackResult =
-  | {
-      stackKey: StackKey;
-      stack: StackValue;
-      stackOrder: StackValue["order"];
-      stackName: StackValue["name"];
+  | (RequiredStackResult & {
       setStackKey: (key: string) => void;
-    }
+    })
   | {
       stackKey: "";
       stack: null;

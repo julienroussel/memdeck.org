@@ -103,13 +103,15 @@ describe("useSelectedStack", () => {
     expect(mockSetValue).toHaveBeenCalledWith("");
   });
 
-  it.each(Object.keys(stacks))("works with stack: %s", (key) => {
+  it.each(
+    Object.entries(stacks)
+  )("works with stack: %s", (key, expectedStack) => {
     mockedUseLocalDb.mockReturnValue([key, mockSetValue, vi.fn()]);
 
     const result = useSelectedStack();
 
     expect(result.stackKey).toBe(key);
-    expect(result.stack).toBe(stacks[key as keyof typeof stacks]);
+    expect(result.stack).toBe(expectedStack);
   });
 });
 
@@ -145,13 +147,15 @@ describe("useRequiredStack", () => {
     );
   });
 
-  it.each(Object.keys(stacks))("works with stack: %s", (key) => {
+  it.each(
+    Object.entries(stacks)
+  )("works with stack: %s", (key, expectedStack) => {
     mockedUseLocalDb.mockReturnValue([key, mockSetValue, vi.fn()]);
 
     const result = useRequiredStack();
 
     expect(result.stackKey).toBe(key);
-    expect(result.stack).toBe(stacks[key as keyof typeof stacks]);
+    expect(result.stack).toBe(expectedStack);
     expect(result.stackOrder).toHaveLength(52);
   });
 });

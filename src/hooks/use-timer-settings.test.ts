@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { FLASHCARD_TIMER_LSK } from "../constants";
 import { useTimerSettings } from "./use-timer-settings";
 
 const mockSetSettings = vi.fn();
@@ -34,10 +35,10 @@ describe("useTimerSettings", () => {
       vi.fn(),
     ]);
 
-    useTimerSettings("test-timer-key");
+    useTimerSettings(FLASHCARD_TIMER_LSK);
 
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
-      "test-timer-key",
+      FLASHCARD_TIMER_LSK,
       expect.any(Object)
     );
   });
@@ -49,7 +50,7 @@ describe("useTimerSettings", () => {
       vi.fn(),
     ]);
 
-    const { timerSettings } = useTimerSettings("test-key");
+    const { timerSettings } = useTimerSettings(FLASHCARD_TIMER_LSK);
 
     expect(timerSettings).toEqual({ enabled: false, duration: 15 });
   });
@@ -61,7 +62,7 @@ describe("useTimerSettings", () => {
       vi.fn(),
     ]);
 
-    const { timerSettings } = useTimerSettings("test-key");
+    const { timerSettings } = useTimerSettings(FLASHCARD_TIMER_LSK);
 
     expect(timerSettings).toEqual({ enabled: true, duration: 30 });
   });
@@ -74,7 +75,7 @@ describe("useTimerSettings", () => {
         vi.fn(),
       ]);
 
-      const { setTimerEnabled } = useTimerSettings("test-key");
+      const { setTimerEnabled } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerEnabled(true);
 
       expect(mockSetSettings).toHaveBeenCalledWith(expect.any(Function));
@@ -91,7 +92,7 @@ describe("useTimerSettings", () => {
         vi.fn(),
       ]);
 
-      const { setTimerEnabled } = useTimerSettings("test-key");
+      const { setTimerEnabled } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerEnabled(false);
 
       const updater = mockSetSettings.mock.calls[0][0];
@@ -106,7 +107,7 @@ describe("useTimerSettings", () => {
         vi.fn(),
       ]);
 
-      const { setTimerEnabled } = useTimerSettings("test-key");
+      const { setTimerEnabled } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerEnabled(true);
 
       const updater = mockSetSettings.mock.calls[0][0];
@@ -123,7 +124,7 @@ describe("useTimerSettings", () => {
         vi.fn(),
       ]);
 
-      const { setTimerDuration } = useTimerSettings("test-key");
+      const { setTimerDuration } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerDuration(10);
 
       const updater = mockSetSettings.mock.calls[0][0];
@@ -138,7 +139,7 @@ describe("useTimerSettings", () => {
         vi.fn(),
       ]);
 
-      const { setTimerDuration } = useTimerSettings("test-key");
+      const { setTimerDuration } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerDuration(30);
 
       const updater = mockSetSettings.mock.calls[0][0];
@@ -153,7 +154,7 @@ describe("useTimerSettings", () => {
         vi.fn(),
       ]);
 
-      const { setTimerDuration } = useTimerSettings("test-key");
+      const { setTimerDuration } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerDuration(10);
 
       const updater = mockSetSettings.mock.calls[0][0];

@@ -1,11 +1,14 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+type WebVitalMetric = { id: string; name: string; value: number };
+type WebVitalCallback = (metric: WebVitalMetric) => void;
+
 const mockInitialize = vi.fn();
 const mockSend = vi.fn();
 const mockEvent = vi.fn();
-const mockOnCLS = vi.fn();
-const mockOnINP = vi.fn();
-const mockOnLCP = vi.fn();
+const mockOnCLS = vi.fn<(callback: WebVitalCallback) => void>();
+const mockOnINP = vi.fn<(callback: WebVitalCallback) => void>();
+const mockOnLCP = vi.fn<(callback: WebVitalCallback) => void>();
 
 vi.mock("react-ga4", () => ({
   default: {
@@ -16,9 +19,9 @@ vi.mock("react-ga4", () => ({
 }));
 
 vi.mock("web-vitals", () => ({
-  onCLS: (callback: unknown) => mockOnCLS(callback),
-  onINP: (callback: unknown) => mockOnINP(callback),
-  onLCP: (callback: unknown) => mockOnLCP(callback),
+  onCLS: (callback: WebVitalCallback) => mockOnCLS(callback),
+  onINP: (callback: WebVitalCallback) => mockOnINP(callback),
+  onLCP: (callback: WebVitalCallback) => mockOnLCP(callback),
 }));
 
 const { analytics } = await import("./analytics");
@@ -104,11 +107,7 @@ describe("analytics", () => {
     it("sends LCP metric with rounded value", () => {
       analytics.initialize();
 
-      const lcpCallback = mockOnLCP.mock.calls[0][0] as (metric: {
-        id: string;
-        name: string;
-        value: number;
-      }) => void;
+      const lcpCallback = mockOnLCP.mock.calls[0][0];
 
       lcpCallback({ id: "v1-123", name: "LCP", value: 2534.5 });
 
@@ -124,11 +123,7 @@ describe("analytics", () => {
     it("sends INP metric with rounded value", () => {
       analytics.initialize();
 
-      const inpCallback = mockOnINP.mock.calls[0][0] as (metric: {
-        id: string;
-        name: string;
-        value: number;
-      }) => void;
+      const inpCallback = mockOnINP.mock.calls[0][0];
 
       inpCallback({ id: "v1-456", name: "INP", value: 128.7 });
 
@@ -144,11 +139,7 @@ describe("analytics", () => {
     it("sends CLS metric with value multiplied by 1000", () => {
       analytics.initialize();
 
-      const clsCallback = mockOnCLS.mock.calls[0][0] as (metric: {
-        id: string;
-        name: string;
-        value: number;
-      }) => void;
+      const clsCallback = mockOnCLS.mock.calls[0][0];
 
       clsCallback({ id: "v1-789", name: "CLS", value: 0.125 });
 
@@ -164,11 +155,7 @@ describe("analytics", () => {
     it("handles CLS value of 0", () => {
       analytics.initialize();
 
-      const clsCallback = mockOnCLS.mock.calls[0][0] as (metric: {
-        id: string;
-        name: string;
-        value: number;
-      }) => void;
+      const clsCallback = mockOnCLS.mock.calls[0][0];
 
       clsCallback({ id: "v1-000", name: "CLS", value: 0 });
 
@@ -184,11 +171,7 @@ describe("analytics", () => {
     it("rounds CLS value correctly", () => {
       analytics.initialize();
 
-      const clsCallback = mockOnCLS.mock.calls[0][0] as (metric: {
-        id: string;
-        name: string;
-        value: number;
-      }) => void;
+      const clsCallback = mockOnCLS.mock.calls[0][0];
 
       clsCallback({ id: "v1-abc", name: "CLS", value: 0.0876 });
 
@@ -202,11 +185,7 @@ describe("analytics", () => {
     it("handles large LCP values", () => {
       analytics.initialize();
 
-      const lcpCallback = mockOnLCP.mock.calls[0][0] as (metric: {
-        id: string;
-        name: string;
-        value: number;
-      }) => void;
+      const lcpCallback = mockOnLCP.mock.calls[0][0];
 
       lcpCallback({ id: "v1-large", name: "LCP", value: 10_000.4 });
 

@@ -1,4 +1,4 @@
-import type {
+import {
   AceOfClubs,
   EightOfClubs,
   FiveOfClubs,
@@ -13,7 +13,7 @@ import type {
   ThreeOfClubs,
   TwoOfClubs,
 } from "./suits/clubs";
-import type {
+import {
   AceOfDiamonds,
   EightOfDiamonds,
   FiveOfDiamonds,
@@ -28,7 +28,7 @@ import type {
   ThreeOfDiamonds,
   TwoOfDiamonds,
 } from "./suits/diamonds";
-import type {
+import {
   AceOfHearts,
   EightOfHearts,
   FiveOfHearts,
@@ -43,7 +43,7 @@ import type {
   ThreeOfHearts,
   TwoOfHearts,
 } from "./suits/hearts";
-import type {
+import {
   AceOfSpades,
   EightOfSpades,
   FiveOfSpades,
@@ -59,59 +59,64 @@ import type {
   TwoOfSpades,
 } from "./suits/spades";
 
-export type PlayingCard =
-  | typeof AceOfHearts
-  | typeof TwoOfHearts
-  | typeof ThreeOfHearts
-  | typeof FourOfHearts
-  | typeof FiveOfHearts
-  | typeof SixOfHearts
-  | typeof SevenOfHearts
-  | typeof EightOfHearts
-  | typeof NineOfHearts
-  | typeof TenOfHearts
-  | typeof JackOfHearts
-  | typeof QueenOfHearts
-  | typeof KingOfHearts
-  | typeof AceOfDiamonds
-  | typeof TwoOfDiamonds
-  | typeof ThreeOfDiamonds
-  | typeof FourOfDiamonds
-  | typeof FiveOfDiamonds
-  | typeof SixOfDiamonds
-  | typeof SevenOfDiamonds
-  | typeof EightOfDiamonds
-  | typeof NineOfDiamonds
-  | typeof TenOfDiamonds
-  | typeof JackOfDiamonds
-  | typeof QueenOfDiamonds
-  | typeof KingOfDiamonds
-  | typeof AceOfClubs
-  | typeof TwoOfClubs
-  | typeof ThreeOfClubs
-  | typeof FourOfClubs
-  | typeof FiveOfClubs
-  | typeof SixOfClubs
-  | typeof SevenOfClubs
-  | typeof EightOfClubs
-  | typeof NineOfClubs
-  | typeof TenOfClubs
-  | typeof JackOfClubs
-  | typeof QueenOfClubs
-  | typeof KingOfClubs
-  | typeof AceOfSpades
-  | typeof TwoOfSpades
-  | typeof ThreeOfSpades
-  | typeof FourOfSpades
-  | typeof FiveOfSpades
-  | typeof SixOfSpades
-  | typeof SevenOfSpades
-  | typeof EightOfSpades
-  | typeof NineOfSpades
-  | typeof TenOfSpades
-  | typeof JackOfSpades
-  | typeof QueenOfSpades
-  | typeof KingOfSpades;
+/** All 52 playing cards as a runtime array, ordered by suit (hearts, diamonds, clubs, spades). */
+export const ALL_CARDS = [
+  AceOfHearts,
+  TwoOfHearts,
+  ThreeOfHearts,
+  FourOfHearts,
+  FiveOfHearts,
+  SixOfHearts,
+  SevenOfHearts,
+  EightOfHearts,
+  NineOfHearts,
+  TenOfHearts,
+  JackOfHearts,
+  QueenOfHearts,
+  KingOfHearts,
+  AceOfDiamonds,
+  TwoOfDiamonds,
+  ThreeOfDiamonds,
+  FourOfDiamonds,
+  FiveOfDiamonds,
+  SixOfDiamonds,
+  SevenOfDiamonds,
+  EightOfDiamonds,
+  NineOfDiamonds,
+  TenOfDiamonds,
+  JackOfDiamonds,
+  QueenOfDiamonds,
+  KingOfDiamonds,
+  AceOfClubs,
+  TwoOfClubs,
+  ThreeOfClubs,
+  FourOfClubs,
+  FiveOfClubs,
+  SixOfClubs,
+  SevenOfClubs,
+  EightOfClubs,
+  NineOfClubs,
+  TenOfClubs,
+  JackOfClubs,
+  QueenOfClubs,
+  KingOfClubs,
+  AceOfSpades,
+  TwoOfSpades,
+  ThreeOfSpades,
+  FourOfSpades,
+  FiveOfSpades,
+  SixOfSpades,
+  SevenOfSpades,
+  EightOfSpades,
+  NineOfSpades,
+  TenOfSpades,
+  JackOfSpades,
+  QueenOfSpades,
+  KingOfSpades,
+] as const;
+
+/** Union type of all 52 playing card objects, derived from the runtime ALL_CARDS array. */
+export type PlayingCard = (typeof ALL_CARDS)[number];
 
 export type Suit = PlayingCard["suit"];
 export type Rank = PlayingCard["rank"];

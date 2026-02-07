@@ -3,6 +3,7 @@ import { useCallback, useReducer, useRef } from "react";
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
 import { useAcaanTimer } from "../../hooks/use-acaan-timer";
 import { timerReducerCases, useGameTimer } from "../../hooks/use-game-timer";
+import type { GameScore } from "../../types/game";
 import type { Stack } from "../../types/stacks";
 import {
   type AcaanScenario,
@@ -87,8 +88,10 @@ export const gameReducer = (
       return timerReducerCases.TICK(state);
     case "RESET_TIMER":
       return timerReducerCases.RESET_TIMER(state, action.payload.duration);
-    default:
-      return state;
+    default: {
+      const _exhaustive: never = action;
+      return _exhaustive;
+    }
   }
 };
 
@@ -96,7 +99,7 @@ export const gameReducer = (
 
 type UseAcaanGameResult = {
   scenario: AcaanScenario;
-  score: { successes: number; fails: number };
+  score: GameScore;
   timeRemaining: number;
   timerEnabled: boolean;
   timerDuration: number;

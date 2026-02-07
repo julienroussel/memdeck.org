@@ -1,16 +1,12 @@
 import { Badge, Group } from "@mantine/core";
 import { IconThumbDown, IconThumbUp } from "@tabler/icons-react";
 import { memo } from "react";
-
-type ScoreData = {
-  successes: number;
-  fails: number;
-};
+import type { GameScore } from "../../types/game";
 
 export const Score = memo(function Score({
   fails = 0,
   successes = 0,
-}: ScoreData) {
+}: GameScore) {
   return (
     <Group gap="xs">
       <Badge bg="green.6" leftSection={<IconThumbUp size={12} />} size="md">

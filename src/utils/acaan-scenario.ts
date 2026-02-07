@@ -1,6 +1,11 @@
 import { DECK_SIZE } from "../constants";
 import type { PlayingCard } from "../types/playingcard";
-import type { DeckPosition, Stack } from "../types/stacks";
+import {
+  createDeckPosition,
+  type DeckPosition,
+  getCardAt,
+  type Stack,
+} from "../types/stacks";
 
 /**
  * Represents an ACAAN (Any Card At Any Number) training scenario.
@@ -20,10 +25,12 @@ export type AcaanScenario = {
 /**
  * Generates a random target position (1-52) that is different from the excluded position.
  */
-export const getRandomTargetPosition = (excludePosition: number): number => {
-  let position: number;
+export const getRandomTargetPosition = (
+  excludePosition: DeckPosition
+): DeckPosition => {
+  let position: DeckPosition;
   do {
-    position = Math.floor(Math.random() * DECK_SIZE) + 1;
+    position = createDeckPosition(Math.floor(Math.random() * DECK_SIZE) + 1);
   } while (position === excludePosition);
   return position;
 };
@@ -34,8 +41,8 @@ export const getRandomTargetPosition = (excludePosition: number): number => {
  */
 export const generateAcaanScenario = (stack: Stack): AcaanScenario => {
   const randomIndex = Math.floor(Math.random() * DECK_SIZE);
-  const cardPosition = randomIndex + 1;
-  const card = stack[randomIndex] ?? stack[0];
+  const cardPosition = createDeckPosition(randomIndex + 1);
+  const card = getCardAt(stack, randomIndex);
   const targetPosition = getRandomTargetPosition(cardPosition);
 
   return {
@@ -58,8 +65,8 @@ export const generateAcaanScenario = (stack: Stack): AcaanScenario => {
  * @returns The cut depth (0-51), where 0 means no cut needed
  */
 export const calculateCutDepth = (
-  cardPosition: number,
-  targetPosition: number
+  cardPosition: DeckPosition,
+  targetPosition: DeckPosition
 ): number => {
   return (cardPosition - targetPosition + DECK_SIZE) % DECK_SIZE;
 };

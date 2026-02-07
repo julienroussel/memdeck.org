@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { stacks } from "../../types/stacks";
+import type { PlayingCard } from "../../types/playingcard";
+import { createDeckPosition, stacks } from "../../types/stacks";
 import {
   generateNewCardAndChoices,
   isCorrectAnswer,
@@ -86,7 +87,7 @@ describe("generateNewCardAndChoices", () => {
 
 describe("isCorrectAnswer", () => {
   const testCard = {
-    index: 10,
+    index: createDeckPosition(10),
     card: testStack[9],
   };
 
@@ -98,15 +99,9 @@ describe("isCorrectAnswer", () => {
     });
 
     it("returns true for card with same suit and rank but different reference", () => {
-      const answer = {
-        suit: testCard.card.suit,
-        rank: testCard.card.rank,
-        image: "different-image.svg",
-      };
+      const answer: PlayingCard = { ...testCard.card };
 
-      expect(isCorrectAnswer(answer as typeof testCard.card, testCard)).toBe(
-        true
-      );
+      expect(isCorrectAnswer(answer, testCard)).toBe(true);
     });
 
     it("returns false when suit differs", () => {
@@ -166,14 +161,20 @@ describe("isCorrectAnswer", () => {
 
   describe("edge cases", () => {
     it("correctly handles index 1", () => {
-      const firstCard = { index: 1, card: testStack[0] };
+      const firstCard = {
+        index: createDeckPosition(1),
+        card: testStack[0],
+      };
 
       expect(isCorrectAnswer(1, firstCard)).toBe(true);
       expect(isCorrectAnswer(2, firstCard)).toBe(false);
     });
 
     it("correctly handles index 52", () => {
-      const lastCard = { index: 52, card: testStack[51] };
+      const lastCard = {
+        index: createDeckPosition(52),
+        card: testStack[51],
+      };
 
       expect(isCorrectAnswer(52, lastCard)).toBe(true);
       expect(isCorrectAnswer(51, lastCard)).toBe(false);
