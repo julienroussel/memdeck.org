@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createDeckPosition } from "../../types/stacks";
 import { mnemonica } from "../../types/stacks/mnemonica";
 import type { AcaanScenario } from "../../utils/acaan-scenario";
 import {
@@ -15,8 +16,8 @@ const createTestScenario = (
   targetPosition: number
 ): AcaanScenario => ({
   card: mnemonica.order[cardPosition - 1],
-  cardPosition,
-  targetPosition,
+  cardPosition: createDeckPosition(cardPosition),
+  targetPosition: createDeckPosition(targetPosition),
 });
 
 // Helper to create a test state
@@ -341,18 +342,6 @@ describe("gameReducer", () => {
       const newState = gameReducer(state, action);
 
       expect(newState.scenario).toEqual(originalScenario);
-    });
-  });
-
-  describe("unknown action", () => {
-    it("returns current state for unknown action type", () => {
-      const state = createTestState();
-      // @ts-expect-error Testing unknown action type
-      const action: GameAction = { type: "UNKNOWN_ACTION" };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState).toEqual(state);
     });
   });
 

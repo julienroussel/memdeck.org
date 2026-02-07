@@ -140,6 +140,190 @@ describe("getStoredValue", () => {
   });
 });
 
+describe("getStoredValue with validate", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const isString = (value: unknown): value is string =>
+    typeof value === "string";
+
+  const isNumber = (value: unknown): value is number =>
+    typeof value === "number";
+
+  const isPositiveNumber = (value: unknown): value is number =>
+    typeof value === "number" && value > 0;
+
+  it("returns stored value when validator passes", () => {
+    mockReadLocalStorageValue.mockReturnValue("valid-string");
+
+    const result = getStoredValue("test-key", "default", isString);
+
+    expect(result).toBe("valid-string");
+  });
+
+  it("returns default value when validator rejects stored value", () => {
+    mockReadLocalStorageValue.mockReturnValue(42);
+
+    const result = getStoredValue("test-key", "default", isString);
+
+    expect(result).toBe("default");
+  });
+
+  it("returns default value when stored number fails a stricter validator", () => {
+    mockReadLocalStorageValue.mockReturnValue(-5);
+
+    const result = getStoredValue("test-key", 1, isPositiveNumber);
+
+    expect(result).toBe(1);
+  });
+
+  it("returns stored number when it passes a stricter validator", () => {
+    mockReadLocalStorageValue.mockReturnValue(10);
+
+    const result = getStoredValue("test-key", 1, isPositiveNumber);
+
+    expect(result).toBe(10);
+  });
+
+  it("returns default value when stored value is undefined with validator", () => {
+    mockReadLocalStorageValue.mockReturnValue(undefined);
+
+    const result = getStoredValue("test-key", "default", isString);
+
+    expect(result).toBe("default");
+  });
+
+  it("returns default value when stored value is null with validator", () => {
+    mockReadLocalStorageValue.mockReturnValue(null);
+
+    const result = getStoredValue("test-key", "default", isString);
+
+    expect(result).toBe("default");
+  });
+
+  it("returns default value when readLocalStorageValue throws with validator", () => {
+    mockReadLocalStorageValue.mockImplementation(() => {
+      throw new Error("Storage error");
+    });
+
+    const result = getStoredValue("test-key", "default", isString);
+
+    expect(result).toBe("default");
+  });
+
+  it("logs warning in dev mode when validation fails", () => {
+    const originalDev = import.meta.env.DEV;
+    import.meta.env.DEV = true;
+
+    const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {
+      // Suppress console output
+    });
+
+    mockReadLocalStorageValue.mockReturnValue(123);
+
+    getStoredValue("test-key", "default", isString);
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[localStorage] Validation failed for key "test-key":',
+      123
+    );
+
+    consoleWarnSpy.mockRestore();
+    import.meta.env.DEV = originalDev;
+  });
+
+  it("does not call validator when stored value is undefined", () => {
+    mockReadLocalStorageValue.mockReturnValue(undefined);
+
+    const validator = vi.fn(() => true) as unknown as (
+      value: unknown
+    ) => value is string;
+
+    getStoredValue("test-key", "default", validator);
+
+    expect(validator).not.toHaveBeenCalled();
+  });
+
+  it("does not call validator when stored value is null", () => {
+    mockReadLocalStorageValue.mockReturnValue(null);
+
+    const validator = vi.fn(() => true) as unknown as (
+      value: unknown
+    ) => value is string;
+
+    getStoredValue("test-key", "default", validator);
+
+    expect(validator).not.toHaveBeenCalled();
+  });
+
+  it("works with object validators", () => {
+    const isSettings = (
+      value: unknown
+    ): value is { theme: string; fontSize: number } =>
+      typeof value === "object" &&
+      value !== null &&
+      "theme" in value &&
+      "fontSize" in value &&
+      typeof (value as { theme: unknown }).theme === "string" &&
+      typeof (value as { fontSize: unknown }).fontSize === "number";
+
+    mockReadLocalStorageValue.mockReturnValue({
+      theme: "dark",
+      fontSize: 14,
+    });
+
+    const result = getStoredValue(
+      "settings",
+      { theme: "light", fontSize: 12 },
+      isSettings
+    );
+
+    expect(result).toEqual({ theme: "dark", fontSize: 14 });
+  });
+
+  it("rejects invalid object shape with object validator", () => {
+    const isSettings = (
+      value: unknown
+    ): value is { theme: string; fontSize: number } =>
+      typeof value === "object" &&
+      value !== null &&
+      "theme" in value &&
+      "fontSize" in value &&
+      typeof (value as { theme: unknown }).theme === "string" &&
+      typeof (value as { fontSize: unknown }).fontSize === "number";
+
+    mockReadLocalStorageValue.mockReturnValue({
+      theme: 123,
+      fontSize: "not-a-number",
+    });
+
+    const result = getStoredValue(
+      "settings",
+      { theme: "light", fontSize: 12 },
+      isSettings
+    );
+
+    expect(result).toEqual({ theme: "light", fontSize: 12 });
+  });
+
+  it("preserves falsy values that pass validation", () => {
+    mockReadLocalStorageValue.mockReturnValue(0);
+
+    const result = getStoredValue("test-key", 100, isNumber);
+
+    expect(result).toBe(0);
+  });
+
+  it("preserves empty string that passes validation", () => {
+    mockReadLocalStorageValue.mockReturnValue("");
+
+    const result = getStoredValue("test-key", "default", isString);
+
+    expect(result).toBe("");
+  });
+});
+
 describe("useLocalDb", () => {
   afterEach(() => {
     vi.clearAllMocks();

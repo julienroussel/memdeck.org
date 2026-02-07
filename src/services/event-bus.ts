@@ -8,47 +8,45 @@ type AnalyticsEvents = {
 
 type Listener<T> = (payload: T) => void;
 
-// Create a type-safe event channel for a specific event type
-const createChannel = <T>() => {
-  const listeners = new Set<Listener<T>>();
+type EventBus<TEvents extends Record<string, unknown>> = {
+  emit: { [K in keyof TEvents]: (payload: TEvents[K]) => void };
+  subscribe: {
+    [K in keyof TEvents]: (listener: Listener<TEvents[K]>) => () => void;
+  };
+};
 
-  return {
-    emit(payload: T): void {
+/**
+ * Creates a type-safe event bus from an events type map.
+ * Each key in the map becomes a named channel with `emit` and `subscribe` methods.
+ * Channel types are derived from the map values — no manual wiring required.
+ */
+function createEventBus<TEvents extends Record<string, unknown>>(
+  eventNames: ReadonlyArray<keyof TEvents>
+): EventBus<TEvents> {
+  const emit = {} as EventBus<TEvents>["emit"];
+  const subscribe = {} as EventBus<TEvents>["subscribe"];
+
+  for (const name of eventNames) {
+    const listeners = new Set<Listener<TEvents[typeof name]>>();
+
+    emit[name] = (payload: TEvents[typeof name]) => {
       for (const listener of listeners) {
         listener(payload);
       }
-    },
-    subscribe(listener: Listener<T>): () => void {
+    };
+
+    subscribe[name] = (listener: Listener<TEvents[typeof name]>) => {
       listeners.add(listener);
       return () => listeners.delete(listener);
-    },
-  };
-};
+    };
+  }
 
-// Each channel is independently typed - no assertions needed anywhere
-const stackSelectedChannel = createChannel<AnalyticsEvents["STACK_SELECTED"]>();
-const flashcardAnswerChannel =
-  createChannel<AnalyticsEvents["FLASHCARD_ANSWER"]>();
-const flashcardModeChangedChannel =
-  createChannel<AnalyticsEvents["FLASHCARD_MODE_CHANGED"]>();
+  return { emit, subscribe };
+}
 
-// Event bus with discriminated method access - full type safety through structure
-export const eventBus = {
-  emit: {
-    STACK_SELECTED: stackSelectedChannel.emit,
-    FLASHCARD_ANSWER: flashcardAnswerChannel.emit,
-    FLASHCARD_MODE_CHANGED: flashcardModeChangedChannel.emit,
-  },
-  subscribe: {
-    STACK_SELECTED: stackSelectedChannel.subscribe,
-    FLASHCARD_ANSWER: flashcardAnswerChannel.subscribe,
-    FLASHCARD_MODE_CHANGED: flashcardModeChangedChannel.subscribe,
-  },
-} satisfies {
-  emit: { [K in keyof AnalyticsEvents]: (payload: AnalyticsEvents[K]) => void };
-  subscribe: {
-    [K in keyof AnalyticsEvents]: (
-      listener: Listener<AnalyticsEvents[K]>
-    ) => () => void;
-  };
-};
+// Event bus with discriminated method access — full type safety through structure
+export const eventBus = createEventBus<AnalyticsEvents>([
+  "STACK_SELECTED",
+  "FLASHCARD_ANSWER",
+  "FLASHCARD_MODE_CHANGED",
+]);

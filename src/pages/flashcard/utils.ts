@@ -1,8 +1,8 @@
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
 
-export type DisplayMode = "card" | "index";
+const DISPLAY_MODES = ["card", "index"] as const;
 
-const DISPLAY_MODES: DisplayMode[] = ["card", "index"];
+export type DisplayMode = (typeof DISPLAY_MODES)[number];
 
 /** Randomly selects between "card" and "index" display modes for both-modes flashcard game. */
 export const getRandomDisplayMode = (): DisplayMode => {
