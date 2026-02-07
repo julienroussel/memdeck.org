@@ -7,7 +7,7 @@ const DEFAULT_TIMER_SETTINGS: TimerSettings = {
   duration: 15,
 };
 
-type UseTimerSettingsResult = {
+export type UseTimerSettingsResult = {
   timerSettings: TimerSettings;
   setTimerEnabled: (enabled: boolean) => void;
   setTimerDuration: (duration: TimerDuration) => void;

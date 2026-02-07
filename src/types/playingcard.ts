@@ -112,3 +112,6 @@ export type PlayingCard =
   | typeof JackOfSpades
   | typeof QueenOfSpades
   | typeof KingOfSpades;
+
+export type Suit = PlayingCard["suit"];
+export type Rank = PlayingCard["rank"];

@@ -7,6 +7,7 @@ import {
 import { useFlashcardTimer } from "../../hooks/use-flashcard-timer";
 import { timerReducerCases, useGameTimer } from "../../hooks/use-game-timer";
 import { eventBus } from "../../services/event-bus";
+import type { FlashcardMode } from "../../types/flashcard";
 import type { PlayingCard } from "../../types/playingcard";
 import { shuffle } from "../../types/shuffle";
 import {
@@ -17,12 +18,13 @@ import {
 import { isPlayingCard } from "../../types/typeguards";
 import { generateUniqueCardChoices } from "../../utils/card-selection";
 import { useLocalDb } from "../../utils/localstorage";
-import type { FlashcardMode } from "./flashcard-options";
-import { getRandomDisplayMode, wrongAnswerNotification } from "./utils";
+import {
+  type DisplayMode,
+  getRandomDisplayMode,
+  wrongAnswerNotification,
+} from "./utils";
 
 // --- Types ---
-
-type DisplayMode = "card" | "index";
 
 type GameState = {
   successes: number;
@@ -132,7 +134,21 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
 
 // --- Hook ---
 
-export const useFlashcardGame = (stackOrder: Stack, stackName: string) => {
+type UseFlashcardGameResult = {
+  score: { successes: number; fails: number };
+  card: PlayingCardPosition;
+  choices: PlayingCardPosition[];
+  shouldShowCard: boolean;
+  timeRemaining: number;
+  timerEnabled: boolean;
+  timerDuration: number;
+  submitAnswer: (item: PlayingCard | number) => void;
+};
+
+export const useFlashcardGame = (
+  stackOrder: Stack,
+  stackName: string
+): UseFlashcardGameResult => {
   const { timerSettings } = useFlashcardTimer();
   const [mode] = useLocalDb<FlashcardMode>(FLASHCARD_OPTION_LSK, "bothmodes");
 

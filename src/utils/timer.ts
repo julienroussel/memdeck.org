@@ -34,4 +34,4 @@ export const TIMER_DURATION_OPTIONS: { label: string; value: string }[] =
 
 /** Type guard to check if a number is a valid timer duration */
 export const isValidDuration = (value: number): value is TimerDuration =>
-  VALID_DURATIONS.includes(value as TimerDuration);
+  (VALID_DURATIONS as readonly number[]).includes(value);

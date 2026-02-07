@@ -9,4 +9,4 @@ export const cssVarCounterStyle = (
 ) =>
   ({
     "--i": index + 1 - size + offset,
-  }) as VarCSSProperty;
+  }) satisfies VarCSSProperty;

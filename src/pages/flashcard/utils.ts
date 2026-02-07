@@ -1,6 +1,6 @@
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
 
-type DisplayMode = "card" | "index";
+export type DisplayMode = "card" | "index";
 
 const DISPLAY_MODES: DisplayMode[] = ["card", "index"];
 

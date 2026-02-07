@@ -1,7 +1,9 @@
+import type { FlashcardMode } from "../types/flashcard";
+
 type AnalyticsEvents = {
   STACK_SELECTED: { stackName: string };
   FLASHCARD_ANSWER: { correct: boolean; stackName: string };
-  FLASHCARD_MODE_CHANGED: { mode: string };
+  FLASHCARD_MODE_CHANGED: { mode: FlashcardMode };
 };
 
 type Listener<T> = (payload: T) => void;
