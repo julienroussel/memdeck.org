@@ -1,5 +1,17 @@
-import { Anchor, Grid, Space, Text, Title } from "@mantine/core";
+import {
+  Anchor,
+  Card,
+  Grid,
+  Group,
+  Space,
+  Stack,
+  Text,
+  ThemeIcon,
+  Title,
+} from "@mantine/core";
+import { IconBook2 } from "@tabler/icons-react";
 import { useMemo } from "react";
+import { Link } from "react-router";
 import { CardSpread } from "../components/card-spread/card-spread";
 import { StackPicker } from "../components/stack-picker";
 import { GITHUB_URL } from "../constants";
@@ -29,7 +41,12 @@ export const Home = () => {
           <Space h="lg" />
           <Text>
             Hope these tools help you level up your memorized deck stack
-            learning. Need a hand or think something's missing? Hit me up on{" "}
+            learning. Check out the{" "}
+            <Anchor component={Link} to="/guide">
+              guide
+            </Anchor>{" "}
+            for a walkthrough of everything MemDeck offers. Need a hand or think
+            something's missing? Hit me up on{" "}
             <Anchor
               href={GITHUB_URL}
               rel="noopener"
@@ -50,6 +67,36 @@ export const Home = () => {
               </Text>
               <Space h="lg" />
               <StackPicker />
+              <Space h="lg" />
+              <Card
+                aria-label="Read the MemDeck guide"
+                component={Link}
+                padding="lg"
+                radius="md"
+                shadow="sm"
+                td="none"
+                to="/guide"
+                withBorder
+              >
+                <Group>
+                  <ThemeIcon
+                    aria-hidden="true"
+                    color="blue"
+                    radius="xl"
+                    size="lg"
+                    variant="light"
+                  >
+                    <IconBook2 size={20} stroke={1.5} />
+                  </ThemeIcon>
+                  <Stack gap={4}>
+                    <Text fw={600}>New here? Read the Guide</Text>
+                    <Text c="dimmed" size="sm">
+                      Learn about all the training modes and how to get the most
+                      out of MemDeck.
+                    </Text>
+                  </Stack>
+                </Group>
+              </Card>
             </>
           )}
         </Grid.Col>
