@@ -74,7 +74,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 
 ### Application Structure
 
-- **Routing**: Hash-based routing (`HashRouter`) via React Router in `src/Routes.tsx`
+- **Routing**: `BrowserRouter` via React Router in `src/Routes.tsx`. GitHub Pages SPA support via `public/404.html` redirect
 - **UI Framework**: Mantine with custom color scheme management stored in localStorage
 - **Pages**: Self-contained in `src/pages/` — each training mode is its own page
 - **Components**: Reusable UI in `src/components/` (e.g., `CardSpread`, `StackPicker`, `NumberCard`)

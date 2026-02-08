@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
 import { GITHUB_URL } from "../constants";
+import { useDocumentMeta } from "../hooks/use-document-meta";
 
 type Resource = {
   title: string;
@@ -44,7 +45,7 @@ const primaryResources: PrimaryResource[] = [
     title: "Bound to Please",
     author: "Simon Aronson",
     description:
-      "Compilation of Aronson’s early works, essential for stack work.",
+      "Compilation of Aronson's early works, essential for stack work.",
     link: "https://www.vanishingincmagic.com/card-magic/bound-to-please/",
     category: "book",
   },
@@ -110,78 +111,91 @@ const otherResources: Resource[] = [
   },
 ];
 
-export const Resources = () => (
-  <>
-    <Title mb="md" order={1}>
-      Memorized Deck Resources
-    </Title>
-    <Text mb="xl">
-      Explore a curated collection of resources to help you master the art of
-      memorized decks. Missing a resource? Give me a shout or drop a pull
-      request on{" "}
-      <Anchor
-        href={GITHUB_URL}
-        rel="noopener"
-        target="_blank"
-        underline="never"
-      >
-        Github
-      </Anchor>
-      .
-    </Text>
-    <SimpleGrid cols={2} spacing="lg">
-      {primaryResources.map((resource) => (
-        <Card
-          key={resource.title}
-          padding="lg"
-          radius="md"
-          shadow="sm"
-          withBorder
-        >
-          <Group>
-            <Title order={3}>{resource.title}</Title>
-            <Badge color="blue" variant="light">
-              {resource.category}
-            </Badge>
-          </Group>
-          <Text c="dimmed" fs="italic" mb="xs" size="sm">
-            {resource.author}
-          </Text>
-          <Text c="dimmed" mb="md" size="sm">
-            {resource.description}
-          </Text>
-          <Anchor href={resource.link} rel="noopener" size="sm" target="_blank">
-            Learn more
-          </Anchor>
-        </Card>
-      ))}
-    </SimpleGrid>
+export const Resources = () => {
+  useDocumentMeta({
+    title: "Resources",
+    description:
+      "Curated books and resources for memorized deck magic, including Mnemonica by Tamariz and The Aronson Approach.",
+  });
 
-    <Title mb="md" mt="xl" order={2}>
-      Other Resources
-    </Title>
-    <List
-      center
-      icon={
-        <ThemeIcon color="blue" radius="xl" size={24}>
-          <IconExternalLink size={16} />
-        </ThemeIcon>
-      }
-      size="md"
-      spacing="sm"
-    >
-      {otherResources.map((resource) => (
-        <List.Item key={resource.title}>
-          <Anchor href={resource.link} rel="noopener" target="_blank">
-            {resource.title}
-          </Anchor>{" "}
-          (
-          <Text c="dimmed" fs="italic" size="sm" span>
-            {resource.author}
-          </Text>
-          ) : <Text span>{resource.description}</Text>
-        </List.Item>
-      ))}
-    </List>
-  </>
-);
+  return (
+    <>
+      <Title mb="md" order={1}>
+        Memorized Deck Resources
+      </Title>
+      <Text mb="xl">
+        Explore a curated collection of resources to help you master the art of
+        memorized decks. Missing a resource? Give me a shout or drop a pull
+        request on{" "}
+        <Anchor
+          href={GITHUB_URL}
+          rel="noopener"
+          target="_blank"
+          underline="never"
+        >
+          Github
+        </Anchor>
+        .
+      </Text>
+      <SimpleGrid cols={2} spacing="lg">
+        {primaryResources.map((resource) => (
+          <Card
+            key={resource.title}
+            padding="lg"
+            radius="md"
+            shadow="sm"
+            withBorder
+          >
+            <Group>
+              <Title order={3}>{resource.title}</Title>
+              <Badge color="blue" variant="light">
+                {resource.category}
+              </Badge>
+            </Group>
+            <Text c="dimmed" fs="italic" mb="xs" size="sm">
+              {resource.author}
+            </Text>
+            <Text c="dimmed" mb="md" size="sm">
+              {resource.description}
+            </Text>
+            <Anchor
+              href={resource.link}
+              rel="noopener"
+              size="sm"
+              target="_blank"
+            >
+              Learn more
+            </Anchor>
+          </Card>
+        ))}
+      </SimpleGrid>
+
+      <Title mb="md" mt="xl" order={2}>
+        Other Resources
+      </Title>
+      <List
+        center
+        icon={
+          <ThemeIcon color="blue" radius="xl" size={24}>
+            <IconExternalLink size={16} />
+          </ThemeIcon>
+        }
+        size="md"
+        spacing="sm"
+      >
+        {otherResources.map((resource) => (
+          <List.Item key={resource.title}>
+            <Anchor href={resource.link} rel="noopener" target="_blank">
+              {resource.title}
+            </Anchor>{" "}
+            (
+            <Text c="dimmed" fs="italic" size="sm" span>
+              {resource.author}
+            </Text>
+            ) : <Text span>{resource.description}</Text>
+          </List.Item>
+        ))}
+      </List>
+    </>
+  );
+};
