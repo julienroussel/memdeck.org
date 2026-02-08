@@ -94,8 +94,8 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
       ultracite:
-        specifier: 7.1.4
-        version: 7.1.4(oxlint@1.38.0)
+        specifier: 7.1.5
+        version: 7.1.5(oxlint@1.38.0)
       vite:
         specifier: 7.3.1
         version: 7.3.1(@types/node@25.2.1)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.6))(yaml@2.8.2)
@@ -1999,8 +1999,8 @@ packages:
   node-releases@2.0.27:
     resolution: {integrity: sha512-nmh3lCkYZ3grZvqcCH+fjmQ7X+H0OeZgP40OierEaAptX4XofMh5kwNbWh7lBduUzCcV/8kZ+NDLCwm2iorIlA==}
 
-  nypm@0.6.4:
-    resolution: {integrity: sha512-1TvCKjZyyklN+JJj2TS3P4uSQEInrM/HkkuSXsEzm1ApPgBffOn8gFguNnZf07r/1X6vlryfIqMUkJKQMzlZiw==}
+  nypm@0.6.5:
+    resolution: {integrity: sha512-K6AJy1GMVyfyMXRVB88700BJqNUkByijGJM8kEHpLdcAt+vSQAVfkWWHYzuRXHSY6xA2sNc5RjTj0p9rE2izVQ==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -2604,8 +2604,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  ultracite@7.1.4:
-    resolution: {integrity: sha512-f7Uu7nxirLlTzINKL1L8huvZS1AGhav9V7g9jAfGQJv0qlAZWwZSLfMwVBsZbn0Vf0mWIXX4zvWoJY2APK9oVw==}
+  ultracite@7.1.5:
+    resolution: {integrity: sha512-bT1Gr32b3tSUbN2fIl4ZpYc/wH+lZnurw6yqobXlfZEkq7+nNVRsoGJuXVhIu1sPo+BEoLfx/RA0ENMBOzMeyQ==}
     hasBin: true
     peerDependencies:
       oxlint: ^1.0.0
@@ -4702,7 +4702,7 @@ snapshots:
 
   node-releases@2.0.27: {}
 
-  nypm@0.6.4:
+  nypm@0.6.5:
     dependencies:
       citty: 0.2.0
       pathe: 2.0.3
@@ -5365,14 +5365,14 @@ snapshots:
 
   typescript@5.9.3: {}
 
-  ultracite@7.1.4(oxlint@1.38.0):
+  ultracite@7.1.5(oxlint@1.38.0):
     dependencies:
       '@clack/prompts': 1.0.0
       commander: 14.0.3
       deepmerge: 4.3.1
       glob: 13.0.1
       jsonc-parser: 3.3.1
-      nypm: 0.6.4
+      nypm: 0.6.5
     optionalDependencies:
       oxlint: 1.38.0
 
