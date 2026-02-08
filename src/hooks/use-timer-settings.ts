@@ -1,4 +1,8 @@
 import { useCallback } from "react";
+import type {
+  ACAAN_TRAINER_TIMER_LSK,
+  FLASHCARD_TIMER_LSK,
+} from "../constants";
 import type { TimerDuration, TimerSettings } from "../types/timer";
 import { useLocalDb } from "../utils/localstorage";
 
@@ -13,13 +17,9 @@ export type UseTimerSettingsResult = {
   setTimerDuration: (duration: TimerDuration) => void;
 };
 
-/**
- * Union of valid timer storage keys.
- * Matches the localStorage key constants for timer settings.
- */
 type TimerStorageKey =
-  | "memdeck-app-flashcard-timer"
-  | "memdeck-app-acaan-trainer-timer";
+  | typeof FLASHCARD_TIMER_LSK
+  | typeof ACAAN_TRAINER_TIMER_LSK;
 
 /**
  * Generic hook for managing timer settings.

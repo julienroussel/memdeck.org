@@ -34,6 +34,23 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
     }
   };
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (canMove && e.buttons === 1) {
+      updateOffset(e.nativeEvent.movementX);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (canMove && e.touches.length === 1) {
+      const touch = e.nativeEvent.touches[0];
+      if (!touch) {
+        return;
+      }
+      updateOffset(touch.screenX - touchLastPosition);
+      setTouchLastPosition(touch.screenX);
+    }
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (!canMove) {
       return;
@@ -99,21 +116,8 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
       justify="center"
       mih={height}
       onKeyDown={handleKeyDown}
-      onMouseMove={(e) => {
-        if (canMove === true && e.buttons === 1) {
-          updateOffset(e.nativeEvent.movementX);
-        }
-      }}
-      onTouchMove={(e) => {
-        if (canMove === true && e.touches.length === 1) {
-          const touch = e.nativeEvent.touches[0];
-          if (!touch) {
-            return;
-          }
-          updateOffset(touch.screenX - touchLastPosition);
-          setTouchLastPosition(touch.screenX);
-        }
-      }}
+      onMouseMove={handleMouseMove}
+      onTouchMove={handleTouchMove}
       role="listbox"
       style={{ "--degree": `${degree}deg` }}
       tabIndex={canMove ? 0 : undefined}

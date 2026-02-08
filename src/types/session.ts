@@ -52,8 +52,11 @@ export type AllTimeStatsEntry = {
   globalBestStreak: number;
 };
 
-/** Keyed by "{mode}:{stackKey}" (e.g. "flashcard:mnemonica") */
-export type AllTimeStats = Record<string, AllTimeStatsEntry>;
+/** Composite key for AllTimeStats: "{mode}:{stackKey}" (e.g. "flashcard:mnemonica") */
+export type StatsKey = `${TrainingMode}:${StackKey}`;
+
+/** Keyed by StatsKey — not all combinations will have entries */
+export type AllTimeStats = Partial<Record<StatsKey, AllTimeStatsEntry>>;
 
 /** Session summary for the end-of-session screen */
 export type SessionSummary = {

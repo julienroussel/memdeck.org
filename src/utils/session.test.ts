@@ -20,6 +20,8 @@ import {
   isAllTimeStats,
   isSessionRecord,
   isSessionRecordArray,
+  isStatsKey,
+  parseStatsKey,
   saveSessionRecord,
   statsKey,
   toAccuracyPercent,
@@ -269,6 +271,53 @@ describe("isSessionRecordArray", () => {
   });
 });
 
+describe("isStatsKey", () => {
+  it("returns true for valid mode:stackKey combinations", () => {
+    expect(isStatsKey("flashcard:mnemonica")).toBe(true);
+    expect(isStatsKey("acaan:aronson")).toBe(true);
+    expect(isStatsKey("flashcard:particle")).toBe(true);
+  });
+
+  it("returns false for strings without a colon separator", () => {
+    expect(isStatsKey("flashcardmnemonica")).toBe(false);
+    expect(isStatsKey("invalid")).toBe(false);
+  });
+
+  it("returns false for unknown training mode", () => {
+    expect(isStatsKey("unknown:mnemonica")).toBe(false);
+  });
+
+  it("returns false for unknown stack key", () => {
+    expect(isStatsKey("flashcard:unknown")).toBe(false);
+  });
+
+  it("returns false for empty strings around separator", () => {
+    expect(isStatsKey(":mnemonica")).toBe(false);
+    expect(isStatsKey("flashcard:")).toBe(false);
+    expect(isStatsKey(":")).toBe(false);
+  });
+
+  it("returns false for empty string", () => {
+    expect(isStatsKey("")).toBe(false);
+  });
+
+  it("returns false for keys with multiple colons", () => {
+    expect(isStatsKey("flashcard:mne:monica")).toBe(false);
+  });
+});
+
+describe("parseStatsKey", () => {
+  it("extracts mode and stackKey from a valid StatsKey", () => {
+    const result = parseStatsKey("flashcard:mnemonica");
+    expect(result).toEqual({ mode: "flashcard", stackKey: "mnemonica" });
+  });
+
+  it("extracts mode and stackKey for acaan mode", () => {
+    const result = parseStatsKey("acaan:aronson");
+    expect(result).toEqual({ mode: "acaan", stackKey: "aronson" });
+  });
+});
+
 describe("isAllTimeStats", () => {
   it("returns true for empty object", () => {
     expect(isAllTimeStats({})).toBe(true);
@@ -291,6 +340,21 @@ describe("isAllTimeStats", () => {
 
   it("returns false for invalid entries", () => {
     expect(isAllTimeStats({ key: "not an entry" })).toBe(false);
+  });
+
+  it("returns false for stats with invalid key format", () => {
+    expect(isAllTimeStats({ "invalid-key": createEmptyStatsEntry() })).toBe(
+      false
+    );
+  });
+
+  it("returns false for stats with valid format but unknown mode or stack", () => {
+    expect(
+      isAllTimeStats({ "unknown:mnemonica": createEmptyStatsEntry() })
+    ).toBe(false);
+    expect(
+      isAllTimeStats({ "flashcard:unknown": createEmptyStatsEntry() })
+    ).toBe(false);
   });
 });
 
@@ -340,11 +404,11 @@ describe("updateAllTimeStats", () => {
     const entry = stored["flashcard:mnemonica"];
 
     expect(entry).toBeDefined();
-    expect(entry.totalSessions).toBe(1);
-    expect(entry.totalQuestions).toBe(10);
-    expect(entry.totalSuccesses).toBe(8);
-    expect(entry.totalFails).toBe(2);
-    expect(entry.globalBestStreak).toBe(5);
+    expect(entry?.totalSessions).toBe(1);
+    expect(entry?.totalQuestions).toBe(10);
+    expect(entry?.totalSuccesses).toBe(8);
+    expect(entry?.totalFails).toBe(2);
+    expect(entry?.globalBestStreak).toBe(5);
   });
 
   it("accumulates stats across sessions", () => {
@@ -356,10 +420,10 @@ describe("updateAllTimeStats", () => {
     );
     const entry = stored["flashcard:mnemonica"];
 
-    expect(entry.totalSessions).toBe(2);
-    expect(entry.totalSuccesses).toBe(13);
-    expect(entry.totalFails).toBe(7);
-    expect(entry.globalBestStreak).toBe(7);
+    expect(entry?.totalSessions).toBe(2);
+    expect(entry?.totalSuccesses).toBe(13);
+    expect(entry?.totalFails).toBe(7);
+    expect(entry?.globalBestStreak).toBe(7);
   });
 
   it("tracks best streak as max across sessions", () => {
@@ -369,7 +433,7 @@ describe("updateAllTimeStats", () => {
     const stored: AllTimeStats = JSON.parse(
       storage.get(ALL_TIME_STATS_LSK) ?? "{}"
     );
-    expect(stored["flashcard:mnemonica"].globalBestStreak).toBe(10);
+    expect(stored["flashcard:mnemonica"]?.globalBestStreak).toBe(10);
   });
 });
 

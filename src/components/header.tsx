@@ -24,6 +24,12 @@ type HeaderProps = {
 export const Header = ({ opened, toggle }: HeaderProps) => {
   const { setColorScheme, colorScheme } = useMantineColorScheme();
 
+  const handleColorSchemeChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setColorScheme(event.currentTarget.checked ? "light" : "dark");
+  };
+
   return (
     <Group h="100%" justify="space-between" px="md">
       <Group>
@@ -69,9 +75,7 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
           offLabel={
             <IconMoonStars color="var(--mantine-color-blue-6)" size={16} />
           }
-          onChange={(event) =>
-            setColorScheme(event.currentTarget.checked ? "light" : "dark")
-          }
+          onChange={handleColorSchemeChange}
           onLabel={<IconSun color="var(--mantine-color-yellow-4)" size={16} />}
           size="md"
         />

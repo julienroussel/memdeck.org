@@ -13,11 +13,15 @@ import {
   type SessionPhase,
   type SessionRecord,
   type SessionSummary,
+  type StatsKey,
   TRAINING_MODES,
   type TrainingMode,
 } from "../types/session";
-import type { StackKey } from "../types/stacks";
+import { type StackKey, stacks } from "../types/stacks";
 import { getStoredValue } from "./localstorage";
+
+const VALID_STACK_KEYS: ReadonlySet<string> = new Set(Object.keys(stacks));
+const VALID_TRAINING_MODES: ReadonlySet<string> = new Set(TRAINING_MODES);
 
 /** Formats a duration in seconds to a human-readable string (e.g. "2m 30s") */
 export const formatDuration = (seconds: number): string => {
@@ -31,8 +35,19 @@ export const formatDuration = (seconds: number): string => {
 };
 
 /** Builds a composite key for AllTimeStats lookups */
-export const statsKey = (mode: TrainingMode, stackKey: StackKey): string =>
+export const statsKey = (mode: TrainingMode, stackKey: StackKey): StatsKey =>
   `${mode}:${stackKey}`;
+
+/** Extracts the mode and stackKey from a composite StatsKey */
+export const parseStatsKey = (
+  key: StatsKey
+): { mode: TrainingMode; stackKey: StackKey } => {
+  const separatorIndex = key.indexOf(":");
+  return {
+    mode: key.slice(0, separatorIndex) as TrainingMode,
+    stackKey: key.slice(separatorIndex + 1) as StackKey,
+  };
+};
 
 /** Calculates accuracy as a 0-1 decimal. Returns 0 when no attempts. */
 export const calculateAccuracy = (successes: number, fails: number): number => {
@@ -145,12 +160,26 @@ export const isSessionRecordArray = (
 ): value is SessionRecord[] =>
   Array.isArray(value) && value.every(isSessionRecord);
 
+/** Validates that a string matches the `{TrainingMode}:{StackKey}` format */
+export const isStatsKey = (key: string): key is StatsKey => {
+  const separatorIndex = key.indexOf(":");
+  if (separatorIndex === -1) {
+    return false;
+  }
+  const mode = key.slice(0, separatorIndex);
+  const stack = key.slice(separatorIndex + 1);
+  return VALID_TRAINING_MODES.has(mode) && VALID_STACK_KEYS.has(stack);
+};
+
 export const isAllTimeStats = (value: unknown): value is AllTimeStats => {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     return false;
   }
-  const entries = Object.values(value);
-  return entries.every((entry) => {
+  const record = value as Record<string, unknown>;
+  return Object.entries(record).every(([key, entry]) => {
+    if (!isStatsKey(key)) {
+      return false;
+    }
     if (typeof entry !== "object" || entry === null) {
       return false;
     }

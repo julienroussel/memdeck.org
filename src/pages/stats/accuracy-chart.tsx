@@ -46,6 +46,12 @@ export const getAccuracyColor = (percent: number): string => {
 export const AccuracyChart = ({ history }: AccuracyChartProps) => {
   const [filter, setFilter] = useState<Filter>("all");
 
+  const handleFilterChange = (value: string) => {
+    if (isFilter(value)) {
+      setFilter(value);
+    }
+  };
+
   const filteredHistory =
     filter === "all" ? history : history.filter((r) => r.mode === filter);
 
@@ -60,11 +66,7 @@ export const AccuracyChart = ({ history }: AccuracyChartProps) => {
       <Title order={3}>Accuracy Trend</Title>
       <SegmentedControl
         data={filterOptions}
-        onChange={(value) => {
-          if (isFilter(value)) {
-            setFilter(value);
-          }
-        }}
+        onChange={handleFilterChange}
         size="xs"
         value={filter}
       />
