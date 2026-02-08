@@ -3,6 +3,7 @@ import { IconFlame, IconTargetArrow, IconTrophy } from "@tabler/icons-react";
 import { memo } from "react";
 import type { ActiveSession } from "../types/session";
 import { calculateAccuracy, toAccuracyPercent } from "../utils/session";
+import { Score } from "./score";
 
 type SessionBannerProps = {
   session: ActiveSession;
@@ -40,6 +41,7 @@ export const SessionBanner = memo(function SessionBanner({
           >
             {progressText}
           </Badge>
+          <Score fails={fails} successes={successes} />
           <Badge
             aria-label={`Accuracy: ${accuracyPercent}%`}
             leftSection={<IconTargetArrow size={12} />}

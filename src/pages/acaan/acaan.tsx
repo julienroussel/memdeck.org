@@ -13,6 +13,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconSettings } from "@tabler/icons-react";
 import { useCallback, useState } from "react";
 import { NumberCard } from "../../components/number-card";
+import { Score } from "../../components/score";
 import { SessionBanner } from "../../components/session-banner";
 import { SessionStartControls } from "../../components/session-start-controls";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
@@ -21,7 +22,6 @@ import { DECK_SIZE } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
-import { Score } from "../flashcard/score";
 import { AcaanOptions } from "./acaan-options";
 import { useAcaanGame } from "./use-acaan-game";
 
@@ -99,7 +99,9 @@ export const Acaan = () => {
           <Group gap="xs" justify="space-between">
             <Title order={1}>ACAAN</Title>
             <Group gap="xs">
-              <Score fails={score.fails} successes={score.successes} />
+              {!isStructuredSession && (
+                <Score fails={score.fails} successes={score.successes} />
+              )}
               <ActionIcon color="gray" onClick={open} variant="subtle">
                 <IconSettings />
               </ActionIcon>
