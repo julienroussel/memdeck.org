@@ -4,6 +4,7 @@ import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
 import { useAcaanTimer } from "../../hooks/use-acaan-timer";
 import { timerReducerCases, useGameTimer } from "../../hooks/use-game-timer";
 import type { GameScore } from "../../types/game";
+import type { AnswerOutcome } from "../../types/session";
 import type { Stack } from "../../types/stacks";
 import {
   type AcaanScenario,
@@ -28,7 +29,7 @@ type TimeoutAction = {
 
 export type GameAction =
   | { type: "CORRECT_ANSWER"; payload: { newScenario: AcaanScenario } }
-  | { type: "WRONG_ANSWER"; payload: { newScenario: AcaanScenario } }
+  | { type: "WRONG_ANSWER" }
   | TimeoutAction
   | { type: "TICK" }
   | { type: "RESET_TIMER"; payload: { duration: number } };
@@ -70,12 +71,14 @@ export const gameReducer = (
         scenario: action.payload.newScenario,
         timeRemaining: state.timerDuration,
       };
+    // Note: WRONG_ANSWER intentionally does NOT reset the timer or advance to next scenario.
+    // This allows users to retry the same question until they get it right or time runs out.
+    // Changed from previous behavior where wrong answers advanced to the next scenario.
+    // Retry-until-correct aligns ACAAN with flashcard mode for consistent session tracking.
     case "WRONG_ANSWER":
       return {
         ...state,
         fails: state.fails + 1,
-        scenario: action.payload.newScenario,
-        timeRemaining: state.timerDuration,
       };
     case "TIMEOUT":
       return {
@@ -97,6 +100,10 @@ export const gameReducer = (
 
 // --- Hook ---
 
+type UseAcaanGameOptions = {
+  onAnswer?: (outcome: AnswerOutcome) => void;
+};
+
 type UseAcaanGameResult = {
   scenario: AcaanScenario;
   score: GameScore;
@@ -106,12 +113,18 @@ type UseAcaanGameResult = {
   submitAnswer: (userAnswer: number) => void;
 };
 
-export const useAcaanGame = (stackOrder: Stack): UseAcaanGameResult => {
+export const useAcaanGame = (
+  stackOrder: Stack,
+  options?: UseAcaanGameOptions
+): UseAcaanGameResult => {
   const { timerSettings } = useAcaanTimer();
 
   // Use ref to avoid stackOrder in effect dependencies (prevents unnecessary re-runs)
   const stackOrderRef = useRef(stackOrder);
   stackOrderRef.current = stackOrder;
+
+  const onAnswerRef = useRef(options?.onAnswer);
+  onAnswerRef.current = options?.onAnswer;
 
   const [state, dispatch] = useReducer(
     gameReducer,
@@ -150,6 +163,7 @@ export const useAcaanGame = (stackOrder: Stack): UseAcaanGameResult => {
       ),
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
     });
+    onAnswerRef.current?.({ correct: false, questionAdvanced: true });
   }, [state.scenario.cardPosition, state.scenario.targetPosition]);
 
   useGameTimer({
@@ -182,21 +196,18 @@ export const useAcaanGame = (stackOrder: Stack): UseAcaanGameResult => {
         type: "CORRECT_ANSWER",
         payload: { newScenario: generateAcaanScenario(stackOrderRef.current) },
       });
+      onAnswerRef.current?.({ correct: true, questionAdvanced: true });
     } else {
+      // Simplified "Try again!" replaces the previous formatCutDepthMessage detail,
+      // since users now retry the same question rather than advancing.
       notifications.show({
         color: "red",
         title: "Wrong answer",
-        message: `You answered ${userAnswer}. ${formatCutDepthMessage(
-          state.scenario.cardPosition,
-          state.scenario.targetPosition,
-          correctAnswer
-        )}`,
+        message: "Try again!",
         autoClose: NOTIFICATION_CLOSE_TIMEOUT,
       });
-      dispatch({
-        type: "WRONG_ANSWER",
-        payload: { newScenario: generateAcaanScenario(stackOrderRef.current) },
-      });
+      dispatch({ type: "WRONG_ANSWER" });
+      onAnswerRef.current?.({ correct: false, questionAdvanced: false });
     }
   };
 

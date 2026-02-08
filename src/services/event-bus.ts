@@ -1,9 +1,16 @@
 import type { FlashcardMode } from "../types/flashcard";
+import type { SessionConfig, TrainingMode } from "../types/session";
 
 type AnalyticsEvents = {
   STACK_SELECTED: { stackName: string };
   FLASHCARD_ANSWER: { correct: boolean; stackName: string };
   FLASHCARD_MODE_CHANGED: { mode: FlashcardMode };
+  SESSION_STARTED: { mode: TrainingMode; config: SessionConfig };
+  SESSION_COMPLETED: {
+    mode: TrainingMode;
+    accuracy: number;
+    questionsCompleted: number;
+  };
 };
 
 type Listener<T> = (payload: T) => void;
@@ -49,4 +56,6 @@ export const eventBus = createEventBus<AnalyticsEvents>([
   "STACK_SELECTED",
   "FLASHCARD_ANSWER",
   "FLASHCARD_MODE_CHANGED",
+  "SESSION_STARTED",
+  "SESSION_COMPLETED",
 ]);

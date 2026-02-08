@@ -13,9 +13,13 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconSettings } from "@tabler/icons-react";
 import { useCallback, useState } from "react";
 import { NumberCard } from "../../components/number-card";
+import { SessionBanner } from "../../components/session-banner";
+import { SessionStartControls } from "../../components/session-start-controls";
+import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
 import { DECK_SIZE } from "../../constants";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
+import { useSession } from "../../hooks/use-session";
 import { Score } from "../flashcard/score";
 import { AcaanOptions } from "./acaan-options";
 import { useAcaanGame } from "./use-acaan-game";
@@ -28,7 +32,18 @@ const isValidCutDepth = (value: number): boolean =>
   Number.isInteger(value) && value >= 0 && value <= MAX_CUT_DEPTH;
 
 export const Acaan = () => {
-  const { stackOrder } = useRequiredStack();
+  const { stackKey, stackOrder } = useRequiredStack();
+  const {
+    status,
+    startSession,
+    handleAnswer,
+    startNewSession,
+    isStructuredSession,
+    activeSession,
+    stopSession,
+    dismissSummary,
+  } = useSession({ mode: "acaan", stackKey, autoStart: true });
+
   const {
     scenario,
     score,
@@ -36,7 +51,7 @@ export const Acaan = () => {
     timerEnabled,
     timerDuration,
     submitAnswer,
-  } = useAcaanGame(stackOrder);
+  } = useAcaanGame(stackOrder, { onAnswer: handleAnswer });
   const [options, { open, close }] = useDisclosure(false);
   const [cutDepth, setCutDepth] = useState<number | "">("");
 
@@ -84,6 +99,12 @@ export const Acaan = () => {
               </ActionIcon>
             </Group>
           </Group>
+          {isStructuredSession && activeSession && (
+            <SessionBanner onStop={stopSession} session={activeSession} />
+          )}
+          {!isStructuredSession && (
+            <SessionStartControls onStart={startSession} />
+          )}
         </Grid.Col>
         <Grid.Col span={12}>
           <Space h="xl" />
@@ -137,6 +158,13 @@ export const Acaan = () => {
           <AcaanOptions close={close} opened={options} />
         </Grid.Col>
       </Grid>
+      {status.phase === "summary" && (
+        <SessionSummaryModal
+          onDismiss={dismissSummary}
+          onNewSession={startNewSession}
+          summary={status.summary}
+        />
+      )}
     </div>
   );
 };
