@@ -12,6 +12,7 @@ import { IconSettings } from "@tabler/icons-react";
 import { useMemo } from "react";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { NumberCard } from "../../components/number-card";
+import { Score } from "../../components/score";
 import { SessionBanner } from "../../components/session-banner";
 import { SessionStartControls } from "../../components/session-start-controls";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
@@ -22,7 +23,6 @@ import { useSession } from "../../hooks/use-session";
 import type { PlayingCard } from "../../types/playingcard";
 import { cardItems, numberItems } from "../../types/typeguards";
 import { FlashcardOptions } from "./flashcard-options";
-import { Score } from "./score";
 import { useFlashcardGame } from "./use-flashcard-game";
 
 export const Flashcard = () => {
@@ -78,7 +78,9 @@ export const Flashcard = () => {
           <Group gap="xs" justify="space-between">
             <Title order={1}>Flashcard</Title>
             <Group gap="xs">
-              <Score fails={score.fails} successes={score.successes} />
+              {!isStructuredSession && (
+                <Score fails={score.fails} successes={score.successes} />
+              )}
               <ActionIcon color="gray" onClick={open} variant="subtle">
                 <IconSettings />
               </ActionIcon>
