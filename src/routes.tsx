@@ -10,6 +10,9 @@ import { RequireStack } from "./components/require-stack";
 const Home = lazy(() =>
   import("./pages/home").then((m) => ({ default: m.Home }))
 );
+const Guide = lazy(() =>
+  import("./pages/guide/guide").then((m) => ({ default: m.Guide }))
+);
 const Resources = lazy(() =>
   import("./pages/resources").then((m) => ({ default: m.Resources }))
 );
@@ -40,6 +43,14 @@ export const Routes = () => (
         </Suspense>
       }
       path="/"
+    />
+    <RouterRoute
+      element={
+        <Suspense fallback={<PageLoader />}>
+          <Guide />
+        </Suspense>
+      }
+      path="/guide"
     />
     <RouterRoute
       element={
