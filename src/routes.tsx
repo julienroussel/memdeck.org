@@ -22,6 +22,9 @@ const Acaan = lazy(() =>
 const Toolbox = lazy(() =>
   import("./pages/toolbox").then((m) => ({ default: m.Toolbox }))
 );
+const Stats = lazy(() =>
+  import("./pages/stats/stats").then((m) => ({ default: m.Stats }))
+);
 const PageLoader = () => (
   <Center h="100%">
     <Loader size="lg" />
@@ -75,6 +78,14 @@ export const Routes = () => (
         </Suspense>
       }
       path="/toolbox"
+    />
+    <RouterRoute
+      element={
+        <Suspense fallback={<PageLoader />}>
+          <Stats />
+        </Suspense>
+      }
+      path="/stats"
     />
     <RouterRoute element={<Navigate replace to="/" />} path="*" />
   </RouterRoutes>

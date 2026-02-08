@@ -14,3 +14,12 @@ export const MAX_RANDOM_ATTEMPTS = 100;
 
 /** Default number of choices shown in flashcard exercises */
 export const DEFAULT_CHOICES_COUNT = 5;
+
+/** localStorage key for storing array of completed session records */
+export const SESSION_HISTORY_LSK = "memdeck-app-session-history";
+
+/** localStorage key for storing aggregated all-time statistics per mode and stack combination */
+export const ALL_TIME_STATS_LSK = "memdeck-app-all-time-stats";
+
+/** Maximum number of session records to retain in localStorage */
+export const MAX_SESSION_HISTORY = 500;

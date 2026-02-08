@@ -10,6 +10,7 @@ import { eventBus } from "../../services/event-bus";
 import type { FlashcardMode } from "../../types/flashcard";
 import type { GameScore } from "../../types/game";
 import type { PlayingCard } from "../../types/playingcard";
+import type { AnswerOutcome } from "../../types/session";
 import { shuffle } from "../../types/shuffle";
 import {
   getRandomPlayingCard,
@@ -110,7 +111,6 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
       };
     // Note: WRONG_ANSWER intentionally does NOT reset the timer or advance to next card.
     // This allows users to retry the same card until they get it right or time runs out.
-    // This differs from ACAAN where every answer (correct/wrong/timeout) advances.
     case "WRONG_ANSWER":
       return {
         ...state,
@@ -138,6 +138,10 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
 
 // --- Hook ---
 
+type UseFlashcardGameOptions = {
+  onAnswer?: (outcome: AnswerOutcome) => void;
+};
+
 type UseFlashcardGameResult = {
   score: GameScore;
   card: PlayingCardPosition;
@@ -151,8 +155,11 @@ type UseFlashcardGameResult = {
 
 export const useFlashcardGame = (
   stackOrder: Stack,
-  stackName: StackValue["name"]
+  stackName: StackValue["name"],
+  options?: UseFlashcardGameOptions
 ): UseFlashcardGameResult => {
+  const onAnswerRef = useRef(options?.onAnswer);
+  onAnswerRef.current = options?.onAnswer;
   const { timerSettings } = useFlashcardTimer();
   const [mode] = useLocalDb<FlashcardMode>(FLASHCARD_OPTION_LSK, "bothmodes");
 
@@ -196,6 +203,7 @@ export const useFlashcardGame = (
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
     });
     eventBus.emit.FLASHCARD_ANSWER({ correct: false, stackName });
+    onAnswerRef.current?.({ correct: false, questionAdvanced: true });
   }, [stackName]);
 
   useGameTimer({
@@ -219,9 +227,11 @@ export const useFlashcardGame = (
         type: "CORRECT_ANSWER",
         payload: { newCard, newChoices, newDisplay },
       });
+      onAnswerRef.current?.({ correct: true, questionAdvanced: true });
     } else {
       notifications.show(wrongAnswerNotification);
       dispatch({ type: "WRONG_ANSWER" });
+      onAnswerRef.current?.({ correct: false, questionAdvanced: false });
     }
 
     eventBus.emit.FLASHCARD_ANSWER({ correct, stackName });

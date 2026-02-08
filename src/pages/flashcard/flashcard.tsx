@@ -12,8 +12,12 @@ import { IconSettings } from "@tabler/icons-react";
 import { useMemo } from "react";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { NumberCard } from "../../components/number-card";
+import { SessionBanner } from "../../components/session-banner";
+import { SessionStartControls } from "../../components/session-start-controls";
+import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
+import { useSession } from "../../hooks/use-session";
 import type { PlayingCard } from "../../types/playingcard";
 import { cardItems, numberItems } from "../../types/typeguards";
 import { FlashcardOptions } from "./flashcard-options";
@@ -21,7 +25,18 @@ import { Score } from "./score";
 import { useFlashcardGame } from "./use-flashcard-game";
 
 export const Flashcard = () => {
-  const { stackOrder, stackName } = useRequiredStack();
+  const { stackKey, stackOrder, stackName } = useRequiredStack();
+  const {
+    status,
+    startSession,
+    handleAnswer,
+    startNewSession,
+    isStructuredSession,
+    activeSession,
+    stopSession,
+    dismissSummary,
+  } = useSession({ mode: "flashcard", stackKey, autoStart: true });
+
   const {
     score,
     card,
@@ -31,7 +46,7 @@ export const Flashcard = () => {
     timerEnabled,
     timerDuration,
     submitAnswer,
-  } = useFlashcardGame(stackOrder, stackName);
+  } = useFlashcardGame(stackOrder, stackName, { onAnswer: handleAnswer });
   const [options, { open, close }] = useDisclosure(false);
 
   const numberChoices = useMemo(
@@ -63,6 +78,12 @@ export const Flashcard = () => {
               </ActionIcon>
             </Group>
           </Group>
+          {isStructuredSession && activeSession && (
+            <SessionBanner onStop={stopSession} session={activeSession} />
+          )}
+          {!isStructuredSession && (
+            <SessionStartControls onStart={startSession} />
+          )}
         </Grid.Col>
         <Grid.Col span={12}>
           <Space h="xl" />
@@ -100,6 +121,13 @@ export const Flashcard = () => {
           <FlashcardOptions close={close} opened={options} />
         </Grid.Col>
       </Grid>
+      {status.phase === "summary" && (
+        <SessionSummaryModal
+          onDismiss={dismissSummary}
+          onNewSession={startNewSession}
+          summary={status.summary}
+        />
+      )}
     </div>
   );
 };

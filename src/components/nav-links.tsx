@@ -1,5 +1,6 @@
 import { NavLink, Tooltip } from "@mantine/core";
 import {
+  IconChartBar,
   IconExternalLink,
   IconHome2,
   IconNumber,
@@ -33,6 +34,14 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
         leftSection={<IconExternalLink size={16} stroke={1.5} />}
         onClick={onClick}
         to="/resources"
+      />
+      <NavLink
+        active={location.pathname === "/stats"}
+        component={Link}
+        label="Stats"
+        leftSection={<IconChartBar size={16} stroke={1.5} />}
+        onClick={onClick}
+        to="/stats"
       />
 
       <NavLink

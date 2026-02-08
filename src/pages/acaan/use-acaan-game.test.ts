@@ -146,11 +146,7 @@ describe("gameReducer", () => {
   describe("WRONG_ANSWER action", () => {
     it("increments fails", () => {
       const state = createTestState({ fails: 3 });
-      const newScenario = createTestScenario(20, 15);
-      const action: GameAction = {
-        type: "WRONG_ANSWER",
-        payload: { newScenario },
-      };
+      const action: GameAction = { type: "WRONG_ANSWER" };
 
       const newState = gameReducer(state, action);
 
@@ -159,44 +155,33 @@ describe("gameReducer", () => {
 
     it("does not change successes", () => {
       const state = createTestState({ successes: 2 });
-      const newScenario = createTestScenario(20, 15);
-      const action: GameAction = {
-        type: "WRONG_ANSWER",
-        payload: { newScenario },
-      };
+      const action: GameAction = { type: "WRONG_ANSWER" };
 
       const newState = gameReducer(state, action);
 
       expect(newState.successes).toBe(2);
     });
 
-    it("updates scenario to new scenario", () => {
+    it("does not advance to a new scenario", () => {
       const state = createTestState();
-      const newScenario = createTestScenario(40, 35);
-      const action: GameAction = {
-        type: "WRONG_ANSWER",
-        payload: { newScenario },
-      };
+      const originalScenario = state.scenario;
+      const action: GameAction = { type: "WRONG_ANSWER" };
 
       const newState = gameReducer(state, action);
 
-      expect(newState.scenario).toEqual(newScenario);
+      expect(newState.scenario).toEqual(originalScenario);
     });
 
-    it("resets timeRemaining to timerDuration", () => {
+    it("does not reset timeRemaining", () => {
       const state = createTestState({
         timeRemaining: 3,
         timerDuration: 10,
       });
-      const newScenario = createTestScenario(20, 15);
-      const action: GameAction = {
-        type: "WRONG_ANSWER",
-        payload: { newScenario },
-      };
+      const action: GameAction = { type: "WRONG_ANSWER" };
 
       const newState = gameReducer(state, action);
 
-      expect(newState.timeRemaining).toBe(10);
+      expect(newState.timeRemaining).toBe(3);
     });
   });
 
