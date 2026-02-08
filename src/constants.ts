@@ -23,3 +23,6 @@ export const ALL_TIME_STATS_LSK = "memdeck-app-all-time-stats";
 
 /** Maximum number of session records to retain in localStorage */
 export const MAX_SESSION_HISTORY = 500;
+
+export const SITE_NAME = "MemDeck";
+export const SITE_URL = "https://memdeck.org";

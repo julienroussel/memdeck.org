@@ -2,11 +2,11 @@ import { expect } from "@playwright/test";
 import { test } from "./fixtures/test-setup";
 
 // URL patterns
-const HOME_URL_PATTERN = /#\/$/;
-const RESOURCES_URL_PATTERN = /#\/resources$/;
-const FLASHCARD_URL_PATTERN = /#\/flashcard$/;
-const ACAAN_URL_PATTERN = /#\/acaan$/;
-const TOOLBOX_URL_PATTERN = /#\/toolbox$/;
+const HOME_URL_PATTERN = /\/$/;
+const RESOURCES_URL_PATTERN = /\/resources$/;
+const FLASHCARD_URL_PATTERN = /\/flashcard$/;
+const ACAAN_URL_PATTERN = /\/acaan$/;
+const TOOLBOX_URL_PATTERN = /\/toolbox$/;
 
 test.describe("Navigation", () => {
   test.beforeEach(async ({ page }) => {
@@ -98,7 +98,7 @@ test.describe("Navigation", () => {
     await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
   });
 
-  test("should update URL hash when navigating between pages", async ({
+  test("should update URL path when navigating between pages", async ({
     page,
   }) => {
     // Select a stack

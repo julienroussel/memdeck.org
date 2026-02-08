@@ -18,6 +18,7 @@ import { SessionStartControls } from "../../components/session-start-controls";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
 import { DECK_SIZE } from "../../constants";
+import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import { Score } from "../flashcard/score";
@@ -32,6 +33,11 @@ const isValidCutDepth = (value: number): boolean =>
   Number.isInteger(value) && value >= 0 && value <= MAX_CUT_DEPTH;
 
 export const Acaan = () => {
+  useDocumentMeta({
+    title: "ACAAN Training",
+    description:
+      "Practice Any Card At Any Number calculations for your memorized deck stack.",
+  });
   const { stackKey, stackOrder } = useRequiredStack();
   const {
     status,

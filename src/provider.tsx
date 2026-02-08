@@ -11,7 +11,7 @@ import {
 import { useColorScheme } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import { ErrorBoundary } from "react-error-boundary";
-import { HashRouter } from "react-router";
+import { BrowserRouter } from "react-router";
 import { App } from "./app";
 import { analytics } from "./services/analytics";
 
@@ -55,9 +55,9 @@ export const Provider = () => {
         defaultColorScheme={colorScheme}
       >
         <Notifications />
-        <HashRouter>
+        <BrowserRouter>
           <App />
-        </HashRouter>
+        </BrowserRouter>
       </MantineProvider>
     </ErrorBoundary>
   );

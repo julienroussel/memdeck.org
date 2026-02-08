@@ -2,10 +2,10 @@ import { expect } from "@playwright/test";
 import { test } from "./fixtures/test-setup";
 
 // URL patterns
-const HOME_URL_PATTERN = /#\/$/;
-const RESOURCES_URL_PATTERN = /#\/resources$/;
-const ACAAN_URL_PATTERN = /#\/acaan$/;
-const TOOLBOX_URL_PATTERN = /#\/toolbox$/;
+const HOME_URL_PATTERN = /\/$/;
+const RESOURCES_URL_PATTERN = /\/resources$/;
+const ACAAN_URL_PATTERN = /\/acaan$/;
+const TOOLBOX_URL_PATTERN = /\/toolbox$/;
 
 test.describe("Pages & Features", () => {
   test.beforeEach(async ({ page }) => {
@@ -106,7 +106,7 @@ test.describe("Pages & Features", () => {
     await expect(page).toHaveURL(RESOURCES_URL_PATTERN);
 
     // Click logo/home link
-    const homeLink = page.locator("a[href='#/']").first();
+    const homeLink = page.locator("a[href='/']").first();
     await homeLink.click();
     await page.waitForLoadState("networkidle");
 

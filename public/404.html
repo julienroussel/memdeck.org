@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>MemDeck</title>
+    <script>
+    "use strict";
+    // GitHub Pages SPA redirect hack
+    // Encodes the path into a query string and redirects to index.html
+    // A script in index.html restores the clean URL via history.replaceState
+    const pathSegmentsToKeep = 0;
+    const l = window.location;
+    l.replace(
+      `${l.protocol}//${l.hostname}${l.port ? `:${l.port}` : ""}${l.pathname
+        .split("/")
+        .slice(0, 1 + pathSegmentsToKeep)
+        .join("/")}/?/${l.pathname
+        .slice(1)
+        .split("/")
+        .slice(pathSegmentsToKeep)
+        .join("/")
+        .replace(
+          /&/g,
+          "~and~"
+        )}${l.search ? `&${l.search.slice(1).replace(/&/g, "~and~")}` : ""}${l.hash}`
+    );
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <p>Page not found. <a href="https://memdeck.org">Go to MemDeck</a>.</p>
+    </noscript>
+  </body>
+</html>

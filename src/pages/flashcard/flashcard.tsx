@@ -16,6 +16,7 @@ import { SessionBanner } from "../../components/session-banner";
 import { SessionStartControls } from "../../components/session-start-controls";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
+import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import type { PlayingCard } from "../../types/playingcard";
@@ -25,6 +26,11 @@ import { Score } from "./score";
 import { useFlashcardGame } from "./use-flashcard-game";
 
 export const Flashcard = () => {
+  useDocumentMeta({
+    title: "Flashcard Training",
+    description:
+      "Practice your memorized deck with interactive flashcard drills. Train card-to-number, number-to-card, or both.",
+  });
   const { stackKey, stackOrder, stackName } = useRequiredStack();
   const {
     status,

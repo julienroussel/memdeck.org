@@ -1,5 +1,6 @@
 import { Space, Stack, Text, Title } from "@mantine/core";
 import { useAllTimeStats } from "../../hooks/use-all-time-stats";
+import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useSessionHistory } from "../../hooks/use-session-history";
 import { AccuracyChart } from "./accuracy-chart";
 import { StatsByStack } from "./stats-by-stack";
@@ -7,6 +8,11 @@ import { StatsHistory } from "./stats-history";
 import { StatsOverview } from "./stats-overview";
 
 export const Stats = () => {
+  useDocumentMeta({
+    title: "Stats",
+    description:
+      "Track your memorized deck training progress with accuracy charts and session history.",
+  });
   const { history } = useSessionHistory();
   const { getGlobalStats } = useAllTimeStats();
   const globalStats = getGlobalStats();

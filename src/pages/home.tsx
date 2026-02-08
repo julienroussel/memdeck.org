@@ -15,10 +15,16 @@ import { Link } from "react-router";
 import { CardSpread } from "../components/card-spread/card-spread";
 import { StackPicker } from "../components/stack-picker";
 import { GITHUB_URL } from "../constants";
+import { useDocumentMeta } from "../hooks/use-document-meta";
 import { useSelectedStack } from "../hooks/use-selected-stack";
 import { cardItems } from "../types/typeguards";
 
 export const Home = () => {
+  useDocumentMeta({
+    title: "MemDeck — Mastering memorized deck",
+    description:
+      "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, and Particle.",
+  });
   const { stackKey, stack, stackName } = useSelectedStack();
 
   const stackCards = useMemo(

@@ -15,6 +15,9 @@
       href="/memdeck-white.png"
       media="(prefers-color-scheme: dark)"
     >
+    <link rel="canonical" href="https://memdeck.org/">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#228be6">
     <title>MemDeck — Mastering memorized deck</title>
     <meta name="title" content="MemDeck — Mastering memorized deck">
     <meta
@@ -43,6 +46,46 @@
       property="twitter:image"
       content="https://memdeck.org/memdeck-logo-white.png"
     >
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "MemDeck",
+        "url": "https://memdeck.org",
+        "description": "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, and Particle.",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Julien Roussel"
+        }
+      }
+    </script>
+    <script>
+    "use strict";
+    // GitHub Pages SPA path restore
+    // Works with 404.html to support BrowserRouter on static hosting
+    (() => {
+      const q = window.location.search;
+      if (q.startsWith("?/")) {
+        const decoded = q
+          .slice(1)
+          .split("&")
+          .map((s) => s.replace(/~and~/g, "&"))
+          .join("?");
+        window.history.replaceState(
+          null,
+          "",
+          window.location.pathname.slice(0, -1) + decoded + window.location.hash
+        );
+      }
+    })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
