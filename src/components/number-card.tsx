@@ -1,4 +1,5 @@
 import { Image } from "@mantine/core";
+import type { CSSProperties } from "react";
 import { memo } from "react";
 import { BLANK_CARD_IMAGE } from "../constants";
 
@@ -9,15 +10,18 @@ type NumberCardProps = {
   width?: number;
   /** Center number font size in pixels */
   fontSize?: number;
+  /** Optional CSS styles for the container */
+  style?: CSSProperties;
 };
 
 export const NumberCard = memo(function NumberCard({
   number,
   width = 80,
   fontSize = 35,
+  style,
 }: NumberCardProps) {
   return (
-    <div className="numberCardContainer" style={{ width }}>
+    <div className="numberCardContainer" style={{ ...style, width }}>
       <Image src={BLANK_CARD_IMAGE} />
       <div className="numberCardTopLeft">{number}</div>
       <div className="numberCardCenter" style={{ fontSize }}>
