@@ -3,6 +3,10 @@ import { useCallback, useReducer, useRef } from "react";
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
 import { useAcaanTimer } from "../../hooks/use-acaan-timer";
 import { timerReducerCases, useGameTimer } from "../../hooks/use-game-timer";
+import {
+  type ResetGameAction,
+  useResetGameOnStackChange,
+} from "../../hooks/use-reset-game-on-stack-change";
 import type { GameScore } from "../../types/game";
 import type { AnswerOutcome } from "../../types/session";
 import type { Stack } from "../../types/stacks";
@@ -32,7 +36,8 @@ export type GameAction =
   | { type: "WRONG_ANSWER" }
   | TimeoutAction
   | { type: "TICK" }
-  | { type: "RESET_TIMER"; payload: { duration: number } };
+  | { type: "RESET_TIMER"; payload: { duration: number } }
+  | ResetGameAction;
 
 // --- Pure Functions ---
 
@@ -91,6 +96,11 @@ export const gameReducer = (
       return timerReducerCases.TICK(state);
     case "RESET_TIMER":
       return timerReducerCases.RESET_TIMER(state, action.payload.duration);
+    case "RESET_GAME":
+      return createInitialState(
+        action.payload.stackOrder,
+        action.payload.timerDuration
+      );
     default: {
       const _exhaustive: never = action;
       return _exhaustive;
@@ -119,7 +129,7 @@ export const useAcaanGame = (
 ): UseAcaanGameResult => {
   const { timerSettings } = useAcaanTimer();
 
-  // Use ref to avoid stackOrder in effect dependencies (prevents unnecessary re-runs)
+  // Use ref to access latest stackOrder in callbacks without re-creating them
   const stackOrderRef = useRef(stackOrder);
   stackOrderRef.current = stackOrder;
 
@@ -132,6 +142,8 @@ export const useAcaanGame = (
     ({ stackOrder, timerDuration }) =>
       createInitialState(stackOrder, timerDuration)
   );
+
+  useResetGameOnStackChange(stackOrder, timerSettings.duration, dispatch);
 
   const createTimeoutAction = useCallback(
     (): TimeoutAction => ({

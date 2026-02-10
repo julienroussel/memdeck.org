@@ -330,6 +330,49 @@ describe("gameReducer", () => {
     });
   });
 
+  describe("RESET_GAME action", () => {
+    it("resets scores to zero", () => {
+      const state = createTestState({ successes: 5, fails: 3 });
+      const action: GameAction = {
+        type: "RESET_GAME",
+        payload: { stackOrder: mnemonica.order, timerDuration: 15 },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.successes).toBe(0);
+      expect(newState.fails).toBe(0);
+    });
+
+    it("generates a new scenario from the provided stack", () => {
+      const state = createTestState();
+      const action: GameAction = {
+        type: "RESET_GAME",
+        payload: { stackOrder: mnemonica.order, timerDuration: 15 },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.scenario).toBeDefined();
+      expect(newState.scenario.card).toBeDefined();
+      expect(newState.scenario.cardPosition).toBeGreaterThanOrEqual(1);
+      expect(newState.scenario.cardPosition).toBeLessThanOrEqual(52);
+    });
+
+    it("resets timeRemaining to the provided timerDuration", () => {
+      const state = createTestState({ timeRemaining: 3, timerDuration: 15 });
+      const action: GameAction = {
+        type: "RESET_GAME",
+        payload: { stackOrder: mnemonica.order, timerDuration: 30 },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.timerDuration).toBe(30);
+      expect(newState.timeRemaining).toBe(30);
+    });
+  });
+
   describe("state immutability", () => {
     it("returns a new object for CORRECT_ANSWER", () => {
       const state = createTestState();

@@ -2,11 +2,29 @@ import { describe, expect, it, vi } from "vitest";
 import type { PlayingCard } from "../../types/playingcard";
 import { createDeckPosition, stacks } from "../../types/stacks";
 import {
+  type GameAction,
+  type GameState,
+  gameReducer,
   generateNewCardAndChoices,
   isCorrectAnswer,
 } from "./use-flashcard-game";
 
 const testStack = stacks.mnemonica.order;
+
+// Helper to create a test state with sensible defaults
+const createTestState = (overrides: Partial<GameState> = {}): GameState => {
+  const { card, choices } = generateNewCardAndChoices(testStack);
+  return {
+    successes: 0,
+    fails: 0,
+    card,
+    choices,
+    display: "card",
+    timeRemaining: 15,
+    timerDuration: 15,
+    ...overrides,
+  };
+};
 
 describe("generateNewCardAndChoices", () => {
   it("returns a valid card position", () => {
@@ -232,5 +250,57 @@ describe("flashcard game utils", () => {
     expect(wrongAnswerNotification.title).toBe("Wrong answer");
     expect(wrongAnswerNotification.message).toBe("Try again!");
     expect(wrongAnswerNotification.autoClose).toBeDefined();
+  });
+});
+
+describe("gameReducer", () => {
+  describe("RESET_GAME action", () => {
+    it("resets scores to zero", () => {
+      const state = createTestState({ successes: 5, fails: 3 });
+      const action: GameAction = {
+        type: "RESET_GAME",
+        payload: { stackOrder: testStack, timerDuration: 15 },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.successes).toBe(0);
+      expect(newState.fails).toBe(0);
+    });
+
+    it("generates a new card and choices from the provided stack", () => {
+      const state = createTestState();
+      const action: GameAction = {
+        type: "RESET_GAME",
+        payload: { stackOrder: testStack, timerDuration: 15 },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.card).toBeDefined();
+      expect(newState.card.index).toBeGreaterThanOrEqual(1);
+      expect(newState.card.index).toBeLessThanOrEqual(52);
+      expect(newState.choices).toHaveLength(5);
+
+      for (const choice of newState.choices) {
+        const cardInStack = testStack.some(
+          (c) => c.suit === choice.card.suit && c.rank === choice.card.rank
+        );
+        expect(cardInStack).toBe(true);
+      }
+    });
+
+    it("resets timeRemaining to the provided timerDuration", () => {
+      const state = createTestState({ timeRemaining: 3, timerDuration: 15 });
+      const action: GameAction = {
+        type: "RESET_GAME",
+        payload: { stackOrder: testStack, timerDuration: 30 },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.timerDuration).toBe(30);
+      expect(newState.timeRemaining).toBe(30);
+    });
   });
 });

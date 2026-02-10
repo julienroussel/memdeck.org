@@ -6,6 +6,10 @@ import {
 } from "../../constants";
 import { useFlashcardTimer } from "../../hooks/use-flashcard-timer";
 import { timerReducerCases, useGameTimer } from "../../hooks/use-game-timer";
+import {
+  type ResetGameAction,
+  useResetGameOnStackChange,
+} from "../../hooks/use-reset-game-on-stack-change";
 import { eventBus } from "../../services/event-bus";
 import type { FlashcardMode } from "../../types/flashcard";
 import type { GameScore } from "../../types/game";
@@ -29,7 +33,7 @@ import {
 
 // --- Types ---
 
-type GameState = {
+export type GameState = {
   successes: number;
   fails: number;
   card: PlayingCardPosition;
@@ -48,7 +52,7 @@ type TimeoutAction = {
   };
 };
 
-type GameAction =
+export type GameAction =
   | {
       type: "CORRECT_ANSWER";
       payload: {
@@ -60,7 +64,8 @@ type GameAction =
   | { type: "WRONG_ANSWER" }
   | TimeoutAction
   | { type: "TICK" }
-  | { type: "RESET_TIMER"; payload: { duration: number } };
+  | { type: "RESET_TIMER"; payload: { duration: number } }
+  | ResetGameAction;
 
 // --- Pure Functions ---
 
@@ -98,7 +103,10 @@ const createInitialState = (
 
 // --- Reducer ---
 
-const gameReducer = (state: GameState, action: GameAction): GameState => {
+export const gameReducer = (
+  state: GameState,
+  action: GameAction
+): GameState => {
   switch (action.type) {
     case "CORRECT_ANSWER":
       return {
@@ -129,6 +137,11 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
       return timerReducerCases.TICK(state);
     case "RESET_TIMER":
       return timerReducerCases.RESET_TIMER(state, action.payload.duration);
+    case "RESET_GAME":
+      return createInitialState(
+        action.payload.stackOrder,
+        action.payload.timerDuration
+      );
     default: {
       const _exhaustive: never = action;
       return _exhaustive;
@@ -176,6 +189,8 @@ export const useFlashcardGame = (
     ({ stackOrder, timerDuration }) =>
       createInitialState(stackOrder, timerDuration)
   );
+
+  useResetGameOnStackChange(stackOrder, timerSettings.duration, dispatch);
 
   const displayRef = useRef(state.display);
   displayRef.current = state.display;
