@@ -1,5 +1,5 @@
 import { Center, Loader } from "@mantine/core";
-import { lazy, Suspense } from "react";
+import { lazy, type ReactNode, Suspense } from "react";
 import {
   Navigate,
   Route as RouterRoute,
@@ -34,67 +34,71 @@ const PageLoader = () => (
   </Center>
 );
 
+const LazyRoute = ({ children }: { children: ReactNode }) => (
+  <Suspense fallback={<PageLoader />}>{children}</Suspense>
+);
+
 export const Routes = () => (
   <RouterRoutes>
     <RouterRoute
       element={
-        <Suspense fallback={<PageLoader />}>
+        <LazyRoute>
           <Home />
-        </Suspense>
+        </LazyRoute>
       }
       path="/"
     />
     <RouterRoute
       element={
-        <Suspense fallback={<PageLoader />}>
+        <LazyRoute>
           <Guide />
-        </Suspense>
+        </LazyRoute>
       }
       path="/guide"
     />
     <RouterRoute
       element={
-        <Suspense fallback={<PageLoader />}>
+        <LazyRoute>
           <Resources />
-        </Suspense>
+        </LazyRoute>
       }
       path="/resources"
     />
     <RouterRoute
       element={
-        <Suspense fallback={<PageLoader />}>
+        <LazyRoute>
           <RequireStack>
             <Flashcard />
           </RequireStack>
-        </Suspense>
+        </LazyRoute>
       }
       path="/flashcard"
     />
     <RouterRoute
       element={
-        <Suspense fallback={<PageLoader />}>
+        <LazyRoute>
           <RequireStack>
             <Acaan />
           </RequireStack>
-        </Suspense>
+        </LazyRoute>
       }
       path="/acaan"
     />
     <RouterRoute
       element={
-        <Suspense fallback={<PageLoader />}>
+        <LazyRoute>
           <RequireStack>
             <Toolbox />
           </RequireStack>
-        </Suspense>
+        </LazyRoute>
       }
       path="/toolbox"
     />
     <RouterRoute
       element={
-        <Suspense fallback={<PageLoader />}>
+        <LazyRoute>
           <Stats />
-        </Suspense>
+        </LazyRoute>
       }
       path="/stats"
     />

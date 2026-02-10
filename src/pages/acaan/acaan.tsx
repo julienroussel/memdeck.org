@@ -7,6 +7,7 @@ import {
   Image,
   NumberInput,
   Space,
+  Text,
   Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -129,7 +130,9 @@ export const Acaan = () => {
                 src={scenario.card.image}
                 w="120px"
               />
-              <Title order={2}>→</Title>
+              <Text aria-hidden="true" fw={700} size="xl">
+                →
+              </Text>
               <NumberCard
                 fontSize={60}
                 number={scenario.targetPosition}

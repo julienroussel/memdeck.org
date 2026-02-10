@@ -4,7 +4,7 @@ import "./styles.css";
 
 import { AppShell, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router";
 import { ErrorBoundary } from "./components/error-boundary";
 import { Header } from "./components/header";
@@ -13,11 +13,18 @@ import { StackPicker } from "./components/stack-picker";
 import { Routes } from "./routes";
 import { analytics } from "./services/analytics";
 
-analytics.initialize();
-
 export const App = () => {
   const [opened, { toggle, close }] = useDisclosure();
   const location = useLocation();
+  const initializedRef = useRef(false);
+
+  useEffect(() => {
+    if (initializedRef.current) {
+      return;
+    }
+    initializedRef.current = true;
+    analytics.initialize();
+  }, []);
 
   useEffect(() => {
     analytics.trackPageView(location.pathname);

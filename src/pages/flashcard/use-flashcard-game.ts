@@ -177,23 +177,25 @@ export const useFlashcardGame = (
       createInitialState(stackOrder, timerDuration)
   );
 
-  // Memoize dispatch to satisfy useGameTimer's stable reference requirement
-  const stableDispatch = useCallback(
-    (action: GameAction) => dispatch(action),
-    []
-  );
+  const displayRef = useRef(state.display);
+  displayRef.current = state.display;
+
+  const cardRef = useRef(state.card);
+  cardRef.current = state.card;
 
   const createTimeoutAction = useCallback((): TimeoutAction => {
     const { card: newCard, choices: newChoices } = generateNewCardAndChoices(
       stackOrderRef.current
     );
     const newDisplay =
-      modeRef.current === "bothmodes" ? getRandomDisplayMode() : state.display;
+      modeRef.current === "bothmodes"
+        ? getRandomDisplayMode()
+        : displayRef.current;
     return {
       type: "TIMEOUT",
       payload: { newCard, newChoices, newDisplay },
     };
-  }, [state.display]);
+  }, []);
 
   const handleTimeout = useCallback(() => {
     notifications.show({
@@ -209,33 +211,38 @@ export const useFlashcardGame = (
   useGameTimer({
     timerSettings,
     timeRemaining: state.timeRemaining,
-    dispatch: stableDispatch,
+    dispatch,
     createTimeoutAction,
     onTimeout: handleTimeout,
   });
 
-  const submitAnswer = (item: PlayingCard | number) => {
-    const correct = isCorrectAnswer(item, state.card);
+  const submitAnswer = useCallback(
+    (item: PlayingCard | number) => {
+      const correct = isCorrectAnswer(item, cardRef.current);
 
-    if (correct) {
-      const { card: newCard, choices: newChoices } =
-        generateNewCardAndChoices(stackOrder);
-      const newDisplay =
-        mode === "bothmodes" ? getRandomDisplayMode() : state.display;
+      if (correct) {
+        const { card: newCard, choices: newChoices } =
+          generateNewCardAndChoices(stackOrderRef.current);
+        const newDisplay =
+          modeRef.current === "bothmodes"
+            ? getRandomDisplayMode()
+            : displayRef.current;
 
-      dispatch({
-        type: "CORRECT_ANSWER",
-        payload: { newCard, newChoices, newDisplay },
-      });
-      onAnswerRef.current?.({ correct: true, questionAdvanced: true });
-    } else {
-      notifications.show(wrongAnswerNotification);
-      dispatch({ type: "WRONG_ANSWER" });
-      onAnswerRef.current?.({ correct: false, questionAdvanced: false });
-    }
+        dispatch({
+          type: "CORRECT_ANSWER",
+          payload: { newCard, newChoices, newDisplay },
+        });
+        onAnswerRef.current?.({ correct: true, questionAdvanced: true });
+      } else {
+        notifications.show(wrongAnswerNotification);
+        dispatch({ type: "WRONG_ANSWER" });
+        onAnswerRef.current?.({ correct: false, questionAdvanced: false });
+      }
 
-    eventBus.emit.FLASHCARD_ANSWER({ correct, stackName });
-  };
+      eventBus.emit.FLASHCARD_ANSWER({ correct, stackName });
+    },
+    [stackName]
+  );
 
   const shouldShowCard =
     mode === "cardonly" || (mode === "bothmodes" && state.display === "card");

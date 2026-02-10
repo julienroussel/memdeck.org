@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSettings } from "@tabler/icons-react";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { NumberCard } from "../../components/number-card";
 import { Score } from "../../components/score";
@@ -64,6 +64,15 @@ export const Flashcard = () => {
     [choices]
   );
 
+  const handleNumberChoice = useCallback(
+    (item: number) => submitAnswer(item),
+    [submitAnswer]
+  );
+  const handleCardChoice = useCallback(
+    (item: PlayingCard) => submitAnswer(item),
+    [submitAnswer]
+  );
+
   return (
     <div className="fullMantineContainerHeight">
       <Grid
@@ -116,14 +125,14 @@ export const Flashcard = () => {
               canMove={false}
               hasCursor={true}
               items={numberChoices}
-              onItemClick={(item: number) => submitAnswer(item)}
+              onItemClick={handleNumberChoice}
             />
           ) : (
             <CardSpread
               canMove={false}
               hasCursor={true}
               items={cardChoices}
-              onItemClick={(item: PlayingCard) => submitAnswer(item)}
+              onItemClick={handleCardChoice}
             />
           )}
           <FlashcardOptions close={close} opened={options} />

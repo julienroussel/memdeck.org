@@ -111,6 +111,39 @@ const otherResources: Resource[] = [
   },
 ];
 
+const ResourceCard = ({ resource }: { resource: PrimaryResource }) => (
+  <Card padding="lg" radius="md" shadow="sm" withBorder>
+    <Group>
+      <Title order={3}>{resource.title}</Title>
+      <Badge color="blue" variant="light">
+        {resource.category}
+      </Badge>
+    </Group>
+    <Text c="dimmed" fs="italic" mb="xs" size="sm">
+      {resource.author}
+    </Text>
+    <Text c="dimmed" mb="md" size="sm">
+      {resource.description}
+    </Text>
+    <Anchor href={resource.link} rel="noopener" size="sm" target="_blank">
+      Learn more
+    </Anchor>
+  </Card>
+);
+
+const ResourceListItem = ({ resource }: { resource: Resource }) => (
+  <List.Item>
+    <Anchor href={resource.link} rel="noopener" target="_blank">
+      {resource.title}
+    </Anchor>{" "}
+    (
+    <Text c="dimmed" fs="italic" size="sm" span>
+      {resource.author}
+    </Text>
+    ) : <Text span>{resource.description}</Text>
+  </List.Item>
+);
+
 export const Resources = () => {
   useDocumentMeta({
     title: "Resources",
@@ -137,36 +170,9 @@ export const Resources = () => {
         </Anchor>
         .
       </Text>
-      <SimpleGrid cols={2} spacing="lg">
+      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
         {primaryResources.map((resource) => (
-          <Card
-            key={resource.title}
-            padding="lg"
-            radius="md"
-            shadow="sm"
-            withBorder
-          >
-            <Group>
-              <Title order={3}>{resource.title}</Title>
-              <Badge color="blue" variant="light">
-                {resource.category}
-              </Badge>
-            </Group>
-            <Text c="dimmed" fs="italic" mb="xs" size="sm">
-              {resource.author}
-            </Text>
-            <Text c="dimmed" mb="md" size="sm">
-              {resource.description}
-            </Text>
-            <Anchor
-              href={resource.link}
-              rel="noopener"
-              size="sm"
-              target="_blank"
-            >
-              Learn more
-            </Anchor>
-          </Card>
+          <ResourceCard key={resource.title} resource={resource} />
         ))}
       </SimpleGrid>
 
@@ -184,16 +190,7 @@ export const Resources = () => {
         spacing="sm"
       >
         {otherResources.map((resource) => (
-          <List.Item key={resource.title}>
-            <Anchor href={resource.link} rel="noopener" target="_blank">
-              {resource.title}
-            </Anchor>{" "}
-            (
-            <Text c="dimmed" fs="italic" size="sm" span>
-              {resource.author}
-            </Text>
-            ) : <Text span>{resource.description}</Text>
-          </List.Item>
+          <ResourceListItem key={resource.title} resource={resource} />
         ))}
       </List>
     </>

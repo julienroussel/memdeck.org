@@ -1,6 +1,6 @@
 import { Flex, Image } from "@mantine/core";
 import type { KeyboardEvent } from "react";
-import { memo, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import type {
   CardSpreadCardsProps,
   CardSpreadProps,
@@ -25,14 +25,21 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
   const [offset, setOffset] = useState(0);
   const [touchLastPosition, setTouchLastPosition] = useState(0);
 
-  const updateOffset = (movementX: number) => {
-    if (movementX < 0 && offset > -items.data.length / 2) {
-      setOffset(offset - 1);
-    }
-    if (movementX > 0 && offset < items.data.length / 2) {
-      setOffset(offset + 1);
-    }
-  };
+  const updateOffset = useCallback(
+    (movementX: number) => {
+      const maxOffset = items.data.length / 2;
+      setOffset((prev) => {
+        if (movementX < 0 && prev > -maxOffset) {
+          return prev - 1;
+        }
+        if (movementX > 0 && prev < maxOffset) {
+          return prev + 1;
+        }
+        return prev;
+      });
+    },
+    [items.data.length]
+  );
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (canMove && e.buttons === 1) {
@@ -74,31 +81,33 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
   const renderItems = () => {
     if (isCardsProps(props)) {
       return props.items.data.map((item, index) => (
-        <Image
-          alt={formatCardName(item)}
+        <button
+          aria-label={formatCardName(item)}
+          aria-selected={false}
           className="cardSpreadCard"
-          key={`${item.suit}_${item.rank}`}
+          key={`card_${item.suit}_${item.rank}`}
           onClick={() => props.onItemClick?.(item, index)}
-          src={item.image}
+          role="option"
           style={{
             cursor: hasCursor ? "pointer" : "default",
             ...cssVarCounterStyle(index, props.items.data.length / 2, offset),
           }}
-          w={80}
-        />
+          type="button"
+        >
+          <Image alt={formatCardName(item)} src={item.image} w={80} />
+        </button>
       ));
     }
     return props.items.data.map((item, index) => (
       <button
         aria-label={`Select position ${item}`}
+        aria-selected={false}
         className="cardSpreadCard"
         key={`number_${item}`}
         onClick={() => props.onItemClick?.(item, index)}
+        role="option"
         style={{
           cursor: hasCursor ? "pointer" : "default",
-          background: "none",
-          border: "none",
-          padding: 0,
           ...cssVarCounterStyle(index, props.items.data.length / 2, offset),
         }}
         type="button"

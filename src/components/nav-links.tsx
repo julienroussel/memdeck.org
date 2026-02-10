@@ -8,12 +8,17 @@ import {
   IconPlayCardStar,
   IconTools,
 } from "@tabler/icons-react";
+import { memo } from "react";
 import { Link, useLocation } from "react-router";
 import { useSelectedStack } from "../hooks/use-selected-stack";
 
 const DISABLED_TOOLTIP = "Select a stack first";
 
-export const NavLinks = ({ onClick }: { onClick: () => void }) => {
+export const NavLinks = memo(function NavLinks({
+  onClick,
+}: {
+  onClick: () => void;
+}) {
   const { stackKey } = useSelectedStack();
   const location = useLocation();
   const isDisabled = stackKey === "";
@@ -106,4 +111,4 @@ export const NavLinks = ({ onClick }: { onClick: () => void }) => {
       </NavLink>
     </>
   );
-};
+});
