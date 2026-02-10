@@ -22,6 +22,7 @@ import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import type { PlayingCard } from "../../types/playingcard";
 import { cardItems, numberItems } from "../../types/typeguards";
+import { formatCardName } from "../../utils/card-formatting";
 import { FlashcardOptions } from "./flashcard-options";
 import { useFlashcardGame } from "./use-flashcard-game";
 
@@ -90,7 +91,12 @@ export const Flashcard = () => {
               {!isStructuredSession && (
                 <Score fails={score.fails} successes={score.successes} />
               )}
-              <ActionIcon color="gray" onClick={open} variant="subtle">
+              <ActionIcon
+                aria-label="Flashcard settings"
+                color="gray"
+                onClick={open}
+                variant="subtle"
+              >
                 <IconSettings />
               </ActionIcon>
             </Group>
@@ -111,11 +117,19 @@ export const Flashcard = () => {
             />
           )}
           <Center>
-            {shouldShowCard ? (
-              <Image className="cardShadow" src={card.card.image} w="120px" />
-            ) : (
-              <NumberCard fontSize={60} number={card.index} width={120} />
-            )}
+            <Image
+              alt={formatCardName(card.card)}
+              className="cardShadow"
+              src={card.card.image}
+              style={{ display: shouldShowCard ? undefined : "none" }}
+              w="120px"
+            />
+            <NumberCard
+              fontSize={60}
+              number={card.index}
+              style={{ display: shouldShowCard ? "none" : undefined }}
+              width={120}
+            />
           </Center>
           <Space h="xl" />
         </Grid.Col>
