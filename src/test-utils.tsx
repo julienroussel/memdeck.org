@@ -5,9 +5,14 @@ import {
   render as rtlRender,
 } from "@testing-library/react";
 import type { ReactElement, ReactNode } from "react";
+import { MemoryRouter } from "react-router";
 
 function AllProviders({ children }: { children: ReactNode }) {
-  return <MantineProvider>{children}</MantineProvider>;
+  return (
+    <MemoryRouter initialEntries={["/"]}>
+      <MantineProvider>{children}</MantineProvider>
+    </MemoryRouter>
+  );
 }
 
 export function render(

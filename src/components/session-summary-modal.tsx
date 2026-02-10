@@ -43,7 +43,7 @@ export const SessionSummaryModal = ({
           {encouragement}
         </Text>
 
-        <SimpleGrid cols={2}>
+        <SimpleGrid cols={{ base: 1, xs: 2 }}>
           <StatDisplay
             label="Questions"
             value={String(record.questionsCompleted)}

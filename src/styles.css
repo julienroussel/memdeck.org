@@ -23,6 +23,11 @@
     translate(calc(var(--i) * 15px), 10px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
   border-radius: 3%;
+  overflow: hidden;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: default;
 }
 
 .cardShadow {

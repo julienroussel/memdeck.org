@@ -51,11 +51,11 @@ export const useGameTimer = <TTimeoutAction>({
       return;
     }
 
-    const interval = setInterval(() => {
+    const timeout = setTimeout(() => {
       dispatch({ type: "TICK" });
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => clearTimeout(timeout);
   }, [timerSettings.enabled, timeRemaining, dispatch]);
 
   // Handle timeout - only triggers when timer reaches 0

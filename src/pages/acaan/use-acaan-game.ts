@@ -133,12 +133,6 @@ export const useAcaanGame = (
       createInitialState(stackOrder, timerDuration)
   );
 
-  // Memoize dispatch to satisfy useGameTimer's stable reference requirement
-  const stableDispatch = useCallback(
-    (action: GameAction) => dispatch(action),
-    []
-  );
-
   const createTimeoutAction = useCallback(
     (): TimeoutAction => ({
       type: "TIMEOUT",
@@ -169,7 +163,7 @@ export const useAcaanGame = (
   useGameTimer({
     timerSettings,
     timeRemaining: state.timeRemaining,
-    dispatch: stableDispatch,
+    dispatch,
     createTimeoutAction,
     onTimeout: handleTimeout,
   });
