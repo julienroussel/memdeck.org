@@ -1,6 +1,7 @@
 import { Badge, Button, Group, Paper } from "@mantine/core";
 import { IconFlame, IconTargetArrow, IconTrophy } from "@tabler/icons-react";
 import { memo } from "react";
+import { useTranslation } from "react-i18next";
 import type { ActiveSession } from "../types/session";
 import { calculateAccuracy, toAccuracyPercent } from "../utils/session";
 import { Score } from "./score";
@@ -24,6 +25,7 @@ export const SessionBanner = memo(function SessionBanner({
   } = session;
   const accuracy = calculateAccuracy(successes, fails);
   const accuracyPercent = toAccuracyPercent(accuracy);
+  const { t } = useTranslation();
 
   const progressText =
     config.type === "structured"
@@ -35,7 +37,9 @@ export const SessionBanner = memo(function SessionBanner({
       <Group gap="md" justify="space-between">
         <Group gap="sm">
           <Badge
-            aria-label={`Progress: ${progressText}`}
+            aria-label={t("session.progressAriaLabel", {
+              progress: progressText,
+            })}
             size="lg"
             variant="filled"
           >
@@ -43,7 +47,9 @@ export const SessionBanner = memo(function SessionBanner({
           </Badge>
           <Score fails={fails} successes={successes} />
           <Badge
-            aria-label={`Accuracy: ${accuracyPercent}%`}
+            aria-label={t("session.accuracyAriaLabel", {
+              percent: accuracyPercent,
+            })}
             leftSection={<IconTargetArrow size={12} />}
             size="md"
             variant="light"
@@ -51,7 +57,9 @@ export const SessionBanner = memo(function SessionBanner({
             {accuracyPercent}%
           </Badge>
           <Badge
-            aria-label={`Current streak: ${currentStreak}`}
+            aria-label={t("session.currentStreakAriaLabel", {
+              count: currentStreak,
+            })}
             color="orange"
             leftSection={<IconFlame size={12} />}
             size="md"
@@ -60,7 +68,9 @@ export const SessionBanner = memo(function SessionBanner({
             {currentStreak}
           </Badge>
           <Badge
-            aria-label={`Best streak: ${bestStreak}`}
+            aria-label={t("session.bestStreakAriaLabel", {
+              count: bestStreak,
+            })}
             color="yellow"
             leftSection={<IconTrophy size={12} />}
             size="md"
@@ -76,7 +86,7 @@ export const SessionBanner = memo(function SessionBanner({
             size="compact-xs"
             variant="subtle"
           >
-            Stop
+            {t("common.stop")}
           </Button>
         </Group>
       </Group>

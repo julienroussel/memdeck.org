@@ -32,5 +32,6 @@ export const SPREAD_CARD_HEIGHT = Math.round(
   SPREAD_CARD_WIDTH * CARD_ASPECT_RATIO
 );
 
+export const LANGUAGE_LSK = "memdeck-app-language";
 export const SITE_NAME = "MemDeck";
 export const SITE_URL = "https://memdeck.org";

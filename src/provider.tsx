@@ -13,6 +13,7 @@ import { Notifications } from "@mantine/notifications";
 import { ErrorBoundary } from "react-error-boundary";
 import { BrowserRouter } from "react-router";
 import { App } from "./app";
+import { LanguageLoadNotifier } from "./components/language-load-notifier";
 import { analytics } from "./services/analytics";
 
 const colorSchemeManager = localStorageColorSchemeManager({
@@ -55,6 +56,7 @@ export const Provider = () => {
         defaultColorScheme={colorScheme}
       >
         <Notifications />
+        <LanguageLoadNotifier />
         <BrowserRouter>
           <App />
         </BrowserRouter>

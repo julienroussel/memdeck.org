@@ -9,6 +9,7 @@ import {
   type AllTimeStats,
   type AllTimeStatsEntry,
   type AnswerOutcome,
+  type Encouragement,
   type SessionConfig,
   type SessionPhase,
   type SessionRecord,
@@ -294,26 +295,29 @@ const computeEncouragement = (
   record: SessionRecord,
   previousAvgAccuracy: number | null,
   isNewGlobalBestStreak: boolean
-): string => {
+): Encouragement => {
   if (record.accuracy === 1) {
-    return "Perfect session!";
+    return { key: "session.encouragement.perfect" };
   }
   if (previousAvgAccuracy === null) {
-    return "Great start!";
+    return { key: "session.encouragement.greatStart" };
   }
   if (isNewGlobalBestStreak) {
-    return `New personal best streak of ${record.bestStreak}!`;
+    return {
+      key: "session.encouragement.newBestStreak",
+      params: { count: record.bestStreak },
+    };
   }
   if (record.accuracy > previousAvgAccuracy) {
-    return "Great improvement! Your accuracy is trending up.";
+    return { key: "session.encouragement.improvement" };
   }
   if (record.accuracy >= 0.8) {
-    return "Solid work! You're getting consistent.";
+    return { key: "session.encouragement.consistent" };
   }
   if (record.accuracy >= 0.5) {
-    return "Keep practicing, you're making progress.";
+    return { key: "session.encouragement.progress" };
   }
-  return "Every session builds your memory. Keep at it!";
+  return { key: "session.encouragement.keepGoing" };
 };
 
 /** Generates a session summary with encouragement by comparing to past sessions */

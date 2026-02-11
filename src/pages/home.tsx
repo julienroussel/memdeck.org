@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import { IconBook2 } from "@tabler/icons-react";
 import { useMemo } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { CardSpread } from "../components/card-spread/card-spread";
 import { StackPicker } from "../components/stack-picker";
@@ -20,10 +21,10 @@ import { useSelectedStack } from "../hooks/use-selected-stack";
 import { cardItems } from "../types/typeguards";
 
 export const Home = () => {
+  const { t } = useTranslation();
   useDocumentMeta({
-    title: "MemDeck — Mastering memorized deck",
-    description:
-      "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, and Particle.",
+    title: t("home.pageTitle"),
+    description: t("home.pageDescription"),
   });
   const { stackKey, stack, stackName } = useSelectedStack();
 
@@ -43,39 +44,33 @@ export const Home = () => {
         }}
       >
         <Grid.Col span={12}>
-          <Title order={2}>Welcome to MemDeck</Title>
+          <Title order={2}>{t("home.welcome")}</Title>
           <Space h="lg" />
           <Text>
-            Hope these tools help you level up your memorized deck stack
-            learning. Check out the{" "}
-            <Anchor component={Link} to="/guide">
-              guide
-            </Anchor>{" "}
-            for a walkthrough of everything MemDeck offers. Need a hand or think
-            something's missing? Hit me up on{" "}
-            <Anchor
-              href={GITHUB_URL}
-              rel="noopener"
-              target="_blank"
-              underline="never"
-            >
-              Github
-            </Anchor>
-            !
+            <Trans
+              components={{
+                guideLink: <Anchor component={Link} to="/guide" />,
+                githubLink: (
+                  <Anchor
+                    href={GITHUB_URL}
+                    rel="noopener"
+                    target="_blank"
+                    underline="never"
+                  />
+                ),
+              }}
+              i18nKey="home.intro"
+            />
           </Text>
           {stackKey === "" && (
             <>
               <Space h="lg" />
-              <Text>
-                Hey there, first-timer! Pick your favorite memorized deck stack
-                below to unlock all the cool features. You can switch it up
-                anytime using the selector at the bottom of the menu.
-              </Text>
+              <Text>{t("home.firstTimer")}</Text>
               <Space h="lg" />
               <StackPicker />
               <Space h="lg" />
               <Card
-                aria-label="Read the MemDeck guide"
+                aria-label={t("home.guideCardAriaLabel")}
                 component={Link}
                 padding="lg"
                 radius="md"
@@ -95,10 +90,9 @@ export const Home = () => {
                     <IconBook2 size={20} stroke={1.5} />
                   </ThemeIcon>
                   <Stack gap={4}>
-                    <Text fw={600}>New here? Read the Guide</Text>
+                    <Text fw={600}>{t("home.guideCardTitle")}</Text>
                     <Text c="dimmed" size="sm">
-                      Learn about all the training modes and how to get the most
-                      out of MemDeck.
+                      {t("home.guideCardDescription")}
                     </Text>
                   </Stack>
                 </Group>
@@ -111,10 +105,13 @@ export const Home = () => {
             <>
               <Space h="lg" />
               <Text>
-                Your selected stack is{" "}
-                <Text fw={700} span>
-                  {stackName}
-                </Text>
+                <Trans
+                  components={{
+                    bold: <Text fw={700} span />,
+                  }}
+                  i18nKey="home.selectedStack"
+                  values={{ stackName }}
+                />
               </Text>
               <Space h="lg" />
               <CardSpread degree={0.5} items={stackCards} />

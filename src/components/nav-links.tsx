@@ -9,10 +9,9 @@ import {
   IconTools,
 } from "@tabler/icons-react";
 import { memo } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
 import { useSelectedStack } from "../hooks/use-selected-stack";
-
-const DISABLED_TOOLTIP = "Select a stack first";
 
 export const NavLinks = memo(function NavLinks({
   onClick,
@@ -22,13 +21,16 @@ export const NavLinks = memo(function NavLinks({
   const { stackKey } = useSelectedStack();
   const location = useLocation();
   const isDisabled = stackKey === "";
+  const { t } = useTranslation();
+
+  const disabledTooltip = t("nav.disabledTooltip");
 
   return (
     <>
       <NavLink
         active={location.pathname === "/"}
         component={Link}
-        label="Home"
+        label={t("nav.home")}
         leftSection={<IconHome2 size={16} stroke={1.5} />}
         onClick={onClick}
         to="/"
@@ -36,7 +38,7 @@ export const NavLinks = memo(function NavLinks({
       <NavLink
         active={location.pathname === "/guide"}
         component={Link}
-        label="Guide"
+        label={t("nav.guide")}
         leftSection={<IconBook2 size={16} stroke={1.5} />}
         onClick={onClick}
         to="/guide"
@@ -44,7 +46,7 @@ export const NavLinks = memo(function NavLinks({
       <NavLink
         active={location.pathname === "/resources"}
         component={Link}
-        label="Resources"
+        label={t("nav.resources")}
         leftSection={<IconExternalLink size={16} stroke={1.5} />}
         onClick={onClick}
         to="/resources"
@@ -52,7 +54,7 @@ export const NavLinks = memo(function NavLinks({
       <NavLink
         active={location.pathname === "/stats"}
         component={Link}
-        label="Stats"
+        label={t("nav.stats")}
         leftSection={<IconChartBar size={16} stroke={1.5} />}
         onClick={onClick}
         to="/stats"
@@ -60,19 +62,19 @@ export const NavLinks = memo(function NavLinks({
 
       <NavLink
         defaultOpened
-        label="Tools"
+        label={t("nav.tools")}
         leftSection={<IconTools size={16} stroke={1.5} />}
       >
         <Tooltip
           disabled={!isDisabled}
-          label={DISABLED_TOOLTIP}
+          label={disabledTooltip}
           position="right"
         >
           <NavLink
             active={location.pathname === "/flashcard"}
             component={Link}
             disabled={isDisabled}
-            label="Flashcard"
+            label={t("nav.flashcard")}
             leftSection={<IconPlayCardStar size={16} stroke={1.5} />}
             onClick={onClick}
             to="/flashcard"
@@ -80,14 +82,14 @@ export const NavLinks = memo(function NavLinks({
         </Tooltip>
         <Tooltip
           disabled={!isDisabled}
-          label={DISABLED_TOOLTIP}
+          label={disabledTooltip}
           position="right"
         >
           <NavLink
             active={location.pathname === "/acaan"}
             component={Link}
             disabled={isDisabled}
-            label="ACAAN"
+            label={t("nav.acaan")}
             leftSection={<IconNumber size={16} stroke={1.5} />}
             onClick={onClick}
             to="/acaan"
@@ -95,14 +97,14 @@ export const NavLinks = memo(function NavLinks({
         </Tooltip>
         <Tooltip
           disabled={!isDisabled}
-          label={DISABLED_TOOLTIP}
+          label={disabledTooltip}
           position="right"
         >
           <NavLink
             active={location.pathname === "/toolbox"}
             component={Link}
             disabled={isDisabled}
-            label="Toolbox"
+            label={t("nav.toolbox")}
             leftSection={<IconTools size={16} stroke={1.5} />}
             onClick={onClick}
             to="/toolbox"

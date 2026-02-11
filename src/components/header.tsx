@@ -8,6 +8,7 @@ import {
   useMantineColorScheme,
 } from "@mantine/core";
 import { IconBrandGithub, IconMoonStars, IconSun } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 // eslint-disable-next-line import/no-unresolved
 import memdeckDarkLogo from "/memdeck-black.png";
@@ -15,6 +16,7 @@ import memdeckDarkLogo from "/memdeck-black.png";
 import memdeckLightLogo from "/memdeck-white.png";
 import { GITHUB_URL } from "../constants";
 import { Help } from "./help";
+import { LanguagePicker } from "./language-picker";
 
 type HeaderProps = {
   opened: boolean;
@@ -23,6 +25,7 @@ type HeaderProps = {
 
 export const Header = ({ opened, toggle }: HeaderProps) => {
   const { setColorScheme, colorScheme } = useMantineColorScheme();
+  const { t } = useTranslation();
 
   const handleColorSchemeChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -60,8 +63,9 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
       </Group>
       <Group>
         <Help />
+        <LanguagePicker />
         <ActionIcon
-          aria-label="Github"
+          aria-label={t("header.githubAriaLabel")}
           color="gray"
           component="a"
           href={GITHUB_URL}
@@ -72,7 +76,7 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
           <IconBrandGithub />
         </ActionIcon>
         <Switch
-          aria-label="Toggle color scheme"
+          aria-label={t("header.toggleColorScheme")}
           checked={colorScheme === "light"}
           color="dark.4"
           offLabel={

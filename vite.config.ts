@@ -2,6 +2,8 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+const LOCALE_CHUNK_RE = /i18n\/locales\/(?!en)(\w+)\.json$/;
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -10,9 +12,25 @@ export default defineConfig({
       registerType: "autoUpdate",
       workbox: {
         globPatterns: ["**/*.{js,css,html}", "cards/*.svg"],
+        // Locale chunks (locale-*.js) are lazy-loaded on demand —
+        // exclude them from precaching to avoid downloading all locales upfront.
+        globIgnores: ["assets/locale-*.js"],
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/404\.html$/],
         runtimeCaching: [
+          {
+            // Cache locale chunks on first use. Vite's hashed filenames make
+            // them immutable, so CacheFirst is safe and avoids re-fetching.
+            urlPattern: /\/assets\/locale-[a-zA-Z0-9_-]+\.js$/,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "locale-chunks",
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 365 * 24 * 60 * 60,
+              },
+            },
+          },
           {
             urlPattern: /\.(?:png|jpg|jpeg|gif|webp)$/,
             handler: "CacheFirst",
@@ -68,15 +86,32 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          "react-vendor": ["react", "react-dom", "react-router"],
-          "mantine-vendor": [
-            "@mantine/core",
-            "@mantine/hooks",
-            "@mantine/notifications",
-          ],
-          "icons-vendor": ["@tabler/icons-react"],
-          "analytics-vendor": ["react-ga4", "web-vitals"],
+        manualChunks(id) {
+          // Give locale JSON chunks a predictable "locale-<code>" prefix so
+          // the PWA config can exclude/cache them with a single glob pattern
+          // instead of enumerating every language code.
+          const localeMatch = id.match(LOCALE_CHUNK_RE);
+          if (localeMatch) {
+            return `locale-${localeMatch[1]}`;
+          }
+
+          const vendorChunks: Record<string, string[]> = {
+            "react-vendor": ["react", "react-dom", "react-router"],
+            "mantine-vendor": [
+              "@mantine/core",
+              "@mantine/hooks",
+              "@mantine/notifications",
+            ],
+            "icons-vendor": ["@tabler/icons-react"],
+            "analytics-vendor": ["react-ga4", "web-vitals"],
+            "i18n-vendor": ["i18next", "react-i18next"],
+          };
+
+          for (const [chunkName, packages] of Object.entries(vendorChunks)) {
+            if (packages.some((pkg) => id.includes(`node_modules/${pkg}/`))) {
+              return chunkName;
+            }
+          }
         },
       },
     },

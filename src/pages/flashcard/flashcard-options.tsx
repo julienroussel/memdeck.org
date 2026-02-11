@@ -1,4 +1,5 @@
 import { Group, Modal, Radio, Space, Stack, Text, Title } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { TimerSettingsControl } from "../../components/timer-settings-control";
 import { FLASHCARD_OPTION_LSK } from "../../constants";
 import { useFlashcardTimer } from "../../hooks/use-flashcard-timer";
@@ -23,6 +24,7 @@ export const FlashcardOptions = ({
   );
   const { timerSettings, setTimerEnabled, setTimerDuration } =
     useFlashcardTimer();
+  const { t } = useTranslation();
 
   const handleModeChange = (value: string) => {
     if (!isFlashcardMode(value)) {
@@ -34,9 +36,9 @@ export const FlashcardOptions = ({
 
   return (
     <Modal onClose={close} opened={opened} size="xl" withCloseButton={false}>
-      <Title order={2}>Flashcard options</Title>
+      <Title order={2}>{t("flashcard.optionsTitle")}</Title>
       <Radio.Group
-        label="Pick one mode"
+        label={t("flashcard.pickOneMode")}
         onChange={handleModeChange}
         value={option}
       >
@@ -51,8 +53,10 @@ export const FlashcardOptions = ({
               <Group align="flex-start" wrap="nowrap">
                 <Radio.Indicator />
                 <div>
-                  <Text className="optionsLabel">{opt.label}</Text>
-                  <Text className="optionsDescription">{opt.description}</Text>
+                  <Text className="optionsLabel">{t(opt.labelKey)}</Text>
+                  <Text className="optionsDescription">
+                    {t(opt.descriptionKey)}
+                  </Text>
                 </div>
               </Group>
             </Radio.Card>

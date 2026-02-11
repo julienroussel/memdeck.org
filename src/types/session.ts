@@ -1,3 +1,4 @@
+import type en from "../i18n/locales/en.json";
 import type { StackKey } from "./stacks";
 
 /** Training mode identifier (extensible for future modes) */
@@ -58,10 +59,21 @@ export type StatsKey = `${TrainingMode}:${StackKey}`;
 /** Keyed by StatsKey — not all combinations will have entries */
 export type AllTimeStats = Partial<Record<StatsKey, AllTimeStatsEntry>>;
 
+/** Valid i18n keys for session encouragement messages, derived from en.json */
+type EncouragementMessages = (typeof en)["session"]["encouragement"];
+export type EncouragementKey =
+  `session.encouragement.${keyof EncouragementMessages & string}`;
+
+/** Translation key with optional interpolation params for encouragement messages */
+export type Encouragement = {
+  key: EncouragementKey;
+  params?: Record<string, number>;
+};
+
 /** Session summary for the end-of-session screen */
 export type SessionSummary = {
   record: SessionRecord;
-  encouragement: string;
+  encouragement: Encouragement;
   isAccuracyImprovement: boolean;
   isNewGlobalBestStreak: boolean;
   previousAverageAccuracy: number | null;

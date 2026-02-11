@@ -10,13 +10,22 @@ import {
   Title,
 } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
+import { Trans, useTranslation } from "react-i18next";
 import { GITHUB_URL } from "../constants";
 import { useDocumentMeta } from "../hooks/use-document-meta";
+import type en from "../i18n/locales/en.json";
+
+/** Valid i18n keys for resource description translations, derived from en.json */
+type ResourceI18nKey =
+  `resources.descriptions.${keyof (typeof en)["resources"]["descriptions"] & string}`;
+
+/** Valid i18n keys for common translations, derived from en.json */
+type CommonI18nKey = `common.${keyof (typeof en)["common"] & string}`;
 
 type Resource = {
   title: string;
   author: string;
-  description: string;
+  descriptionKey: ResourceI18nKey;
   link: string;
 };
 
@@ -24,151 +33,152 @@ type PrimaryResource = Resource & {
   category: "book" | "pdf";
 };
 
-const primaryResources: PrimaryResource[] = [
+const CATEGORY_LABELS = {
+  book: "common.book",
+  pdf: "common.pdf",
+} as const satisfies Record<PrimaryResource["category"], CommonI18nKey>;
+
+const primaryResources = [
   {
     title: "Mnemonica",
     author: "Juan Tamariz",
-    description:
-      "The definitive work on the Mnemonica stack with tricks, principles, and deep theories.",
+    descriptionKey: "resources.descriptions.mnemonica",
     link: "https://www.vanishingincmagic.com/card-magic/mnemonica/",
     category: "book",
   },
   {
     title: "The Aronson Approach",
     author: "Simon Aronson",
-    description:
-      "Introduces the Aronson Stack, its applications, and several powerful routines.",
+    descriptionKey: "resources.descriptions.aronsonApproach",
     link: "https://www.vanishingincmagic.com/card-magic/the-aronson-approach/",
     category: "book",
   },
   {
     title: "Bound to Please",
     author: "Simon Aronson",
-    description:
-      "Compilation of Aronson's early works, essential for stack work.",
+    descriptionKey: "resources.descriptions.boundToPlease",
     link: "https://www.vanishingincmagic.com/card-magic/bound-to-please/",
     category: "book",
   },
   {
     title: "Memories Are Made of This",
     author: "Simon Aronson",
-    description:
-      "A shorter work that provides practical applications for the memorized deck.",
+    descriptionKey: "resources.descriptions.memoriesAreMade",
     link: "http://simonaronson.com/Memories%20Are%20Made%20of%20This.pdf",
     category: "pdf",
   },
-];
+] as const satisfies readonly PrimaryResource[];
 
-const otherResources: Resource[] = [
+const otherResources = [
   {
     title: "The Magic Rainbow",
     author: "Juan Tamariz",
     link: "https://www.vanishingincmagic.com/magic-theory/tamariz-magic-rainbow/",
-    description:
-      "Not just about memorized decks, but essential for deepening magical thinking.",
+    descriptionKey: "resources.descriptions.magicRainbow",
   },
   {
     title: "In Order To Amaze",
     author: "Pit Hartling",
     link: "https://pithartling.com/shop/#in-order-to-amaze",
-    description:
-      "Brilliant routines and effects with memorized deck techniques",
+    descriptionKey: "resources.descriptions.inOrderToAmaze",
   },
   {
     title: "Memorandum",
-    author: "Woody Aragón",
+    author: "Woody Arag\u00f3n",
     link: "https://www.vanishingincmagic.com/card-magic/memorandum/",
-    description:
-      "Unique memorized deck with powerful effects and deep insights.",
+    descriptionKey: "resources.descriptions.memorandum",
   },
   {
     title: "Temporarily Out of Order",
     author: "Patrick Redford",
     link: "https://www.murphysmagic.com/product.aspx?id=59497",
-    description:
-      "A deep dive into the Redford stack with versatile routines and stack-independent principles.",
+    descriptionKey: "resources.descriptions.temporarilyOutOfOrder",
   },
   {
     title: "Applesauce",
     author: "Patrick Redford",
     link: "https://patrickredford.com/product/applesauce/",
-    description:
-      "Expands on the Redford stack with new effects, ideas, and applications for stack work.",
+    descriptionKey: "resources.descriptions.applesauce",
   },
   {
     title: "Sleightly Out of Order",
     author: "Patrick Redford",
     link: "https://patrickredford.com/product/sleightly-out-of-order/",
-    description:
-      "Advanced techniques and effects using a memorized stack with sleight-of-hand integrations.",
+    descriptionKey: "resources.descriptions.sleightlyOutOfOrder",
   },
   {
     title: "Particle System",
     author: "Joshua Jay",
     link: "https://www.vanishingincmagic.com/magic-books/particle-system/",
-    description:
-      "New memorized deck that allows magicians to cut to any named card without looking, featuring built-in benefits and a variety of powerful routines.",
+    descriptionKey: "resources.descriptions.particleSystem",
   },
-];
+] as const satisfies readonly Resource[];
 
-const ResourceCard = ({ resource }: { resource: PrimaryResource }) => (
-  <Card padding="lg" radius="md" shadow="sm" withBorder>
-    <Group>
-      <Title order={3}>{resource.title}</Title>
-      <Badge color="blue" variant="light">
-        {resource.category}
-      </Badge>
-    </Group>
-    <Text c="dimmed" fs="italic" mb="xs" size="sm">
-      {resource.author}
-    </Text>
-    <Text c="dimmed" mb="md" size="sm">
-      {resource.description}
-    </Text>
-    <Anchor href={resource.link} rel="noopener" size="sm" target="_blank">
-      Learn more
-    </Anchor>
-  </Card>
-);
+const ResourceCard = ({ resource }: { resource: PrimaryResource }) => {
+  const { t } = useTranslation();
+  return (
+    <Card padding="lg" radius="md" shadow="sm" withBorder>
+      <Group>
+        <Title order={3}>{resource.title}</Title>
+        <Badge color="blue" variant="light">
+          {t(CATEGORY_LABELS[resource.category])}
+        </Badge>
+      </Group>
+      <Text c="dimmed" fs="italic" mb="xs" size="sm">
+        {resource.author}
+      </Text>
+      <Text c="dimmed" mb="md" size="sm">
+        {t(resource.descriptionKey)}
+      </Text>
+      <Anchor href={resource.link} rel="noopener" size="sm" target="_blank">
+        {t("common.learnMore")}
+      </Anchor>
+    </Card>
+  );
+};
 
-const ResourceListItem = ({ resource }: { resource: Resource }) => (
-  <List.Item>
-    <Anchor href={resource.link} rel="noopener" target="_blank">
-      {resource.title}
-    </Anchor>{" "}
-    (
-    <Text c="dimmed" fs="italic" size="sm" span>
-      {resource.author}
-    </Text>
-    ) : <Text span>{resource.description}</Text>
-  </List.Item>
-);
+const ResourceListItem = ({ resource }: { resource: Resource }) => {
+  const { t } = useTranslation();
+  return (
+    <List.Item>
+      <Anchor href={resource.link} rel="noopener" target="_blank">
+        {resource.title}
+      </Anchor>{" "}
+      (
+      <Text c="dimmed" fs="italic" size="sm" span>
+        {resource.author}
+      </Text>
+      ) : <Text span>{t(resource.descriptionKey)}</Text>
+    </List.Item>
+  );
+};
 
 export const Resources = () => {
+  const { t } = useTranslation();
   useDocumentMeta({
-    title: "Resources",
-    description:
-      "Curated books and resources for memorized deck magic, including Mnemonica by Tamariz and The Aronson Approach.",
+    title: t("resources.pageTitle"),
+    description: t("resources.pageDescription"),
   });
 
   return (
     <>
       <Title mb="md" order={1}>
-        Memorized Deck Resources
+        {t("resources.title")}
       </Title>
       <Text mb="xl">
-        Explore a curated collection of resources to help you master the art of
-        memorized decks. Missing a resource? Give me a shout or drop a pull
-        request on{" "}
-        <Anchor
-          href={GITHUB_URL}
-          rel="noopener"
-          target="_blank"
-          underline="never"
-        >
-          Github
-        </Anchor>
-        .
+        <Trans
+          components={{
+            githubLink: (
+              <Anchor
+                href={GITHUB_URL}
+                rel="noopener"
+                target="_blank"
+                underline="never"
+              />
+            ),
+          }}
+          i18nKey="resources.intro"
+        />
       </Text>
       <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
         {primaryResources.map((resource) => (
@@ -177,7 +187,7 @@ export const Resources = () => {
       </SimpleGrid>
 
       <Title mb="md" mt="xl" order={2}>
-        Other Resources
+        {t("resources.otherResources")}
       </Title>
       <List
         center

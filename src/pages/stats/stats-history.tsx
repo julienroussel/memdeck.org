@@ -1,5 +1,6 @@
 import { Button, Group, Table, Text, Title } from "@mantine/core";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { SessionRecord } from "../../types/session";
 import { stacks } from "../../types/stacks";
 import { formatDuration, toAccuracyPercent } from "../../utils/session";
@@ -21,6 +22,7 @@ export const formatDate = (iso: string): string => {
 };
 
 export const StatsHistory = ({ history }: StatsHistoryProps) => {
+  const { t } = useTranslation();
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const visibleHistory = history.slice(0, visibleCount);
@@ -28,7 +30,7 @@ export const StatsHistory = ({ history }: StatsHistoryProps) => {
   if (history.length === 0) {
     return (
       <Text c="dimmed" ta="center">
-        No sessions recorded yet.
+        {t("stats.noSessions")}
       </Text>
     );
   }
@@ -37,18 +39,18 @@ export const StatsHistory = ({ history }: StatsHistoryProps) => {
 
   return (
     <>
-      <Title order={3}>Session History</Title>
+      <Title order={3}>{t("stats.sessionHistory")}</Title>
       <Table striped>
-        <Table.Caption>Session history</Table.Caption>
+        <Table.Caption>{t("stats.sessionHistoryCaption")}</Table.Caption>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>Date</Table.Th>
-            <Table.Th>Mode</Table.Th>
-            <Table.Th>Stack</Table.Th>
-            <Table.Th ta="center">Score</Table.Th>
-            <Table.Th ta="center">Accuracy</Table.Th>
-            <Table.Th ta="center">Best Streak</Table.Th>
-            <Table.Th ta="center">Duration</Table.Th>
+            <Table.Th>{t("stats.date")}</Table.Th>
+            <Table.Th>{t("stats.mode")}</Table.Th>
+            <Table.Th>{t("stats.stack")}</Table.Th>
+            <Table.Th ta="center">{t("stats.score")}</Table.Th>
+            <Table.Th ta="center">{t("common.accuracy")}</Table.Th>
+            <Table.Th ta="center">{t("common.bestStreak")}</Table.Th>
+            <Table.Th ta="center">{t("common.duration")}</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -80,7 +82,7 @@ export const StatsHistory = ({ history }: StatsHistoryProps) => {
             size="compact-sm"
             variant="subtle"
           >
-            Show more
+            {t("common.showMore")}
           </Button>
         </Group>
       )}

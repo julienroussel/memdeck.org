@@ -1,5 +1,6 @@
 import { Center, NativeSelect } from "@mantine/core";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useSelectedStack } from "../hooks/use-selected-stack";
 import { eventBus } from "../services/event-bus";
 import { stacks } from "../types/stacks";
@@ -13,11 +14,18 @@ const availableStacks = Object.entries(stacks)
 
 export const StackPicker = memo(function StackPicker() {
   const { stackKey, setStackKey } = useSelectedStack();
+  const { t } = useTranslation();
 
-  const stackSelection =
-    stackKey !== ""
-      ? availableStacks
-      : [{ label: "Please choose a stack", value: "" }, ...availableStacks];
+  const stackSelection = useMemo(
+    () =>
+      stackKey !== ""
+        ? availableStacks
+        : [
+            { label: t("stackPicker.placeholder"), value: "" },
+            ...availableStacks,
+          ],
+    [stackKey, t]
+  );
 
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -36,7 +44,7 @@ export const StackPicker = memo(function StackPicker() {
   return (
     <Center>
       <NativeSelect
-        aria-label="Select memorized deck"
+        aria-label={t("stackPicker.ariaLabel")}
         data={stackSelection}
         onChange={handleChange}
         value={stackKey}

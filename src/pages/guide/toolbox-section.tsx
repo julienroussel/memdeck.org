@@ -1,25 +1,26 @@
 import { Anchor, Space, Text } from "@mantine/core";
 import { IconTools } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { SectionHeading } from "./section-heading";
 
-export const ToolboxSection = () => (
-  <section>
-    <SectionHeading
-      badge={{ label: "Requires stack" }}
-      color="yellow"
-      icon={<IconTools size={14} />}
-      title="Toolbox"
-    />
-    <Space h="sm" />
-    <Text>
-      A collection of memorized deck utilities for stack analysis and
-      performance work. Use these tools to explore your selected stack, look up
-      cards by position, and prepare for performances.
-    </Text>
-    <Space h="xs" />
-    <Anchor component={Link} to="/toolbox">
-      Go to Toolbox
-    </Anchor>
-  </section>
-);
+export const ToolboxSection = () => {
+  const { t } = useTranslation();
+
+  return (
+    <section>
+      <SectionHeading
+        badge={{ label: t("guide.toolbox.requiresStack") }}
+        color="yellow"
+        icon={<IconTools size={14} />}
+        title={t("guide.toolbox.title")}
+      />
+      <Space h="sm" />
+      <Text>{t("guide.toolbox.description")}</Text>
+      <Space h="xs" />
+      <Anchor component={Link} to="/toolbox">
+        {t("guide.toolbox.link")}
+      </Anchor>
+    </section>
+  );
+};

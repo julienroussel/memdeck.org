@@ -8,6 +8,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import type { SessionSummary } from "../types/session";
 import { formatDuration, toAccuracyPercent } from "../utils/session";
 import { StatDisplay } from "./stat-display";
@@ -30,30 +31,45 @@ export const SessionSummaryModal = ({
     previousAverageAccuracy,
   } = summary;
   const accuracyPercent = toAccuracyPercent(record.accuracy);
+  const { t } = useTranslation();
+
+  const encouragementText = t(encouragement.key, encouragement.params);
 
   return (
     <Modal
       centered
       onClose={onDismiss}
       opened={true}
-      title={<Title order={3}>Session Complete</Title>}
+      title={<Title order={3}>{t("session.complete")}</Title>}
     >
       <Stack gap="md">
         <Text c="dimmed" fw={500} size="lg" ta="center">
-          {encouragement}
+          {encouragementText}
         </Text>
 
         <SimpleGrid cols={{ base: 1, xs: 2 }}>
           <StatDisplay
-            label="Questions"
+            label={t("common.questions")}
             value={String(record.questionsCompleted)}
           />
-          <StatDisplay label="Correct" value={String(record.successes)} />
-          <StatDisplay label="Incorrect" value={String(record.fails)} />
-          <StatDisplay label="Accuracy" value={`${accuracyPercent}%`} />
-          <StatDisplay label="Best Streak" value={String(record.bestStreak)} />
           <StatDisplay
-            label="Duration"
+            label={t("session.correct")}
+            value={String(record.successes)}
+          />
+          <StatDisplay
+            label={t("session.incorrect")}
+            value={String(record.fails)}
+          />
+          <StatDisplay
+            label={t("common.accuracy")}
+            value={`${accuracyPercent}%`}
+          />
+          <StatDisplay
+            label={t("common.bestStreak")}
+            value={String(record.bestStreak)}
+          />
+          <StatDisplay
+            label={t("common.duration")}
             value={formatDuration(record.durationSeconds)}
           />
         </SimpleGrid>
@@ -61,7 +77,7 @@ export const SessionSummaryModal = ({
         {previousAverageAccuracy !== null && (
           <Group gap="xs" justify="center">
             <Text c="dimmed" size="sm">
-              Previous avg:
+              {t("session.previousAvg")}
             </Text>
             <Badge
               color={isAccuracyImprovement ? "green" : "gray"}
@@ -74,9 +90,9 @@ export const SessionSummaryModal = ({
         )}
 
         <Group justify="center" mt="md">
-          <Button onClick={onNewSession}>New Session</Button>
+          <Button onClick={onNewSession}>{t("common.newSession")}</Button>
           <Button onClick={onDismiss} variant="subtle">
-            Done
+            {t("common.done")}
           </Button>
         </Group>
       </Stack>

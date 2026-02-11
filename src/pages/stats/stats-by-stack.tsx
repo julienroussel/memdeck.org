@@ -1,5 +1,6 @@
 import { Table, Text, Title } from "@mantine/core";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useAllTimeStats } from "../../hooks/use-all-time-stats";
 import { isStackKey } from "../../hooks/use-selected-stack";
 import { stacks } from "../../types/stacks";
@@ -8,6 +9,7 @@ import { calculateAccuracy, toAccuracyPercent } from "../../utils/session";
 const stackKeys = Object.keys(stacks).filter(isStackKey);
 
 export const StatsByStack = () => {
+  const { t } = useTranslation();
   const { getStatsByStack } = useAllTimeStats();
 
   const rows = useMemo(
@@ -42,23 +44,23 @@ export const StatsByStack = () => {
   if (rows.length === 0) {
     return (
       <Text c="dimmed" ta="center">
-        No stats yet. Complete a session to see per-stack data.
+        {t("stats.noStackStats")}
       </Text>
     );
   }
 
   return (
     <>
-      <Title order={3}>By Stack</Title>
+      <Title order={3}>{t("stats.byStack")}</Title>
       <Table striped>
-        <Table.Caption>Statistics by stack</Table.Caption>
+        <Table.Caption>{t("stats.statisticsByStack")}</Table.Caption>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>Stack</Table.Th>
-            <Table.Th ta="center">Sessions</Table.Th>
-            <Table.Th ta="center">Questions</Table.Th>
-            <Table.Th ta="center">Accuracy</Table.Th>
-            <Table.Th ta="center">Best Streak</Table.Th>
+            <Table.Th>{t("stats.stack")}</Table.Th>
+            <Table.Th ta="center">{t("stats.sessions")}</Table.Th>
+            <Table.Th ta="center">{t("common.questions")}</Table.Th>
+            <Table.Th ta="center">{t("common.accuracy")}</Table.Th>
+            <Table.Th ta="center">{t("common.bestStreak")}</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>{rows}</Table.Tbody>

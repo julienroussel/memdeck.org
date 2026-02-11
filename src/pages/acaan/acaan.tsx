@@ -13,6 +13,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconSettings } from "@tabler/icons-react";
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { NumberCard } from "../../components/number-card";
 import { Score } from "../../components/score";
 import { SessionBanner } from "../../components/session-banner";
@@ -35,10 +36,10 @@ const isValidCutDepth = (value: number): boolean =>
   Number.isInteger(value) && value >= 0 && value <= MAX_CUT_DEPTH;
 
 export const Acaan = () => {
+  const { t } = useTranslation();
   useDocumentMeta({
-    title: "ACAAN Training",
-    description:
-      "Practice Any Card At Any Number calculations for your memorized deck stack.",
+    title: t("acaan.pageTitle"),
+    description: t("acaan.pageDescription"),
   });
   const { stackKey, stackOrder } = useRequiredStack();
   const {
@@ -99,13 +100,13 @@ export const Acaan = () => {
       >
         <Grid.Col span={12}>
           <Group gap="xs" justify="space-between">
-            <Title order={1}>ACAAN</Title>
+            <Title order={1}>{t("acaan.title")}</Title>
             <Group gap="xs">
               {!isStructuredSession && (
                 <Score fails={score.fails} successes={score.successes} />
               )}
               <ActionIcon
-                aria-label="ACAAN settings"
+                aria-label={t("acaan.settingsAriaLabel")}
                 color="gray"
                 onClick={open}
                 variant="subtle"
@@ -154,12 +155,12 @@ export const Acaan = () => {
               <NumberInput
                 allowDecimal={false}
                 allowNegative={false}
-                aria-label="Cut depth"
+                aria-label={t("acaan.cutDepthAriaLabel")}
                 max={MAX_CUT_DEPTH}
                 min={0}
                 onChange={handleCutDepthChange}
                 onKeyDown={handleKeyDown}
-                placeholder="Cut depth"
+                placeholder={t("acaan.cutDepthPlaceholder")}
                 size="md"
                 value={cutDepth}
                 w={140}
@@ -169,7 +170,7 @@ export const Acaan = () => {
                 onClick={handleCheckAnswer}
                 size="md"
               >
-                Check
+                {t("common.check")}
               </Button>
             </Group>
           </Center>
