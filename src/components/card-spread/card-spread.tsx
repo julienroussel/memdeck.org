@@ -1,6 +1,7 @@
 import { Flex, Image } from "@mantine/core";
 import type { KeyboardEvent } from "react";
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { SPREAD_CARD_HEIGHT, SPREAD_CARD_WIDTH } from "../../constants";
 import type {
   CardSpreadCardsProps,
   CardSpreadProps,
@@ -23,7 +24,18 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
     hasCursor = false,
   } = props;
   const [offset, setOffset] = useState(0);
-  const [touchLastPosition, setTouchLastPosition] = useState(0);
+  const touchLastPositionRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
+  const movementAccumulatorRef = useRef(0);
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
+      movementAccumulatorRef.current = 0;
+    };
+  }, []);
 
   const updateOffset = useCallback(
     (movementX: number) => {
@@ -41,42 +53,68 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
     [items.data.length]
   );
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (canMove && e.buttons === 1) {
-      updateOffset(e.nativeEvent.movementX);
-    }
-  };
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (canMove && e.buttons === 1) {
+        movementAccumulatorRef.current += e.nativeEvent.movementX;
+        if (rafRef.current === null) {
+          rafRef.current = requestAnimationFrame(() => {
+            const accumulated = movementAccumulatorRef.current;
+            movementAccumulatorRef.current = 0;
+            updateOffset(accumulated);
+            rafRef.current = null;
+          });
+        }
+      }
+    },
+    [canMove, updateOffset]
+  );
 
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (canMove && e.touches.length === 1) {
-      const touch = e.nativeEvent.touches[0];
-      if (!touch) {
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (canMove && e.touches.length === 1) {
+        const touch = e.nativeEvent.touches[0];
+        if (!touch) {
+          return;
+        }
+        const movementX = touch.screenX - touchLastPositionRef.current;
+        touchLastPositionRef.current = touch.screenX;
+        movementAccumulatorRef.current += movementX;
+        if (rafRef.current === null) {
+          rafRef.current = requestAnimationFrame(() => {
+            const accumulated = movementAccumulatorRef.current;
+            movementAccumulatorRef.current = 0;
+            updateOffset(accumulated);
+            rafRef.current = null;
+          });
+        }
+      }
+    },
+    [canMove, updateOffset]
+  );
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (!canMove) {
         return;
       }
-      updateOffset(touch.screenX - touchLastPosition);
-      setTouchLastPosition(touch.screenX);
-    }
-  };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (!canMove) {
-      return;
-    }
-
-    const maxOffset = items.data.length / 2;
-    switch (event.key) {
-      case "ArrowLeft":
-        event.preventDefault();
-        setOffset((prev) => Math.max(prev - KEYBOARD_STEP, -maxOffset));
-        break;
-      case "ArrowRight":
-        event.preventDefault();
-        setOffset((prev) => Math.min(prev + KEYBOARD_STEP, maxOffset));
-        break;
-      default:
-        break;
-    }
-  };
+      const maxOffset = items.data.length / 2;
+      switch (event.key) {
+        case "ArrowLeft":
+          event.preventDefault();
+          setOffset((prev) => Math.max(prev - KEYBOARD_STEP, -maxOffset));
+          break;
+        case "ArrowRight":
+          event.preventDefault();
+          setOffset((prev) => Math.min(prev + KEYBOARD_STEP, maxOffset));
+          break;
+        default:
+          break;
+      }
+    },
+    [canMove, items.data.length]
+  );
 
   const renderItems = () => {
     if (isCardsProps(props)) {
@@ -94,7 +132,12 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
           }}
           type="button"
         >
-          <Image alt={formatCardName(item)} src={item.image} w={80} />
+          <Image
+            alt={formatCardName(item)}
+            h={SPREAD_CARD_HEIGHT}
+            src={item.image}
+            w={SPREAD_CARD_WIDTH}
+          />
         </button>
       ));
     }

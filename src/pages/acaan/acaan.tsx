@@ -19,7 +19,7 @@ import { SessionBanner } from "../../components/session-banner";
 import { SessionStartControls } from "../../components/session-start-controls";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
-import { DECK_SIZE } from "../../constants";
+import { CARD_HEIGHT, CARD_WIDTH, DECK_SIZE } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
@@ -134,8 +134,9 @@ export const Acaan = () => {
               <Image
                 alt={formatCardName(scenario.card)}
                 className="cardShadow"
+                h={CARD_HEIGHT}
                 src={scenario.card.image}
-                w="120px"
+                w={CARD_WIDTH}
               />
               <Text aria-hidden="true" fw={700} size="xl">
                 →
@@ -143,7 +144,7 @@ export const Acaan = () => {
               <NumberCard
                 fontSize={60}
                 number={scenario.targetPosition}
-                width={120}
+                width={CARD_WIDTH}
               />
             </Group>
           </Center>

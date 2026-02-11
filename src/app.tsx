@@ -23,7 +23,11 @@ export const App = () => {
       return;
     }
     initializedRef.current = true;
-    analytics.initialize();
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(() => analytics.initialize());
+    } else {
+      setTimeout(() => analytics.initialize(), 1);
+    }
   }, []);
 
   useEffect(() => {

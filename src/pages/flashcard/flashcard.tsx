@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSettings } from "@tabler/icons-react";
+import type { CSSProperties } from "react";
 import { useCallback, useMemo } from "react";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { NumberCard } from "../../components/number-card";
@@ -17,6 +18,7 @@ import { SessionBanner } from "../../components/session-banner";
 import { SessionStartControls } from "../../components/session-start-controls";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
+import { CARD_HEIGHT, CARD_WIDTH } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
@@ -25,6 +27,20 @@ import { cardItems, numberItems } from "../../types/typeguards";
 import { formatCardName } from "../../utils/card-formatting";
 import { FlashcardOptions } from "./flashcard-options";
 import { useFlashcardGame } from "./use-flashcard-game";
+
+const CARD_VISIBLE_STYLE: CSSProperties = {
+  visibility: "visible",
+  position: "relative",
+  top: 0,
+  left: 0,
+};
+
+const CARD_HIDDEN_STYLE: CSSProperties = {
+  visibility: "hidden",
+  position: "absolute",
+  top: 0,
+  left: 0,
+};
 
 export const Flashcard = () => {
   useDocumentMeta({
@@ -117,19 +133,28 @@ export const Flashcard = () => {
             />
           )}
           <Center>
-            <Image
-              alt={formatCardName(card.card)}
-              className="cardShadow"
-              src={card.card.image}
-              style={{ display: shouldShowCard ? undefined : "none" }}
-              w="120px"
-            />
-            <NumberCard
-              fontSize={60}
-              number={card.index}
-              style={{ display: shouldShowCard ? "none" : undefined }}
-              width={120}
-            />
+            <div
+              style={{
+                position: "relative",
+                width: CARD_WIDTH,
+                height: CARD_HEIGHT,
+              }}
+            >
+              <Image
+                alt={formatCardName(card.card)}
+                className="cardShadow"
+                h={CARD_HEIGHT}
+                src={card.card.image}
+                style={shouldShowCard ? CARD_VISIBLE_STYLE : CARD_HIDDEN_STYLE}
+                w={CARD_WIDTH}
+              />
+              <NumberCard
+                fontSize={60}
+                number={card.index}
+                style={shouldShowCard ? CARD_HIDDEN_STYLE : CARD_VISIBLE_STYLE}
+                width={CARD_WIDTH}
+              />
+            </div>
           </Center>
           <Space h="xl" />
         </Grid.Col>
