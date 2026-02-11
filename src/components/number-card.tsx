@@ -1,7 +1,7 @@
 import { Image } from "@mantine/core";
 import type { CSSProperties } from "react";
 import { memo } from "react";
-import { BLANK_CARD_IMAGE } from "../constants";
+import { BLANK_CARD_IMAGE, CARD_ASPECT_RATIO } from "../constants";
 
 type NumberCardProps = {
   /** The number to display on the card (1-52) */
@@ -22,7 +22,7 @@ export const NumberCard = memo(function NumberCard({
 }: NumberCardProps) {
   return (
     <div className="numberCardContainer" style={{ ...style, width }}>
-      <Image src={BLANK_CARD_IMAGE} />
+      <Image h={Math.round(width * CARD_ASPECT_RATIO)} src={BLANK_CARD_IMAGE} />
       <div className="numberCardTopLeft">{number}</div>
       <div className="numberCardCenter" style={{ fontSize }}>
         {number}

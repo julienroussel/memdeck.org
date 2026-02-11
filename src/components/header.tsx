@@ -42,7 +42,7 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
             h={30}
             radius="md"
             src={memdeckLightLogo}
-            w="auto"
+            w={30}
           />
           <Image
             alt="MemDeck"
@@ -51,7 +51,7 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
             lightHidden
             radius="md"
             src={memdeckDarkLogo}
-            w="auto"
+            w={30}
           />
         </Link>
         <Text fw={700} tt="uppercase">
