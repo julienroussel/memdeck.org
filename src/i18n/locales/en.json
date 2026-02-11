@@ -37,7 +37,7 @@
     "githubCta": "Swing by the project's <githubLink>GitHub page</githubLink> if you need help or have a feature request. Just a heads-up: this tool is all about simplicity, and it's a side project built in my spare time."
   },
   "home": {
-    "pageTitle": "MemDeck \u2014 Mastering memorized deck",
+    "pageTitle": "MemDeck — Mastering memorized deck",
     "pageDescription": "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, and Particle.",
     "welcome": "Welcome to MemDeck",
     "intro": "Hope these tools help you level up your memorized deck stack learning. Check out the <guideLink>guide</guideLink> for a walkthrough of everything MemDeck offers. Need a hand or think something's missing? Hit me up on <githubLink>Github</githubLink>!",
@@ -137,7 +137,7 @@
     "filterFlashcard": "Flashcard",
     "filterAcaan": "ACAAN",
     "noFilterMatch": "No sessions match this filter.",
-    "chartTooltip": "{{mode}} \u00b7 {{stack}} \u00b7 {{successes}}/{{total}}",
+    "chartTooltip": "{{mode}} · {{stack}} · {{successes}}/{{total}}",
     "modeFlashcard": "Flashcard",
     "modeAcaan": "ACAAN"
   },
@@ -168,7 +168,7 @@
     "subtitle": "Everything you need to know about MemDeck and its features.",
     "gettingStarted": {
       "title": "Getting Started",
-      "intro": "MemDeck is a training tool for magicians and memory enthusiasts who want to master a memorized deck. It helps you drill card positions through flashcard exercises and utilities so you can recall any card at any position \u2014 instantly.",
+      "intro": "MemDeck is a training tool for magicians and memory enthusiasts who want to master a memorized deck. It helps you drill card positions through flashcard exercises and utilities so you can recall any card at any position — instantly.",
       "selectStack": "To get started, select a stack using the dropdown at the bottom of the sidebar. MemDeck supports five classic memorized deck systems:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
@@ -193,7 +193,7 @@
     "acaanTraining": {
       "title": "ACAAN Training",
       "requiresStack": "Requires stack",
-      "intro": "ACAAN stands for \"Any Card At Any Number\" \u2014 a classic effect where a spectator names any card and any number, and the card is found at that exact position in the deck.",
+      "intro": "ACAAN stands for \"Any Card At Any Number\" — a classic effect where a spectator names any card and any number, and the card is found at that exact position in the deck.",
       "description": "In this mode, you're shown a card and a target position. Your job is to calculate the cut depth needed to move the card to that position. Enter a value from 0 to 51. Timer and session options work the same as Flashcard mode.",
       "link": "Go to ACAAN Training"
     },
@@ -216,10 +216,10 @@
     },
     "tips": {
       "title": "Tips",
-      "dataLocal": "All your data stays in your browser \u2014 nothing is sent to a server.",
+      "dataLocal": "All your data stays in your browser — nothing is sent to a server.",
       "darkMode": "Toggle between dark and light mode using the icon in the header.",
       "gearIcon": "In training modes, tap the gear icon to open settings for timer, session length, and mode options.",
-      "switchStacks": "Switching stacks doesn't lose your data \u2014 progress is tracked per stack."
+      "switchStacks": "Switching stacks doesn't lose your data — progress is tracked per stack."
     }
   }
 }
