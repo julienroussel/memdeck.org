@@ -1,4 +1,5 @@
 import { Space, Stack, Text, Title } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { useAllTimeStats } from "../../hooks/use-all-time-stats";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useSessionHistory } from "../../hooks/use-session-history";
@@ -8,10 +9,10 @@ import { StatsHistory } from "./stats-history";
 import { StatsOverview } from "./stats-overview";
 
 export const Stats = () => {
+  const { t } = useTranslation();
   useDocumentMeta({
-    title: "Stats",
-    description:
-      "Track your memorized deck training progress with accuracy charts and session history.",
+    title: t("stats.pageTitle"),
+    description: t("stats.pageDescription"),
   });
   const { history } = useSessionHistory();
   const { getGlobalStats } = useAllTimeStats();
@@ -21,12 +22,11 @@ export const Stats = () => {
 
   return (
     <Stack gap="xl" p="md">
-      <Title order={1}>Stats</Title>
+      <Title order={1}>{t("stats.title")}</Title>
 
       {!hasData && (
         <Text c="dimmed" ta="center">
-          No training data yet. Complete a flashcard or ACAAN session to see
-          your stats here.
+          {t("stats.noData")}
         </Text>
       )}
 

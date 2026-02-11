@@ -158,7 +158,7 @@ const makeSummary = (): SessionSummary => ({
     accuracy: 0.8,
     bestStreak: 5,
   },
-  encouragement: "Great work!",
+  encouragement: { key: "session.encouragement.consistent" },
   isAccuracyImprovement: false,
   isNewGlobalBestStreak: false,
   previousAverageAccuracy: null,

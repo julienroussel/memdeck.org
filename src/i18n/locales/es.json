@@ -1,0 +1,225 @@
+{
+  "common": {
+    "comingSoon": "Próximamente...",
+    "learnMore": "Más información",
+    "showMore": "Mostrar más",
+    "check": "Verificar",
+    "stop": "Detener",
+    "done": "Listo",
+    "newSession": "Nueva sesión",
+    "book": "Libro",
+    "pdf": "PDF",
+    "accuracy": "Precisión",
+    "bestStreak": "Mejor racha",
+    "questions": "Preguntas",
+    "duration": "Duración"
+  },
+  "nav": {
+    "home": "Inicio",
+    "guide": "Guía",
+    "resources": "Recursos",
+    "stats": "Estadísticas",
+    "tools": "Herramientas",
+    "flashcard": "Flashcard",
+    "acaan": "ACAAN",
+    "toolbox": "Caja de herramientas",
+    "disabledTooltip": "Selecciona un stack primero"
+  },
+  "header": {
+    "githubAriaLabel": "Github",
+    "toggleColorScheme": "Cambiar esquema de colores",
+    "helpAriaLabel": "Ayuda",
+    "languageAriaLabel": "Idioma"
+  },
+  "help": {
+    "title": "¿Qué es MemDeck?",
+    "description": "MemDeck es tu herramienta para dominar una baraja memorizada. Ya seas mago, entusiasta de la memoria o simplemente curioso, MemDeck ofrece ejercicios sencillos para entrenar y poner a prueba tus habilidades.",
+    "githubCta": "Visita la <githubLink>página de GitHub</githubLink> del proyecto si necesitas ayuda o quieres sugerir una funcionalidad. Un aviso: esta herramienta apuesta por la simplicidad y es un proyecto personal desarrollado en mi tiempo libre."
+  },
+  "home": {
+    "pageTitle": "MemDeck — Domina tu baraja memorizada",
+    "pageDescription": "Herramienta online gratuita para dominar sistemas de barajas memorizadas como Mnemonica, Aronson, Memorandum, Redford y Particle.",
+    "welcome": "Bienvenido a MemDeck",
+    "intro": "Espero que estas herramientas te ayuden a mejorar tu aprendizaje del stack. Consulta la <guideLink>guía</guideLink> para un recorrido por todo lo que MemDeck ofrece. ¿Necesitas ayuda o falta algo? Contáctame en <githubLink>Github</githubLink>!",
+    "firstTimer": "¡Hola, novato! Elige tu stack favorito abajo para desbloquear todas las funcionalidades. Puedes cambiarlo en cualquier momento usando el selector en la parte inferior del menú.",
+    "guideCardAriaLabel": "Leer la guía de MemDeck",
+    "guideCardTitle": "¿Nuevo aquí? Lee la Guía",
+    "guideCardDescription": "Descubre todos los modos de entrenamiento y cómo sacar el máximo provecho de MemDeck.",
+    "selectedStack": "Tu stack seleccionado es <bold>{{stackName}}</bold>"
+  },
+  "flashcard": {
+    "pageTitle": "Entrenamiento Flashcard",
+    "pageDescription": "Practica tu baraja memorizada con ejercicios interactivos de flashcard. Entrena carta a número, número a carta, o ambos.",
+    "title": "Flashcard",
+    "settingsAriaLabel": "Configuración de Flashcard",
+    "optionsTitle": "Opciones de Flashcard",
+    "pickOneMode": "Elige un modo",
+    "modeCardOnly": "Solo carta",
+    "modeCardOnlyDescription": "En este modo, verás una carta y deberás adivinar su posición en el stack entre 5 opciones.",
+    "modeBothModes": "Ambos modos",
+    "modeBothModesDescription": "En este modo, verás aleatoriamente una carta o un número, adivina la correspondencia entre 5 opciones.",
+    "modeNumberOnly": "Solo número",
+    "modeNumberOnlyDescription": "En este modo, verás un número y deberás elegir la carta correspondiente entre 5 opciones."
+  },
+  "acaan": {
+    "pageTitle": "Entrenamiento ACAAN",
+    "pageDescription": "Practica cálculos de Any Card At Any Number para tu stack memorizado.",
+    "title": "ACAAN",
+    "settingsAriaLabel": "Configuración de ACAAN",
+    "optionsTitle": "Opciones de ACAAN",
+    "cutDepthAriaLabel": "Profundidad de corte",
+    "cutDepthPlaceholder": "Profundidad de corte"
+  },
+  "toolbox": {
+    "pageTitle": "Caja de herramientas",
+    "pageDescription": "Utilidades para análisis de stack, búsqueda de cartas y preparación de actuaciones.",
+    "title": "Caja de herramientas"
+  },
+  "timer": {
+    "timeRemaining": "Tiempo restante",
+    "timedMode": "Modo cronometrado",
+    "timeLimit": "Límite de tiempo:"
+  },
+  "session": {
+    "startSession": "Iniciar sesión:",
+    "startPresetAriaLabel": "Iniciar sesión de {{count}} preguntas",
+    "progressAriaLabel": "Progreso: {{progress}}",
+    "accuracyAriaLabel": "Precisión: {{percent}}%",
+    "currentStreakAriaLabel": "Racha actual: {{count}}",
+    "bestStreakAriaLabel": "Mejor racha: {{count}}",
+    "complete": "Sesión completada",
+    "correct": "Correctas",
+    "incorrect": "Incorrectas",
+    "previousAvg": "Media anterior:",
+    "encouragement": {
+      "perfect": "¡Sesión perfecta!",
+      "greatStart": "¡Gran comienzo!",
+      "newBestStreak": "¡Nuevo récord personal de {{count}}!",
+      "improvement": "¡Gran mejora! Tu precisión está subiendo.",
+      "consistent": "¡Buen trabajo! Estás siendo constante.",
+      "progress": "Sigue practicando, estás progresando.",
+      "keepGoing": "Cada sesión fortalece tu memoria. ¡Sigue así!"
+    }
+  },
+  "score": {
+    "correctAriaLabel": "Respuestas correctas: {{count}}",
+    "incorrectAriaLabel": "Respuestas incorrectas: {{count}}"
+  },
+  "stackPicker": {
+    "placeholder": "Por favor elige un stack",
+    "ariaLabel": "Seleccionar baraja memorizada"
+  },
+  "errors": {
+    "somethingWentWrong": "Algo salió mal",
+    "languageLoadFailed": "No se pudo cargar tu idioma preferido. Usando inglés."
+  },
+  "stats": {
+    "pageTitle": "Estadísticas",
+    "pageDescription": "Sigue tu progreso de entrenamiento con gráficos de precisión e historial de sesiones.",
+    "title": "Estadísticas",
+    "noData": "Aún no hay datos. Completa una sesión de flashcard o ACAAN para ver tus estadísticas aquí.",
+    "totalSessions": "Sesiones totales",
+    "totalQuestions": "Preguntas totales",
+    "overallAccuracy": "Precisión general",
+    "byStack": "Por stack",
+    "statisticsByStack": "Estadísticas por stack",
+    "stack": "Stack",
+    "sessions": "Sesiones",
+    "noStackStats": "Aún no hay estadísticas. Completa una sesión para ver datos por stack.",
+    "sessionHistory": "Historial de sesiones",
+    "sessionHistoryCaption": "Historial de sesiones",
+    "date": "Fecha",
+    "mode": "Modo",
+    "score": "Puntuación",
+    "noSessions": "No hay sesiones registradas aún.",
+    "accuracyTrend": "Tendencia de precisión",
+    "filterAll": "Todos",
+    "filterFlashcard": "Flashcard",
+    "filterAcaan": "ACAAN",
+    "noFilterMatch": "Ninguna sesión coincide con este filtro.",
+    "chartTooltip": "{{mode}} · {{stack}} · {{successes}}/{{total}}",
+    "modeFlashcard": "Flashcard",
+    "modeAcaan": "ACAAN"
+  },
+  "resources": {
+    "pageTitle": "Recursos",
+    "pageDescription": "Libros y recursos seleccionados para magia con baraja memorizada, incluyendo Mnemonica de Tamariz y The Aronson Approach.",
+    "title": "Recursos de barajas memorizadas",
+    "intro": "Explora una colección de recursos para ayudarte a dominar el arte de las barajas memorizadas. ¿Falta un recurso? Contáctame o envía un pull request en <githubLink>Github</githubLink>.",
+    "otherResources": "Otros recursos",
+    "descriptions": {
+      "mnemonica": "La obra definitiva sobre el stack Mnemonica con trucos, principios y teorías profundas.",
+      "aronsonApproach": "Presenta el Stack Aronson, sus aplicaciones y varias rutinas poderosas.",
+      "boundToPlease": "Compilación de los primeros trabajos de Aronson, esencial para el trabajo de stack.",
+      "memoriesAreMade": "Una obra más corta que ofrece aplicaciones prácticas para la baraja memorizada.",
+      "magicRainbow": "No solo sobre barajas memorizadas, pero esencial para profundizar el pensamiento mágico.",
+      "inOrderToAmaze": "Rutinas brillantes y efectos con técnicas de baraja memorizada.",
+      "memorandum": "Baraja memorizada única con efectos poderosos y reflexiones profundas.",
+      "temporarilyOutOfOrder": "Una inmersión profunda en el stack Redford con rutinas versátiles y principios independientes del stack.",
+      "applesauce": "Amplía el stack Redford con nuevos efectos, ideas y aplicaciones.",
+      "sleightlyOutOfOrder": "Técnicas avanzadas y efectos usando un stack memorizado con integraciones de manipulación.",
+      "particleSystem": "Nueva baraja memorizada que permite cortar a cualquier carta nombrada sin mirar, con beneficios integrados y rutinas poderosas."
+    }
+  },
+  "guide": {
+    "pageTitle": "Guía",
+    "pageDescription": "Aprende a usar los modos de entrenamiento de MemDeck: ejercicios Flashcard, ACAAN, seguimiento de sesiones y consejos para dominar tu stack.",
+    "title": "Guía",
+    "subtitle": "Todo lo que necesitas saber sobre MemDeck y sus funcionalidades.",
+    "gettingStarted": {
+      "title": "Primeros pasos",
+      "intro": "MemDeck es una herramienta de entrenamiento para magos y entusiastas de la memoria que quieren dominar una baraja memorizada. Te ayuda a practicar posiciones de cartas mediante ejercicios de flashcard y utilidades para recordar cualquier carta en cualquier posición — al instante.",
+      "selectStack": "Para empezar, selecciona un stack en el menú desplegable de la parte inferior de la barra lateral. MemDeck admite cinco sistemas clásicos de barajas memorizadas:",
+      "stacks": {
+        "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
+        "aronson": "<bold>Aronson</bold> — Simon Aronson",
+        "memorandum": "<bold>Memorandum</bold> — Woody Aragón",
+        "redford": "<bold>Redford Stack</bold> — Patrick Redford",
+        "particle": "<bold>Particle System</bold> — Joshua Jay"
+      },
+      "alertTitle": "Elige un stack primero",
+      "alertDescription": "La mayoría de las herramientas de entrenamiento requieren un stack seleccionado. Elige uno para desbloquear los modos Flashcard, ACAAN y Caja de herramientas."
+    },
+    "flashcardTraining": {
+      "title": "Entrenamiento Flashcard",
+      "requiresStack": "Requiere stack",
+      "intro": "El modo de entrenamiento principal. Se te muestra una pista y debes recordar la carta o posición correspondiente en tu stack. Hay tres modos disponibles:",
+      "cardOnlyItem": "<bold>Solo carta</bold> — se muestra una carta, recuerda su número de posición",
+      "numberOnlyItem": "<bold>Solo número</bold> — se muestra un número de posición, recuerda la carta",
+      "bothItem": "<bold>Ambos</bold> — alterna aleatoriamente entre los dos",
+      "settings": "Toca el icono de engranaje para abrir la configuración. Puedes activar un cronómetro opcional y elegir entre práctica libre o sesiones estructuradas de 10, 20, 30 o 52 cartas. El seguimiento de puntuación muestra tu precisión y racha actual.",
+      "link": "Ir al entrenamiento Flashcard"
+    },
+    "acaanTraining": {
+      "title": "Entrenamiento ACAAN",
+      "requiresStack": "Requiere stack",
+      "intro": "ACAAN significa «Any Card At Any Number» — un efecto clásico donde un espectador nombra cualquier carta y cualquier número, y la carta se encuentra exactamente en esa posición en la baraja.",
+      "description": "En este modo, se te muestra una carta y una posición objetivo. Tu trabajo es calcular la profundidad de corte necesaria para mover la carta a esa posición. Introduce un valor de 0 a 51. El cronómetro y las opciones de sesión funcionan igual que en el modo Flashcard.",
+      "link": "Ir al entrenamiento ACAAN"
+    },
+    "toolbox": {
+      "title": "Caja de herramientas",
+      "requiresStack": "Requiere stack",
+      "description": "Una colección de utilidades para el análisis de stack y trabajo de actuación. Usa estas herramientas para explorar tu stack, buscar cartas por posición y preparar tus actuaciones.",
+      "link": "Ir a la caja de herramientas"
+    },
+    "stats": {
+      "title": "Estadísticas",
+      "noStackRequired": "No requiere stack",
+      "description": "Sigue tu progreso a lo largo del tiempo. La página de Estadísticas incluye tarjetas de resumen, un gráfico de tendencia de precisión (con colores y filtrable por modo), una tabla de desglose por stack e historial de sesiones paginado. Todos los datos se almacenan localmente en tu navegador.",
+      "link": "Ver estadísticas"
+    },
+    "resources": {
+      "title": "Recursos",
+      "description": "Una colección de libros y PDFs sobre teoría de barajas memorizadas, rutinas y técnicas de práctica de autores destacados.",
+      "link": "Explorar recursos"
+    },
+    "tips": {
+      "title": "Consejos",
+      "dataLocal": "Todos tus datos permanecen en tu navegador — nada se envía a un servidor.",
+      "darkMode": "Alterna entre modo oscuro y claro usando el icono en la cabecera.",
+      "gearIcon": "En los modos de entrenamiento, toca el icono de engranaje para abrir la configuración de cronómetro, duración de sesión y opciones de modo.",
+      "switchStacks": "Cambiar de stack no pierde tus datos — el progreso se registra por stack."
+    }
+  }
+}

@@ -1,0 +1,225 @@
+{
+  "common": {
+    "comingSoon": "Demnächst verfügbar...",
+    "learnMore": "Mehr erfahren",
+    "showMore": "Mehr anzeigen",
+    "check": "Prüfen",
+    "stop": "Stopp",
+    "done": "Fertig",
+    "newSession": "Neue Sitzung",
+    "book": "Buch",
+    "pdf": "PDF",
+    "accuracy": "Genauigkeit",
+    "bestStreak": "Beste Serie",
+    "questions": "Fragen",
+    "duration": "Dauer"
+  },
+  "nav": {
+    "home": "Start",
+    "guide": "Anleitung",
+    "resources": "Ressourcen",
+    "stats": "Statistiken",
+    "tools": "Werkzeuge",
+    "flashcard": "Flashcard",
+    "acaan": "ACAAN",
+    "toolbox": "Werkzeugkasten",
+    "disabledTooltip": "Wähle zuerst einen Stack"
+  },
+  "header": {
+    "githubAriaLabel": "Github",
+    "toggleColorScheme": "Farbschema wechseln",
+    "helpAriaLabel": "Hilfe",
+    "languageAriaLabel": "Sprache"
+  },
+  "help": {
+    "title": "Was ist MemDeck?",
+    "description": "MemDeck ist dein Werkzeug zum Meistern eines memorierten Kartenstapels. Ob Zauberkünstler, Gedächtnisfan oder einfach neugierig — MemDeck bietet unkomplizierte Übungen zum Trainieren und Testen deiner Fähigkeiten.",
+    "githubCta": "Besuche die <githubLink>GitHub-Seite</githubLink> des Projekts, wenn du Hilfe brauchst oder einen Funktionswunsch hast. Kleiner Hinweis: Dieses Tool setzt auf Einfachheit und ist ein Nebenprojekt, das in meiner Freizeit entstanden ist."
+  },
+  "home": {
+    "pageTitle": "MemDeck — Memoriertes Kartendeck meistern",
+    "pageDescription": "Kostenloses Online-Tool zum Meistern von memorierten Kartensystemen wie Mnemonica, Aronson, Memorandum, Redford und Particle.",
+    "welcome": "Willkommen bei MemDeck",
+    "intro": "Ich hoffe, diese Tools helfen dir beim Erlernen deines Stacks. Schau dir den <guideLink>Guide</guideLink> an für einen Überblick über alles, was MemDeck bietet. Brauchst du Hilfe oder fehlt etwas? Kontaktiere mich auf <githubLink>Github</githubLink>!",
+    "firstTimer": "Hallo, Neuling! Wähle unten deinen Lieblings-Stack, um alle Funktionen freizuschalten. Du kannst jederzeit über den Selektor am unteren Rand des Menüs wechseln.",
+    "guideCardAriaLabel": "MemDeck-Anleitung lesen",
+    "guideCardTitle": "Neu hier? Lies die Anleitung",
+    "guideCardDescription": "Erfahre alles über die Trainingsmodi und wie du das Beste aus MemDeck herausholst.",
+    "selectedStack": "Dein ausgewählter Stack ist <bold>{{stackName}}</bold>"
+  },
+  "flashcard": {
+    "pageTitle": "Flashcard-Training",
+    "pageDescription": "Übe dein memoriertes Kartendeck mit interaktiven Flashcard-Übungen. Trainiere Karte-zu-Nummer, Nummer-zu-Karte oder beides.",
+    "title": "Flashcard",
+    "settingsAriaLabel": "Flashcard-Einstellungen",
+    "optionsTitle": "Flashcard-Optionen",
+    "pickOneMode": "Wähle einen Modus",
+    "modeCardOnly": "Nur Karte",
+    "modeCardOnlyDescription": "In diesem Modus siehst du eine Karte und musst ihre Position im Stack aus 5 Optionen erraten.",
+    "modeBothModes": "Beide Modi",
+    "modeBothModesDescription": "In diesem Modus wird zufällig entweder eine Karte oder eine Nummer gezeigt, errate die Zuordnung aus 5 Optionen.",
+    "modeNumberOnly": "Nur Nummer",
+    "modeNumberOnlyDescription": "In diesem Modus siehst du eine Nummer und musst die entsprechende Karte aus 5 Optionen auswählen."
+  },
+  "acaan": {
+    "pageTitle": "ACAAN-Training",
+    "pageDescription": "Übe Any Card At Any Number-Berechnungen für deinen memorierten Stack.",
+    "title": "ACAAN",
+    "settingsAriaLabel": "ACAAN-Einstellungen",
+    "optionsTitle": "ACAAN-Optionen",
+    "cutDepthAriaLabel": "Schnitttiefe",
+    "cutDepthPlaceholder": "Schnitttiefe"
+  },
+  "toolbox": {
+    "pageTitle": "Werkzeugkasten",
+    "pageDescription": "Dienstprogramme für Stack-Analyse, Kartensuche und Vorbereitungen für Auftritte.",
+    "title": "Werkzeugkasten"
+  },
+  "timer": {
+    "timeRemaining": "Verbleibende Zeit",
+    "timedMode": "Zeitmodus",
+    "timeLimit": "Zeitlimit:"
+  },
+  "session": {
+    "startSession": "Sitzung starten:",
+    "startPresetAriaLabel": "Sitzung mit {{count}} Fragen starten",
+    "progressAriaLabel": "Fortschritt: {{progress}}",
+    "accuracyAriaLabel": "Genauigkeit: {{percent}}%",
+    "currentStreakAriaLabel": "Aktuelle Serie: {{count}}",
+    "bestStreakAriaLabel": "Beste Serie: {{count}}",
+    "complete": "Sitzung abgeschlossen",
+    "correct": "Richtig",
+    "incorrect": "Falsch",
+    "previousAvg": "Vorheriger Durchschnitt:",
+    "encouragement": {
+      "perfect": "Perfekte Sitzung!",
+      "greatStart": "Toller Start!",
+      "newBestStreak": "Neuer persönlicher Rekord von {{count}}!",
+      "improvement": "Tolle Verbesserung! Deine Genauigkeit steigt.",
+      "consistent": "Gute Arbeit! Du wirst konstanter.",
+      "progress": "Übe weiter, du machst Fortschritte.",
+      "keepGoing": "Jede Sitzung stärkt dein Gedächtnis. Bleib dran!"
+    }
+  },
+  "score": {
+    "correctAriaLabel": "Richtige Antworten: {{count}}",
+    "incorrectAriaLabel": "Falsche Antworten: {{count}}"
+  },
+  "stackPicker": {
+    "placeholder": "Bitte wähle einen Stack",
+    "ariaLabel": "Memoriertes Kartendeck auswählen"
+  },
+  "errors": {
+    "somethingWentWrong": "Etwas ist schiefgelaufen",
+    "languageLoadFailed": "Ihre bevorzugte Sprache konnte nicht geladen werden. Englisch wird verwendet."
+  },
+  "stats": {
+    "pageTitle": "Statistiken",
+    "pageDescription": "Verfolge deinen Trainingsfortschritt mit Genauigkeitsdiagrammen und Sitzungsverlauf.",
+    "title": "Statistiken",
+    "noData": "Noch keine Trainingsdaten. Schließe eine Flashcard- oder ACAAN-Sitzung ab, um deine Statistiken hier zu sehen.",
+    "totalSessions": "Sitzungen gesamt",
+    "totalQuestions": "Fragen gesamt",
+    "overallAccuracy": "Gesamtgenauigkeit",
+    "byStack": "Nach Stack",
+    "statisticsByStack": "Statistiken nach Stack",
+    "stack": "Stack",
+    "sessions": "Sitzungen",
+    "noStackStats": "Noch keine Statistiken. Schließe eine Sitzung ab, um Daten pro Stack zu sehen.",
+    "sessionHistory": "Sitzungsverlauf",
+    "sessionHistoryCaption": "Sitzungsverlauf",
+    "date": "Datum",
+    "mode": "Modus",
+    "score": "Ergebnis",
+    "noSessions": "Noch keine Sitzungen aufgezeichnet.",
+    "accuracyTrend": "Genauigkeitstrend",
+    "filterAll": "Alle",
+    "filterFlashcard": "Flashcard",
+    "filterAcaan": "ACAAN",
+    "noFilterMatch": "Keine Sitzungen entsprechen diesem Filter.",
+    "chartTooltip": "{{mode}} · {{stack}} · {{successes}}/{{total}}",
+    "modeFlashcard": "Flashcard",
+    "modeAcaan": "ACAAN"
+  },
+  "resources": {
+    "pageTitle": "Ressourcen",
+    "pageDescription": "Ausgewählte Bücher und Ressourcen für Magie mit memoriertem Kartendeck, darunter Mnemonica von Tamariz und The Aronson Approach.",
+    "title": "Ressourcen für memorierte Kartendecks",
+    "intro": "Entdecke eine Sammlung von Ressourcen, die dir helfen, die Kunst der memorierten Kartendecks zu meistern. Fehlt eine Ressource? Kontaktiere mich oder erstelle einen Pull Request auf <githubLink>Github</githubLink>.",
+    "otherResources": "Weitere Ressourcen",
+    "descriptions": {
+      "mnemonica": "Das Standardwerk zum Mnemonica-Stack mit Tricks, Prinzipien und tiefgehenden Theorien.",
+      "aronsonApproach": "Stellt den Aronson-Stack vor, seine Anwendungen und mehrere kraftvolle Routinen.",
+      "boundToPlease": "Zusammenstellung von Aronsons frühen Werken, unverzichtbar für Stack-Arbeit.",
+      "memoriesAreMade": "Ein kürzeres Werk mit praktischen Anwendungen für das memorierte Kartendeck.",
+      "magicRainbow": "Nicht nur über memorierte Kartendecks, aber unverzichtbar zur Vertiefung magischen Denkens.",
+      "inOrderToAmaze": "Brillante Routinen und Effekte mit Techniken für memorierte Kartendecks.",
+      "memorandum": "Einzigartiges memoriertes Kartendeck mit kraftvollen Effekten und tiefen Einsichten.",
+      "temporarilyOutOfOrder": "Ein tiefer Einblick in den Redford-Stack mit vielseitigen Routinen und stack-unabhängigen Prinzipien.",
+      "applesauce": "Erweitert den Redford-Stack mit neuen Effekten, Ideen und Anwendungen.",
+      "sleightlyOutOfOrder": "Fortgeschrittene Techniken und Effekte mit einem memorierten Stack und Sleight-of-Hand-Integration.",
+      "particleSystem": "Neues memoriertes Kartendeck, das es ermöglicht, zu jeder genannten Karte zu schneiden, ohne hinzusehen, mit integrierten Vorteilen und kraftvollen Routinen."
+    }
+  },
+  "guide": {
+    "pageTitle": "Anleitung",
+    "pageDescription": "Lerne die Trainingsmodi von MemDeck kennen: Flashcard-Übungen, ACAAN, Sitzungsverfolgung und Tipps zum Meistern deines Stacks.",
+    "title": "Anleitung",
+    "subtitle": "Alles, was du über MemDeck und seine Funktionen wissen musst.",
+    "gettingStarted": {
+      "title": "Erste Schritte",
+      "intro": "MemDeck ist ein Trainingstool für Zauberkünstler und Gedächtnisenthusiasten, die ein memoriertes Kartendeck meistern wollen. Es hilft dir, Kartenpositionen durch Flashcard-Übungen und Dienstprogramme zu trainieren, damit du jede Karte an jeder Position abrufen kannst — sofort.",
+      "selectStack": "Um zu beginnen, wähle einen Stack über das Dropdown am unteren Rand der Seitenleiste. MemDeck unterstützt fünf klassische memorierte Kartensysteme:",
+      "stacks": {
+        "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
+        "aronson": "<bold>Aronson</bold> — Simon Aronson",
+        "memorandum": "<bold>Memorandum</bold> — Woody Aragón",
+        "redford": "<bold>Redford Stack</bold> — Patrick Redford",
+        "particle": "<bold>Particle System</bold> — Joshua Jay"
+      },
+      "alertTitle": "Wähle zuerst einen Stack",
+      "alertDescription": "Die meisten Trainingstools erfordern einen ausgewählten Stack. Wähle einen aus, um Flashcard, ACAAN und den Werkzeugkasten freizuschalten."
+    },
+    "flashcardTraining": {
+      "title": "Flashcard-Training",
+      "requiresStack": "Stack erforderlich",
+      "intro": "Der Haupttrainingsmodus. Dir wird ein Hinweis gezeigt und du musst die passende Karte oder Position in deinem Stack abrufen. Drei Modi sind verfügbar:",
+      "cardOnlyItem": "<bold>Nur Karte</bold> — eine Karte wird gezeigt, nenne ihre Positionsnummer",
+      "numberOnlyItem": "<bold>Nur Nummer</bold> — eine Positionsnummer wird gezeigt, nenne die Karte",
+      "bothItem": "<bold>Beide</bold> — wechselt zufällig zwischen beiden",
+      "settings": "Tippe auf das Zahnrad-Symbol, um die Einstellungen zu öffnen. Du kannst einen optionalen Timer aktivieren und zwischen freiem Üben oder strukturierten Sitzungen mit 10, 20, 30 oder 52 Karten wählen. Die Punkteverfolgung zeigt deine Genauigkeit und aktuelle Serie.",
+      "link": "Zum Flashcard-Training"
+    },
+    "acaanTraining": {
+      "title": "ACAAN-Training",
+      "requiresStack": "Stack erforderlich",
+      "intro": "ACAAN steht für „Any Card At Any Number“ — ein klassischer Effekt, bei dem ein Zuschauer eine beliebige Karte und eine beliebige Zahl nennt und die Karte genau an dieser Position im Deck gefunden wird.",
+      "description": "In diesem Modus wird dir eine Karte und eine Zielposition gezeigt. Deine Aufgabe ist es, die Schnitttiefe zu berechnen, um die Karte an diese Position zu bringen. Gib einen Wert von 0 bis 51 ein. Timer und Sitzungsoptionen funktionieren wie im Flashcard-Modus.",
+      "link": "Zum ACAAN-Training"
+    },
+    "toolbox": {
+      "title": "Werkzeugkasten",
+      "requiresStack": "Stack erforderlich",
+      "description": "Eine Sammlung von Dienstprogrammen für Stack-Analyse und Auftrittsvorbereitung. Nutze diese Tools, um deinen Stack zu erkunden, Karten nach Position zu suchen und dich auf Auftritte vorzubereiten.",
+      "link": "Zum Werkzeugkasten"
+    },
+    "stats": {
+      "title": "Statistiken",
+      "noStackRequired": "Kein Stack erforderlich",
+      "description": "Verfolge deinen Fortschritt über die Zeit. Die Statistik-Seite umfasst Übersichtskarten, ein Genauigkeitstrend-Diagramm (farbcodiert und filterbar nach Modus), eine Aufschlüsselung nach Stack und einen paginierten Sitzungsverlauf. Alle Daten werden lokal in deinem Browser gespeichert.",
+      "link": "Zu den Statistiken"
+    },
+    "resources": {
+      "title": "Ressourcen",
+      "description": "Eine Sammlung von Büchern und PDFs über Theorie memorierter Kartendecks, Routinen und Übungstechniken von führenden Autoren.",
+      "link": "Ressourcen durchsuchen"
+    },
+    "tips": {
+      "title": "Tipps",
+      "dataLocal": "Alle deine Daten bleiben in deinem Browser — nichts wird an einen Server gesendet.",
+      "darkMode": "Wechsle zwischen dunklem und hellem Modus mit dem Symbol in der Kopfzeile.",
+      "gearIcon": "In den Trainingsmodi tippe auf das Zahnrad-Symbol, um Einstellungen für Timer, Sitzungslänge und Modusoptionen zu öffnen.",
+      "switchStacks": "Das Wechseln von Stacks verliert keine Daten — der Fortschritt wird pro Stack verfolgt."
+    }
+  }
+}

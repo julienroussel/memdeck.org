@@ -1,5 +1,6 @@
 import { Space, Text, Title } from "@mantine/core";
 import { IconBook2 } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { AcaanTraining } from "./acaan-training";
 import { FlashcardTraining } from "./flashcard-training";
@@ -10,19 +11,21 @@ import { TipsSection } from "./tips-section";
 import { ToolboxSection } from "./toolbox-section";
 
 export const Guide = () => {
+  const { t } = useTranslation();
+
   useDocumentMeta({
-    title: "Guide",
-    description:
-      "Learn how to use MemDeck's training modes: Flashcard drills, ACAAN, session tracking, and tips for mastering your stack.",
+    title: t("guide.pageTitle"),
+    description: t("guide.pageDescription"),
   });
 
   return (
     <article>
       <Title mb="xs" order={1}>
-        <IconBook2 aria-hidden="true" size={28} stroke={1.5} /> Guide
+        <IconBook2 aria-hidden="true" size={28} stroke={1.5} />{" "}
+        {t("guide.title")}
       </Title>
       <Text c="dimmed" mb="xl">
-        Everything you need to know about MemDeck and its features.
+        {t("guide.subtitle")}
       </Text>
       <GettingStarted />
       <Space h="xl" />

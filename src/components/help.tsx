@@ -1,10 +1,12 @@
 import { ActionIcon, Anchor, Modal, Space, Text, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconHelp } from "@tabler/icons-react";
+import { Trans, useTranslation } from "react-i18next";
 import { GITHUB_URL } from "../constants";
 
 export const Help = () => {
   const [opened, { open, close }] = useDisclosure(false);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -14,33 +16,29 @@ export const Help = () => {
         size="auto"
         withCloseButton={false}
       >
-        <Title order={1}>What is MemDeck?</Title>
+        <Title order={1}>{t("help.title")}</Title>
+        <Space h="lg" />
+        <Text>{t("help.description")}</Text>
         <Space h="lg" />
         <Text>
-          MemDeck is your go-to tool for mastering a memorized deck of cards.
-          Whether you're a magician, a memory buff, or simply curious about
-          memorization, MemDeck offers straightforward exercises to train and
-          test your skills.
-        </Text>
-        <Space h="lg" />
-        <Text>
-          Swing by the project's{" "}
-          <Anchor
-            href={GITHUB_URL}
-            rel="noopener"
-            target="_blank"
-            underline="never"
-          >
-            GitHub page
-          </Anchor>{" "}
-          if you need help or have a feature request. Just a heads-up: this tool
-          is all about simplicity, and it's a side project built in my spare
-          time.
+          <Trans
+            components={{
+              githubLink: (
+                <Anchor
+                  href={GITHUB_URL}
+                  rel="noopener"
+                  target="_blank"
+                  underline="never"
+                />
+              ),
+            }}
+            i18nKey="help.githubCta"
+          />
         </Text>
       </Modal>
 
       <ActionIcon
-        aria-label="Help"
+        aria-label={t("header.helpAriaLabel")}
         color="gray"
         onClick={open}
         variant="subtle"

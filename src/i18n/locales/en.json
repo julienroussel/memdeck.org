@@ -1,0 +1,225 @@
+{
+  "common": {
+    "comingSoon": "Coming soon...",
+    "learnMore": "Learn more",
+    "showMore": "Show more",
+    "check": "Check",
+    "stop": "Stop",
+    "done": "Done",
+    "newSession": "New Session",
+    "book": "Book",
+    "pdf": "PDF",
+    "accuracy": "Accuracy",
+    "bestStreak": "Best Streak",
+    "questions": "Questions",
+    "duration": "Duration"
+  },
+  "nav": {
+    "home": "Home",
+    "guide": "Guide",
+    "resources": "Resources",
+    "stats": "Stats",
+    "tools": "Tools",
+    "flashcard": "Flashcard",
+    "acaan": "ACAAN",
+    "toolbox": "Toolbox",
+    "disabledTooltip": "Select a stack first"
+  },
+  "header": {
+    "githubAriaLabel": "Github",
+    "toggleColorScheme": "Toggle color scheme",
+    "helpAriaLabel": "Help",
+    "languageAriaLabel": "Language"
+  },
+  "help": {
+    "title": "What is MemDeck?",
+    "description": "MemDeck is your go-to tool for mastering a memorized deck of cards. Whether you're a magician, a memory buff, or simply curious about memorization, MemDeck offers straightforward exercises to train and test your skills.",
+    "githubCta": "Swing by the project's <githubLink>GitHub page</githubLink> if you need help or have a feature request. Just a heads-up: this tool is all about simplicity, and it's a side project built in my spare time."
+  },
+  "home": {
+    "pageTitle": "MemDeck \u2014 Mastering memorized deck",
+    "pageDescription": "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, and Particle.",
+    "welcome": "Welcome to MemDeck",
+    "intro": "Hope these tools help you level up your memorized deck stack learning. Check out the <guideLink>guide</guideLink> for a walkthrough of everything MemDeck offers. Need a hand or think something's missing? Hit me up on <githubLink>Github</githubLink>!",
+    "firstTimer": "Hey there, first-timer! Pick your favorite memorized deck stack below to unlock all the cool features. You can switch it up anytime using the selector at the bottom of the menu.",
+    "guideCardAriaLabel": "Read the MemDeck guide",
+    "guideCardTitle": "New here? Read the Guide",
+    "guideCardDescription": "Learn about all the training modes and how to get the most out of MemDeck.",
+    "selectedStack": "Your selected stack is <bold>{{stackName}}</bold>"
+  },
+  "flashcard": {
+    "pageTitle": "Flashcard Training",
+    "pageDescription": "Practice your memorized deck with interactive flashcard drills. Train card-to-number, number-to-card, or both.",
+    "title": "Flashcard",
+    "settingsAriaLabel": "Flashcard settings",
+    "optionsTitle": "Flashcard options",
+    "pickOneMode": "Pick one mode",
+    "modeCardOnly": "Card only",
+    "modeCardOnlyDescription": "In this mode, you'll see a card and need to guess its position in the stack from 5 options.",
+    "modeBothModes": "Both modes",
+    "modeBothModesDescription": "In this mode, you'll be randomly shown either a card or a number, guess its match from 5 options.",
+    "modeNumberOnly": "Number only",
+    "modeNumberOnlyDescription": "In this mode, you'll see a number and need to pick the corresponding card from 5 options."
+  },
+  "acaan": {
+    "pageTitle": "ACAAN Training",
+    "pageDescription": "Practice Any Card At Any Number calculations for your memorized deck stack.",
+    "title": "ACAAN",
+    "settingsAriaLabel": "ACAAN settings",
+    "optionsTitle": "ACAAN options",
+    "cutDepthAriaLabel": "Cut depth",
+    "cutDepthPlaceholder": "Cut depth"
+  },
+  "toolbox": {
+    "pageTitle": "Toolbox",
+    "pageDescription": "Memorized deck utilities for stack analysis, card lookups, and performance preparation.",
+    "title": "Toolbox"
+  },
+  "timer": {
+    "timeRemaining": "Time remaining",
+    "timedMode": "Timed mode",
+    "timeLimit": "Time limit:"
+  },
+  "session": {
+    "startSession": "Start session:",
+    "startPresetAriaLabel": "Start {{count}} question session",
+    "progressAriaLabel": "Progress: {{progress}}",
+    "accuracyAriaLabel": "Accuracy: {{percent}}%",
+    "currentStreakAriaLabel": "Current streak: {{count}}",
+    "bestStreakAriaLabel": "Best streak: {{count}}",
+    "complete": "Session Complete",
+    "correct": "Correct",
+    "incorrect": "Incorrect",
+    "previousAvg": "Previous avg:",
+    "encouragement": {
+      "perfect": "Perfect session!",
+      "greatStart": "Great start!",
+      "newBestStreak": "New personal best streak of {{count}}!",
+      "improvement": "Great improvement! Your accuracy is trending up.",
+      "consistent": "Solid work! You're getting consistent.",
+      "progress": "Keep practicing, you're making progress.",
+      "keepGoing": "Every session builds your memory. Keep at it!"
+    }
+  },
+  "score": {
+    "correctAriaLabel": "Correct answers: {{count}}",
+    "incorrectAriaLabel": "Incorrect answers: {{count}}"
+  },
+  "stackPicker": {
+    "placeholder": "Please choose a stack",
+    "ariaLabel": "Select memorized deck"
+  },
+  "errors": {
+    "somethingWentWrong": "Something went wrong",
+    "languageLoadFailed": "Could not load your preferred language. Using English."
+  },
+  "stats": {
+    "pageTitle": "Stats",
+    "pageDescription": "Track your memorized deck training progress with accuracy charts and session history.",
+    "title": "Stats",
+    "noData": "No training data yet. Complete a flashcard or ACAAN session to see your stats here.",
+    "totalSessions": "Total Sessions",
+    "totalQuestions": "Total Questions",
+    "overallAccuracy": "Overall Accuracy",
+    "byStack": "By Stack",
+    "statisticsByStack": "Statistics by stack",
+    "stack": "Stack",
+    "sessions": "Sessions",
+    "noStackStats": "No stats yet. Complete a session to see per-stack data.",
+    "sessionHistory": "Session History",
+    "sessionHistoryCaption": "Session history",
+    "date": "Date",
+    "mode": "Mode",
+    "score": "Score",
+    "noSessions": "No sessions recorded yet.",
+    "accuracyTrend": "Accuracy Trend",
+    "filterAll": "All",
+    "filterFlashcard": "Flashcard",
+    "filterAcaan": "ACAAN",
+    "noFilterMatch": "No sessions match this filter.",
+    "chartTooltip": "{{mode}} \u00b7 {{stack}} \u00b7 {{successes}}/{{total}}",
+    "modeFlashcard": "Flashcard",
+    "modeAcaan": "ACAAN"
+  },
+  "resources": {
+    "pageTitle": "Resources",
+    "pageDescription": "Curated books and resources for memorized deck magic, including Mnemonica by Tamariz and The Aronson Approach.",
+    "title": "Memorized Deck Resources",
+    "intro": "Explore a curated collection of resources to help you master the art of memorized decks. Missing a resource? Give me a shout or drop a pull request on <githubLink>Github</githubLink>.",
+    "otherResources": "Other Resources",
+    "descriptions": {
+      "mnemonica": "The definitive work on the Mnemonica stack with tricks, principles, and deep theories.",
+      "aronsonApproach": "Introduces the Aronson Stack, its applications, and several powerful routines.",
+      "boundToPlease": "Compilation of Aronson's early works, essential for stack work.",
+      "memoriesAreMade": "A shorter work that provides practical applications for the memorized deck.",
+      "magicRainbow": "Not just about memorized decks, but essential for deepening magical thinking.",
+      "inOrderToAmaze": "Brilliant routines and effects with memorized deck techniques",
+      "memorandum": "Unique memorized deck with powerful effects and deep insights.",
+      "temporarilyOutOfOrder": "A deep dive into the Redford stack with versatile routines and stack-independent principles.",
+      "applesauce": "Expands on the Redford stack with new effects, ideas, and applications for stack work.",
+      "sleightlyOutOfOrder": "Advanced techniques and effects using a memorized stack with sleight-of-hand integrations.",
+      "particleSystem": "New memorized deck that allows magicians to cut to any named card without looking, featuring built-in benefits and a variety of powerful routines."
+    }
+  },
+  "guide": {
+    "pageTitle": "Guide",
+    "pageDescription": "Learn how to use MemDeck's training modes: Flashcard drills, ACAAN, session tracking, and tips for mastering your stack.",
+    "title": "Guide",
+    "subtitle": "Everything you need to know about MemDeck and its features.",
+    "gettingStarted": {
+      "title": "Getting Started",
+      "intro": "MemDeck is a training tool for magicians and memory enthusiasts who want to master a memorized deck. It helps you drill card positions through flashcard exercises and utilities so you can recall any card at any position \u2014 instantly.",
+      "selectStack": "To get started, select a stack using the dropdown at the bottom of the sidebar. MemDeck supports five classic memorized deck systems:",
+      "stacks": {
+        "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
+        "aronson": "<bold>Aronson</bold> — Simon Aronson",
+        "memorandum": "<bold>Memorandum</bold> — Woody Aragón",
+        "redford": "<bold>Redford Stack</bold> — Patrick Redford",
+        "particle": "<bold>Particle System</bold> — Joshua Jay"
+      },
+      "alertTitle": "Pick a stack first",
+      "alertDescription": "Most training tools require a selected stack to work. Pick one to unlock Flashcard, ACAAN, and Toolbox modes."
+    },
+    "flashcardTraining": {
+      "title": "Flashcard Training",
+      "requiresStack": "Requires stack",
+      "intro": "The main training mode. You're shown a prompt and must recall the matching card or position in your selected stack. Three modes are available:",
+      "cardOnlyItem": "<bold>Card Only</bold> — shown a card, recall its position number",
+      "numberOnlyItem": "<bold>Number Only</bold> — shown a position number, recall the card",
+      "bothItem": "<bold>Both</bold> — randomly alternates between the two",
+      "settings": "Tap the gear icon to open settings. You can enable an optional timer and choose between free-form practice or structured sessions with 10, 20, 30, or 52 card presets. Score tracking shows your accuracy and current streak.",
+      "link": "Go to Flashcard Training"
+    },
+    "acaanTraining": {
+      "title": "ACAAN Training",
+      "requiresStack": "Requires stack",
+      "intro": "ACAAN stands for \"Any Card At Any Number\" \u2014 a classic effect where a spectator names any card and any number, and the card is found at that exact position in the deck.",
+      "description": "In this mode, you're shown a card and a target position. Your job is to calculate the cut depth needed to move the card to that position. Enter a value from 0 to 51. Timer and session options work the same as Flashcard mode.",
+      "link": "Go to ACAAN Training"
+    },
+    "toolbox": {
+      "title": "Toolbox",
+      "requiresStack": "Requires stack",
+      "description": "A collection of memorized deck utilities for stack analysis and performance work. Use these tools to explore your selected stack, look up cards by position, and prepare for performances.",
+      "link": "Go to Toolbox"
+    },
+    "stats": {
+      "title": "Stats",
+      "noStackRequired": "No stack required",
+      "description": "Track your progress over time. The Stats page includes overview cards, an accuracy trend chart (color-coded and filterable by mode), a per-stack breakdown table, and paginated session history. All data is stored locally in your browser.",
+      "link": "Go to Stats"
+    },
+    "resources": {
+      "title": "Resources",
+      "description": "A curated collection of books and PDFs on memorized deck theory, routines, and practice techniques from leading authors in the field.",
+      "link": "Browse Resources"
+    },
+    "tips": {
+      "title": "Tips",
+      "dataLocal": "All your data stays in your browser \u2014 nothing is sent to a server.",
+      "darkMode": "Toggle between dark and light mode using the icon in the header.",
+      "gearIcon": "In training modes, tap the gear icon to open settings for timer, session length, and mode options.",
+      "switchStacks": "Switching stacks doesn't lose your data \u2014 progress is tracked per stack."
+    }
+  }
+}

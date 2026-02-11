@@ -1,5 +1,6 @@
 import { Center, Group, Progress, Space, Text } from "@mantine/core";
 import { memo } from "react";
+import { useTranslation } from "react-i18next";
 import { calculateTimerProgress, getTimerColor } from "../utils/timer";
 
 const TIMER_WIDTH = 300;
@@ -20,6 +21,7 @@ export const TimerDisplay = memo(function TimerDisplay({
 }: TimerDisplayProps) {
   const timerProgress = calculateTimerProgress(timeRemaining, timerDuration);
   const timerColor = getTimerColor(timeRemaining);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -27,7 +29,7 @@ export const TimerDisplay = memo(function TimerDisplay({
         <div style={{ width: TIMER_WIDTH }}>
           <Group gap="xs" justify="space-between">
             <Text c={timerColor} fw={500} size="sm">
-              Time remaining
+              {t("timer.timeRemaining")}
             </Text>
             <Text c={timerColor} fw={700} size="lg">
               {timeRemaining}s

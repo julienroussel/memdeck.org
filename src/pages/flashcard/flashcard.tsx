@@ -11,6 +11,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconSettings } from "@tabler/icons-react";
 import type { CSSProperties } from "react";
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { NumberCard } from "../../components/number-card";
 import { Score } from "../../components/score";
@@ -43,10 +44,10 @@ const CARD_HIDDEN_STYLE: CSSProperties = {
 };
 
 export const Flashcard = () => {
+  const { t } = useTranslation();
   useDocumentMeta({
-    title: "Flashcard Training",
-    description:
-      "Practice your memorized deck with interactive flashcard drills. Train card-to-number, number-to-card, or both.",
+    title: t("flashcard.pageTitle"),
+    description: t("flashcard.pageDescription"),
   });
   const { stackKey, stackOrder, stackName } = useRequiredStack();
   const {
@@ -102,13 +103,13 @@ export const Flashcard = () => {
       >
         <Grid.Col span={12}>
           <Group gap="xs" justify="space-between">
-            <Title order={1}>Flashcard</Title>
+            <Title order={1}>{t("flashcard.title")}</Title>
             <Group gap="xs">
               {!isStructuredSession && (
                 <Score fails={score.fails} successes={score.successes} />
               )}
               <ActionIcon
-                aria-label="Flashcard settings"
+                aria-label={t("flashcard.settingsAriaLabel")}
                 color="gray"
                 onClick={open}
                 variant="subtle"

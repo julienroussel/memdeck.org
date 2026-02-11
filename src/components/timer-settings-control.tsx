@@ -1,4 +1,5 @@
 import { Group, SegmentedControl, Stack, Switch, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import type { TimerDuration, TimerSettings } from "../types/timer";
 import { isValidDuration, TIMER_DURATION_OPTIONS } from "../utils/timer";
 
@@ -17,6 +18,8 @@ export const TimerSettingsControl = ({
   onEnabledChange,
   onDurationChange,
 }: TimerSettingsControlProps) => {
+  const { t } = useTranslation();
+
   const handleTimerToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     onEnabledChange(event.currentTarget.checked);
   };
@@ -32,12 +35,12 @@ export const TimerSettingsControl = ({
     <Stack gap="md">
       <Switch
         checked={timerSettings.enabled}
-        label="Timed mode"
+        label={t("timer.timedMode")}
         onChange={handleTimerToggle}
       />
       {timerSettings.enabled && (
         <Group gap="xs">
-          <Text size="sm">Time limit:</Text>
+          <Text size="sm">{t("timer.timeLimit")}</Text>
           <SegmentedControl
             data={TIMER_DURATION_OPTIONS}
             onChange={handleDurationChange}

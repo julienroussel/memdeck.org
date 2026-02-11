@@ -473,20 +473,24 @@ describe("aggregateStatsEntries", () => {
 describe("computeSessionSummary", () => {
   const emptyStats: AllTimeStats = {};
 
-  it("returns 'Perfect session!' for 100% accuracy", () => {
+  it("returns perfect encouragement key for 100% accuracy", () => {
     const record = makeRecord({ accuracy: 1, successes: 10, fails: 0 });
     const summary = computeSessionSummary(record, [], emptyStats);
-    expect(summary.encouragement).toBe("Perfect session!");
+    expect(summary.encouragement).toEqual({
+      key: "session.encouragement.perfect",
+    });
   });
 
-  it("returns 'Great start!' for first session in mode+stack", () => {
+  it("returns great start key for first session in mode+stack", () => {
     const record = makeRecord({ accuracy: 0.7 });
     const summary = computeSessionSummary(record, [], emptyStats);
-    expect(summary.encouragement).toBe("Great start!");
+    expect(summary.encouragement).toEqual({
+      key: "session.encouragement.greatStart",
+    });
     expect(summary.previousAverageAccuracy).toBeNull();
   });
 
-  it("returns improvement message when accuracy exceeds rolling average", () => {
+  it("returns improvement key when accuracy exceeds rolling average", () => {
     const history = [
       makeRecord({ id: "old-1", accuracy: 0.5 }),
       makeRecord({ id: "old-2", accuracy: 0.6 }),
@@ -494,13 +498,13 @@ describe("computeSessionSummary", () => {
 
     const record = makeRecord({ id: "new", accuracy: 0.79, bestStreak: 0 });
     const summary = computeSessionSummary(record, history, emptyStats);
-    expect(summary.encouragement).toBe(
-      "Great improvement! Your accuracy is trending up."
-    );
+    expect(summary.encouragement).toEqual({
+      key: "session.encouragement.improvement",
+    });
     expect(summary.isAccuracyImprovement).toBe(true);
   });
 
-  it("returns new best streak message when applicable", () => {
+  it("returns new best streak key with params when applicable", () => {
     const history = [makeRecord({ id: "old-1", accuracy: 0.9 })];
 
     const allTimeStats: AllTimeStats = {
@@ -519,7 +523,10 @@ describe("computeSessionSummary", () => {
       bestStreak: 6,
     });
     const summary = computeSessionSummary(record, history, allTimeStats);
-    expect(summary.encouragement).toBe("New personal best streak of 6!");
+    expect(summary.encouragement).toEqual({
+      key: "session.encouragement.newBestStreak",
+      params: { count: 6 },
+    });
     expect(summary.isNewGlobalBestStreak).toBe(true);
   });
 
@@ -545,7 +552,7 @@ describe("computeSessionSummary", () => {
     expect(summary.isNewGlobalBestStreak).toBe(false);
   });
 
-  it("returns low-accuracy encouragement below 50%", () => {
+  it("returns keepGoing key for low accuracy below 50%", () => {
     const history = [makeRecord({ id: "old-1", accuracy: 0.4 })];
 
     const record = makeRecord({
@@ -554,9 +561,9 @@ describe("computeSessionSummary", () => {
       bestStreak: 0,
     });
     const summary = computeSessionSummary(record, history, emptyStats);
-    expect(summary.encouragement).toBe(
-      "Every session builds your memory. Keep at it!"
-    );
+    expect(summary.encouragement).toEqual({
+      key: "session.encouragement.keepGoing",
+    });
   });
 
   it("includes previousAverageAccuracy when history exists", () => {
