@@ -23,6 +23,7 @@ import { DECK_SIZE } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
+import { formatCardName } from "../../utils/card-formatting";
 import { AcaanOptions } from "./acaan-options";
 import { useAcaanGame } from "./use-acaan-game";
 
@@ -103,7 +104,12 @@ export const Acaan = () => {
               {!isStructuredSession && (
                 <Score fails={score.fails} successes={score.successes} />
               )}
-              <ActionIcon color="gray" onClick={open} variant="subtle">
+              <ActionIcon
+                aria-label="ACAAN settings"
+                color="gray"
+                onClick={open}
+                variant="subtle"
+              >
                 <IconSettings />
               </ActionIcon>
             </Group>
@@ -126,6 +132,7 @@ export const Acaan = () => {
           <Center>
             <Group align="center" gap="xl">
               <Image
+                alt={formatCardName(scenario.card)}
                 className="cardShadow"
                 src={scenario.card.image}
                 w="120px"
@@ -146,6 +153,7 @@ export const Acaan = () => {
               <NumberInput
                 allowDecimal={false}
                 allowNegative={false}
+                aria-label="Cut depth"
                 max={MAX_CUT_DEPTH}
                 min={0}
                 onChange={handleCutDepthChange}

@@ -7,7 +7,7 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   type SessionRecord,
   TRAINING_MODES,
@@ -52,8 +52,11 @@ export const AccuracyChart = ({ history }: AccuracyChartProps) => {
     }
   };
 
-  const filteredHistory =
-    filter === "all" ? history : history.filter((r) => r.mode === filter);
+  const filteredHistory = useMemo(
+    () =>
+      filter === "all" ? history : history.filter((r) => r.mode === filter),
+    [filter, history]
+  );
 
   const chartData = filteredHistory.slice(0, CHART_SIZE).reverse();
 

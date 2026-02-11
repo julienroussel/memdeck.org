@@ -36,6 +36,7 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
         <Burger hiddenFrom="sm" onClick={toggle} opened={opened} size="sm" />
         <Link to="/">
           <Image
+            alt="MemDeck"
             darkHidden
             fit="contain"
             h={30}
@@ -44,6 +45,7 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
             w="auto"
           />
           <Image
+            alt="MemDeck"
             fit="contain"
             h={30}
             lightHidden
@@ -70,6 +72,7 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
           <IconBrandGithub />
         </ActionIcon>
         <Switch
+          aria-label="Toggle color scheme"
           checked={colorScheme === "light"}
           color="dark.4"
           offLabel={

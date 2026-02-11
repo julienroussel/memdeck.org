@@ -36,6 +36,7 @@ export const StackPicker = memo(function StackPicker() {
   return (
     <Center>
       <NativeSelect
+        aria-label="Select memorized deck"
         data={stackSelection}
         onChange={handleChange}
         value={stackKey}

@@ -23,6 +23,8 @@ export const formatDate = (iso: string): string => {
 export const StatsHistory = ({ history }: StatsHistoryProps) => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
+  const visibleHistory = history.slice(0, visibleCount);
+
   if (history.length === 0) {
     return (
       <Text c="dimmed" ta="center">
@@ -31,13 +33,13 @@ export const StatsHistory = ({ history }: StatsHistoryProps) => {
     );
   }
 
-  const visibleHistory = history.slice(0, visibleCount);
   const hasMore = visibleCount < history.length;
 
   return (
     <>
       <Title order={3}>Session History</Title>
       <Table striped>
+        <Table.Caption>Session history</Table.Caption>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Date</Table.Th>

@@ -1,37 +1,43 @@
 import { Table, Text, Title } from "@mantine/core";
+import { useMemo } from "react";
 import { useAllTimeStats } from "../../hooks/use-all-time-stats";
 import { isStackKey } from "../../hooks/use-selected-stack";
 import { stacks } from "../../types/stacks";
 import { calculateAccuracy, toAccuracyPercent } from "../../utils/session";
 
+const stackKeys = Object.keys(stacks).filter(isStackKey);
+
 export const StatsByStack = () => {
   const { getStatsByStack } = useAllTimeStats();
-  const stackKeys = Object.keys(stacks).filter(isStackKey);
 
-  const rows = stackKeys
-    .map((key) => {
-      const entry = getStatsByStack(key);
+  const rows = useMemo(
+    () =>
+      stackKeys
+        .map((key) => {
+          const entry = getStatsByStack(key);
 
-      if (entry.totalSessions === 0) {
-        return null;
-      }
+          if (entry.totalSessions === 0) {
+            return null;
+          }
 
-      const accuracy = calculateAccuracy(
-        entry.totalSuccesses,
-        entry.totalFails
-      );
+          const accuracy = calculateAccuracy(
+            entry.totalSuccesses,
+            entry.totalFails
+          );
 
-      return (
-        <Table.Tr key={key}>
-          <Table.Td>{stacks[key].name}</Table.Td>
-          <Table.Td ta="center">{entry.totalSessions}</Table.Td>
-          <Table.Td ta="center">{entry.totalQuestions}</Table.Td>
-          <Table.Td ta="center">{toAccuracyPercent(accuracy)}%</Table.Td>
-          <Table.Td ta="center">{entry.globalBestStreak}</Table.Td>
-        </Table.Tr>
-      );
-    })
-    .filter(Boolean);
+          return (
+            <Table.Tr key={key}>
+              <Table.Td>{stacks[key].name}</Table.Td>
+              <Table.Td ta="center">{entry.totalSessions}</Table.Td>
+              <Table.Td ta="center">{entry.totalQuestions}</Table.Td>
+              <Table.Td ta="center">{toAccuracyPercent(accuracy)}%</Table.Td>
+              <Table.Td ta="center">{entry.globalBestStreak}</Table.Td>
+            </Table.Tr>
+          );
+        })
+        .filter(Boolean),
+    [getStatsByStack]
+  );
 
   if (rows.length === 0) {
     return (
@@ -45,6 +51,7 @@ export const StatsByStack = () => {
     <>
       <Title order={3}>By Stack</Title>
       <Table striped>
+        <Table.Caption>Statistics by stack</Table.Caption>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Stack</Table.Th>
