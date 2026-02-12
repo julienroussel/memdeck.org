@@ -1,4 +1,12 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
 type WebVitalMetric = { id: string; name: string; value: number };
 type WebVitalCallback = (metric: WebVitalMetric) => void;
@@ -24,11 +32,33 @@ vi.mock("web-vitals", () => ({
   onLCP: (callback: WebVitalCallback) => mockOnLCP(callback),
 }));
 
+const originalLocation = window.location;
+
+const setHostname = (hostname: string) => {
+  Object.defineProperty(window, "location", {
+    value: { ...originalLocation, hostname },
+    configurable: true,
+    writable: true,
+  });
+};
+
 const { analytics } = await import("./analytics");
 
 describe("analytics", () => {
+  beforeAll(() => {
+    setHostname("memdeck.org");
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
+  });
+
+  afterAll(() => {
+    Object.defineProperty(window, "location", {
+      value: originalLocation,
+      configurable: true,
+      writable: true,
+    });
   });
 
   describe("initialize", () => {
@@ -403,6 +433,44 @@ describe("analytics", () => {
         exDescription: "ReferenceError: x is not defined",
         exFatal: false,
       });
+    });
+  });
+
+  describe("when hostname is not production", () => {
+    beforeAll(() => {
+      setHostname("localhost");
+    });
+
+    afterAll(() => {
+      setHostname("memdeck.org");
+    });
+
+    it("does not initialize ReactGA", () => {
+      analytics.initialize();
+
+      expect(mockInitialize).not.toHaveBeenCalled();
+      expect(mockOnCLS).not.toHaveBeenCalled();
+      expect(mockOnINP).not.toHaveBeenCalled();
+      expect(mockOnLCP).not.toHaveBeenCalled();
+    });
+
+    it("does not track page views", () => {
+      analytics.trackPageView("/home");
+
+      expect(mockSend).not.toHaveBeenCalled();
+    });
+
+    it("does not track events", () => {
+      analytics.trackEvent("Category", "Action");
+
+      expect(mockEvent).not.toHaveBeenCalled();
+    });
+
+    it("does not track errors", () => {
+      analytics.trackError(new Error("test"));
+
+      expect(mockEvent).not.toHaveBeenCalled();
+      expect(mockSend).not.toHaveBeenCalled();
     });
   });
 });

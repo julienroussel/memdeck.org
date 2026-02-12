@@ -4,6 +4,9 @@ import type { FlashcardMode } from "../types/flashcard";
 import { eventBus } from "./event-bus";
 
 const TRACKING_ID = "G-36CZ6GEMKQ";
+const PRODUCTION_HOSTNAME = "memdeck.org";
+
+const isEnabled = () => window.location.hostname === PRODUCTION_HOSTNAME;
 
 const trackWebVital = ({ id, name, value }: Metric) => {
   ReactGA.send({
@@ -31,6 +34,9 @@ const subscribeToEvents = () => {
 
 export const analytics = {
   initialize: () => {
+    if (!isEnabled()) {
+      return;
+    }
     ReactGA.initialize(TRACKING_ID);
     onCLS(trackWebVital);
     onINP(trackWebVital);
@@ -39,15 +45,23 @@ export const analytics = {
   },
 
   trackPageView: (path: string) => {
+    if (!isEnabled()) {
+      return;
+    }
     ReactGA.send({ hitType: "pageview", page: path });
   },
 
   trackEvent: (category: string, action: string, label?: string) => {
+    if (!isEnabled()) {
+      return;
+    }
     ReactGA.event({ category, action, label });
   },
 
-  // Stack selection events
   trackStackSelected: (stackName: string) => {
+    if (!isEnabled()) {
+      return;
+    }
     ReactGA.event({
       category: "Stack",
       action: "Selected",
@@ -55,8 +69,10 @@ export const analytics = {
     });
   },
 
-  // Flashcard game events
   trackFlashcardAnswer: (correct: boolean, stackName: string) => {
+    if (!isEnabled()) {
+      return;
+    }
     ReactGA.event({
       category: "Flashcard",
       action: correct ? "Correct Answer" : "Wrong Answer",
@@ -65,6 +81,9 @@ export const analytics = {
   },
 
   trackFlashcardModeChanged: (mode: FlashcardMode) => {
+    if (!isEnabled()) {
+      return;
+    }
     ReactGA.event({
       category: "Flashcard",
       action: "Mode Changed",
@@ -72,8 +91,10 @@ export const analytics = {
     });
   },
 
-  // Feature usage events
   trackFeatureUsed: (feature: string) => {
+    if (!isEnabled()) {
+      return;
+    }
     ReactGA.event({
       category: "Feature",
       action: "Used",
@@ -81,14 +102,15 @@ export const analytics = {
     });
   },
 
-  // Error tracking
   trackError: (error: Error, componentStack?: string) => {
+    if (!isEnabled()) {
+      return;
+    }
     ReactGA.event({
       category: "Error",
       action: error.name,
       label: error.message,
     });
-    // Also send as exception for better GA4 error tracking
     ReactGA.send({
       hitType: "exception",
       exDescription: `${error.name}: ${error.message}${componentStack ? ` | ${componentStack.slice(0, 100)}` : ""}`,
