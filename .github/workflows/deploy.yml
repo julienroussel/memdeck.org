@@ -10,18 +10,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checks:
+  build:
+    name: Build
     permissions:
       contents: read
-      statuses: write
     uses: ./.github/workflows/build.yml
-    secrets: inherit
     with:
-      upload-artifact: true
+      run-checks: false
+      upload-pages-artifact: true
 
   deploy:
     name: Deploy
-    needs: checks
+    needs: build
     permissions:
       pages: write
       id-token: write
