@@ -42,6 +42,7 @@ export const Help = () => {
         color="gray"
         onClick={open}
         variant="subtle"
+        visibleFrom="sm"
       >
         <IconHelp />
       </ActionIcon>
