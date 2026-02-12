@@ -1,21 +1,21 @@
 name: CI
 
 on:
-  push:
-    branches-ignore:
-      - main
   pull_request:
     branches:
       - main
 
 concurrency:
-  group: ci-${{ github.event.pull_request.number || github.ref }}
+  group: ci-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   checks:
+    name: Checks
     permissions:
       contents: read
       statuses: write
     uses: ./.github/workflows/build.yml
+    with:
+      run-checks: true
     secrets: inherit
