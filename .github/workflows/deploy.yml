@@ -10,44 +10,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
+  checks:
     permissions:
+      contents: read
       statuses: write
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Validate
-        run: pnpm run validate
-
-      - name: Run tests
-        run: pnpm run test
-
-      - name: Build static files
-        run: pnpm run build
-
-      - name: Run Lighthouse CI
-        run: pnpm run lighthouse
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload static files as artifact
-        id: deployment
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist/
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+    with:
+      upload-artifact: true
 
   deploy:
     name: Deploy
-    needs: build
+    needs: checks
     permissions:
       pages: write
       id-token: write
@@ -56,6 +30,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

@@ -134,7 +134,10 @@ test.describe("Theme & Color Scheme", () => {
 
   test("should toggle theme from any page", async ({ page }) => {
     // Select a stack first
-    await page.locator("select").first().selectOption("mnemonica");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard

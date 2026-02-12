@@ -8,7 +8,10 @@ test.describe("Flashcard Training", () => {
     await page.waitForLoadState("networkidle");
 
     // Select Mnemonica stack
-    await page.locator("select").first().selectOption("mnemonica");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard page

@@ -46,6 +46,7 @@ export const StackPicker = memo(function StackPicker() {
       <NativeSelect
         aria-label={t("stackPicker.ariaLabel")}
         data={stackSelection}
+        data-testid="stack-picker"
         onChange={handleChange}
         value={stackKey}
       />

@@ -17,11 +17,17 @@ test.describe("User Journeys", () => {
     ).toBeVisible();
 
     // User selects a stack
-    await page.locator("select").first().selectOption("mnemonica");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
     // Verify stack selection persists
-    const selectedValue = await page.locator("select").first().inputValue();
+    const selectedValue = await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .inputValue();
     expect(selectedValue).toBe("mnemonica");
 
     // Stack name should be displayed (mnemonica's display name is "Tamariz")
@@ -49,7 +55,10 @@ test.describe("User Journeys", () => {
     await page.waitForLoadState("networkidle");
 
     // Select stack
-    await page.locator("select").first().selectOption("aronson");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("aronson");
     await page.waitForLoadState("networkidle");
 
     // Go to flashcard
@@ -114,7 +123,10 @@ test.describe("User Journeys", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("select").first().selectOption("mnemonica");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
     // Go to flashcard
@@ -132,7 +144,10 @@ test.describe("User Journeys", () => {
     await page.waitForLoadState("networkidle");
 
     // Switch to different deck
-    await page.locator("select").first().selectOption("redford");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("redford");
     await page.waitForLoadState("networkidle");
 
     // Go back to flashcard with new deck
@@ -154,7 +169,10 @@ test.describe("User Journeys", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("select").first().selectOption("particle");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("particle");
     await page.waitForLoadState("networkidle");
 
     // Should be able to navigate to all pages
@@ -172,7 +190,10 @@ test.describe("User Journeys", () => {
       await page.waitForLoadState("networkidle");
 
       // Stack should still be selected
-      const selectedValue = await page.locator("select").first().inputValue();
+      const selectedValue = await page
+        .locator("[data-testid='stack-picker']")
+        .first()
+        .inputValue();
       expect(selectedValue).toBe("particle");
     }
   });
@@ -227,7 +248,7 @@ test.describe("User Journeys", () => {
     }
 
     // Stack picker should be accessible
-    const select = page.locator("select").first();
+    const select = page.locator("[data-testid='stack-picker']").first();
     await expect(select).toBeVisible();
 
     // Select a stack
@@ -269,7 +290,10 @@ test.describe("User Journeys", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("select").first().selectOption("memorandum");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("memorandum");
     await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard and set mode
@@ -293,7 +317,10 @@ test.describe("User Journeys", () => {
     await page.waitForLoadState("networkidle");
 
     // All preferences should be restored
-    const selectedValue = await page.locator("select").first().inputValue();
+    const selectedValue = await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .inputValue();
     expect(selectedValue).toBe("memorandum");
 
     // localStorage values are JSON-stringified

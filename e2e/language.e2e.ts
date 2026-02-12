@@ -1,6 +1,8 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures/test-setup";
 
+const ENGLISH_SUIT_PATTERN = /Hearts|Spades|Clubs|Diamonds/;
+
 test.describe("Language & i18n", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
@@ -106,7 +108,10 @@ test.describe("Language & i18n", () => {
     page,
   }) => {
     // Select a stack to enable flashcard mode
-    await page.locator("select").first().selectOption("mnemonica");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
     // Switch to French
@@ -128,11 +133,11 @@ test.describe("Language & i18n", () => {
       await startButton.click();
     }
 
-    // Wait for a card with an English suit name to appear on the page
-    const englishSuitPattern = page.locator(
-      "text=/Hearts|Spades|Clubs|Diamonds/"
-    );
-    await expect(englishSuitPattern.first()).toBeVisible();
+    // Card names should remain in English (visible in card image alt text)
+    const englishSuitCard = page.getByRole("img", {
+      name: ENGLISH_SUIT_PATTERN,
+    });
+    await expect(englishSuitCard.first()).toBeVisible();
   });
 
   test("should translate navigation links", async ({ page }) => {

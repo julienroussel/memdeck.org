@@ -4,33 +4,18 @@ on:
   push:
     branches-ignore:
       - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
+  checks:
     permissions:
+      contents: read
       statuses: write
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Validate
-        run: pnpm run validate
-
-      - name: Run tests
-        run: pnpm run test
-
-      - name: Build static files
-        run: pnpm run build
-
-      - name: Run Lighthouse CI
-        run: pnpm run lighthouse
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
