@@ -11,8 +11,8 @@ const CUT_DEPTH_PATTERN = /cut depth/i;
 const CHECK_PATTERN = /check/i;
 const TIMED_MODE_PATTERN = /timed mode/i;
 const START_SESSION_PATTERN = /start \d+ question session/i;
-const SESSION_PATTERN = /Session:/i;
 const STOP_PATTERN = /stop/i;
+const PROGRESS_ARIA_PATTERN = /progress:/i;
 const ACAAN_OPTIONS_PATTERN = /ACAAN options/i;
 const PROGRESS_PATTERN = /\/\d+/;
 const CARD_SRC_PATTERN = /cards\/(.+)\.svg/;
@@ -310,6 +310,17 @@ test.describe("ACAAN Training", () => {
   test("should NOT advance to new scenario after wrong answer", async ({
     page,
   }) => {
+    // Disable the timer first to prevent TIMEOUT from advancing the scenario
+    const settingsButton = page.getByRole("button", {
+      name: SETTINGS_PATTERN,
+    });
+    await settingsButton.click();
+    const timerSwitch = page.getByRole("switch", { name: TIMED_MODE_PATTERN });
+    if (await timerSwitch.isChecked()) {
+      await timerSwitch.click();
+    }
+    await page.keyboard.press("Escape");
+
     const cutDepthInput = page.getByLabel(CUT_DEPTH_PATTERN);
     const checkButton = page.getByRole("button", { name: CHECK_PATTERN });
 
@@ -456,9 +467,9 @@ test.describe("ACAAN Training", () => {
 
     await startButton.click();
 
-    // Session banner should appear
-    const sessionBanner = page.getByText(SESSION_PATTERN);
-    await expect(sessionBanner).toBeVisible();
+    // Session banner should appear — look for its progress badge and stop button
+    const progressBadge = page.getByLabel(PROGRESS_ARIA_PATTERN);
+    await expect(progressBadge).toBeVisible();
 
     // Stop session button should be visible
     const stopButton = page.getByRole("button", { name: STOP_PATTERN });
@@ -476,11 +487,11 @@ test.describe("ACAAN Training", () => {
 
     await startButton.click();
 
-    // Session banner should be visible with progress info
-    const sessionBanner = page.getByText(SESSION_PATTERN);
-    await expect(sessionBanner).toBeVisible();
+    // Session banner should be visible with progress badge
+    const progressBadge = page.getByLabel(PROGRESS_ARIA_PATTERN);
+    await expect(progressBadge).toBeVisible();
 
-    // Should show question count (e.g., "1/10")
+    // Should show question count (e.g., "0/10")
     const progressText = page.getByText(PROGRESS_PATTERN);
     await expect(progressText).toBeVisible();
   });
@@ -498,23 +509,23 @@ test.describe("ACAAN Training", () => {
     await expect(failBadge).toBeVisible();
   });
 
-  test("should hide score badges during structured session", async ({
+  test("should replace session start controls with banner during structured session", async ({
     page,
   }) => {
     const startButton = page
       .getByRole("button", { name: START_SESSION_PATTERN })
       .first();
-    const successBadge = page.getByLabel(CORRECT_ANSWERS_PATTERN);
 
-    // Initially score badges should be visible
-    await expect(successBadge).toBeVisible();
-
-    // Start session
+    // Initially session start controls should be visible
     await expect(startButton).toBeVisible();
+
+    // Start structured session
     await startButton.click();
 
-    // Score badges should be hidden during structured session
-    await expect(successBadge).not.toBeVisible();
+    // Session start controls should be replaced by the session banner
+    await expect(startButton).not.toBeVisible();
+    const progressBadge = page.getByLabel(PROGRESS_ARIA_PATTERN);
+    await expect(progressBadge).toBeVisible();
   });
 
   test("should persist game state across page reload", async ({ page }) => {
