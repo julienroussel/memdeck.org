@@ -18,5 +18,4 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       run-checks: true
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    secrets: inherit

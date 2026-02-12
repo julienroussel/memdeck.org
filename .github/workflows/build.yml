@@ -11,9 +11,6 @@ on:
         description: Upload dist/ as a GitHub Pages artifact
         type: boolean
         default: false
-    secrets:
-      GITHUB_TOKEN:
-        required: false
 
 jobs:
   build:
