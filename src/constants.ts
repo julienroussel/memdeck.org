@@ -33,5 +33,9 @@ export const SPREAD_CARD_HEIGHT = Math.round(
 );
 
 export const LANGUAGE_LSK = "memdeck-app-language";
+
+/** sessionStorage key prefix for tracking chunk reload attempts */
+export const CHUNK_RELOAD_SSK = "memdeck-chunk-reload:";
+
 export const SITE_NAME = "MemDeck";
 export const SITE_URL = "https://memdeck.org";
