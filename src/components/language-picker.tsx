@@ -5,12 +5,13 @@ import { useTranslation } from "react-i18next";
 import {
   changeLanguage,
   isSupportedLanguage,
+  LANGUAGE_CODES,
   LANGUAGE_LABELS,
   SUPPORTED_LANGUAGES,
 } from "../i18n/language";
 
 const LANGUAGE_OPTIONS = SUPPORTED_LANGUAGES.map((lang) => ({
-  label: LANGUAGE_LABELS[lang],
+  label: LANGUAGE_CODES[lang],
   value: lang,
 }));
 
@@ -41,8 +42,9 @@ export const LanguagePicker = memo(function LanguagePicker() {
       data-testid="language-picker"
       onChange={handleChange}
       size="xs"
+      title={LANGUAGE_LABELS[currentLang]}
       value={currentLang}
-      w={110}
+      w={60}
     />
   );
 });
