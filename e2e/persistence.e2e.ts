@@ -8,7 +8,10 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Select a stack
-    await page.locator("select").first().selectOption("aronson");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("aronson");
     await page.waitForLoadState("networkidle");
 
     // Verify localStorage (Mantine's useLocalStorage stores JSON stringified values)
@@ -22,7 +25,10 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Stack should still be selected
-    const selectedValue = await page.locator("select").first().inputValue();
+    const selectedValue = await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .inputValue();
     expect(selectedValue).toBe("aronson");
 
     // Stack name should be displayed in main content
@@ -33,7 +39,10 @@ test.describe("localStorage Persistence", () => {
     // Navigate to home and select stack
     await page.goto("/");
     await page.waitForLoadState("networkidle");
-    await page.locator("select").first().selectOption("mnemonica");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard
@@ -110,7 +119,10 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Set stack
-    await page.locator("select").first().selectOption("redford");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("redford");
     await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard and set mode
@@ -143,7 +155,10 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Check stack
-    const selectedValue = await page.locator("select").first().inputValue();
+    const selectedValue = await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .inputValue();
     expect(selectedValue).toBe("redford");
 
     // Navigate to flashcard
@@ -171,7 +186,10 @@ test.describe("localStorage Persistence", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("select").first().selectOption("particle");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("particle");
     await page.waitForLoadState("networkidle");
 
     // Create a new page in same context (simulates new tab)
@@ -182,7 +200,10 @@ test.describe("localStorage Persistence", () => {
     await page2.waitForLoadState("networkidle");
 
     // Stack selection should be visible in second tab
-    const selectedValue = await page2.locator("select").first().inputValue();
+    const selectedValue = await page2
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .inputValue();
     expect(selectedValue).toBe("particle");
 
     await page2.close();
@@ -195,7 +216,10 @@ test.describe("localStorage Persistence", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("select").first().selectOption("memorandum");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("memorandum");
     await page.waitForLoadState("networkidle");
 
     // Verify it's saved (Mantine's useLocalStorage stores JSON stringified values)
@@ -214,7 +238,10 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Stack should be reset - verify the select has empty value
-    const selectedValue = await page.locator("select").first().inputValue();
+    const selectedValue = await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .inputValue();
     expect(selectedValue).toBe("");
 
     // After reload, app re-initializes localStorage with default empty value
@@ -230,7 +257,10 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Set stack
-    await page.locator("select").first().selectOption("mnemonica");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
     // Navigate rapidly between pages
@@ -247,7 +277,10 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Stack should still be selected
-    const selectedValue = await page.locator("select").first().inputValue();
+    const selectedValue = await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .inputValue();
     expect(selectedValue).toBe("mnemonica");
   });
 });

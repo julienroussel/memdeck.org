@@ -12,7 +12,7 @@ test.describe("Stack Selection", () => {
     page,
   }) => {
     // Select dropdown should show "Please choose a stack"
-    const select = page.locator("select").first();
+    const select = page.locator("[data-testid='stack-picker']").first();
     await expect(select).toBeVisible();
 
     const selectedValue = await select.inputValue();
@@ -20,7 +20,7 @@ test.describe("Stack Selection", () => {
   });
 
   test("should display all available stacks in dropdown", async ({ page }) => {
-    const select = page.locator("select").first();
+    const select = page.locator("[data-testid='stack-picker']").first();
     // Stack labels are display names from stack definitions
     const availableStacks = [
       "Tamariz", // mnemonica
@@ -38,7 +38,7 @@ test.describe("Stack Selection", () => {
   });
 
   test("should select a stack from dropdown", async ({ page }) => {
-    const select = page.locator("select").first();
+    const select = page.locator("[data-testid='stack-picker']").first();
 
     // Select Mnemonica stack
     await select.selectOption("mnemonica");
@@ -51,7 +51,10 @@ test.describe("Stack Selection", () => {
 
   test("should persist stack selection in localStorage", async ({ page }) => {
     // Select a stack
-    await page.locator("select").first().selectOption("aronson");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("aronson");
     await page.waitForLoadState("networkidle");
 
     // Check localStorage (values are JSON-stringified)
@@ -67,7 +70,10 @@ test.describe("Stack Selection", () => {
     page,
   }) => {
     // Select Mnemonica stack (display name is "Tamariz")
-    await page.locator("select").first().selectOption("mnemonica");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
     // Verify stack name is displayed in main content
@@ -81,7 +87,10 @@ test.describe("Stack Selection", () => {
     page,
   }) => {
     // Select a stack
-    await page.locator("select").first().selectOption("mnemonica");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
     // Wait for card images to load
@@ -94,7 +103,7 @@ test.describe("Stack Selection", () => {
 
   test("should switch between different stacks", async ({ page }) => {
     // Select first stack
-    const select = page.locator("select").first();
+    const select = page.locator("[data-testid='stack-picker']").first();
     await select.selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
@@ -118,7 +127,10 @@ test.describe("Stack Selection", () => {
     page,
   }) => {
     // Select a stack
-    await page.locator("select").first().selectOption("redford");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("redford");
     await page.waitForLoadState("networkidle");
 
     // Navigate to resources page
@@ -130,13 +142,19 @@ test.describe("Stack Selection", () => {
     await page.waitForLoadState("networkidle");
 
     // Stack should still be selected
-    const selectedValue = await page.locator("select").first().inputValue();
+    const selectedValue = await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .inputValue();
     expect(selectedValue).toBe("redford");
   });
 
   test("should restore stack selection on page reload", async ({ page }) => {
     // Select a stack (display name is "Particle System")
-    await page.locator("select").first().selectOption("particle");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("particle");
     await page.waitForLoadState("networkidle");
 
     // Reload page
@@ -144,7 +162,10 @@ test.describe("Stack Selection", () => {
     await page.waitForLoadState("networkidle");
 
     // Stack should still be selected
-    const selectedValue = await page.locator("select").first().inputValue();
+    const selectedValue = await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .inputValue();
     expect(selectedValue).toBe("particle");
 
     // Stack name should be displayed (use specific selector to avoid matching option)

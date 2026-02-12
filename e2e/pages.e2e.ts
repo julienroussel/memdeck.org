@@ -14,7 +14,10 @@ test.describe("Pages & Features", () => {
     await page.waitForLoadState("networkidle");
 
     // Select a stack for features that require it
-    await page.locator("select").first().selectOption("mnemonica");
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
   });
 
