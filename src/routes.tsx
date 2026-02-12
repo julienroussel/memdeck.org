@@ -1,31 +1,32 @@
 import { Center, Loader } from "@mantine/core";
-import { lazy, type ReactNode, Suspense } from "react";
+import { type ReactNode, Suspense } from "react";
 import {
   Navigate,
   Route as RouterRoute,
   Routes as RouterRoutes,
 } from "react-router";
 import { RequireStack } from "./components/require-stack";
+import { lazyWithReload } from "./utils/lazy-with-reload";
 
-const Home = lazy(() =>
+const Home = lazyWithReload(() =>
   import("./pages/home").then((m) => ({ default: m.Home }))
 );
-const Guide = lazy(() =>
+const Guide = lazyWithReload(() =>
   import("./pages/guide/guide").then((m) => ({ default: m.Guide }))
 );
-const Resources = lazy(() =>
+const Resources = lazyWithReload(() =>
   import("./pages/resources").then((m) => ({ default: m.Resources }))
 );
-const Flashcard = lazy(() =>
+const Flashcard = lazyWithReload(() =>
   import("./pages/flashcard/flashcard").then((m) => ({ default: m.Flashcard }))
 );
-const Acaan = lazy(() =>
+const Acaan = lazyWithReload(() =>
   import("./pages/acaan/acaan").then((m) => ({ default: m.Acaan }))
 );
-const Toolbox = lazy(() =>
+const Toolbox = lazyWithReload(() =>
   import("./pages/toolbox").then((m) => ({ default: m.Toolbox }))
 );
-const Stats = lazy(() =>
+const Stats = lazyWithReload(() =>
   import("./pages/stats/stats").then((m) => ({ default: m.Stats }))
 );
 const PageLoader = () => (
