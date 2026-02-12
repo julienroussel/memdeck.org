@@ -21,8 +21,8 @@ importers:
         specifier: 3.36.1
         version: 3.36.1(react@19.2.4)
       i18next:
-        specifier: 25.8.5
-        version: 25.8.5(typescript@5.9.3)
+        specifier: 25.8.6
+        version: 25.8.6(typescript@5.9.3)
       react:
         specifier: 19.2.4
         version: 19.2.4
@@ -37,7 +37,7 @@ importers:
         version: 2.1.0
       react-i18next:
         specifier: 16.5.4
-        version: 16.5.4(i18next@25.8.5(typescript@5.9.3))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
+        version: 16.5.4(i18next@25.8.6(typescript@5.9.3))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
       react-router:
         specifier: 7.13.0
         version: 7.13.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -2371,8 +2371,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  i18next@25.8.5:
-    resolution: {integrity: sha512-TApjhgqQU6P7BQlpCTv6zQuXrYAP9rjYWgx2Nm8dsq+Zg9yJlAz+iR16/w7uVtTlSoULbqPTfqYjMK/DAQI+Ng==}
+  i18next@25.8.6:
+    resolution: {integrity: sha512-HsS6p2yr/Vo5EPljWuBJ9OxKVFok2Q/Oa6PvFTpv2bMcDt2sQMOnKDQ7FTDDdME+3d1YULQjKj7aVSZP1bCouQ==}
     peerDependencies:
       typescript: ^5
     peerDependenciesMeta:
@@ -3496,9 +3496,9 @@ packages:
     resolution: {integrity: sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==}
     engines: {node: '>= 6.0.0', npm: '>= 3.0.0'}
 
-  smob@1.6.0:
-    resolution: {integrity: sha512-m/Bpm2tsx68FEr4zgGaMdcjHSkq7x7uOPJIQudT/gS7slXH5y2VatJru4POV0dKbmk7ZYntX29fKgwWCXJKwvQ==}
-    engines: {node: '>=22.0.0'}
+  smob@1.6.1:
+    resolution: {integrity: sha512-KAkBqZl3c2GvNgNhcoyJae1aKldDW0LO279wF9bk1PnluRTETKBq0WyzRXxEhoQLk56yHaOY4JCBEKDuJIET5g==}
+    engines: {node: '>=20.0.0'}
 
   smol-toml@1.6.0:
     resolution: {integrity: sha512-4zemZi0HvTnYwLfrpk/CF9LOd9Lt87kAt50GnqhMpyF9U3poDAP2+iukq2bZsO/ufegbYehBkqINbsWxj4l4cw==}
@@ -5309,7 +5309,7 @@ snapshots:
   '@rollup/plugin-terser@0.4.4(rollup@2.79.2)':
     dependencies:
       serialize-javascript: 6.0.2
-      smob: 1.6.0
+      smob: 1.6.1
       terser: 5.46.0
     optionalDependencies:
       rollup: 2.79.2
@@ -6578,7 +6578,7 @@ snapshots:
 
   husky@9.1.7: {}
 
-  i18next@25.8.5(typescript@5.9.3):
+  i18next@25.8.6(typescript@5.9.3):
     dependencies:
       '@babel/runtime': 7.28.6
     optionalDependencies:
@@ -7422,11 +7422,11 @@ snapshots:
 
   react-ga4@2.1.0: {}
 
-  react-i18next@16.5.4(i18next@25.8.5(typescript@5.9.3))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3):
+  react-i18next@16.5.4(i18next@25.8.6(typescript@5.9.3))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3):
     dependencies:
       '@babel/runtime': 7.28.6
       html-parse-stringify: 3.0.1
-      i18next: 25.8.5(typescript@5.9.3)
+      i18next: 25.8.6(typescript@5.9.3)
       react: 19.2.4
       use-sync-external-store: 1.6.0(react@19.2.4)
     optionalDependencies:
@@ -7765,7 +7765,7 @@ snapshots:
 
   smart-buffer@4.2.0: {}
 
-  smob@1.6.0: {}
+  smob@1.6.1: {}
 
   smol-toml@1.6.0: {}
 
