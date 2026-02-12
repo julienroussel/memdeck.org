@@ -4,12 +4,19 @@ import { LANGUAGE_LSK } from "../constants";
 export const SUPPORTED_LANGUAGES = ["en", "fr", "es", "de"] as const;
 type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 
-export const LANGUAGE_LABELS: Record<SupportedLanguage, string> = {
+export const LANGUAGE_LABELS = {
   en: "English",
   fr: "Français",
   es: "Español",
   de: "Deutsch",
-};
+} as const satisfies Record<SupportedLanguage, string>;
+
+export const LANGUAGE_CODES = {
+  en: "EN",
+  fr: "FR",
+  es: "ES",
+  de: "DE",
+} as const satisfies Record<SupportedLanguage, string>;
 
 export const isSupportedLanguage = (lang: string): lang is SupportedLanguage =>
   (SUPPORTED_LANGUAGES as readonly string[]).includes(lang);

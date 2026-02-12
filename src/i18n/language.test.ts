@@ -4,6 +4,7 @@ import {
   changeLanguage,
   detectLanguage,
   isSupportedLanguage,
+  LANGUAGE_CODES,
   SUPPORTED_LANGUAGES,
 } from "./language";
 
@@ -43,6 +44,20 @@ afterEach(() => {
 describe("SUPPORTED_LANGUAGES", () => {
   it("contains en, fr, es, de", () => {
     expect(SUPPORTED_LANGUAGES).toEqual(["en", "fr", "es", "de"]);
+  });
+});
+
+describe("LANGUAGE_CODES", () => {
+  it("has an entry for every supported language", () => {
+    for (const lang of SUPPORTED_LANGUAGES) {
+      expect(LANGUAGE_CODES).toHaveProperty(lang);
+    }
+  });
+
+  it("maps each language to its uppercase ISO code", () => {
+    for (const lang of SUPPORTED_LANGUAGES) {
+      expect(LANGUAGE_CODES[lang]).toBe(lang.toUpperCase());
+    }
   });
 });
 

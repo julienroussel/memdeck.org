@@ -72,6 +72,7 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
           rel="noopener"
           target="_blank"
           variant="subtle"
+          visibleFrom="sm"
         >
           <IconBrandGithub />
         </ActionIcon>
