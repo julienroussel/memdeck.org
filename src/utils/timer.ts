@@ -1,4 +1,5 @@
 import type { TimerDuration } from "../types/timer";
+import { includes } from "./includes";
 
 /**
  * Calculates timer progress as a percentage.
@@ -34,4 +35,4 @@ export const TIMER_DURATION_OPTIONS: { label: string; value: string }[] =
 
 /** Type guard to check if a number is a valid timer duration */
 export const isValidDuration = (value: number): value is TimerDuration =>
-  (VALID_DURATIONS as readonly number[]).includes(value);
+  includes(VALID_DURATIONS, value);

@@ -8,6 +8,7 @@ import {
   useMantineColorScheme,
 } from "@mantine/core";
 import { IconBrandGithub, IconMoonStars, IconSun } from "@tabler/icons-react";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 // eslint-disable-next-line import/no-unresolved
@@ -23,7 +24,7 @@ type HeaderProps = {
   toggle: () => void;
 };
 
-export const Header = ({ opened, toggle }: HeaderProps) => {
+export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
   const { setColorScheme, colorScheme } = useMantineColorScheme();
   const { t } = useTranslation();
 
@@ -90,4 +91,6 @@ export const Header = ({ opened, toggle }: HeaderProps) => {
       </Group>
     </Group>
   );
-};
+});
+
+Header.displayName = "Header";

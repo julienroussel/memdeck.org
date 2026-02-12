@@ -36,6 +36,7 @@ export const useAllTimeStats = () => {
 
   const getStatsByMode = useCallback(
     (mode: TrainingMode): AllTimeStatsEntry => {
+      // Safe cast: `stats` is validated by isAllTimeStats, so all keys are StatsKeys
       const entries = Object.entries(stats)
         .filter(([key]) => {
           const parsed = parseStatsKey(key as StatsKey);
@@ -50,6 +51,7 @@ export const useAllTimeStats = () => {
 
   const getStatsByStack = useCallback(
     (stackKey: StackKey): AllTimeStatsEntry => {
+      // Safe cast: `stats` is validated by isAllTimeStats, so all keys are StatsKeys
       const entries = Object.entries(stats)
         .filter(([key]) => {
           const parsed = parseStatsKey(key as StatsKey);

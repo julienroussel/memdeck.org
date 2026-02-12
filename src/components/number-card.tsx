@@ -21,10 +21,18 @@ export const NumberCard = memo(function NumberCard({
   style,
 }: NumberCardProps) {
   return (
-    <div className="numberCardContainer" style={{ ...style, width }}>
+    <div
+      className="numberCardContainer"
+      data-testid="number-card"
+      style={{ ...style, width }}
+    >
       <Image h={Math.round(width * CARD_ASPECT_RATIO)} src={BLANK_CARD_IMAGE} />
       <div className="numberCardTopLeft">{number}</div>
-      <div className="numberCardCenter" style={{ fontSize }}>
+      <div
+        className="numberCardCenter"
+        data-testid="number-card-value"
+        style={{ fontSize }}
+      >
         {number}
       </div>
       <div className="numberCardBottomRight">{number}</div>

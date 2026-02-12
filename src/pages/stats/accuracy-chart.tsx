@@ -16,6 +16,7 @@ import {
   type TrainingMode,
 } from "../../types/session";
 import { stacks } from "../../types/stacks";
+import { includes } from "../../utils/includes";
 import { toAccuracyPercent } from "../../utils/session";
 
 /** Valid i18n keys for stats translations, derived from en.json */
@@ -30,7 +31,7 @@ type AccuracyChartProps = {
 type Filter = "all" | TrainingMode;
 
 export const isFilter = (value: string): value is Filter =>
-  value === "all" || (TRAINING_MODES as readonly string[]).includes(value);
+  value === "all" || includes(TRAINING_MODES, value);
 
 export const getAccuracyColor = (percent: number): string => {
   if (percent >= 80) {

@@ -19,6 +19,7 @@ import {
   type TrainingMode,
 } from "../types/session";
 import { type StackKey, stacks } from "../types/stacks";
+import { includes } from "./includes";
 import { getStoredValue } from "./localstorage";
 
 const VALID_STACK_KEYS: ReadonlySet<string> = new Set(Object.keys(stacks));
@@ -39,7 +40,13 @@ export const formatDuration = (seconds: number): string => {
 export const statsKey = (mode: TrainingMode, stackKey: StackKey): StatsKey =>
   `${mode}:${stackKey}`;
 
-/** Extracts the mode and stackKey from a composite StatsKey */
+/**
+ * Parses a validated StatsKey into its constituent mode and stackKey components.
+ *
+ * Assumes the input has already been validated via `isStatsKey()` (or constructed
+ * via `statsKey()`). The internal `as` casts on the sliced substrings are safe
+ * because the branded StatsKey type guarantees the format `"{TrainingMode}:{StackKey}"`.
+ */
 export const parseStatsKey = (
   key: StatsKey
 ): { mode: TrainingMode; stackKey: StackKey } => {
@@ -142,7 +149,7 @@ export const isSessionRecord = (value: unknown): value is SessionRecord => {
   return (
     typeof value.id === "string" &&
     typeof value.mode === "string" &&
-    (TRAINING_MODES as readonly string[]).includes(value.mode) &&
+    includes(TRAINING_MODES, value.mode) &&
     typeof value.stackKey === "string" &&
     isSessionConfig(value.config) &&
     typeof value.startedAt === "string" &&
