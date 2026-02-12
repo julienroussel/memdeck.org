@@ -10,14 +10,19 @@ updates:
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
+      day: 'monday'
       time: '04:00'
       timezone: 'Europe/Paris'
-    open-pull-requests-limit: 4
+    open-pull-requests-limit: 5
     target-branch: 'main'
     labels:
       - 'dependencies'
     groups:
+      all-minor-patch:
+        update-types:
+          - minor
+          - patch
       mantine:
         patterns:
           - '@mantine/*'
