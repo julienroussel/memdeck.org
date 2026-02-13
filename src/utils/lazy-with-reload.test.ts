@@ -7,7 +7,7 @@ beforeEach(() => {
   reloadMock.mockClear();
   sessionStorage.clear();
   Object.defineProperty(window, "location", {
-    value: { pathname: "/flashcard", reload: reloadMock },
+    value: { pathname: "/flashcard", search: "", reload: reloadMock },
     writable: true,
     configurable: true,
   });
@@ -105,5 +105,60 @@ describe("lazyWithReload", () => {
 
     await expect(callFactory(result)).rejects.toThrow(error);
     expect(reloadMock).not.toHaveBeenCalled();
+  });
+
+  it("re-throws if chunk-reloaded URL param is present", async () => {
+    const { lazyWithReload } = await import("./lazy-with-reload");
+
+    Object.defineProperty(window, "location", {
+      value: {
+        pathname: "/flashcard",
+        search: "?chunk-reloaded=1",
+        reload: reloadMock,
+      },
+      writable: true,
+      configurable: true,
+    });
+
+    const result = lazyWithReload(() =>
+      Promise.reject(
+        new TypeError(
+          "Failed to fetch dynamically imported module: /assets/flashcard-DrWAC-jS.js"
+        )
+      )
+    );
+
+    await expect(callFactory(result)).rejects.toThrow(TypeError);
+    expect(reloadMock).not.toHaveBeenCalled();
+  });
+
+  it("falls back to URL param when sessionStorage.setItem throws", async () => {
+    const { lazyWithReload } = await import("./lazy-with-reload");
+
+    vi.spyOn(
+      Object.getPrototypeOf(sessionStorage),
+      "setItem"
+    ).mockImplementation(() => {
+      throw new DOMException("QuotaExceededError");
+    });
+
+    const result = lazyWithReload(() =>
+      Promise.reject(
+        new TypeError(
+          "Failed to fetch dynamically imported module: /assets/flashcard-DrWAC-jS.js"
+        )
+      )
+    );
+
+    const raceResult = await Promise.race([
+      callFactory(result).then(() => "resolved"),
+      new Promise<string>((resolve) =>
+        setTimeout(() => resolve("pending"), 50)
+      ),
+    ]);
+
+    expect(raceResult).toBe("pending");
+    expect(reloadMock).not.toHaveBeenCalled();
+    expect(window.location.search).toBe("chunk-reloaded=1");
   });
 });

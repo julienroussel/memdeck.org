@@ -114,7 +114,11 @@ const otherResources = [
   },
 ] as const satisfies readonly Resource[];
 
-const ResourceCard = ({ resource }: { resource: PrimaryResource }) => {
+type ResourceCardProps = {
+  resource: PrimaryResource;
+};
+
+const ResourceCard = ({ resource }: ResourceCardProps) => {
   const { t } = useTranslation();
   return (
     <Card padding="lg" radius="md" shadow="sm" withBorder>
@@ -137,7 +141,11 @@ const ResourceCard = ({ resource }: { resource: PrimaryResource }) => {
   );
 };
 
-const ResourceListItem = ({ resource }: { resource: Resource }) => {
+type ResourceListItemProps = {
+  resource: Resource;
+};
+
+const ResourceListItem = ({ resource }: ResourceListItemProps) => {
   const { t } = useTranslation();
   return (
     <List.Item>

@@ -32,9 +32,18 @@ jobs:
       - name: Run validation
         if: inputs.run-checks
         run: pnpm run validate
-      - name: Run unit tests
+      - name: Run unit tests with coverage
+        # Coverage runs on every check (CI only, skipped on deploy) to maintain threshold visibility.
+        # For this project size the instrumentation overhead is negligible (~33s total).
         if: inputs.run-checks
-        run: pnpm run test
+        run: pnpm run test:coverage
+      - name: Upload coverage report
+        if: inputs.run-checks
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 3
       - name: Build production bundle
         run: pnpm run build
       - name: Run Lighthouse CI

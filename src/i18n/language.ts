@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { LANGUAGE_LSK } from "../constants";
+import { includes } from "../utils/includes";
 
 export const SUPPORTED_LANGUAGES = ["en", "fr", "es", "de"] as const;
 type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
@@ -19,7 +20,7 @@ export const LANGUAGE_CODES = {
 } as const satisfies Record<SupportedLanguage, string>;
 
 export const isSupportedLanguage = (lang: string): lang is SupportedLanguage =>
-  (SUPPORTED_LANGUAGES as readonly string[]).includes(lang);
+  includes(SUPPORTED_LANGUAGES, lang);
 
 export const detectLanguage = (): SupportedLanguage => {
   try {

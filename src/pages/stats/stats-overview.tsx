@@ -14,7 +14,7 @@ export const StatsOverview = ({ stats }: StatsOverviewProps) => {
   const accuracyPercent = toAccuracyPercent(accuracy);
 
   return (
-    <SimpleGrid cols={{ base: 2, sm: 4 }}>
+    <SimpleGrid cols={{ base: 2, sm: 4 }} data-testid="stats-overview">
       <StatDisplay
         label={t("stats.totalSessions")}
         value={String(stats.totalSessions)}
