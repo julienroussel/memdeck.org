@@ -50,7 +50,7 @@ jobs:
         if: inputs.run-checks && github.actor != 'dependabot[bot]'
         run: pnpm run lighthouse
         env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LHCI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload build output
         if: inputs.run-checks
         uses: actions/upload-artifact@v6
