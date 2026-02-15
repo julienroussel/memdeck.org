@@ -30,6 +30,7 @@ test-results/
 playwright-report/
 blob-report/
 .auth/
+TODO.txt
 
 .ralph-tui/
 
