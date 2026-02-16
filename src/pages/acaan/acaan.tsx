@@ -156,6 +156,7 @@ export const Acaan = () => {
                 allowDecimal={false}
                 allowNegative={false}
                 aria-label={t("acaan.cutDepthAriaLabel")}
+                inputMode="numeric"
                 max={MAX_CUT_DEPTH}
                 min={0}
                 onChange={handleCutDepthChange}
