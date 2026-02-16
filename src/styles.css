@@ -11,37 +11,37 @@
 
 /* Card spread */
 .cardSpreadContainer {
-  overflow: hidden;
   position: relative;
   width: 100%;
+  overflow: hidden;
 }
 
 .cardSpreadCard {
   position: absolute;
-  transform-origin: 50% 100%;
-  transform: rotate(calc(var(--i) * var(--degree)))
-    translate(calc(var(--i) * 15px), 10px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
-  border-radius: 3%;
+  padding: 0;
   overflow: hidden;
+  cursor: default;
   background: none;
   border: none;
-  padding: 0;
-  cursor: default;
+  border-radius: 3%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  transform: rotate(calc(var(--i) * var(--degree)))
+    translate(calc(var(--i) * 15px), 10px);
+  transform-origin: 50% 100%;
 }
 
 .cardShadow {
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
   border-radius: 3%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
 }
 
 /* Number card */
 .numberCardContainer {
   position: relative;
-  text-align: center;
   color: black;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  text-align: center;
   border-radius: 3%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
 }
 
 .numberCardTopLeft {
@@ -59,8 +59,8 @@
 
 .numberCardBottomRight {
   position: absolute;
-  bottom: 8px;
   right: 8px;
+  bottom: 8px;
   transform: scale(-1, -1);
 }
 
@@ -73,14 +73,14 @@
 
 .optionsLabel {
   font-family: var(--mantine-font-family-monospace);
-  font-weight: bold;
   font-size: var(--mantine-font-size-md);
+  font-weight: bold;
   line-height: 1.3;
   color: var(--mantine-color-bright);
 }
 
 .optionsDescription {
   margin-top: 8px;
-  color: var(--mantine-color-dimmed);
   font-size: var(--mantine-font-size-xs);
+  color: var(--mantine-color-dimmed);
 }
