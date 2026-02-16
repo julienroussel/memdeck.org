@@ -1,5 +1,16 @@
 # MemDeck
 
+[![CI](https://github.com/julienroussel/memdeck.org/actions/workflows/CI.yml/badge.svg)](https://github.com/julienroussel/memdeck.org/actions/workflows/CI.yml)
+[![Deploy](https://github.com/julienroussel/memdeck.org/actions/workflows/deploy.yml/badge.svg)](https://github.com/julienroussel/memdeck.org/actions/workflows/deploy.yml)
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
+[![Mantine](https://img.shields.io/badge/Mantine-8-339AF0?logo=mantine&logoColor=white)](https://mantine.dev/)
+[![Biome](https://img.shields.io/badge/Biome-2-60A5FA?logo=biome&logoColor=white)](https://biomejs.dev/)
+[![Playwright](https://img.shields.io/badge/Playwright-E2E-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/)
+[![pnpm](https://img.shields.io/badge/pnpm-10-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
+
 **MemDeck** is a simple yet effective tool designed to help anyone master a memorized deck of cards. Whether you're a magician, a memory enthusiast, or just curious about the art of memorization, MemDeck provides straightforward exercises to train and test your knowledge.
 
 ## About the Project
