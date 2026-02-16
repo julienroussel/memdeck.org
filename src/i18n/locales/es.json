@@ -23,7 +23,8 @@
     "flashcard": "Flashcard",
     "acaan": "ACAAN",
     "toolbox": "Caja de herramientas",
-    "disabledTooltip": "Selecciona un stack primero"
+    "disabledTooltip": "Selecciona un stack primero",
+    "about": "Acerca de"
   },
   "header": {
     "githubAriaLabel": "Github",
@@ -160,6 +161,14 @@
       "sleightlyOutOfOrder": "Técnicas avanzadas y efectos usando un stack memorizado con integraciones de manipulación.",
       "particleSystem": "Nueva baraja memorizada que permite cortar a cualquier carta nombrada sin mirar, con beneficios integrados y rutinas poderosas."
     }
+  },
+  "about": {
+    "pageTitle": "Acerca de",
+    "pageDescription": "Información de contacto y enlaces para el proyecto MemDeck.",
+    "title": "Acerca de",
+    "intro": "MemDeck es un proyecto personal creado por Julien Roussel. No dudes en contactarme a través de los enlaces a continuación.",
+    "githubDescription": "Código fuente, informes de errores y solicitudes de funcionalidades",
+    "linktreeDescription": "Más sobre mí y mis otros proyectos"
   },
   "guide": {
     "pageTitle": "Guía",

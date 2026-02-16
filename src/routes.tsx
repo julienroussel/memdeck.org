@@ -29,6 +29,9 @@ const Toolbox = lazyWithReload(() =>
 const Stats = lazyWithReload(() =>
   import("./pages/stats/stats").then((m) => ({ default: m.Stats }))
 );
+const About = lazyWithReload(() =>
+  import("./pages/about").then((m) => ({ default: m.About }))
+);
 const PageLoader = () => (
   <Center h="100%">
     <Loader size="lg" />
@@ -102,6 +105,14 @@ export const Routes = () => (
         </LazyRoute>
       }
       path="/stats"
+    />
+    <RouterRoute
+      element={
+        <LazyRoute>
+          <About />
+        </LazyRoute>
+      }
+      path="/about"
     />
     <RouterRoute element={<Navigate replace to="/" />} path="*" />
   </RouterRoutes>

@@ -23,7 +23,8 @@
     "flashcard": "Flashcard",
     "acaan": "ACAAN",
     "toolbox": "Werkzeugkasten",
-    "disabledTooltip": "Wähle zuerst einen Stack"
+    "disabledTooltip": "Wähle zuerst einen Stack",
+    "about": "Über uns"
   },
   "header": {
     "githubAriaLabel": "Github",
@@ -160,6 +161,14 @@
       "sleightlyOutOfOrder": "Fortgeschrittene Techniken und Effekte mit einem memorierten Stack und Sleight-of-Hand-Integration.",
       "particleSystem": "Neues memoriertes Kartendeck, das es ermöglicht, zu jeder genannten Karte zu schneiden, ohne hinzusehen, mit integrierten Vorteilen und kraftvollen Routinen."
     }
+  },
+  "about": {
+    "pageTitle": "Über uns",
+    "pageDescription": "Kontaktinformationen und Links für das MemDeck-Projekt.",
+    "title": "Über uns",
+    "intro": "MemDeck ist ein Nebenprojekt von Julien Roussel. Zögere nicht, mich über die folgenden Links zu kontaktieren.",
+    "githubDescription": "Quellcode, Fehlermeldungen und Funktionswünsche",
+    "linktreeDescription": "Mehr über mich und meine anderen Projekte"
   },
   "guide": {
     "pageTitle": "Anleitung",

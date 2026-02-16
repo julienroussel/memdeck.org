@@ -4,6 +4,7 @@ import {
   IconChartBar,
   IconExternalLink,
   IconHome2,
+  IconInfoCircle,
   IconNumber,
   IconPlayCardStar,
   IconTools,
@@ -111,6 +112,17 @@ export const NavLinks = memo(function NavLinks({
           />
         </Tooltip>
       </NavLink>
+
+      <NavLink
+        active={location.pathname === "/about"}
+        component={Link}
+        label={t("nav.about")}
+        leftSection={
+          <IconInfoCircle aria-hidden="true" size={16} stroke={1.5} />
+        }
+        onClick={onClick}
+        to="/about"
+      />
     </>
   );
 });
