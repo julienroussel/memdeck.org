@@ -19,6 +19,14 @@ import { GITHUB_URL } from "../constants";
 import { Help } from "./help";
 import { LanguagePicker } from "./language-picker";
 
+const homeLinkStyle: React.CSSProperties = {
+  textDecoration: "none",
+  color: "inherit",
+  display: "flex",
+  alignItems: "center",
+  gap: "var(--mantine-spacing-sm)",
+};
+
 type HeaderProps = {
   opened: boolean;
   toggle: () => void;
@@ -38,9 +46,9 @@ export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
     <Group h="100%" justify="space-between" px="md">
       <Group>
         <Burger hiddenFrom="sm" onClick={toggle} opened={opened} size="sm" />
-        <Link to="/">
+        <Link style={homeLinkStyle} to="/">
           <Image
-            alt="MemDeck"
+            alt=""
             darkHidden
             fit="contain"
             h={30}
@@ -49,7 +57,7 @@ export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
             w={30}
           />
           <Image
-            alt="MemDeck"
+            alt=""
             fit="contain"
             h={30}
             lightHidden
@@ -57,10 +65,10 @@ export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
             src={memdeckDarkLogo}
             w={30}
           />
+          <Text fw={700} tt="uppercase">
+            MemDeck
+          </Text>
         </Link>
-        <Text fw={700} tt="uppercase">
-          MemDeck
-        </Text>
       </Group>
       <Group>
         <Help />
