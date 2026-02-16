@@ -49,6 +49,7 @@ export default defineConfig({
         short_name: "MemDeck",
         start_url: "/",
         display: "standalone",
+        orientation: "portrait",
         description:
           "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, and Particle.",
         theme_color: "#228be6",
@@ -67,6 +68,12 @@ export default defineConfig({
             purpose: "any",
           },
           {
+            src: "/memdeck-logo-white.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
+          },
+          {
             src: "/memdeck-white.png",
             sizes: "192x192",
             type: "image/png",
@@ -77,6 +84,12 @@ export default defineConfig({
             sizes: "192x192",
             type: "image/png",
             purpose: "any",
+          },
+          {
+            src: "/memdeck-white.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "maskable",
           },
         ],
       },

@@ -3,7 +3,7 @@ import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { calculateTimerProgress, getTimerColor } from "../utils/timer";
 
-const TIMER_WIDTH = 300;
+const TIMER_MAX_WIDTH = 300;
 
 type TimerDisplayProps = {
   timeRemaining: number;
@@ -26,7 +26,7 @@ export const TimerDisplay = memo(function TimerDisplay({
   return (
     <>
       <Center>
-        <div style={{ width: TIMER_WIDTH }}>
+        <div style={{ width: "100%", maxWidth: TIMER_MAX_WIDTH }}>
           <Group gap="xs" justify="space-between">
             <Text c={timerColor} fw={500} size="sm">
               {t("timer.timeRemaining")}
