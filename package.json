@@ -65,11 +65,11 @@
     "vitest": "4.0.18"
   },
   "dependencies": {
-    "@mantine/core": "8.3.14",
-    "@mantine/hooks": "8.3.14",
-    "@mantine/notifications": "8.3.14",
+    "@mantine/core": "8.3.15",
+    "@mantine/hooks": "8.3.15",
+    "@mantine/notifications": "8.3.15",
     "@tabler/icons-react": "3.36.1",
-    "i18next": "25.8.8",
+    "i18next": "25.8.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-error-boundary": "6.1.1",
