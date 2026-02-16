@@ -1,4 +1,5 @@
 export const GITHUB_URL = "https://github.com/julienroussel/memdeck.org";
+export const LINKTREE_URL = "https://linktr.ee/julien.roussel";
 export const SELECTED_STACK_LSK = "memdeck-app-stack";
 export const FLASHCARD_OPTION_LSK = "memdeck-app-flashcard-option";
 export const FLASHCARD_TIMER_LSK = "memdeck-app-flashcard-timer";

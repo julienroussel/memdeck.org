@@ -23,7 +23,8 @@
     "flashcard": "Flashcard",
     "acaan": "ACAAN",
     "toolbox": "Toolbox",
-    "disabledTooltip": "Select a stack first"
+    "disabledTooltip": "Select a stack first",
+    "about": "About"
   },
   "header": {
     "githubAriaLabel": "Github",
@@ -160,6 +161,14 @@
       "sleightlyOutOfOrder": "Advanced techniques and effects using a memorized stack with sleight-of-hand integrations.",
       "particleSystem": "New memorized deck that allows magicians to cut to any named card without looking, featuring built-in benefits and a variety of powerful routines."
     }
+  },
+  "about": {
+    "pageTitle": "About",
+    "pageDescription": "Contact information and links for the MemDeck project.",
+    "title": "About",
+    "intro": "MemDeck is a side project built by Julien Roussel. Feel free to reach out through any of the links below.",
+    "githubDescription": "Source code, bug reports, and feature requests",
+    "linktreeDescription": "More about me and my other projects"
   },
   "guide": {
     "pageTitle": "Guide",

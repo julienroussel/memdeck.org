@@ -23,7 +23,8 @@
     "flashcard": "Flashcard",
     "acaan": "ACAAN",
     "toolbox": "Boîte à outils",
-    "disabledTooltip": "Sélectionnez d'abord un stack"
+    "disabledTooltip": "Sélectionnez d'abord un stack",
+    "about": "À propos"
   },
   "header": {
     "githubAriaLabel": "Github",
@@ -160,6 +161,14 @@
       "sleightlyOutOfOrder": "Techniques avancées et effets utilisant un stack mémorisé avec intégration de manipulation.",
       "particleSystem": "Nouveau jeu mémorisé permettant de couper à n'importe quelle carte nommée sans regarder, avec des avantages intégrés et des routines puissantes."
     }
+  },
+  "about": {
+    "pageTitle": "À propos",
+    "pageDescription": "Informations de contact et liens pour le projet MemDeck.",
+    "title": "À propos",
+    "intro": "MemDeck est un projet personnel créé par Julien Roussel. N'hésitez pas à me contacter via les liens ci-dessous.",
+    "githubDescription": "Code source, rapports de bugs et demandes de fonctionnalités",
+    "linktreeDescription": "En savoir plus sur moi et mes autres projets"
   },
   "guide": {
     "pageTitle": "Guide",
