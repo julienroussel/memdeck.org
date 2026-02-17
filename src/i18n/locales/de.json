@@ -170,6 +170,13 @@
     "placeholder": "Bitte wähle einen Stack",
     "ariaLabel": "Memoriertes Kartendeck auswählen"
   },
+  "resetButton": {
+    "label": "App zurücksetzen",
+    "modalTitle": "Alle Daten zurücksetzen?",
+    "modalBody": "Dies löscht deinen gesamten Trainingsverlauf, Statistiken und Einstellungen. Dies kann nicht rückgängig gemacht werden.",
+    "confirm": "Alles zurücksetzen",
+    "cancel": "Abbrechen"
+  },
   "errors": {
     "somethingWentWrong": "Etwas ist schiefgelaufen",
     "languageLoadFailed": "Ihre bevorzugte Sprache konnte nicht geladen werden. Englisch wird verwendet."

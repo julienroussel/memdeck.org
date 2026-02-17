@@ -170,6 +170,13 @@
     "placeholder": "Por favor elige un stack",
     "ariaLabel": "Seleccionar baraja memorizada"
   },
+  "resetButton": {
+    "label": "Restablecer app",
+    "modalTitle": "¿Restablecer todos los datos?",
+    "modalBody": "Esto borrará todo tu historial de entrenamiento, estadísticas y preferencias. Esta acción no se puede deshacer.",
+    "confirm": "Restablecer todo",
+    "cancel": "Cancelar"
+  },
   "errors": {
     "somethingWentWrong": "Algo salió mal",
     "languageLoadFailed": "No se pudo cargar tu idioma preferido. Usando inglés."

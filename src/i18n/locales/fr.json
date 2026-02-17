@@ -170,6 +170,13 @@
     "placeholder": "Veuillez choisir un stack",
     "ariaLabel": "Sélectionner un jeu mémorisé"
   },
+  "resetButton": {
+    "label": "Réinitialiser",
+    "modalTitle": "Réinitialiser toutes les données ?",
+    "modalBody": "Cela effacera tout votre historique d'entraînement, vos statistiques et vos préférences. Cette action est irréversible.",
+    "confirm": "Tout réinitialiser",
+    "cancel": "Annuler"
+  },
   "errors": {
     "somethingWentWrong": "Une erreur est survenue",
     "languageLoadFailed": "Impossible de charger votre langue préférée. Utilisation de l'anglais."
