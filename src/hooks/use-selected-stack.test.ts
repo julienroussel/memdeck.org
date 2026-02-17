@@ -22,6 +22,7 @@ describe("isStackKey", () => {
     expect(isStackKey("memorandum")).toBe(true);
     expect(isStackKey("redford")).toBe(true);
     expect(isStackKey("particle")).toBe(true);
+    expect(isStackKey("elephant")).toBe(true);
   });
 
   it("returns false for invalid stack keys", () => {

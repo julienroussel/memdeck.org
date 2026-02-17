@@ -1,6 +1,7 @@
 import { DECK_SIZE, MAX_RANDOM_ATTEMPTS } from "../constants";
 import type { PlayingCard } from "./playingcard";
 import { aronson } from "./stacks/aronson";
+import { elephant } from "./stacks/elephant";
 import { memorandum } from "./stacks/memorandum";
 import { mnemonica } from "./stacks/mnemonica";
 import { particle } from "./stacks/particle";
@@ -27,6 +28,7 @@ export const stacks = {
   memorandum,
   redford,
   particle,
+  elephant,
 } as const;
 
 export type StackKey = keyof typeof stacks;
