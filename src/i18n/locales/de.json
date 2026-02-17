@@ -118,6 +118,22 @@
       "countLabel": "Anzahl der Mischvorgänge",
       "position": "#",
       "card": "Karte"
+    },
+    "spelling": {
+      "title": "Kartenbuchstabieren",
+      "description": "Sieh, wie viele Buchstaben der Name jeder Karte hat und wo das Buchstabieren in deinem Stack landet.",
+      "position": "#",
+      "card": "Karte",
+      "letters": "Buchstaben",
+      "landsOn": "Landet auf",
+      "selfSpelling": "Selbst-buchstabierend",
+      "searchPlaceholder": "Nach Karte oder Position suchen...",
+      "searchAriaLabel": "Karten nach Name oder Position suchen",
+      "noResults": "Keine passenden Karten",
+      "detailTitle": "Buchstabier-Aufschlüsselung",
+      "letter": "Buchstabe",
+      "dealtCard": "Ausgeteilte Karte",
+      "resultCount": "{{count}} Ergebnisse"
     }
   },
   "timer": {

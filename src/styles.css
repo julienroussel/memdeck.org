@@ -9,6 +9,20 @@
   );
 }
 
+/* Clickable table rows */
+.clickableRow {
+  cursor: pointer;
+}
+
+.clickableRow:hover {
+  background-color: var(--mantine-color-default-hover);
+}
+
+.clickableRow:focus-visible {
+  outline: 2px solid var(--mantine-primary-color-filled);
+  outline-offset: -2px;
+}
+
 /* Card spread */
 .cardSpreadContainer {
   position: relative;
