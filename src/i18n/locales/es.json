@@ -14,12 +14,36 @@
     "questions": "Preguntas",
     "duration": "Duración"
   },
+  "cards": {
+    "ranks": {
+      "A": "As",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7",
+      "8": "8",
+      "9": "9",
+      "10": "10",
+      "J": "Jota",
+      "Q": "Reina",
+      "K": "Rey"
+    },
+    "suits": {
+      "hearts": "Corazones",
+      "diamonds": "Diamantes",
+      "clubs": "Tréboles",
+      "spades": "Picas"
+    },
+    "name": "{{rank}} de {{suit}}"
+  },
   "nav": {
     "home": "Inicio",
     "guide": "Guía",
     "resources": "Recursos",
     "stats": "Estadísticas",
-    "tools": "Herramientas",
+    "tools": "Práctica",
     "flashcard": "Flashcard",
     "acaan": "ACAAN",
     "toolbox": "Caja de herramientas",
@@ -74,7 +98,17 @@
   "toolbox": {
     "pageTitle": "Caja de herramientas",
     "pageDescription": "Utilidades para análisis de stack, búsqueda de cartas y preparación de actuaciones.",
-    "title": "Caja de herramientas"
+    "title": "Caja de herramientas",
+    "lookup": {
+      "title": "Consulta de stack",
+      "description": "Busca en tu stack por nombre de carta o número de posición.",
+      "searchPlaceholder": "Buscar por carta o posición...",
+      "searchAriaLabel": "Buscar cartas por nombre o posición",
+      "position": "#",
+      "card": "Carta",
+      "noResults": "No se encontraron cartas",
+      "resultCount": "{{count}} cartas encontradas"
+    }
   },
   "timer": {
     "timeRemaining": "Tiempo restante",

@@ -14,12 +14,36 @@
     "questions": "Questions",
     "duration": "Duration"
   },
+  "cards": {
+    "ranks": {
+      "A": "Ace",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7",
+      "8": "8",
+      "9": "9",
+      "10": "10",
+      "J": "Jack",
+      "Q": "Queen",
+      "K": "King"
+    },
+    "suits": {
+      "hearts": "Hearts",
+      "diamonds": "Diamonds",
+      "clubs": "Clubs",
+      "spades": "Spades"
+    },
+    "name": "{{rank}} of {{suit}}"
+  },
   "nav": {
     "home": "Home",
     "guide": "Guide",
     "resources": "Resources",
     "stats": "Stats",
-    "tools": "Tools",
+    "tools": "Practice",
     "flashcard": "Flashcard",
     "acaan": "ACAAN",
     "toolbox": "Toolbox",
@@ -74,7 +98,17 @@
   "toolbox": {
     "pageTitle": "Toolbox",
     "pageDescription": "Memorized deck utilities for stack analysis, card lookups, and performance preparation.",
-    "title": "Toolbox"
+    "title": "Toolbox",
+    "lookup": {
+      "title": "Stack Lookup",
+      "description": "Search your stack by card name or position number.",
+      "searchPlaceholder": "Search by card or position...",
+      "searchAriaLabel": "Search cards by name or position",
+      "position": "#",
+      "card": "Card",
+      "noResults": "No matching cards",
+      "resultCount": "{{count}} cards found"
+    }
   },
   "timer": {
     "timeRemaining": "Time remaining",
