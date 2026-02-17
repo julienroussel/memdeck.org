@@ -245,12 +245,12 @@ test.describe("Toolbox Page", () => {
 
     // Navigate to home
     await page.locator("a:has-text('Home')").first().click();
-    await page.waitForLoadState("networkidle");
+    await page.waitForURL(HOME_URL_PATTERN);
     await expect(page).toHaveURL(HOME_URL_PATTERN);
 
     // Use browser back button
     await page.goBack();
-    await page.waitForLoadState("networkidle");
+    await page.waitForURL(TOOLBOX_URL_PATTERN);
 
     // Should be back on toolbox
     await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
@@ -260,7 +260,7 @@ test.describe("Toolbox Page", () => {
 
     // Use browser forward button
     await page.goForward();
-    await page.waitForLoadState("networkidle");
+    await page.waitForURL(HOME_URL_PATTERN);
 
     // Should be back on home
     await expect(page).toHaveURL(HOME_URL_PATTERN);
