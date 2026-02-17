@@ -1,4 +1,5 @@
 import type { PlayingCard } from "../../types/playingcard";
+import type { Stack } from "../../types/stacks";
 
 type StackEntry = {
   position: number;
@@ -6,7 +7,7 @@ type StackEntry = {
 };
 
 export const filterStack = (
-  stackOrder: readonly PlayingCard[],
+  stackOrder: Stack,
   query: string,
   formatName: (card: PlayingCard) => string
 ): StackEntry[] => {

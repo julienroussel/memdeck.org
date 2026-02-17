@@ -108,6 +108,16 @@
       "card": "Karte",
       "noResults": "Keine passenden Karten",
       "resultCount": "{{count}} Karten gefunden"
+    },
+    "faro": {
+      "title": "Faro-Mischen",
+      "description": "Sieh die Auswirkung perfekter Faro-Mischvorgänge auf deine Stack-Reihenfolge.",
+      "typeLabel": "Mischtyp",
+      "out": "Out",
+      "in": "In",
+      "countLabel": "Anzahl der Mischvorgänge",
+      "position": "#",
+      "card": "Karte"
     }
   },
   "timer": {

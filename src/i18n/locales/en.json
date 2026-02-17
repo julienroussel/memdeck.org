@@ -108,6 +108,16 @@
       "card": "Card",
       "noResults": "No matching cards",
       "resultCount": "{{count}} cards found"
+    },
+    "faro": {
+      "title": "Faro Shuffle",
+      "description": "See the effect of perfect faro shuffles on your stack order.",
+      "typeLabel": "Shuffle type",
+      "out": "Out",
+      "in": "In",
+      "countLabel": "Number of shuffles",
+      "position": "#",
+      "card": "Card"
     }
   },
   "timer": {

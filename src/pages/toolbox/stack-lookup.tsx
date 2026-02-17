@@ -1,11 +1,11 @@
 import { Image, Table, Text, TextInput, VisuallyHidden } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CARD_ASPECT_RATIO } from "../../constants";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
-import type { PlayingCard } from "../../types/playingcard";
 import { filterStack } from "./filter-stack";
+import { useFormatCardName } from "./use-format-card-name";
 
 const THUMBNAIL_WIDTH = 40;
 const THUMBNAIL_HEIGHT = Math.round(THUMBNAIL_WIDTH * CARD_ASPECT_RATIO);
@@ -20,14 +20,7 @@ export const StackLookup = () => {
   const { stackOrder } = useRequiredStack();
   const [query, setQuery] = useState("");
 
-  const formatCardName = useCallback(
-    (card: PlayingCard): string => {
-      const rank = t(`cards.ranks.${card.rank}`);
-      const suit = t(`cards.suits.${card.suit}`);
-      return t("cards.name", { rank, suit });
-    },
-    [t]
-  );
+  const formatCardName = useFormatCardName();
 
   const filtered = filterStack(stackOrder, query, formatCardName);
 

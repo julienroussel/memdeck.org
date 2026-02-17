@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { TOOLBOX_SECTIONS_LSK } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useLocalDb } from "../../utils/localstorage";
+import { FaroShuffle } from "./faro-shuffle";
 import { StackLookup } from "./stack-lookup";
 
 export const Toolbox = () => {
@@ -37,6 +38,19 @@ export const Toolbox = () => {
           </Accordion.Control>
           <Accordion.Panel>
             <StackLookup />
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="faro">
+          <Accordion.Control>
+            <Group gap="sm" wrap="wrap">
+              <Text fw={500}>{t("toolbox.faro.title")}</Text>
+              <Text c="dimmed" size="sm">
+                {t("toolbox.faro.description")}
+              </Text>
+            </Group>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <FaroShuffle />
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>

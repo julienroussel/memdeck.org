@@ -134,12 +134,17 @@ test.describe("Toolbox Page", () => {
     // Open the Stack Lookup accordion
     await page.locator("text=Stack Lookup").click();
 
+    // Scope assertions to the Stack Lookup accordion item
+    const lookupTable = page.locator(".mantine-Accordion-item", {
+      hasText: "Stack Lookup",
+    });
+
     // Verify all 52 cards are shown
-    await expect(page.locator("table tbody tr")).toHaveCount(52);
+    await expect(lookupTable.locator("table tbody tr")).toHaveCount(52);
 
     // Search for aces
     await page.getByRole("textbox", { name: SEARCH_INPUT_PATTERN }).fill("ace");
-    await expect(page.locator("table tbody tr")).toHaveCount(4);
+    await expect(lookupTable.locator("table tbody tr")).toHaveCount(4);
 
     // Search for non-existent card
     await page.getByRole("textbox", { name: SEARCH_INPUT_PATTERN }).fill("zzz");
