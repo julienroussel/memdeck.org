@@ -170,6 +170,13 @@
     "placeholder": "Please choose a stack",
     "ariaLabel": "Select memorized deck"
   },
+  "resetButton": {
+    "label": "Reset app",
+    "modalTitle": "Reset all data?",
+    "modalBody": "This will erase all your training history, statistics, and preferences. This cannot be undone.",
+    "confirm": "Reset everything",
+    "cancel": "Cancel"
+  },
   "errors": {
     "somethingWentWrong": "Something went wrong",
     "languageLoadFailed": "Could not load your preferred language. Using English."

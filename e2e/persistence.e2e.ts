@@ -49,12 +49,8 @@ test.describe("localStorage Persistence", () => {
     await page.locator("a:has-text('Flashcard')").first().click();
     await page.waitForLoadState("networkidle");
 
-    // Open options and change mode (exclude help button which also has an svg)
-    const settingsButton = page
-      .locator('button:not([aria-label="Help"])')
-      .filter({ has: page.locator("svg") })
-      .first();
-    await settingsButton.click();
+    // Open options and change mode
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
     await page.waitForTimeout(300);
 
     // Select card-only mode
@@ -129,11 +125,7 @@ test.describe("localStorage Persistence", () => {
     await page.locator("a:has-text('Flashcard')").first().click();
     await page.waitForLoadState("networkidle");
 
-    const settingsButton = page
-      .locator('button:not([aria-label="Help"])')
-      .filter({ has: page.locator("svg") })
-      .first();
-    await settingsButton.click();
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
     await page.waitForTimeout(300);
 
     await page.locator("text=Number only").first().click();

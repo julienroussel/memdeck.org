@@ -9,6 +9,7 @@ import { useLocation } from "react-router";
 import { ErrorBoundary } from "./components/error-boundary";
 import { Header } from "./components/header";
 import { NavLinks } from "./components/nav-links";
+import { ResetButton } from "./components/reset-button";
 import { StackPicker } from "./components/stack-picker";
 import { Routes } from "./routes";
 import { analytics } from "./services/analytics";
@@ -54,6 +55,7 @@ export const App = () => {
         </AppShell.Section>
         <AppShell.Section>
           <StackPicker />
+          <ResetButton />
         </AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main>
