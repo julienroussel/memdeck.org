@@ -24,7 +24,7 @@ const Acaan = lazyWithReload(() =>
   import("./pages/acaan/acaan").then((m) => ({ default: m.Acaan }))
 );
 const Toolbox = lazyWithReload(() =>
-  import("./pages/toolbox").then((m) => ({ default: m.Toolbox }))
+  import("./pages/toolbox/toolbox").then((m) => ({ default: m.Toolbox }))
 );
 const Stats = lazyWithReload(() =>
   import("./pages/stats/stats").then((m) => ({ default: m.Stats }))

@@ -34,6 +34,7 @@ export const SPREAD_CARD_HEIGHT = Math.round(
 );
 
 export const LANGUAGE_LSK = "memdeck-app-language";
+export const TOOLBOX_SECTIONS_LSK = "memdeck-app-toolbox-sections";
 
 /** sessionStorage key prefix for tracking chunk reload attempts */
 export const CHUNK_RELOAD_SSK = "memdeck-chunk-reload:";

@@ -14,12 +14,36 @@
     "questions": "Questions",
     "duration": "Durée"
   },
+  "cards": {
+    "ranks": {
+      "A": "As",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7",
+      "8": "8",
+      "9": "9",
+      "10": "10",
+      "J": "Valet",
+      "Q": "Dame",
+      "K": "Roi"
+    },
+    "suits": {
+      "hearts": "Cœur",
+      "diamonds": "Carreau",
+      "clubs": "Trèfle",
+      "spades": "Pique"
+    },
+    "name": "{{rank}} de {{suit}}"
+  },
   "nav": {
     "home": "Accueil",
     "guide": "Guide",
     "resources": "Ressources",
     "stats": "Statistiques",
-    "tools": "Outils",
+    "tools": "Entraînement",
     "flashcard": "Flashcard",
     "acaan": "ACAAN",
     "toolbox": "Boîte à outils",
@@ -74,7 +98,17 @@
   "toolbox": {
     "pageTitle": "Boîte à outils",
     "pageDescription": "Utilitaires pour l'analyse de stack, la recherche de cartes et la préparation de performances.",
-    "title": "Boîte à outils"
+    "title": "Boîte à outils",
+    "lookup": {
+      "title": "Recherche de stack",
+      "description": "Recherchez dans votre stack par nom de carte ou numéro de position.",
+      "searchPlaceholder": "Rechercher par carte ou position...",
+      "searchAriaLabel": "Rechercher des cartes par nom ou position",
+      "position": "#",
+      "card": "Carte",
+      "noResults": "Aucune carte correspondante",
+      "resultCount": "{{count}} cartes trouvées"
+    }
   },
   "timer": {
     "timeRemaining": "Temps restant",

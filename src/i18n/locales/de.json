@@ -14,12 +14,36 @@
     "questions": "Fragen",
     "duration": "Dauer"
   },
+  "cards": {
+    "ranks": {
+      "A": "Ass",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7",
+      "8": "8",
+      "9": "9",
+      "10": "10",
+      "J": "Bube",
+      "Q": "Dame",
+      "K": "König"
+    },
+    "suits": {
+      "hearts": "Herz",
+      "diamonds": "Karo",
+      "clubs": "Kreuz",
+      "spades": "Pik"
+    },
+    "name": "{{suit}} {{rank}}"
+  },
   "nav": {
     "home": "Start",
     "guide": "Anleitung",
     "resources": "Ressourcen",
     "stats": "Statistiken",
-    "tools": "Werkzeuge",
+    "tools": "Übung",
     "flashcard": "Flashcard",
     "acaan": "ACAAN",
     "toolbox": "Werkzeugkasten",
@@ -74,7 +98,17 @@
   "toolbox": {
     "pageTitle": "Werkzeugkasten",
     "pageDescription": "Dienstprogramme für Stack-Analyse, Kartensuche und Vorbereitungen für Auftritte.",
-    "title": "Werkzeugkasten"
+    "title": "Werkzeugkasten",
+    "lookup": {
+      "title": "Stack-Nachschlagen",
+      "description": "Durchsuche deinen Stack nach Kartenname oder Positionsnummer.",
+      "searchPlaceholder": "Nach Karte oder Position suchen...",
+      "searchAriaLabel": "Karten nach Name oder Position suchen",
+      "position": "#",
+      "card": "Karte",
+      "noResults": "Keine passenden Karten",
+      "resultCount": "{{count}} Karten gefunden"
+    }
   },
   "timer": {
     "timeRemaining": "Verbleibende Zeit",

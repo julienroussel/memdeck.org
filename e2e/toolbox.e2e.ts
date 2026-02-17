@@ -3,6 +3,7 @@ import { test } from "./fixtures/test-setup";
 
 const TOOLBOX_URL_PATTERN = /\/toolbox$/;
 const HOME_URL_PATTERN = /\/$/;
+const SEARCH_INPUT_PATTERN = /search/i;
 
 test.describe("Toolbox Page", () => {
   test.beforeEach(async ({ page }) => {
@@ -33,8 +34,8 @@ test.describe("Toolbox Page", () => {
       page.getByRole("heading", { name: "Toolbox", level: 1 })
     ).toBeVisible();
 
-    // Verify coming soon message is displayed
-    await expect(page.locator("text=Coming soon")).toBeVisible();
+    // Verify Stack Lookup section is present in the accordion
+    await expect(page.locator("text=Stack Lookup")).toBeVisible();
   });
 
   test("should require a stack to be selected (RequireStack guard)", async ({
@@ -121,6 +122,29 @@ test.describe("Toolbox Page", () => {
     await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
     await expect(
       page.getByRole("heading", { name: "Toolbox", level: 1 })
+    ).toBeVisible();
+  });
+
+  test("should filter stack lookup results when searching", async ({
+    page,
+  }) => {
+    // Navigate to toolbox (stack should already be selected from beforeEach)
+    await page.goto("/toolbox");
+
+    // Open the Stack Lookup accordion
+    await page.locator("text=Stack Lookup").click();
+
+    // Verify all 52 cards are shown
+    await expect(page.locator("table tbody tr")).toHaveCount(52);
+
+    // Search for aces
+    await page.getByRole("textbox", { name: SEARCH_INPUT_PATTERN }).fill("ace");
+    await expect(page.locator("table tbody tr")).toHaveCount(4);
+
+    // Search for non-existent card
+    await page.getByRole("textbox", { name: SEARCH_INPUT_PATTERN }).fill("zzz");
+    await expect(
+      page.getByRole("paragraph").filter({ hasText: "No matching cards" })
     ).toBeVisible();
   });
 
