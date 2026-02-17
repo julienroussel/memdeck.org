@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { TOOLBOX_SECTIONS_LSK } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useLocalDb } from "../../utils/localstorage";
+import { CardSpelling } from "./card-spelling";
 import { FaroShuffle } from "./faro-shuffle";
 import { StackLookup } from "./stack-lookup";
 
@@ -51,6 +52,19 @@ export const Toolbox = () => {
           </Accordion.Control>
           <Accordion.Panel>
             <FaroShuffle />
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="spelling">
+          <Accordion.Control>
+            <Group gap="sm" wrap="wrap">
+              <Text fw={500}>{t("toolbox.spelling.title")}</Text>
+              <Text c="dimmed" size="sm">
+                {t("toolbox.spelling.description")}
+              </Text>
+            </Group>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <CardSpelling />
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>

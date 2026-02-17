@@ -118,6 +118,22 @@
       "countLabel": "Nombre de mélanges",
       "position": "#",
       "card": "Carte"
+    },
+    "spelling": {
+      "title": "Épellation de carte",
+      "description": "Voyez combien de lettres compose le nom de chaque carte et où l'épellation atterrit dans votre stack.",
+      "position": "#",
+      "card": "Carte",
+      "letters": "Lettres",
+      "landsOn": "Atterrit sur",
+      "selfSpelling": "Auto-épellation",
+      "searchPlaceholder": "Rechercher par carte ou position...",
+      "searchAriaLabel": "Rechercher des cartes par nom ou position",
+      "noResults": "Aucune carte correspondante",
+      "detailTitle": "Détail de l'épellation",
+      "letter": "Lettre",
+      "dealtCard": "Carte distribuée",
+      "resultCount": "{{count}} résultats"
     }
   },
   "timer": {

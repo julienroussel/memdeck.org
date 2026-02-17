@@ -118,6 +118,22 @@
       "countLabel": "Number of shuffles",
       "position": "#",
       "card": "Card"
+    },
+    "spelling": {
+      "title": "Card Spelling",
+      "description": "See how many letters each card's name has and where spelling lands in your stack.",
+      "position": "#",
+      "card": "Card",
+      "letters": "Letters",
+      "landsOn": "Lands on",
+      "selfSpelling": "Self-spelling",
+      "searchPlaceholder": "Search by card or position...",
+      "searchAriaLabel": "Search cards by name or position",
+      "noResults": "No matching cards",
+      "detailTitle": "Spelling breakdown",
+      "letter": "Letter",
+      "dealtCard": "Card dealt",
+      "resultCount": "{{count}} results"
     }
   },
   "timer": {

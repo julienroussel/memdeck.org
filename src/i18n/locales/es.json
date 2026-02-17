@@ -118,6 +118,22 @@
       "countLabel": "Número de mezclas",
       "position": "#",
       "card": "Carta"
+    },
+    "spelling": {
+      "title": "Deletreo de carta",
+      "description": "Mira cuántas letras tiene el nombre de cada carta y dónde aterriza el deletreo en tu stack.",
+      "position": "#",
+      "card": "Carta",
+      "letters": "Letras",
+      "landsOn": "Aterriza en",
+      "selfSpelling": "Auto-deletreo",
+      "searchPlaceholder": "Buscar por carta o posición...",
+      "searchAriaLabel": "Buscar cartas por nombre o posición",
+      "noResults": "No se encontraron cartas",
+      "detailTitle": "Desglose del deletreo",
+      "letter": "Letra",
+      "dealtCard": "Carta repartida",
+      "resultCount": "{{count}} resultados"
     }
   },
   "timer": {

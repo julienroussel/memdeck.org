@@ -153,6 +153,90 @@ test.describe("Toolbox Page", () => {
     ).toBeVisible();
   });
 
+  test("should open Card Spelling accordion and render all 52 rows", async ({
+    page,
+  }) => {
+    // Open the Card Spelling accordion
+    await page.locator("text=Card Spelling").click();
+
+    // Scope assertions to the Card Spelling accordion item
+    const spellingSection = page.locator(".mantine-Accordion-item", {
+      hasText: "Card Spelling",
+    });
+
+    // Verify all 52 card rows are visible (each card also has a hidden detail row)
+    await expect(spellingSection.locator("table tbody tr:visible")).toHaveCount(
+      52
+    );
+  });
+
+  test("should filter Card Spelling results when searching", async ({
+    page,
+  }) => {
+    // Open the Card Spelling accordion
+    await page.locator("text=Card Spelling").click();
+
+    const spellingSection = page.locator(".mantine-Accordion-item", {
+      hasText: "Card Spelling",
+    });
+
+    // Verify all 52 rows initially visible
+    await expect(spellingSection.locator("table tbody tr:visible")).toHaveCount(
+      52
+    );
+
+    // Search for aces
+    await spellingSection
+      .getByRole("textbox", { name: SEARCH_INPUT_PATTERN })
+      .fill("ace");
+    await expect(spellingSection.locator("table tbody tr:visible")).toHaveCount(
+      4
+    );
+
+    // Search for non-existent card
+    await spellingSection
+      .getByRole("textbox", { name: SEARCH_INPUT_PATTERN })
+      .fill("zzz");
+    await expect(
+      spellingSection
+        .getByRole("paragraph")
+        .filter({ hasText: "No matching cards" })
+    ).toBeVisible();
+  });
+
+  test("should expand a Card Spelling row to show spelling detail table", async ({
+    page,
+  }) => {
+    // Open the Card Spelling accordion
+    await page.locator("text=Card Spelling").click();
+
+    const spellingSection = page.locator(".mantine-Accordion-item", {
+      hasText: "Card Spelling",
+    });
+
+    // Click the first visible data row to expand it
+    await spellingSection.locator("table tbody tr:visible").first().click();
+
+    // The first card in Mnemonica is "4 of Clubs"
+    // Verify the spelling detail section appears with breakdown title
+    await expect(
+      spellingSection.getByText("Spelling breakdown: 4 of Clubs")
+    ).toBeVisible();
+
+    // The detail contains a nested table with "Letter" and "Card dealt" headers
+    // Scope to the expanded collapse panel via its ID
+    const detailPanel = spellingSection.locator("#spelling-detail-1");
+    await expect(
+      detailPanel.locator("th", { hasText: "Letter" })
+    ).toBeVisible();
+    await expect(
+      detailPanel.locator("th", { hasText: "Card dealt" })
+    ).toBeVisible();
+
+    // Verify the detail table has rows (one per letter in the card name)
+    await expect(detailPanel.locator("tbody tr").first()).toBeVisible();
+  });
+
   test("should handle browser back/forward navigation correctly", async ({
     page,
   }) => {
