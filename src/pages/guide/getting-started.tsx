@@ -49,6 +49,12 @@ export const GettingStarted = () => {
             i18nKey="guide.gettingStarted.stacks.particle"
           />
         </List.Item>
+        <List.Item>
+          <Trans
+            components={{ bold: <Text fw={600} span /> }}
+            i18nKey="guide.gettingStarted.stacks.elephant"
+          />
+        </List.Item>
       </List>
       <Space h="sm" />
       <Alert

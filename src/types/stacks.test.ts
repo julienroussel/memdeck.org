@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { DECK_SIZE } from "../constants";
+import { ALL_CARDS } from "./playingcard";
 import {
   createDeckPosition,
   getCardAt,
@@ -232,4 +233,29 @@ describe("getUniqueRandomCard", () => {
 
     expect(uniqueIndices.size).toBe(10);
   });
+});
+
+describe("stack uniqueness", () => {
+  const allCardKeys = ALL_CARDS.map((c) => `${c.rank}-${c.suit}`);
+
+  for (const [name, stack] of Object.entries(stacks)) {
+    describe(name, () => {
+      it("contains exactly 52 cards", () => {
+        expect(stack.order).toHaveLength(DECK_SIZE);
+      });
+
+      it("contains no duplicate cards", () => {
+        const cardKeys = stack.order.map((c) => `${c.rank}-${c.suit}`);
+        const uniqueKeys = new Set(cardKeys);
+        expect(uniqueKeys.size).toBe(DECK_SIZE);
+      });
+
+      it("contains every card from the standard 52-card deck", () => {
+        const cardKeys = new Set(stack.order.map((c) => `${c.rank}-${c.suit}`));
+        for (const key of allCardKeys) {
+          expect(cardKeys.has(key)).toBe(true);
+        }
+      });
+    });
+  }
 });

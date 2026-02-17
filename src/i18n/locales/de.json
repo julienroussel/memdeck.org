@@ -244,7 +244,8 @@
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
         "memorandum": "<bold>Memorandum</bold> — Woody Aragón",
         "redford": "<bold>Redford Stack</bold> — Patrick Redford",
-        "particle": "<bold>Particle System</bold> — Joshua Jay"
+        "particle": "<bold>Particle System</bold> — Joshua Jay",
+        "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret"
       },
       "alertTitle": "Wähle zuerst einen Stack",
       "alertDescription": "Die meisten Trainingstools erfordern einen ausgewählten Stack. Wähle einen aus, um Flashcard, ACAAN und den Werkzeugkasten freizuschalten."
