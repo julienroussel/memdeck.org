@@ -108,6 +108,16 @@
       "card": "Carte",
       "noResults": "Aucune carte correspondante",
       "resultCount": "{{count}} cartes trouvées"
+    },
+    "faro": {
+      "title": "Mélange Faro",
+      "description": "Visualisez l'effet des mélanges faro parfaits sur l'ordre de votre stack.",
+      "typeLabel": "Type de mélange",
+      "out": "Out",
+      "in": "In",
+      "countLabel": "Nombre de mélanges",
+      "position": "#",
+      "card": "Carte"
     }
   },
   "timer": {

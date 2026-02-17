@@ -108,6 +108,16 @@
       "card": "Carta",
       "noResults": "No se encontraron cartas",
       "resultCount": "{{count}} cartas encontradas"
+    },
+    "faro": {
+      "title": "Mezcla Faro",
+      "description": "Observa el efecto de mezclas faro perfectas en el orden de tu stack.",
+      "typeLabel": "Tipo de mezcla",
+      "out": "Out",
+      "in": "In",
+      "countLabel": "Número de mezclas",
+      "position": "#",
+      "card": "Carta"
     }
   },
   "timer": {
