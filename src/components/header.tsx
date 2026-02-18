@@ -16,6 +16,7 @@ import memdeckDarkLogo from "/memdeck-black.png";
 // eslint-disable-next-line import/no-unresolved
 import memdeckLightLogo from "/memdeck-white.png";
 import { GITHUB_URL } from "../constants";
+import { analytics } from "../services/analytics";
 import { Help } from "./help";
 import { LanguagePicker } from "./language-picker";
 
@@ -39,7 +40,9 @@ export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
   const handleColorSchemeChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setColorScheme(event.currentTarget.checked ? "light" : "dark");
+    const scheme = event.currentTarget.checked ? "light" : "dark";
+    setColorScheme(scheme);
+    analytics.trackEvent("Settings", "Theme Toggled", scheme);
   };
 
   return (

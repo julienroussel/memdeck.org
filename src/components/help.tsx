@@ -3,10 +3,16 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconHelp } from "@tabler/icons-react";
 import { Trans, useTranslation } from "react-i18next";
 import { GITHUB_URL } from "../constants";
+import { analytics } from "../services/analytics";
 
 export const Help = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const { t } = useTranslation();
+
+  const handleOpen = () => {
+    analytics.trackFeatureUsed("Help");
+    open();
+  };
 
   return (
     <>
@@ -40,7 +46,7 @@ export const Help = () => {
       <ActionIcon
         aria-label={t("header.helpAriaLabel")}
         color="gray"
-        onClick={open}
+        onClick={handleOpen}
         variant="subtle"
         visibleFrom="sm"
       >

@@ -2,6 +2,7 @@ import {
   afterAll,
   afterEach,
   beforeAll,
+  beforeEach,
   describe,
   expect,
   it,
@@ -43,6 +44,7 @@ const setHostname = (hostname: string) => {
 };
 
 const { analytics } = await import("./analytics");
+const { eventBus } = await import("./event-bus");
 
 describe("analytics", () => {
   beforeAll(() => {
@@ -58,6 +60,132 @@ describe("analytics", () => {
       value: originalLocation,
       configurable: true,
       writable: true,
+    });
+  });
+
+  describe("subscribeToEvents", () => {
+    beforeAll(() => {
+      analytics.initialize();
+    });
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it("tracks STACK_SELECTED event via event bus", () => {
+      eventBus.emit.STACK_SELECTED({ stackName: "Mnemonica" });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Stack",
+        action: "Selected",
+        label: "Mnemonica",
+      });
+    });
+
+    it("tracks FLASHCARD_MODE_CHANGED event via event bus", () => {
+      eventBus.emit.FLASHCARD_MODE_CHANGED({ mode: "cardonly" });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Flashcard",
+        action: "Mode Changed",
+        label: "cardonly",
+      });
+    });
+
+    it("tracks ACAAN_ANSWER correct event via event bus", () => {
+      eventBus.emit.ACAAN_ANSWER({ correct: true, stackName: "Mnemonica" });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "ACAAN",
+        action: "Correct Answer",
+        label: "Mnemonica",
+      });
+    });
+
+    it("tracks ACAAN_ANSWER wrong event via event bus", () => {
+      eventBus.emit.ACAAN_ANSWER({ correct: false, stackName: "Aronson" });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "ACAAN",
+        action: "Wrong Answer",
+        label: "Aronson",
+      });
+    });
+
+    it("tracks FLASHCARD_ANSWER correct event via event bus", () => {
+      eventBus.emit.FLASHCARD_ANSWER({ correct: true, stackName: "Mnemonica" });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Flashcard",
+        action: "Correct Answer",
+        label: "Mnemonica",
+      });
+    });
+
+    it("tracks FLASHCARD_ANSWER wrong event via event bus", () => {
+      eventBus.emit.FLASHCARD_ANSWER({ correct: false, stackName: "Aronson" });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Flashcard",
+        action: "Wrong Answer",
+        label: "Aronson",
+      });
+    });
+
+    it("tracks SESSION_STARTED for structured session via event bus", () => {
+      eventBus.emit.SESSION_STARTED({
+        mode: "flashcard",
+        config: { type: "structured", totalQuestions: 20 },
+      });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Session",
+        action: "Started",
+        label: "flashcard (20q)",
+      });
+    });
+
+    it("tracks SESSION_STARTED for open session via event bus", () => {
+      eventBus.emit.SESSION_STARTED({
+        mode: "acaan",
+        config: { type: "open" },
+      });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Session",
+        action: "Started",
+        label: "acaan (open)",
+      });
+    });
+
+    it("tracks SESSION_COMPLETED with accuracy via event bus", () => {
+      eventBus.emit.SESSION_COMPLETED({
+        mode: "flashcard",
+        accuracy: 0.92,
+        questionsCompleted: 10,
+      });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Session",
+        action: "Completed",
+        label: "flashcard",
+        value: 92,
+      });
+    });
+
+    it("tracks SESSION_COMPLETED with rounded accuracy via event bus", () => {
+      eventBus.emit.SESSION_COMPLETED({
+        mode: "acaan",
+        accuracy: 0.333,
+        questionsCompleted: 6,
+      });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Session",
+        action: "Completed",
+        label: "acaan",
+        value: 33,
+      });
     });
   });
 
@@ -367,6 +495,77 @@ describe("analytics", () => {
     });
   });
 
+  describe("trackAcaanAnswer", () => {
+    it("sends correct answer event", () => {
+      analytics.trackAcaanAnswer(true, "Mnemonica");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "ACAAN",
+        action: "Correct Answer",
+        label: "Mnemonica",
+      });
+    });
+
+    it("sends wrong answer event", () => {
+      analytics.trackAcaanAnswer(false, "Aronson");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "ACAAN",
+        action: "Wrong Answer",
+        label: "Aronson",
+      });
+    });
+  });
+
+  describe("trackSessionStarted", () => {
+    it("sends session started event for structured session", () => {
+      analytics.trackSessionStarted("flashcard", {
+        type: "structured",
+        totalQuestions: 10,
+      });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Session",
+        action: "Started",
+        label: "flashcard (10q)",
+      });
+    });
+
+    it("sends session started event for open session", () => {
+      analytics.trackSessionStarted("acaan", { type: "open" });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Session",
+        action: "Started",
+        label: "acaan (open)",
+      });
+    });
+  });
+
+  describe("trackSessionCompleted", () => {
+    it("sends session completed event with accuracy as value", () => {
+      analytics.trackSessionCompleted("flashcard", 0.85);
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Session",
+        action: "Completed",
+        label: "flashcard",
+        value: 85,
+      });
+    });
+
+    it("rounds accuracy percentage", () => {
+      analytics.trackSessionCompleted("acaan", 0.666);
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Session",
+        action: "Completed",
+        label: "acaan",
+        value: 67,
+      });
+    });
+  });
+
   describe("trackError", () => {
     it("sends error event with error name and message", () => {
       const error = new TypeError("Cannot read property 'foo' of undefined");
@@ -471,6 +670,27 @@ describe("analytics", () => {
 
       expect(mockEvent).not.toHaveBeenCalled();
       expect(mockSend).not.toHaveBeenCalled();
+    });
+
+    it("does not track ACAAN answers", () => {
+      analytics.trackAcaanAnswer(true, "Mnemonica");
+
+      expect(mockEvent).not.toHaveBeenCalled();
+    });
+
+    it("does not track session started", () => {
+      analytics.trackSessionStarted("flashcard", {
+        type: "structured",
+        totalQuestions: 10,
+      });
+
+      expect(mockEvent).not.toHaveBeenCalled();
+    });
+
+    it("does not track session completed", () => {
+      analytics.trackSessionCompleted("flashcard", 0.85);
+
+      expect(mockEvent).not.toHaveBeenCalled();
     });
   });
 });

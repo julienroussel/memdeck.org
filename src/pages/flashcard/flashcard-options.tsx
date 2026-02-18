@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { TimerSettingsControl } from "../../components/timer-settings-control";
 import { FLASHCARD_OPTION_LSK } from "../../constants";
 import { useFlashcardTimer } from "../../hooks/use-flashcard-timer";
+import { analytics } from "../../services/analytics";
 import { eventBus } from "../../services/event-bus";
 import {
   FLASHCARD_MODE_OPTIONS,
@@ -25,6 +26,15 @@ export const FlashcardOptions = ({
   const { timerSettings, setTimerEnabled, setTimerDuration } =
     useFlashcardTimer();
   const { t } = useTranslation();
+
+  const handleTimerEnabledChange = (enabled: boolean) => {
+    analytics.trackEvent(
+      "Settings",
+      `Timer ${enabled ? "Enabled" : "Disabled"}`,
+      "Flashcard"
+    );
+    setTimerEnabled(enabled);
+  };
 
   const handleModeChange = (value: string) => {
     if (!isFlashcardMode(value)) {
@@ -66,7 +76,7 @@ export const FlashcardOptions = ({
       <Space h="xl" />
       <TimerSettingsControl
         onDurationChange={setTimerDuration}
-        onEnabledChange={setTimerEnabled}
+        onEnabledChange={handleTimerEnabledChange}
         timerSettings={timerSettings}
       />
     </Modal>

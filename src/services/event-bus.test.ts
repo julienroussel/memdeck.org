@@ -63,6 +63,59 @@ describe("eventBus", () => {
       unsubAnswer();
     });
 
+    it("delivers the ACAAN_ANSWER payload to a subscribed listener", () => {
+      const listener = vi.fn();
+      const unsubscribe = eventBus.subscribe.ACAAN_ANSWER(listener);
+
+      eventBus.emit.ACAAN_ANSWER({ correct: true, stackName: "Mnemonica" });
+
+      expect(listener).toHaveBeenCalledOnce();
+      expect(listener).toHaveBeenCalledWith({
+        correct: true,
+        stackName: "Mnemonica",
+      });
+
+      unsubscribe();
+    });
+
+    it("delivers the SESSION_STARTED payload to a subscribed listener", () => {
+      const listener = vi.fn();
+      const unsubscribe = eventBus.subscribe.SESSION_STARTED(listener);
+
+      eventBus.emit.SESSION_STARTED({
+        mode: "flashcard",
+        config: { type: "structured", totalQuestions: 10 },
+      });
+
+      expect(listener).toHaveBeenCalledOnce();
+      expect(listener).toHaveBeenCalledWith({
+        mode: "flashcard",
+        config: { type: "structured", totalQuestions: 10 },
+      });
+
+      unsubscribe();
+    });
+
+    it("delivers the SESSION_COMPLETED payload to a subscribed listener", () => {
+      const listener = vi.fn();
+      const unsubscribe = eventBus.subscribe.SESSION_COMPLETED(listener);
+
+      eventBus.emit.SESSION_COMPLETED({
+        mode: "flashcard",
+        accuracy: 0.85,
+        questionsCompleted: 10,
+      });
+
+      expect(listener).toHaveBeenCalledOnce();
+      expect(listener).toHaveBeenCalledWith({
+        mode: "flashcard",
+        accuracy: 0.85,
+        questionsCompleted: 10,
+      });
+
+      unsubscribe();
+    });
+
     it("supports subscribing the same listener multiple times without duplication", () => {
       const listener = vi.fn();
       // Set-based listeners means adding the same function reference twice is idempotent

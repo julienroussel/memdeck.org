@@ -2,6 +2,7 @@ import { Accordion, Group, Stack, Text, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { TOOLBOX_SECTIONS_LSK } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
+import { analytics } from "../../services/analytics";
 import { useLocalDb } from "../../utils/localstorage";
 import { CardSpelling } from "./card-spelling";
 import { FaroShuffle } from "./faro-shuffle";
@@ -14,6 +15,14 @@ export const Toolbox = () => {
     []
   );
 
+  const handleSectionsChange = (sections: string[]) => {
+    const opened = sections.filter((s) => !openSections.includes(s));
+    for (const section of opened) {
+      analytics.trackFeatureUsed(`Toolbox - ${section}`);
+    }
+    setOpenSections(sections);
+  };
+
   useDocumentMeta({
     title: t("toolbox.pageTitle"),
     description: t("toolbox.pageDescription"),
@@ -24,7 +33,7 @@ export const Toolbox = () => {
       <Title order={1}>{t("toolbox.title")}</Title>
       <Accordion
         multiple
-        onChange={setOpenSections}
+        onChange={handleSectionsChange}
         value={openSections}
         variant="separated"
       >
