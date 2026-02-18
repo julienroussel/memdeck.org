@@ -62,7 +62,8 @@
     "ultracite": "7.2.3",
     "vite": "7.3.1",
     "vite-plugin-pwa": "1.2.0",
-    "vitest": "4.0.18"
+    "vitest": "4.0.18",
+    "workbox-window": "7.4.0"
   },
   "dependencies": {
     "@mantine/core": "8.3.15",

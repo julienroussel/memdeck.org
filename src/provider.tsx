@@ -14,6 +14,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { BrowserRouter } from "react-router";
 import { App } from "./app";
 import { LanguageLoadNotifier } from "./components/language-load-notifier";
+import { PwaUpdateNotifier } from "./components/pwa-update-notifier";
 import { analytics } from "./services/analytics";
 
 const colorSchemeManager = localStorageColorSchemeManager({
@@ -57,6 +58,7 @@ export const Provider = () => {
       >
         <Notifications />
         <LanguageLoadNotifier />
+        <PwaUpdateNotifier />
         <BrowserRouter>
           <App />
         </BrowserRouter>

@@ -178,6 +178,11 @@
     "confirm": "Restablecer todo",
     "cancel": "Cancelar"
   },
+  "pwaUpdate": {
+    "title": "Actualización disponible",
+    "message": "Una nueva versión de MemDeck está disponible.",
+    "reload": "Recargar para actualizar"
+  },
   "errors": {
     "somethingWentWrong": "Algo salió mal",
     "languageLoadFailed": "No se pudo cargar tu idioma preferido. Usando inglés."
