@@ -3,6 +3,16 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      // vite-plugin-pwa's virtual module is unavailable during tests.
+      // Point it at a no-op stub so vi.mock() in test files can intercept it.
+      "virtual:pwa-register/react": new URL(
+        "src/__mocks__/virtual-pwa-register-react.ts",
+        import.meta.url
+      ).pathname,
+    },
+  },
   test: {
     globals: false,
     environment: "happy-dom",

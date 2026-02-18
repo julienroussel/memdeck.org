@@ -10,6 +10,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      injectRegister: false,
       workbox: {
         globPatterns: ["**/*.{js,css,html}", "cards/*.svg"],
         // Locale chunks (locale-*.js) are lazy-loaded on demand —
