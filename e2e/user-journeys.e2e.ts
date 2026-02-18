@@ -75,7 +75,8 @@ test.describe("User Journeys", () => {
 
     // User practices by clicking answers
     for (let i = 0; i < 5; i++) {
-      await page.waitForTimeout(500);
+      // Wait for card spread to render before clicking
+      await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
 
       // Get available choices from card spread (use force:true due to overlapping)
       const cardSpreadItems = page.locator(".cardSpreadCard");
@@ -100,15 +101,14 @@ test.describe("User Journeys", () => {
       .locator("button")
       .filter({ has: page.locator("svg") });
     await settingsButton.click();
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).toBeVisible();
 
     // Change to card-only mode
     await page.locator("text=Card only").first().click();
-    await page.waitForTimeout(300);
 
     // Close modal
     await page.keyboard.press("Escape");
-    await page.waitForLoadState("networkidle");
+    await expect(page.getByRole("dialog")).not.toBeVisible();
 
     // Mode should be saved (localStorage values are JSON-stringified)
     const mode = await page.evaluate(() => {
@@ -212,8 +212,10 @@ test.describe("User Journeys", () => {
     // Toggle multiple times by clicking the visible track
     for (let i = 0; i < 4; i++) {
       await themeSwitchTrack.click();
-      await page.waitForTimeout(300);
       isLight = !isLight;
+
+      // Wait for switch state to update before checking
+      await expect(themeSwitch).toBeChecked({ checked: isLight });
 
       // Verify state changed
       const currentState = await themeSwitch.isChecked();
@@ -244,7 +246,10 @@ test.describe("User Journeys", () => {
     const burgerButton = page.locator(".mantine-Burger-root");
     if (await burgerButton.isVisible()) {
       await burgerButton.click();
-      await page.waitForTimeout(300);
+      // Wait for menu to open
+      await expect(
+        page.locator("[data-testid='stack-picker']").first()
+      ).toBeVisible();
     }
 
     // Stack picker should be accessible
@@ -261,7 +266,7 @@ test.describe("User Journeys", () => {
       const flashcardLink = page.locator("a:has-text('Flashcard')").first();
       if (!(await flashcardLink.isVisible())) {
         await burgerButton.click();
-        await page.waitForTimeout(300);
+        await expect(flashcardLink).toBeVisible();
       }
     }
 
@@ -306,11 +311,12 @@ test.describe("User Journeys", () => {
       .locator("button")
       .filter({ has: page.locator("svg") });
     await settingsButton.click();
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).toBeVisible();
 
     await page.locator("text=Number only").first().click();
-    await page.waitForTimeout(300);
+
     await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).not.toBeVisible();
 
     // Simulate inactivity by reloading
     await page.reload();

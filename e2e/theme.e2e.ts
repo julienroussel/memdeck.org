@@ -33,7 +33,7 @@ test.describe("Theme & Color Scheme", () => {
 
     // Toggle theme by clicking the visible track
     await themeSwitchTrack.click();
-    await page.waitForTimeout(300);
+    await expect(themeSwitch).toBeChecked({ checked: !initialChecked });
 
     // Verify theme changed
     const newChecked = await themeSwitch.isChecked();
@@ -41,11 +41,12 @@ test.describe("Theme & Color Scheme", () => {
   });
 
   test("should persist theme selection in localStorage", async ({ page }) => {
+    const themeSwitch = page.locator("input[type='checkbox']").first();
     const themeSwitchTrack = page.locator(".mantine-Switch-track").first();
 
     // Toggle to dark theme by clicking the visible track
     await themeSwitchTrack.click();
-    await page.waitForTimeout(300);
+    await expect(themeSwitch).not.toBeChecked();
 
     // Check localStorage
     const colorScheme = await page.evaluate(() => {
@@ -64,7 +65,7 @@ test.describe("Theme & Color Scheme", () => {
     if (initialChecked) {
       // Currently light, toggle to dark by clicking the visible track
       await themeSwitchTrack.click();
-      await page.waitForTimeout(300);
+      await expect(themeSwitch).not.toBeChecked();
     }
 
     // Reload page
@@ -91,15 +92,14 @@ test.describe("Theme & Color Scheme", () => {
 
     // Toggle theme by clicking the visible track
     await themeSwitchTrack.click();
-    await page.waitForTimeout(500);
 
-    // Get new background color
-    const newBg = await body.evaluate((el) => {
-      return window.getComputedStyle(el).backgroundColor;
-    });
-
-    // Colors should be different
-    expect(initialBg).not.toBe(newBg);
+    // Wait for background color to change (CSS transition)
+    await expect(async () => {
+      const newBg = await body.evaluate((el) => {
+        return window.getComputedStyle(el).backgroundColor;
+      });
+      expect(newBg).not.toBe(initialBg);
+    }).toPass();
   });
 
   test("should maintain theme across page navigation", async ({ page }) => {
@@ -110,7 +110,7 @@ test.describe("Theme & Color Scheme", () => {
     const initialChecked = await themeSwitch.isChecked();
     if (initialChecked) {
       await themeSwitchTrack.click();
-      await page.waitForTimeout(300);
+      await expect(themeSwitch).not.toBeChecked();
     }
 
     // Navigate to resources
@@ -150,7 +150,7 @@ test.describe("Theme & Color Scheme", () => {
     const initialChecked = await themeSwitch.isChecked();
 
     await themeSwitchTrack.click();
-    await page.waitForTimeout(300);
+    await expect(themeSwitch).toBeChecked({ checked: !initialChecked });
 
     // Verify it changed
     const newChecked = await themeSwitch.isChecked();
@@ -175,7 +175,7 @@ test.describe("Theme & Color Scheme", () => {
     const isLight = await themeSwitch.isChecked();
     if (!isLight) {
       await themeSwitchTrack.click();
-      await page.waitForTimeout(300);
+      await expect(themeSwitch).toBeChecked();
     }
 
     // Check main text is visible
@@ -183,7 +183,7 @@ test.describe("Theme & Color Scheme", () => {
 
     // Toggle to dark theme
     await themeSwitchTrack.click();
-    await page.waitForTimeout(300);
+    await expect(themeSwitch).not.toBeChecked();
 
     // Text should still be visible
     await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();

@@ -94,12 +94,9 @@ test.describe("Stack Selection", () => {
       .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
-    // Wait for card images to load
+    // Wait for card images to load and verify cards are displayed
     const cardImages = page.locator("img[src*='cards/']");
-    const count = await cardImages.count();
-
-    // Should display 52 cards
-    expect(count).toBeGreaterThanOrEqual(1);
+    await expect(cardImages.first()).toBeVisible();
   });
 
   test("should switch between different stacks", async ({ page }) => {
