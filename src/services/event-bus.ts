@@ -5,6 +5,7 @@ type AnalyticsEvents = {
   STACK_SELECTED: { stackName: string };
   FLASHCARD_ANSWER: { correct: boolean; stackName: string };
   FLASHCARD_MODE_CHANGED: { mode: FlashcardMode };
+  ACAAN_ANSWER: { correct: boolean; stackName: string };
   SESSION_STARTED: { mode: TrainingMode; config: SessionConfig };
   SESSION_COMPLETED: {
     mode: TrainingMode;
@@ -56,6 +57,7 @@ export const eventBus = createEventBus<AnalyticsEvents>([
   "STACK_SELECTED",
   "FLASHCARD_ANSWER",
   "FLASHCARD_MODE_CHANGED",
+  "ACAAN_ANSWER",
   "SESSION_STARTED",
   "SESSION_COMPLETED",
 ]);

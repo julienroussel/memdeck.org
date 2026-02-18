@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createDeckPosition } from "../../types/stacks";
 import { mnemonica } from "../../types/stacks/mnemonica";
 import type { AcaanScenario } from "../../utils/acaan-scenario";
@@ -22,6 +22,40 @@ vi.mock("../../hooks/use-acaan-timer", () => ({
     timerSettings: { enabled: false, duration: 15 },
     setTimerSettings: vi.fn(),
   }),
+}));
+
+vi.mock("../../hooks/use-game-timer", () => {
+  let capturedOnTimeout: (() => void) | undefined;
+  return {
+    timerReducerCases: {
+      TICK: (state: { timeRemaining: number }) => ({
+        ...state,
+        timeRemaining: Math.max(0, state.timeRemaining - 1),
+      }),
+      RESET_TIMER: (
+        state: { timeRemaining: number; timerDuration: number },
+        duration: number
+      ) => ({
+        ...state,
+        timeRemaining: duration,
+        timerDuration: duration,
+      }),
+    },
+    useGameTimer: vi.fn((opts: { onTimeout?: () => void }) => {
+      capturedOnTimeout = opts.onTimeout;
+    }),
+    __getCapturedOnTimeout: () => capturedOnTimeout,
+  };
+});
+
+vi.mock("../../hooks/use-reset-game-on-stack-change", () => ({
+  useResetGameOnStackChange: vi.fn(),
+}));
+
+vi.mock("../../services/event-bus", () => ({
+  eventBus: {
+    emit: { ACAAN_ANSWER: vi.fn() },
+  },
 }));
 
 // Helper to create a test scenario
@@ -470,12 +504,16 @@ describe("gameReducer", () => {
 });
 
 describe("useAcaanGame hook", () => {
+  afterEach(() => vi.clearAllMocks());
+
   describe("revealAnswer", () => {
     it("shows a notification with the correct cut depth answer", async () => {
       const { notifications } = vi.mocked(
         await import("@mantine/notifications")
       );
-      const { result } = renderHook(() => useAcaanGame(mnemonica.order));
+      const { result } = renderHook(() =>
+        useAcaanGame(mnemonica.order, "Mnemonica")
+      );
 
       const { cardPosition, targetPosition } = result.current.scenario;
       const expectedCutDepth = calculateCutDepth(cardPosition, targetPosition);
@@ -498,7 +536,9 @@ describe("useAcaanGame hook", () => {
     });
 
     it("increments fails count", () => {
-      const { result } = renderHook(() => useAcaanGame(mnemonica.order));
+      const { result } = renderHook(() =>
+        useAcaanGame(mnemonica.order, "Mnemonica")
+      );
 
       expect(result.current.score.fails).toBe(0);
 
@@ -510,7 +550,9 @@ describe("useAcaanGame hook", () => {
     });
 
     it("advances to a new scenario", () => {
-      const { result } = renderHook(() => useAcaanGame(mnemonica.order));
+      const { result } = renderHook(() =>
+        useAcaanGame(mnemonica.order, "Mnemonica")
+      );
 
       const originalScenario = result.current.scenario;
 
@@ -524,7 +566,7 @@ describe("useAcaanGame hook", () => {
     it("calls onAnswer callback with correct: false and questionAdvanced: true", () => {
       const onAnswer = vi.fn();
       const { result } = renderHook(() =>
-        useAcaanGame(mnemonica.order, { onAnswer })
+        useAcaanGame(mnemonica.order, "Mnemonica", { onAnswer })
       );
 
       act(() => {
@@ -534,6 +576,92 @@ describe("useAcaanGame hook", () => {
       expect(onAnswer).toHaveBeenCalledWith({
         correct: false,
         questionAdvanced: true,
+      });
+    });
+
+    it("emits ACAAN_ANSWER event with correct: false", async () => {
+      const { eventBus } = await import("../../services/event-bus");
+      const { result } = renderHook(() =>
+        useAcaanGame(mnemonica.order, "Mnemonica")
+      );
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(eventBus.emit.ACAAN_ANSWER).toHaveBeenCalledWith({
+        correct: false,
+        stackName: "Mnemonica",
+      });
+    });
+  });
+
+  describe("submitAnswer", () => {
+    it("emits ACAAN_ANSWER event with correct: true on correct answer", async () => {
+      const { eventBus } = await import("../../services/event-bus");
+      const { result } = renderHook(() =>
+        useAcaanGame(mnemonica.order, "Mnemonica")
+      );
+
+      const { cardPosition, targetPosition } = result.current.scenario;
+      const correctAnswer = calculateCutDepth(cardPosition, targetPosition);
+
+      act(() => {
+        result.current.submitAnswer(correctAnswer);
+      });
+
+      expect(eventBus.emit.ACAAN_ANSWER).toHaveBeenCalledWith({
+        correct: true,
+        stackName: "Mnemonica",
+      });
+    });
+
+    it("emits ACAAN_ANSWER event with correct: false on wrong answer", async () => {
+      const { eventBus } = await import("../../services/event-bus");
+      const { result } = renderHook(() =>
+        useAcaanGame(mnemonica.order, "Mnemonica")
+      );
+
+      const { cardPosition, targetPosition } = result.current.scenario;
+      const correctAnswer = calculateCutDepth(cardPosition, targetPosition);
+      const wrongAnswer = correctAnswer === 0 ? 1 : correctAnswer - 1;
+
+      act(() => {
+        result.current.submitAnswer(wrongAnswer);
+      });
+
+      expect(eventBus.emit.ACAAN_ANSWER).toHaveBeenCalledWith({
+        correct: false,
+        stackName: "Mnemonica",
+      });
+    });
+  });
+
+  describe("handleTimeout", () => {
+    it("emits ACAAN_ANSWER event with correct: false on timeout", async () => {
+      const { eventBus } = await import("../../services/event-bus");
+      const gameTimerMock = (await import(
+        "../../hooks/use-game-timer"
+      )) as typeof import("../../hooks/use-game-timer") & {
+        __getCapturedOnTimeout: () => (() => void) | undefined;
+      };
+
+      renderHook(() => useAcaanGame(mnemonica.order, "Mnemonica"));
+
+      const onTimeout = gameTimerMock.__getCapturedOnTimeout();
+      expect(onTimeout).toBeDefined();
+
+      if (!onTimeout) {
+        throw new Error("onTimeout should be defined after hook render");
+      }
+
+      act(() => {
+        onTimeout();
+      });
+
+      expect(eventBus.emit.ACAAN_ANSWER).toHaveBeenCalledWith({
+        correct: false,
+        stackName: "Mnemonica",
       });
     });
   });

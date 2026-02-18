@@ -31,23 +31,29 @@ vi.mock("../../utils/localstorage", () => ({
   useLocalDb: (_key: string, defaultValue: string) => [defaultValue],
 }));
 
-vi.mock("../../hooks/use-game-timer", () => ({
-  timerReducerCases: {
-    TICK: (state: { timeRemaining: number }) => ({
-      ...state,
-      timeRemaining: Math.max(0, state.timeRemaining - 1),
+vi.mock("../../hooks/use-game-timer", () => {
+  let capturedOnTimeout: (() => void) | undefined;
+  return {
+    timerReducerCases: {
+      TICK: (state: { timeRemaining: number }) => ({
+        ...state,
+        timeRemaining: Math.max(0, state.timeRemaining - 1),
+      }),
+      RESET_TIMER: (
+        state: { timeRemaining: number; timerDuration: number },
+        duration: number
+      ) => ({
+        ...state,
+        timeRemaining: duration,
+        timerDuration: duration,
+      }),
+    },
+    useGameTimer: vi.fn((opts: { onTimeout?: () => void }) => {
+      capturedOnTimeout = opts.onTimeout;
     }),
-    RESET_TIMER: (
-      state: { timeRemaining: number; timerDuration: number },
-      duration: number
-    ) => ({
-      ...state,
-      timeRemaining: duration,
-      timerDuration: duration,
-    }),
-  },
-  useGameTimer: vi.fn(),
-}));
+    __getCapturedOnTimeout: () => capturedOnTimeout,
+  };
+});
 
 vi.mock("../../hooks/use-reset-game-on-stack-change", () => ({
   useResetGameOnStackChange: vi.fn(),
@@ -60,6 +66,10 @@ vi.mock("../../services/event-bus", () => ({
 }));
 
 const testStack = stacks.mnemonica.order;
+
+afterEach(() => {
+  vi.clearAllMocks();
+});
 
 // Helper to create a test state with sensible defaults
 const createTestState = (overrides: Partial<GameState> = {}): GameState => {
@@ -541,6 +551,96 @@ describe("useFlashcardGame hook", () => {
       });
 
       expect(result.current.score.successes).toBe(0);
+    });
+
+    it("emits FLASHCARD_ANSWER event with correct: false", async () => {
+      const { eventBus } = await import("../../services/event-bus");
+      const { result } = renderHook(() =>
+        useFlashcardGame(testStack, "Mnemonica")
+      );
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(eventBus.emit.FLASHCARD_ANSWER).toHaveBeenCalledWith({
+        correct: false,
+        stackName: "Mnemonica",
+      });
+    });
+  });
+
+  describe("submitAnswer()", () => {
+    it("emits FLASHCARD_ANSWER event with correct: true on correct answer", async () => {
+      const { eventBus } = await import("../../services/event-bus");
+      const { result } = renderHook(() =>
+        useFlashcardGame(testStack, "Mnemonica")
+      );
+
+      const correctCard = result.current.card.card;
+
+      act(() => {
+        result.current.submitAnswer(correctCard);
+      });
+
+      expect(eventBus.emit.FLASHCARD_ANSWER).toHaveBeenCalledWith({
+        correct: true,
+        stackName: "Mnemonica",
+      });
+    });
+
+    it("emits FLASHCARD_ANSWER event with correct: false on wrong answer", async () => {
+      const { eventBus } = await import("../../services/event-bus");
+      const { result } = renderHook(() =>
+        useFlashcardGame(testStack, "Mnemonica")
+      );
+
+      const currentCard = result.current.card.card;
+      const wrongChoice = result.current.choices.find(
+        (c) =>
+          c.card.suit !== currentCard.suit || c.card.rank !== currentCard.rank
+      );
+      if (!wrongChoice) {
+        throw new Error("Expected at least one wrong choice");
+      }
+
+      act(() => {
+        result.current.submitAnswer(wrongChoice.card);
+      });
+
+      expect(eventBus.emit.FLASHCARD_ANSWER).toHaveBeenCalledWith({
+        correct: false,
+        stackName: "Mnemonica",
+      });
+    });
+  });
+
+  describe("handleTimeout", () => {
+    it("emits FLASHCARD_ANSWER event with correct: false on timeout", async () => {
+      const { eventBus } = await import("../../services/event-bus");
+      const gameTimerMock = (await import(
+        "../../hooks/use-game-timer"
+      )) as typeof import("../../hooks/use-game-timer") & {
+        __getCapturedOnTimeout: () => (() => void) | undefined;
+      };
+
+      renderHook(() => useFlashcardGame(testStack, "Mnemonica"));
+
+      const onTimeout = gameTimerMock.__getCapturedOnTimeout();
+      expect(onTimeout).toBeDefined();
+
+      if (!onTimeout) {
+        throw new Error("onTimeout should be defined after hook render");
+      }
+
+      act(() => {
+        onTimeout();
+      });
+
+      expect(eventBus.emit.FLASHCARD_ANSWER).toHaveBeenCalledWith({
+        correct: false,
+        stackName: "Mnemonica",
+      });
     });
   });
 });

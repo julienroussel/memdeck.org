@@ -1,6 +1,7 @@
 import ReactGA from "react-ga4";
 import { type Metric, onCLS, onINP, onLCP } from "web-vitals";
 import type { FlashcardMode } from "../types/flashcard";
+import type { SessionConfig, TrainingMode } from "../types/session";
 import { eventBus } from "./event-bus";
 
 const TRACKING_ID = "G-36CZ6GEMKQ";
@@ -18,6 +19,14 @@ const trackWebVital = ({ id, name, value }: Metric) => {
   });
 };
 
+const formatSessionLabel = (
+  mode: TrainingMode,
+  config: SessionConfig
+): string =>
+  config.type === "structured"
+    ? `${mode} (${config.totalQuestions}q)`
+    : `${mode} (open)`;
+
 const subscribeToEvents = () => {
   eventBus.subscribe.STACK_SELECTED(({ stackName }) => {
     analytics.trackStackSelected(stackName);
@@ -29,6 +38,18 @@ const subscribeToEvents = () => {
 
   eventBus.subscribe.FLASHCARD_MODE_CHANGED(({ mode }) => {
     analytics.trackFlashcardModeChanged(mode);
+  });
+
+  eventBus.subscribe.ACAAN_ANSWER(({ correct, stackName }) => {
+    analytics.trackAcaanAnswer(correct, stackName);
+  });
+
+  eventBus.subscribe.SESSION_STARTED(({ mode, config }) => {
+    analytics.trackSessionStarted(mode, config);
+  });
+
+  eventBus.subscribe.SESSION_COMPLETED(({ mode, accuracy }) => {
+    analytics.trackSessionCompleted(mode, accuracy);
   });
 };
 
@@ -88,6 +109,40 @@ export const analytics = {
       category: "Flashcard",
       action: "Mode Changed",
       label: mode,
+    });
+  },
+
+  trackAcaanAnswer: (correct: boolean, stackName: string) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "ACAAN",
+      action: correct ? "Correct Answer" : "Wrong Answer",
+      label: stackName,
+    });
+  },
+
+  trackSessionStarted: (mode: TrainingMode, config: SessionConfig) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "Session",
+      action: "Started",
+      label: formatSessionLabel(mode, config),
+    });
+  },
+
+  trackSessionCompleted: (mode: TrainingMode, accuracy: number) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "Session",
+      action: "Completed",
+      label: mode,
+      value: Math.round(accuracy * 100),
     });
   },
 

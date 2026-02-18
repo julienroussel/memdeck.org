@@ -2,6 +2,7 @@ import { Button, Group, Modal, Space, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconRestore } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
+import { analytics } from "../services/analytics";
 
 export const resetApp = async () => {
   localStorage.clear();
@@ -32,6 +33,7 @@ export const ResetButton = () => {
   const { t } = useTranslation();
 
   const handleConfirm = async () => {
+    analytics.trackEvent("Settings", "Reset App");
     close();
     await resetApp();
   };

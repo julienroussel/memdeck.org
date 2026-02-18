@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   Button,
   Center,
   Grid,
@@ -8,23 +7,20 @@ import {
   NumberInput,
   Space,
   Text,
-  Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconSettings } from "@tabler/icons-react";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NumberCard } from "../../components/number-card";
 import { RevealButton } from "../../components/reveal-button";
-import { Score } from "../../components/score";
-import { SessionBanner } from "../../components/session-banner";
-import { SessionStartControls } from "../../components/session-start-controls";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
+import { TrainingHeader } from "../../components/training-header";
 import { CARD_HEIGHT, CARD_WIDTH, DECK_SIZE } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
+import { analytics } from "../../services/analytics";
 import { formatCardName } from "../../utils/card-formatting";
 import { AcaanOptions } from "./acaan-options";
 import { useAcaanGame } from "./use-acaan-game";
@@ -42,7 +38,7 @@ export const Acaan = () => {
     title: t("acaan.pageTitle"),
     description: t("acaan.pageDescription"),
   });
-  const { stackKey, stackOrder } = useRequiredStack();
+  const { stackKey, stackOrder, stackName } = useRequiredStack();
   const {
     status,
     startSession,
@@ -62,8 +58,19 @@ export const Acaan = () => {
     timerDuration,
     submitAnswer,
     revealAnswer,
-  } = useAcaanGame(stackOrder, { onAnswer: handleAnswer });
+  } = useAcaanGame(stackOrder, stackName, { onAnswer: handleAnswer });
   const [options, { open, close }] = useDisclosure(false);
+
+  const handleOpenSettings = useCallback(() => {
+    analytics.trackFeatureUsed("ACAAN Settings");
+    open();
+  }, [open]);
+
+  const handleRevealAnswer = useCallback(() => {
+    analytics.trackFeatureUsed("Reveal Answer - ACAAN");
+    revealAnswer();
+  }, [revealAnswer]);
+
   const [cutDepth, setCutDepth] = useState<number | "">("");
 
   const handleCutDepthChange = useCallback((value: string | number) => {
@@ -101,28 +108,16 @@ export const Acaan = () => {
         }}
       >
         <Grid.Col span={12}>
-          <Group gap="xs" justify="space-between">
-            <Title order={1}>{t("acaan.title")}</Title>
-            <Group gap="xs">
-              {!isStructuredSession && (
-                <Score fails={score.fails} successes={score.successes} />
-              )}
-              <ActionIcon
-                aria-label={t("acaan.settingsAriaLabel")}
-                color="gray"
-                onClick={open}
-                variant="subtle"
-              >
-                <IconSettings />
-              </ActionIcon>
-            </Group>
-          </Group>
-          {isStructuredSession && activeSession && (
-            <SessionBanner onStop={stopSession} session={activeSession} />
-          )}
-          {!isStructuredSession && (
-            <SessionStartControls onStart={startSession} />
-          )}
+          <TrainingHeader
+            activeSession={activeSession}
+            isStructuredSession={isStructuredSession}
+            onOpenSettings={handleOpenSettings}
+            onStartSession={startSession}
+            onStopSession={stopSession}
+            score={score}
+            settingsAriaLabel={t("acaan.settingsAriaLabel")}
+            title={t("acaan.title")}
+          />
         </Grid.Col>
         <Grid.Col span={12}>
           <Space h="xl" />
@@ -189,7 +184,9 @@ export const Acaan = () => {
           summary={status.summary}
         />
       )}
-      {status.phase !== "summary" && <RevealButton onReveal={revealAnswer} />}
+      {status.phase !== "summary" && (
+        <RevealButton onReveal={handleRevealAnswer} />
+      )}
     </div>
   );
 };

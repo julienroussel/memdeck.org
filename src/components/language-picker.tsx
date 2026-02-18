@@ -9,6 +9,7 @@ import {
   LANGUAGE_LABELS,
   SUPPORTED_LANGUAGES,
 } from "../i18n/language";
+import { analytics } from "../services/analytics";
 
 const LANGUAGE_OPTIONS = SUPPORTED_LANGUAGES.map((lang) => ({
   label: LANGUAGE_CODES[lang],
@@ -24,6 +25,7 @@ export const LanguagePicker = memo(function LanguagePicker() {
     (event: React.ChangeEvent<HTMLSelectElement>) => {
       const value = event.currentTarget.value;
       if (isSupportedLanguage(value)) {
+        analytics.trackEvent("Settings", "Language Changed", value);
         changeLanguage(value).catch(() => {
           notifications.show({
             color: "red",

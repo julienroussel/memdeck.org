@@ -7,9 +7,10 @@ import {
   type ResetGameAction,
   useResetGameOnStackChange,
 } from "../../hooks/use-reset-game-on-stack-change";
+import { eventBus } from "../../services/event-bus";
 import type { GameScore } from "../../types/game";
 import type { AnswerOutcome } from "../../types/session";
-import type { Stack } from "../../types/stacks";
+import type { Stack, StackValue } from "../../types/stacks";
 import {
   type AcaanScenario,
   calculateCutDepth,
@@ -134,13 +135,16 @@ type UseAcaanGameResult = {
 
 export const useAcaanGame = (
   stackOrder: Stack,
+  stackName: StackValue["name"],
   options?: UseAcaanGameOptions
 ): UseAcaanGameResult => {
   const { timerSettings } = useAcaanTimer();
 
-  // Use ref to access latest stackOrder in callbacks without re-creating them
+  // Use ref to access latest stackOrder/stackName in callbacks without re-creating them
   const stackOrderRef = useRef(stackOrder);
   stackOrderRef.current = stackOrder;
+  const stackNameRef = useRef(stackName);
+  stackNameRef.current = stackName;
 
   const onAnswerRef = useRef(options?.onAnswer);
   onAnswerRef.current = options?.onAnswer;
@@ -178,6 +182,10 @@ export const useAcaanGame = (
       ),
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
     });
+    eventBus.emit.ACAAN_ANSWER({
+      correct: false,
+      stackName: stackNameRef.current,
+    });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
   }, [state.scenario.cardPosition, state.scenario.targetPosition]);
 
@@ -214,6 +222,10 @@ export const useAcaanGame = (
             newScenario: generateAcaanScenario(stackOrderRef.current),
           },
         });
+        eventBus.emit.ACAAN_ANSWER({
+          correct: true,
+          stackName: stackNameRef.current,
+        });
         onAnswerRef.current?.({ correct: true, questionAdvanced: true });
       } else {
         // Simplified "Try again!" replaces the previous formatCutDepthMessage detail,
@@ -225,6 +237,10 @@ export const useAcaanGame = (
           autoClose: NOTIFICATION_CLOSE_TIMEOUT,
         });
         dispatch({ type: "WRONG_ANSWER" });
+        eventBus.emit.ACAAN_ANSWER({
+          correct: false,
+          stackName: stackNameRef.current,
+        });
         onAnswerRef.current?.({ correct: false, questionAdvanced: false });
       }
     },
@@ -251,6 +267,10 @@ export const useAcaanGame = (
     dispatch({
       type: "REVEAL_ANSWER",
       payload: { newScenario: generateAcaanScenario(stackOrderRef.current) },
+    });
+    eventBus.emit.ACAAN_ANSWER({
+      correct: false,
+      stackName: stackNameRef.current,
     });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
   }, [state.scenario.cardPosition, state.scenario.targetPosition]);

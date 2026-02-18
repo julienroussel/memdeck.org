@@ -2,6 +2,7 @@ import { useRegisterSW } from "virtual:pwa-register/react";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { analytics } from "../services/analytics";
 
 /**
  * Detects when a new service worker is ready and shows a Mantine notification
@@ -20,8 +21,10 @@ export const PwaUpdateNotifier = () => {
   useEffect(() => {
     if (needRefresh && !notifiedRef.current) {
       notifiedRef.current = true;
+      analytics.trackFeatureUsed("PWA Update Available");
 
       const handleReload = () => {
+        analytics.trackFeatureUsed("PWA Update Accepted");
         updateServiceWorker(true);
       };
 
@@ -36,9 +39,12 @@ export const PwaUpdateNotifier = () => {
               onClick={handleReload}
               style={{
                 all: "unset",
+                display: "inline-block",
                 cursor: "pointer",
                 outline: "revert",
                 textDecoration: "underline",
+                padding: "8px 16px",
+                minHeight: "44px",
               }}
               type="button"
             >
