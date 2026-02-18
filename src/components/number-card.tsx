@@ -16,7 +16,7 @@ type NumberCardProps = {
 
 export const NumberCard = memo(function NumberCard({
   number,
-  width = 80,
+  width = 100,
   fontSize = 35,
   style,
 }: NumberCardProps) {

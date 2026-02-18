@@ -28,7 +28,7 @@ export const MAX_SESSION_HISTORY = 500;
 export const CARD_ASPECT_RATIO = 333 / 234;
 export const CARD_WIDTH = 120;
 export const CARD_HEIGHT = Math.round(CARD_WIDTH * CARD_ASPECT_RATIO);
-export const SPREAD_CARD_WIDTH = 80;
+export const SPREAD_CARD_WIDTH = 100;
 export const SPREAD_CARD_HEIGHT = Math.round(
   SPREAD_CARD_WIDTH * CARD_ASPECT_RATIO
 );
