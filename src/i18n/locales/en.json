@@ -12,7 +12,8 @@
     "accuracy": "Accuracy",
     "bestStreak": "Best Streak",
     "questions": "Questions",
-    "duration": "Duration"
+    "duration": "Duration",
+    "revealAriaLabel": "Reveal answer"
   },
   "cards": {
     "ranks": {

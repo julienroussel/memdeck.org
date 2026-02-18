@@ -1,14 +1,28 @@
-import { describe, expect, it } from "vitest";
+import { act, renderHook } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { createDeckPosition } from "../../types/stacks";
 import { mnemonica } from "../../types/stacks/mnemonica";
 import type { AcaanScenario } from "../../utils/acaan-scenario";
+import { calculateCutDepth } from "../../utils/acaan-scenario";
 import {
   createInitialState,
   formatCutDepthMessage,
   type GameAction,
   type GameState,
   gameReducer,
+  useAcaanGame,
 } from "./use-acaan-game";
+
+vi.mock("@mantine/notifications", () => ({
+  notifications: { show: vi.fn() },
+}));
+
+vi.mock("../../hooks/use-acaan-timer", () => ({
+  useAcaanTimer: () => ({
+    timerSettings: { enabled: false, duration: 15 },
+    setTimerSettings: vi.fn(),
+  }),
+}));
 
 // Helper to create a test scenario
 const createTestScenario = (
@@ -182,6 +196,63 @@ describe("gameReducer", () => {
       const newState = gameReducer(state, action);
 
       expect(newState.timeRemaining).toBe(3);
+    });
+  });
+
+  describe("REVEAL_ANSWER action", () => {
+    it("increments fails", () => {
+      const state = createTestState({ fails: 1 });
+      const newScenario = createTestScenario(20, 15);
+      const action: GameAction = {
+        type: "REVEAL_ANSWER",
+        payload: { newScenario },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.fails).toBe(2);
+    });
+
+    it("does not change successes", () => {
+      const state = createTestState({ successes: 5 });
+      const newScenario = createTestScenario(20, 15);
+      const action: GameAction = {
+        type: "REVEAL_ANSWER",
+        payload: { newScenario },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.successes).toBe(5);
+    });
+
+    it("advances to a new scenario", () => {
+      const state = createTestState();
+      const newScenario = createTestScenario(15, 10);
+      const action: GameAction = {
+        type: "REVEAL_ANSWER",
+        payload: { newScenario },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.scenario).toEqual(newScenario);
+    });
+
+    it("resets timeRemaining to timerDuration", () => {
+      const state = createTestState({
+        timeRemaining: 0,
+        timerDuration: 30,
+      });
+      const newScenario = createTestScenario(20, 15);
+      const action: GameAction = {
+        type: "REVEAL_ANSWER",
+        payload: { newScenario },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.timeRemaining).toBe(30);
     });
   });
 
@@ -394,6 +465,76 @@ describe("gameReducer", () => {
       const newState = gameReducer(state, action);
 
       expect(newState).not.toBe(state);
+    });
+  });
+});
+
+describe("useAcaanGame hook", () => {
+  describe("revealAnswer", () => {
+    it("shows a notification with the correct cut depth answer", async () => {
+      const { notifications } = vi.mocked(
+        await import("@mantine/notifications")
+      );
+      const { result } = renderHook(() => useAcaanGame(mnemonica.order));
+
+      const { cardPosition, targetPosition } = result.current.scenario;
+      const expectedCutDepth = calculateCutDepth(cardPosition, targetPosition);
+      const expectedMessage = formatCutDepthMessage(
+        cardPosition,
+        targetPosition,
+        expectedCutDepth
+      );
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(notifications.show).toHaveBeenCalledWith(
+        expect.objectContaining({
+          color: "yellow",
+          message: expectedMessage,
+        })
+      );
+    });
+
+    it("increments fails count", () => {
+      const { result } = renderHook(() => useAcaanGame(mnemonica.order));
+
+      expect(result.current.score.fails).toBe(0);
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(result.current.score.fails).toBe(1);
+    });
+
+    it("advances to a new scenario", () => {
+      const { result } = renderHook(() => useAcaanGame(mnemonica.order));
+
+      const originalScenario = result.current.scenario;
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(result.current.scenario).not.toBe(originalScenario);
+    });
+
+    it("calls onAnswer callback with correct: false and questionAdvanced: true", () => {
+      const onAnswer = vi.fn();
+      const { result } = renderHook(() =>
+        useAcaanGame(mnemonica.order, { onAnswer })
+      );
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(onAnswer).toHaveBeenCalledWith({
+        correct: false,
+        questionAdvanced: true,
+      });
     });
   });
 });

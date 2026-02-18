@@ -35,6 +35,7 @@ export type GameAction =
   | { type: "CORRECT_ANSWER"; payload: { newScenario: AcaanScenario } }
   | { type: "WRONG_ANSWER" }
   | TimeoutAction
+  | { type: "REVEAL_ANSWER"; payload: { newScenario: AcaanScenario } }
   | { type: "TICK" }
   | { type: "RESET_TIMER"; payload: { duration: number } }
   | ResetGameAction;
@@ -92,6 +93,13 @@ export const gameReducer = (
         scenario: action.payload.newScenario,
         timeRemaining: state.timerDuration,
       };
+    case "REVEAL_ANSWER":
+      return {
+        ...state,
+        fails: state.fails + 1,
+        scenario: action.payload.newScenario,
+        timeRemaining: state.timerDuration,
+      };
     case "TICK":
       return timerReducerCases.TICK(state);
     case "RESET_TIMER":
@@ -121,6 +129,7 @@ type UseAcaanGameResult = {
   timerEnabled: boolean;
   timerDuration: number;
   submitAnswer: (userAnswer: number) => void;
+  revealAnswer: () => void;
 };
 
 export const useAcaanGame = (
@@ -180,42 +189,71 @@ export const useAcaanGame = (
     onTimeout: handleTimeout,
   });
 
-  const submitAnswer = (userAnswer: number) => {
+  const submitAnswer = useCallback(
+    (userAnswer: number) => {
+      const correctAnswer = calculateCutDepth(
+        state.scenario.cardPosition,
+        state.scenario.targetPosition
+      );
+      const isCorrect = userAnswer === correctAnswer;
+
+      if (isCorrect) {
+        notifications.show({
+          color: "green",
+          title: "Correct!",
+          message: formatCutDepthMessage(
+            state.scenario.cardPosition,
+            state.scenario.targetPosition,
+            correctAnswer
+          ),
+          autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+        });
+        dispatch({
+          type: "CORRECT_ANSWER",
+          payload: {
+            newScenario: generateAcaanScenario(stackOrderRef.current),
+          },
+        });
+        onAnswerRef.current?.({ correct: true, questionAdvanced: true });
+      } else {
+        // Simplified "Try again!" replaces the previous formatCutDepthMessage detail,
+        // since users now retry the same question rather than advancing.
+        notifications.show({
+          color: "red",
+          title: "Wrong answer",
+          message: "Try again!",
+          autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+        });
+        dispatch({ type: "WRONG_ANSWER" });
+        onAnswerRef.current?.({ correct: false, questionAdvanced: false });
+      }
+    },
+    [state.scenario.cardPosition, state.scenario.targetPosition]
+  );
+
+  const revealAnswer = useCallback(() => {
     const correctAnswer = calculateCutDepth(
       state.scenario.cardPosition,
       state.scenario.targetPosition
     );
-    const isCorrect = userAnswer === correctAnswer;
 
-    if (isCorrect) {
-      notifications.show({
-        color: "green",
-        title: "Correct!",
-        message: formatCutDepthMessage(
-          state.scenario.cardPosition,
-          state.scenario.targetPosition,
-          correctAnswer
-        ),
-        autoClose: NOTIFICATION_CLOSE_TIMEOUT,
-      });
-      dispatch({
-        type: "CORRECT_ANSWER",
-        payload: { newScenario: generateAcaanScenario(stackOrderRef.current) },
-      });
-      onAnswerRef.current?.({ correct: true, questionAdvanced: true });
-    } else {
-      // Simplified "Try again!" replaces the previous formatCutDepthMessage detail,
-      // since users now retry the same question rather than advancing.
-      notifications.show({
-        color: "red",
-        title: "Wrong answer",
-        message: "Try again!",
-        autoClose: NOTIFICATION_CLOSE_TIMEOUT,
-      });
-      dispatch({ type: "WRONG_ANSWER" });
-      onAnswerRef.current?.({ correct: false, questionAdvanced: false });
-    }
-  };
+    notifications.show({
+      color: "yellow",
+      title: "Answer",
+      message: formatCutDepthMessage(
+        state.scenario.cardPosition,
+        state.scenario.targetPosition,
+        correctAnswer
+      ),
+      autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+    });
+
+    dispatch({
+      type: "REVEAL_ANSWER",
+      payload: { newScenario: generateAcaanScenario(stackOrderRef.current) },
+    });
+    onAnswerRef.current?.({ correct: false, questionAdvanced: true });
+  }, [state.scenario.cardPosition, state.scenario.targetPosition]);
 
   return {
     scenario: state.scenario,
@@ -224,5 +262,6 @@ export const useAcaanGame = (
     timerEnabled: timerSettings.enabled,
     timerDuration: state.timerDuration,
     submitAnswer,
+    revealAnswer,
   };
 };

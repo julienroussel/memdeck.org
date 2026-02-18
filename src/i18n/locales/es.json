@@ -12,7 +12,8 @@
     "accuracy": "Precisión",
     "bestStreak": "Mejor racha",
     "questions": "Preguntas",
-    "duration": "Duración"
+    "duration": "Duración",
+    "revealAriaLabel": "Revelar respuesta"
   },
   "cards": {
     "ranks": {

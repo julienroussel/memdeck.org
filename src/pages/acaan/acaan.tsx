@@ -15,6 +15,7 @@ import { IconSettings } from "@tabler/icons-react";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NumberCard } from "../../components/number-card";
+import { RevealButton } from "../../components/reveal-button";
 import { Score } from "../../components/score";
 import { SessionBanner } from "../../components/session-banner";
 import { SessionStartControls } from "../../components/session-start-controls";
@@ -60,6 +61,7 @@ export const Acaan = () => {
     timerEnabled,
     timerDuration,
     submitAnswer,
+    revealAnswer,
   } = useAcaanGame(stackOrder, { onAnswer: handleAnswer });
   const [options, { open, close }] = useDisclosure(false);
   const [cutDepth, setCutDepth] = useState<number | "">("");
@@ -187,6 +189,7 @@ export const Acaan = () => {
           summary={status.summary}
         />
       )}
+      {status.phase !== "summary" && <RevealButton onReveal={revealAnswer} />}
     </div>
   );
 };

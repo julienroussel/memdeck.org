@@ -14,6 +14,7 @@ import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { NumberCard } from "../../components/number-card";
+import { RevealButton } from "../../components/reveal-button";
 import { Score } from "../../components/score";
 import { SessionBanner } from "../../components/session-banner";
 import { SessionStartControls } from "../../components/session-start-controls";
@@ -70,6 +71,7 @@ export const Flashcard = () => {
     timerEnabled,
     timerDuration,
     submitAnswer,
+    revealAnswer,
   } = useFlashcardGame(stackOrder, stackName, { onAnswer: handleAnswer });
   const [options, { open, close }] = useDisclosure(false);
 
@@ -90,7 +92,6 @@ export const Flashcard = () => {
     (item: PlayingCard) => submitAnswer(item),
     [submitAnswer]
   );
-
   return (
     <div className="fullMantineContainerHeight">
       <Grid
@@ -185,6 +186,7 @@ export const Flashcard = () => {
           summary={status.summary}
         />
       )}
+      {status.phase !== "summary" && <RevealButton onReveal={revealAnswer} />}
     </div>
   );
 };

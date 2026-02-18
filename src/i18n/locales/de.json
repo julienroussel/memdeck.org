@@ -12,7 +12,8 @@
     "accuracy": "Genauigkeit",
     "bestStreak": "Beste Serie",
     "questions": "Fragen",
-    "duration": "Dauer"
+    "duration": "Dauer",
+    "revealAriaLabel": "Antwort anzeigen"
   },
   "cards": {
     "ranks": {
