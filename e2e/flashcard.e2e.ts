@@ -35,10 +35,9 @@ test.describe("Flashcard Training", () => {
 
   test("should display settings button on flashcard page", async ({ page }) => {
     // Find settings button in main content area (near the score badges)
-    const settingsButton = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") });
+    const settingsButton = page.getByRole("button", {
+      name: "Flashcard settings",
+    });
     await expect(settingsButton).toBeVisible();
   });
 
@@ -46,10 +45,9 @@ test.describe("Flashcard Training", () => {
     page,
   }) => {
     // Click settings button in main content area
-    const settingsButton = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") });
+    const settingsButton = page.getByRole("button", {
+      name: "Flashcard settings",
+    });
     await settingsButton.click();
 
     // Verify modal is displayed
@@ -156,10 +154,9 @@ test.describe("Flashcard Training", () => {
     page,
   }) => {
     // Open options modal - settings button is in main content area
-    const settingsButton = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") });
+    const settingsButton = page.getByRole("button", {
+      name: "Flashcard settings",
+    });
     await settingsButton.click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
@@ -184,10 +181,9 @@ test.describe("Flashcard Training", () => {
     page,
   }) => {
     // Open options modal - settings button is in main content area
-    const settingsButton = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") });
+    const settingsButton = page.getByRole("button", {
+      name: "Flashcard settings",
+    });
     await settingsButton.click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
@@ -212,10 +208,9 @@ test.describe("Flashcard Training", () => {
     page,
   }) => {
     // Open options and select a mode - settings button is in main content area
-    const settingsButton = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") });
+    const settingsButton = page.getByRole("button", {
+      name: "Flashcard settings",
+    });
     await settingsButton.click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
@@ -232,10 +227,9 @@ test.describe("Flashcard Training", () => {
 
   test("should restore flashcard mode on page reload", async ({ page }) => {
     // Set a specific mode - settings button is in main content area
-    const settingsButton = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") });
+    const settingsButton = page.getByRole("button", {
+      name: "Flashcard settings",
+    });
     await settingsButton.click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
@@ -249,10 +243,9 @@ test.describe("Flashcard Training", () => {
     await page.waitForLoadState("networkidle");
 
     // Open options again and verify mode is restored
-    const settingsButtonAfterReload = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") });
+    const settingsButtonAfterReload = page.getByRole("button", {
+      name: "Flashcard settings",
+    });
     await settingsButtonAfterReload.click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
