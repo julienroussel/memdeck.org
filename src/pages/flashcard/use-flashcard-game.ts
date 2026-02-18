@@ -23,6 +23,7 @@ import {
   type StackValue,
 } from "../../types/stacks";
 import { isPlayingCard } from "../../types/typeguards";
+import { formatCardName } from "../../utils/card-formatting";
 import { generateUniqueCardChoices } from "../../utils/card-selection";
 import { useLocalDb } from "../../utils/localstorage";
 import {
@@ -63,6 +64,14 @@ export type GameAction =
     }
   | { type: "WRONG_ANSWER" }
   | TimeoutAction
+  | {
+      type: "REVEAL_ANSWER";
+      payload: {
+        newCard: PlayingCardPosition;
+        newChoices: PlayingCardPosition[];
+        newDisplay: DisplayMode;
+      };
+    }
   | { type: "TICK" }
   | { type: "RESET_TIMER"; payload: { duration: number } }
   | ResetGameAction;
@@ -133,6 +142,15 @@ export const gameReducer = (
         display: action.payload.newDisplay,
         timeRemaining: state.timerDuration,
       };
+    case "REVEAL_ANSWER":
+      return {
+        ...state,
+        fails: state.fails + 1,
+        card: action.payload.newCard,
+        choices: action.payload.newChoices,
+        display: action.payload.newDisplay,
+        timeRemaining: state.timerDuration,
+      };
     case "TICK":
       return timerReducerCases.TICK(state);
     case "RESET_TIMER":
@@ -164,6 +182,7 @@ type UseFlashcardGameResult = {
   timerEnabled: boolean;
   timerDuration: number;
   submitAnswer: (item: PlayingCard | number) => void;
+  revealAnswer: () => void;
 };
 
 export const useFlashcardGame = (
@@ -262,6 +281,37 @@ export const useFlashcardGame = (
   const shouldShowCard =
     mode === "cardonly" || (mode === "bothmodes" && state.display === "card");
 
+  const revealAnswer = useCallback(() => {
+    const currentCard = cardRef.current;
+    const currentShouldShowCard =
+      modeRef.current === "cardonly" ||
+      (modeRef.current === "bothmodes" && displayRef.current === "card");
+
+    notifications.show({
+      color: "yellow",
+      title: "Answer",
+      message: currentShouldShowCard
+        ? String(currentCard.index)
+        : formatCardName(currentCard.card),
+      autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+    });
+
+    const { card: newCard, choices: newChoices } = generateNewCardAndChoices(
+      stackOrderRef.current
+    );
+    const newDisplay =
+      modeRef.current === "bothmodes"
+        ? getRandomDisplayMode()
+        : displayRef.current;
+
+    dispatch({
+      type: "REVEAL_ANSWER",
+      payload: { newCard, newChoices, newDisplay },
+    });
+    eventBus.emit.FLASHCARD_ANSWER({ correct: false, stackName });
+    onAnswerRef.current?.({ correct: false, questionAdvanced: true });
+  }, [stackName]);
+
   return {
     score: { successes: state.successes, fails: state.fails },
     card: state.card,
@@ -271,5 +321,6 @@ export const useFlashcardGame = (
     timerEnabled: timerSettings.enabled,
     timerDuration: state.timerDuration,
     submitAnswer,
+    revealAnswer,
   };
 };

@@ -1,13 +1,63 @@
-import { describe, expect, it, vi } from "vitest";
+import { act, renderHook } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PlayingCard } from "../../types/playingcard";
+import type { AnswerOutcome } from "../../types/session";
 import { createDeckPosition, stacks } from "../../types/stacks";
+import { formatCardName } from "../../utils/card-formatting";
 import {
   type GameAction,
   type GameState,
   gameReducer,
   generateNewCardAndChoices,
   isCorrectAnswer,
+  useFlashcardGame,
 } from "./use-flashcard-game";
+
+const INDEX_ANSWER_PATTERN = /^\d+$/;
+
+// --- Mocks for hook-level tests ---
+
+vi.mock("@mantine/notifications", () => ({
+  notifications: { show: vi.fn() },
+}));
+
+vi.mock("../../hooks/use-flashcard-timer", () => ({
+  useFlashcardTimer: () => ({
+    timerSettings: { enabled: false, duration: 15 },
+  }),
+}));
+
+vi.mock("../../utils/localstorage", () => ({
+  useLocalDb: (_key: string, defaultValue: string) => [defaultValue],
+}));
+
+vi.mock("../../hooks/use-game-timer", () => ({
+  timerReducerCases: {
+    TICK: (state: { timeRemaining: number }) => ({
+      ...state,
+      timeRemaining: Math.max(0, state.timeRemaining - 1),
+    }),
+    RESET_TIMER: (
+      state: { timeRemaining: number; timerDuration: number },
+      duration: number
+    ) => ({
+      ...state,
+      timeRemaining: duration,
+      timerDuration: duration,
+    }),
+  },
+  useGameTimer: vi.fn(),
+}));
+
+vi.mock("../../hooks/use-reset-game-on-stack-change", () => ({
+  useResetGameOnStackChange: vi.fn(),
+}));
+
+vi.mock("../../services/event-bus", () => ({
+  eventBus: {
+    emit: { FLASHCARD_ANSWER: vi.fn() },
+  },
+}));
 
 const testStack = stacks.mnemonica.order;
 
@@ -254,6 +304,69 @@ describe("flashcard game utils", () => {
 });
 
 describe("gameReducer", () => {
+  describe("REVEAL_ANSWER action", () => {
+    it("increments fails", () => {
+      const state = createTestState({ fails: 2 });
+      const { card: newCard, choices: newChoices } =
+        generateNewCardAndChoices(testStack);
+      const action: GameAction = {
+        type: "REVEAL_ANSWER",
+        payload: { newCard, newChoices, newDisplay: "card" },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.fails).toBe(3);
+    });
+
+    it("does not change successes", () => {
+      const state = createTestState({ successes: 5 });
+      const { card: newCard, choices: newChoices } =
+        generateNewCardAndChoices(testStack);
+      const action: GameAction = {
+        type: "REVEAL_ANSWER",
+        payload: { newCard, newChoices, newDisplay: "card" },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.successes).toBe(5);
+    });
+
+    it("advances to a new card", () => {
+      const state = createTestState();
+      const { card: newCard, choices: newChoices } =
+        generateNewCardAndChoices(testStack);
+      const action: GameAction = {
+        type: "REVEAL_ANSWER",
+        payload: { newCard, newChoices, newDisplay: "index" },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.card).toEqual(newCard);
+      expect(newState.choices).toEqual(newChoices);
+      expect(newState.display).toBe("index");
+    });
+
+    it("resets timeRemaining to timerDuration", () => {
+      const state = createTestState({
+        timeRemaining: 3,
+        timerDuration: 15,
+      });
+      const { card: newCard, choices: newChoices } =
+        generateNewCardAndChoices(testStack);
+      const action: GameAction = {
+        type: "REVEAL_ANSWER",
+        payload: { newCard, newChoices, newDisplay: "card" },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.timeRemaining).toBe(15);
+    });
+  });
+
   describe("RESET_GAME action", () => {
     it("resets scores to zero", () => {
       const state = createTestState({ successes: 5, fails: 3 });
@@ -301,6 +414,133 @@ describe("gameReducer", () => {
 
       expect(newState.timerDuration).toBe(30);
       expect(newState.timeRemaining).toBe(30);
+    });
+  });
+});
+
+describe("useFlashcardGame hook", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  describe("revealAnswer()", () => {
+    it("shows a notification with the card index when showing a card", async () => {
+      const { notifications } = vi.mocked(
+        await import("@mantine/notifications")
+      );
+      const { result } = renderHook(() =>
+        useFlashcardGame(testStack, "Mnemonica")
+      );
+
+      // Default mode is "bothmodes", initial display is "card", so the answer is the index
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(notifications.show).toHaveBeenCalledWith(
+        expect.objectContaining({
+          color: "yellow",
+          message: expect.stringMatching(INDEX_ANSWER_PATTERN),
+        })
+      );
+    });
+
+    it("shows a notification with the card name when showing an index", async () => {
+      const { notifications } = vi.mocked(
+        await import("@mantine/notifications")
+      );
+      // Mock random to always return "index" display mode
+      vi.spyOn(Math, "random").mockReturnValue(0.99);
+
+      const { result } = renderHook(() =>
+        useFlashcardGame(testStack, "Mnemonica")
+      );
+
+      // Reveal once to advance past the initial "card" display
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      // Now display should be "index", so the answer is the card name
+      const currentCard = result.current.card;
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(notifications.show).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          color: "yellow",
+          message: formatCardName(currentCard.card),
+        })
+      );
+    });
+
+    it("increments fails count", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(testStack, "Mnemonica")
+      );
+
+      expect(result.current.score.fails).toBe(0);
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(result.current.score.fails).toBe(1);
+    });
+
+    it("advances to a new card", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(testStack, "Mnemonica")
+      );
+
+      const cardBefore = result.current.card;
+
+      let cardChanged = false;
+      for (let i = 0; i < 10; i++) {
+        act(() => {
+          result.current.revealAnswer();
+        });
+        if (
+          result.current.card.index !== cardBefore.index ||
+          result.current.card.card.suit !== cardBefore.card.suit
+        ) {
+          cardChanged = true;
+          break;
+        }
+      }
+
+      expect(cardChanged).toBe(true);
+    });
+
+    it("calls onAnswer with correct: false and questionAdvanced: true", () => {
+      const onAnswer = vi.fn<(outcome: AnswerOutcome) => void>();
+      const { result } = renderHook(() =>
+        useFlashcardGame(testStack, "Mnemonica", { onAnswer })
+      );
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(onAnswer).toHaveBeenCalledWith({
+        correct: false,
+        questionAdvanced: true,
+      });
+    });
+
+    it("does not change successes count", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(testStack, "Mnemonica")
+      );
+
+      expect(result.current.score.successes).toBe(0);
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(result.current.score.successes).toBe(0);
     });
   });
 });

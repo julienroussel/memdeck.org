@@ -96,10 +96,9 @@ test.describe("User Journeys", () => {
     expect(totalScore).toBeGreaterThan(0);
 
     // User can access settings to change mode (settings button in main area)
-    const settingsButton = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") });
+    const settingsButton = page.getByRole("button", {
+      name: "Flashcard settings",
+    });
     await settingsButton.click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
@@ -306,10 +305,9 @@ test.describe("User Journeys", () => {
     await page.waitForLoadState("networkidle");
 
     // Settings button is in main content area (not header)
-    const settingsButton = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") });
+    const settingsButton = page.getByRole("button", {
+      name: "Flashcard settings",
+    });
     await settingsButton.click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
