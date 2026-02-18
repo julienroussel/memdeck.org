@@ -51,11 +51,10 @@ test.describe("localStorage Persistence", () => {
 
     // Open options and change mode
     await page.getByRole("button", { name: "Flashcard settings" }).click();
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).toBeVisible();
 
     // Select card-only mode
     await page.locator("text=Card only").first().click();
-    await page.waitForTimeout(300);
 
     // Verify localStorage (Mantine's useLocalStorage stores JSON stringified values)
     const savedMode = await page.evaluate(() => {
@@ -65,7 +64,7 @@ test.describe("localStorage Persistence", () => {
 
     // Close options
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).not.toBeVisible();
 
     // Reload page
     await page.reload();
@@ -90,7 +89,7 @@ test.describe("localStorage Persistence", () => {
 
     if (isLight) {
       await themeSwitchTrack.click();
-      await page.waitForTimeout(300);
+      await expect(themeSwitchInput).not.toBeChecked();
     }
 
     // Verify localStorage (color scheme is stored as plain string, not JSON stringified)
@@ -126,12 +125,12 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     await page.getByRole("button", { name: "Flashcard settings" }).click();
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).toBeVisible();
 
     await page.locator("text=Number only").first().click();
-    await page.waitForTimeout(300);
+
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).not.toBeVisible();
 
     // Set theme to dark (use switch track, Mantine hides the actual checkbox)
     const themeSwitchTrack = page.locator(".mantine-Switch-track").first();
@@ -139,7 +138,7 @@ test.describe("localStorage Persistence", () => {
     const isLight = await themeSwitchInput.isChecked();
     if (isLight) {
       await themeSwitchTrack.click();
-      await page.waitForTimeout(300);
+      await expect(themeSwitchInput).not.toBeChecked();
     }
 
     // Reload and verify all settings persist

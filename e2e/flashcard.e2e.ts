@@ -51,7 +51,6 @@ test.describe("Flashcard Training", () => {
       .locator("button")
       .filter({ has: page.locator("svg") });
     await settingsButton.click();
-    await page.waitForTimeout(300);
 
     // Verify modal is displayed
     await expect(page.locator("text=Flashcard options")).toBeVisible();
@@ -63,15 +62,16 @@ test.describe("Flashcard Training", () => {
   });
 
   test("should display card in card-only mode by default", async ({ page }) => {
-    // In default both modes, wait a moment for initial card
-    await page.waitForTimeout(500);
+    // In default both modes, a card image or number card should be visible
+    // Card spread items are always present, so wait for those as a reliable indicator
+    await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
 
     // Look for either a card image or number card - one should be visible
     const cardImage = page.locator("img[src*='cards/']").first();
-    const numberCard = page.locator("text=/^\\d{1,2}$/");
+    const numberCard = page.locator("[class*='numberCard']");
 
     const hasCard = await cardImage.isVisible().catch(() => false);
-    const hasNumber = await numberCard.isVisible().catch(() => false);
+    const hasNumber = (await numberCard.count()) > 0;
 
     expect(hasCard || hasNumber).toBeTruthy();
   });
@@ -79,22 +79,22 @@ test.describe("Flashcard Training", () => {
   test("should display choice cards or numbers for user to select from", async ({
     page,
   }) => {
-    await page.waitForTimeout(500);
-
     // Should have at least 5 choice items visible
     const allCards = page.locator("img[src*='cards/']");
     const allNumbers = page.locator("[class*='numberCard']");
 
-    const cardCount = await allCards.count();
-    const numberCount = await allNumbers.count();
-
-    expect(cardCount + numberCount).toBeGreaterThanOrEqual(5);
+    await expect(async () => {
+      const cardCount = await allCards.count();
+      const numberCount = await allNumbers.count();
+      expect(cardCount + numberCount).toBeGreaterThanOrEqual(5);
+    }).toPass();
   });
 
   test("should allow selecting an answer by clicking on a card choice", async ({
     page,
   }) => {
-    await page.waitForTimeout(500);
+    // Wait for card spread to render
+    await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
 
     // Get initial score from badges
     const scoreBadges = page.locator(".mantine-Badge-root");
@@ -112,15 +112,14 @@ test.describe("Flashcard Training", () => {
       await cardSpreadItems.last().click({ force: true });
     }
 
-    await page.waitForTimeout(500);
-
     // Score should have changed - one of the badges should now show 1
-    const newSuccess = await scoreBadges.first().textContent();
-    const newFails = await scoreBadges.last().textContent();
-
-    const scoreChanged =
-      newSuccess !== initialSuccess || newFails !== initialFails;
-    expect(scoreChanged).toBeTruthy();
+    await expect(async () => {
+      const newSuccess = await scoreBadges.first().textContent();
+      const newFails = await scoreBadges.last().textContent();
+      const scoreChanged =
+        newSuccess !== initialSuccess || newFails !== initialFails;
+      expect(scoreChanged).toBeTruthy();
+    }).toPass();
   });
 
   test("should update score when correct answer is selected", async ({
@@ -132,7 +131,7 @@ test.describe("Flashcard Training", () => {
 
     // Make multiple selections to increase score
     for (let i = 0; i < 3; i++) {
-      await page.waitForTimeout(500);
+      await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
 
       // Click on a choice from the card spread
       // Use force:true because card spread items overlap each other visually
@@ -142,15 +141,15 @@ test.describe("Flashcard Training", () => {
       }
     }
 
-    await page.waitForTimeout(300);
-
     // Score should have increased - at least one badge should show a non-zero value
-    const successText = await scoreBadges.first().textContent();
-    const failsText = await scoreBadges.last().textContent();
-    const totalScore =
-      Number.parseInt(successText || "0", 10) +
-      Number.parseInt(failsText || "0", 10);
-    expect(totalScore).toBeGreaterThan(0);
+    await expect(async () => {
+      const successText = await scoreBadges.first().textContent();
+      const failsText = await scoreBadges.last().textContent();
+      const totalScore =
+        Number.parseInt(successText || "0", 10) +
+        Number.parseInt(failsText || "0", 10);
+      expect(totalScore).toBeGreaterThan(0);
+    }).toPass();
   });
 
   test("should allow changing flashcard mode to card-only", async ({
@@ -162,16 +161,15 @@ test.describe("Flashcard Training", () => {
       .locator("button")
       .filter({ has: page.locator("svg") });
     await settingsButton.click();
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).toBeVisible();
 
     // Select "Card only" option (click on the Radio.Card)
     const cardOnlyOption = page.locator("text=Card only").first();
     await cardOnlyOption.click();
-    await page.waitForTimeout(300);
 
     // Close modal
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).not.toBeVisible();
 
     // Verify mode was saved to localStorage (values are JSON-stringified)
     const mode = await page.evaluate(() => {
@@ -191,16 +189,15 @@ test.describe("Flashcard Training", () => {
       .locator("button")
       .filter({ has: page.locator("svg") });
     await settingsButton.click();
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).toBeVisible();
 
     // Select "Number only" option (click on the Radio.Card)
     const numberOnlyOption = page.locator("text=Number only").first();
     await numberOnlyOption.click();
-    await page.waitForTimeout(300);
 
     // Close modal
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).not.toBeVisible();
 
     // Verify mode was saved to localStorage (values are JSON-stringified)
     const mode = await page.evaluate(() => {
@@ -220,10 +217,9 @@ test.describe("Flashcard Training", () => {
       .locator("button")
       .filter({ has: page.locator("svg") });
     await settingsButton.click();
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).toBeVisible();
 
     await page.locator("text=Card only").first().click();
-    await page.waitForTimeout(300);
 
     // Check localStorage directly (values are JSON-stringified)
     const mode = await page.evaluate(() => {
@@ -241,13 +237,12 @@ test.describe("Flashcard Training", () => {
       .locator("button")
       .filter({ has: page.locator("svg") });
     await settingsButton.click();
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).toBeVisible();
 
     await page.locator("text=Number only").first().click();
-    await page.waitForTimeout(300);
 
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).not.toBeVisible();
 
     // Reload page
     await page.reload();
@@ -259,7 +254,7 @@ test.describe("Flashcard Training", () => {
       .locator("button")
       .filter({ has: page.locator("svg") });
     await settingsButtonAfterReload.click();
-    await page.waitForTimeout(300);
+    await expect(page.getByRole("dialog")).toBeVisible();
 
     // Check that "Number only" option is selected (has data-checked attribute)
     const numberOnlyCard = page.locator(

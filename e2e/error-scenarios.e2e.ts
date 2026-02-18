@@ -592,12 +592,9 @@ test.describe("Error Scenarios - Edge Cases", () => {
     await page.waitForLoadState("networkidle");
 
     // Make some progress
-    const cardSpreadItems = page.getByRole("option");
-    if ((await cardSpreadItems.count()) > 0) {
-      await cardSpreadItems.last().click({ force: true });
-      // Brief wait to let the click register before reloading
-      await page.waitForTimeout(500);
-    }
+    const cardSpreadItems = page.locator(".cardSpreadCard");
+    await expect(cardSpreadItems.first()).toBeVisible();
+    await cardSpreadItems.last().click({ force: true });
 
     // Reload mid-session
     await page.reload();

@@ -147,8 +147,8 @@ test.describe("Navigation", () => {
     // If menu was hidden, click burger
     if (!isVisible) {
       await burgerButton.click();
-      await page.waitForTimeout(300); // Wait for menu animation
-      isVisible = await resourcesLink.isVisible().catch(() => false);
+      await expect(resourcesLink).toBeVisible();
+      isVisible = true;
     }
 
     await expect(resourcesLink).toBeVisible();

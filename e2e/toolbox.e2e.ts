@@ -243,26 +243,24 @@ test.describe("Toolbox Page", () => {
     // We're on toolbox from beforeEach
     await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
 
-    // Navigate to home
-    await page.locator("a:has-text('Home')").first().click();
-    await page.waitForURL(HOME_URL_PATTERN);
+    // Navigate to home using full navigation (creates reliable history entry)
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(HOME_URL_PATTERN);
 
-    // Use browser back button
+    // Use browser back button to return to toolbox
     await page.goBack();
-    await page.waitForURL(TOOLBOX_URL_PATTERN);
+    await page.waitForLoadState("networkidle");
+    await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
 
     // Should be back on toolbox
-    await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
     await expect(
       page.getByRole("heading", { name: "Toolbox", level: 1 })
     ).toBeVisible();
 
-    // Use browser forward button
+    // Use browser forward button to return to home
     await page.goForward();
-    await page.waitForURL(HOME_URL_PATTERN);
-
-    // Should be back on home
+    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(HOME_URL_PATTERN);
   });
 });
