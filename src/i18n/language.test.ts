@@ -42,8 +42,16 @@ afterEach(() => {
 });
 
 describe("SUPPORTED_LANGUAGES", () => {
-  it("contains en, fr, es, de", () => {
-    expect(SUPPORTED_LANGUAGES).toEqual(["en", "fr", "es", "de"]);
+  it("contains en, fr, es, de, it, nl, pt", () => {
+    expect(SUPPORTED_LANGUAGES).toEqual([
+      "en",
+      "fr",
+      "es",
+      "de",
+      "it",
+      "nl",
+      "pt",
+    ]);
   });
 });
 
@@ -121,6 +129,18 @@ describe("isSupportedLanguage", () => {
 
   it("returns true for de", () => {
     expect(isSupportedLanguage("de")).toBe(true);
+  });
+
+  it("returns true for it", () => {
+    expect(isSupportedLanguage("it")).toBe(true);
+  });
+
+  it("returns true for nl", () => {
+    expect(isSupportedLanguage("nl")).toBe(true);
+  });
+
+  it("returns true for pt", () => {
+    expect(isSupportedLanguage("pt")).toBe(true);
   });
 
   it("returns false for unsupported language ja", () => {
@@ -222,6 +242,63 @@ describe("changeLanguage", () => {
     expect(mockI18n.changeLanguage).toHaveBeenCalledWith("de");
     expect(storage.get(LANGUAGE_LSK)).toBe("de");
     expect(document.documentElement.lang).toBe("de");
+  });
+
+  it("switches to it and loads the Italian bundle when not cached", async () => {
+    mockI18n.hasResourceBundle.mockReturnValue(false);
+
+    await changeLanguage("it");
+
+    expect(mockI18n.hasResourceBundle).toHaveBeenCalledWith(
+      "it",
+      "translation"
+    );
+    expect(mockI18n.addResourceBundle).toHaveBeenCalledWith(
+      "it",
+      "translation",
+      expect.any(Object)
+    );
+    expect(mockI18n.changeLanguage).toHaveBeenCalledWith("it");
+    expect(storage.get(LANGUAGE_LSK)).toBe("it");
+    expect(document.documentElement.lang).toBe("it");
+  });
+
+  it("switches to nl and loads the Dutch bundle when not cached", async () => {
+    mockI18n.hasResourceBundle.mockReturnValue(false);
+
+    await changeLanguage("nl");
+
+    expect(mockI18n.hasResourceBundle).toHaveBeenCalledWith(
+      "nl",
+      "translation"
+    );
+    expect(mockI18n.addResourceBundle).toHaveBeenCalledWith(
+      "nl",
+      "translation",
+      expect.any(Object)
+    );
+    expect(mockI18n.changeLanguage).toHaveBeenCalledWith("nl");
+    expect(storage.get(LANGUAGE_LSK)).toBe("nl");
+    expect(document.documentElement.lang).toBe("nl");
+  });
+
+  it("switches to pt and loads the Portuguese bundle when not cached", async () => {
+    mockI18n.hasResourceBundle.mockReturnValue(false);
+
+    await changeLanguage("pt");
+
+    expect(mockI18n.hasResourceBundle).toHaveBeenCalledWith(
+      "pt",
+      "translation"
+    );
+    expect(mockI18n.addResourceBundle).toHaveBeenCalledWith(
+      "pt",
+      "translation",
+      expect.any(Object)
+    );
+    expect(mockI18n.changeLanguage).toHaveBeenCalledWith("pt");
+    expect(storage.get(LANGUAGE_LSK)).toBe("pt");
+    expect(document.documentElement.lang).toBe("pt");
   });
 
   it("switches to fr without loading when bundle is already cached", async () => {

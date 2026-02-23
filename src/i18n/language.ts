@@ -2,7 +2,15 @@ import i18n from "i18next";
 import { LANGUAGE_LSK } from "../constants";
 import { includes } from "../utils/includes";
 
-export const SUPPORTED_LANGUAGES = ["en", "fr", "es", "de"] as const;
+export const SUPPORTED_LANGUAGES = [
+  "en",
+  "fr",
+  "es",
+  "de",
+  "it",
+  "nl",
+  "pt",
+] as const;
 type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 
 export const LANGUAGE_LABELS = {
@@ -10,6 +18,9 @@ export const LANGUAGE_LABELS = {
   fr: "Français",
   es: "Español",
   de: "Deutsch",
+  it: "Italiano",
+  nl: "Nederlands",
+  pt: "Português",
 } as const satisfies Record<SupportedLanguage, string>;
 
 export const LANGUAGE_CODES = {
@@ -17,6 +28,9 @@ export const LANGUAGE_CODES = {
   fr: "FR",
   es: "ES",
   de: "DE",
+  it: "IT",
+  nl: "NL",
+  pt: "PT",
 } as const satisfies Record<SupportedLanguage, string>;
 
 export const isSupportedLanguage = (lang: string): lang is SupportedLanguage =>
@@ -47,6 +61,9 @@ export const languageLoaders: Record<
   fr: () => import("./locales/fr.json"),
   es: () => import("./locales/es.json"),
   de: () => import("./locales/de.json"),
+  it: () => import("./locales/it.json"),
+  nl: () => import("./locales/nl.json"),
+  pt: () => import("./locales/pt.json"),
 };
 
 let changeLanguageCallId = 0;
