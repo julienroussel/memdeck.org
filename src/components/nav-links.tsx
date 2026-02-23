@@ -62,6 +62,7 @@ export const NavLinks = memo(function NavLinks({
       />
 
       <NavLink
+        component="button"
         defaultOpened
         label={t("nav.tools")}
         leftSection={<IconTools size={16} stroke={1.5} />}

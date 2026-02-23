@@ -12,9 +12,9 @@ import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 // eslint-disable-next-line import/no-unresolved
-import memdeckDarkLogo from "/memdeck-black.png";
+import memdeckDarkLogo from "/memdeck-black.webp";
 // eslint-disable-next-line import/no-unresolved
-import memdeckLightLogo from "/memdeck-white.png";
+import memdeckLightLogo from "/memdeck-white.webp";
 import { GITHUB_URL } from "../constants";
 import { analytics } from "../services/analytics";
 import { Help } from "./help";
@@ -48,7 +48,14 @@ export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
   return (
     <Group h="100%" justify="space-between" px="md">
       <Group>
-        <Burger hiddenFrom="sm" onClick={toggle} opened={opened} size="sm" />
+        <Burger
+          aria-expanded={opened}
+          aria-label={t("header.toggleNav")}
+          hiddenFrom="sm"
+          onClick={toggle}
+          opened={opened}
+          size="sm"
+        />
         <Link style={homeLinkStyle} to="/">
           <Image
             alt=""
