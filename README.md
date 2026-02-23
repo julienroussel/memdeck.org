@@ -3,29 +3,12 @@
 [![CI](https://github.com/julienroussel/memdeck.org/actions/workflows/CI.yml/badge.svg)](https://github.com/julienroussel/memdeck.org/actions/workflows/CI.yml)
 [![Deploy](https://github.com/julienroussel/memdeck.org/actions/workflows/deploy.yml/badge.svg)](https://github.com/julienroussel/memdeck.org/actions/workflows/deploy.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
-[![Mantine](https://img.shields.io/badge/Mantine-8-339AF0?logo=mantine&logoColor=white)](https://mantine.dev/)
-[![Biome](https://img.shields.io/badge/Biome-2-60A5FA?logo=biome&logoColor=white)](https://biomejs.dev/)
-[![Playwright](https://img.shields.io/badge/Playwright-E2E-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/)
-[![pnpm](https://img.shields.io/badge/pnpm-10-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
 
-**MemDeck** is a simple yet effective tool designed to help anyone master a memorized deck of cards. Whether you're a magician, a memory enthusiast, or just curious about the art of memorization, MemDeck provides straightforward exercises to train and test your knowledge.
+A free, open-source training tool for mastering memorized deck systems. Built for magicians and memory enthusiasts.
 
-## About the Project
+**[Try it live →](https://memdeck.org)**
 
-This is a side project, built with one goal in mind: **keeping things simple**. No distractions, no unnecessary features — just a clean and efficient tool to help you learn and retain a memorized deck.
-
-## Supported Stacks
-
-MemDeck supports five famous memorized deck systems:
-
-- **Mnemonica** — Juan Tamariz
-- **Aronson** — Simon Aronson
-- **Memorandum** — Woody Aragon
-- **Redford** — Patrick Redford
-- **Particle** — Joshua Jay
+![MemDeck flashcard trainer](docs/screenshot.png)
 
 ## Features
 
@@ -33,87 +16,83 @@ MemDeck supports five famous memorized deck systems:
 
 Test your recall with three training modes:
 
-- **Card Only** — See a card, guess its position in the stack
-- **Number Only** — See a position, pick the correct card
-- **Both Modes** — Randomly alternates between the two
+- **Card → Position** — See a card, guess its position in the stack
+- **Position → Card** — See a position, pick the correct card
+- **Mixed** — Randomly alternates between the two
 
-Each mode presents five choices and tracks your score in real time. An optional **timer mode** adds time pressure with configurable durations (5s, 10s, 15s, 30s, 60s).
+Each mode presents five choices and tracks your score in real time. An optional timer adds time pressure (5s–60s).
 
 ### ACAAN Calculator
 
-Train your Any Card At Any Number calculations:
-
-- A target card and position are shown
-- Calculate and input the required cut depth
-- Instant feedback with the correct answer
-- Optional timer mode with the same duration options
+Practice Any Card At Any Number calculations: a target card and position are shown, you calculate the required cut depth and get instant feedback.
 
 ### Interactive Card Spread
 
-Browse any selected stack with an interactive spread that supports mouse drag, touch gestures, and keyboard navigation (arrow keys).
+Browse any stack with a draggable, touch-friendly spread. Supports mouse, touch gestures, and keyboard navigation.
 
-### Resources
+### Install as App
 
-A curated collection of books and materials for learning memorized deck systems, including works by Tamariz, Aronson, Hartling, Aragon, Redford, and Jay.
+MemDeck is a Progressive Web App — install it on your phone or desktop for offline access.
+
+### Multi-language
+
+Available in English, French, Spanish, and German.
 
 ### Dark / Light Mode
 
-Toggle between dark and light themes. Your preference is persisted across sessions.
+Toggle themes freely. Your preference is saved across sessions.
 
-## Tech Stack
+## Supported Stacks
 
-- **React** 19 with **TypeScript**
-- **Mantine** UI framework
-- **Vite** for builds and development
-- **Vitest** + **Playwright** for unit and E2E testing
-- **Biome** (via Ultracite) for formatting and linting
+| Stack | Author |
+|-------|--------|
+| Mnemonica | Juan Tamariz |
+| Aronson | Simon Aronson |
+| Memorandum | Woody Aragon |
+| Redford | Patrick Redford |
+| Particle | Joshua Jay |
 
-Runs entirely client-side with no backend. State is persisted in localStorage.
+## Getting Started
 
-## Installation
+```sh
+git clone https://github.com/julienroussel/memdeck.org
+cd memdeck.org
+pnpm install
+pnpm run dev
+```
 
-To run MemDeck locally:
-
-1. Clone the repository:
-
-   ```sh
-   git clone https://github.com/julienroussel/memdeck.org
-   cd memdeck.org
-   ```
-
-2. Install dependencies:
-
-   ```sh
-   pnpm install
-   ```
-
-3. Start the development server:
-
-   ```sh
-   pnpm run dev
-   ```
-
-## Development
+<details>
+<summary><strong>Development commands</strong></summary>
 
 ```bash
-pnpm run lint          # Check formatting and lint rules
+pnpm run lint          # Check formatting and lint rules (Biome)
 pnpm run typecheck     # Type checking
-pnpm run test          # Unit tests
+pnpm run test          # Unit tests (Vitest)
 pnpm run test:e2e      # E2E tests (Playwright)
 pnpm run validate      # Full validation (knip + lint + typecheck + fta)
 pnpm run build         # Production build
 ```
 
-## Contributions
+</details>
 
-Want to improve MemDeck? Feel free to fork the project, open an issue, or submit a pull request. Keep it simple, keep it useful.
+## Tech Stack
+
+React 19 · TypeScript · Mantine · Vite · Vitest · Playwright · Biome
+
+Runs entirely client-side with no backend. State is persisted in localStorage.
+
+## Contributing
+
+Want to help? Ideas for contributions:
+
+- Add a new memorized deck system
+- Improve translations or add a new language
+- Report bugs or suggest features via [issues](https://github.com/julienroussel/memdeck.org/issues)
 
 ## License
 
-This project is open-source and available under the [GPL-3.0 License](LICENSE).
+[GPL-3.0](LICENSE)
 
 ## Acknowledgements
 
-A huge shout-out to all memory enthusiasts and magicians who inspired this project!
-
-Card SVG images are from <https://tekeye.uk/playing_cards/svg-playing-cards>
+Card SVG images from [tekeye.uk](https://tekeye.uk/playing_cards/svg-playing-cards).
