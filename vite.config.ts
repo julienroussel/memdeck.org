@@ -1,11 +1,17 @@
+import { execSync } from "node:child_process";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
+
+const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
 
 const LOCALE_CHUNK_RE = /i18n\/locales\/(?!en)(\w+)\.json$/;
 
 // https://vite.dev/config/
 export default defineConfig({
+  define: {
+    __COMMIT_HASH__: JSON.stringify(commitHash),
+  },
   plugins: [
     react(),
     VitePWA({
