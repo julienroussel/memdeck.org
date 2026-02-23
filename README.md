@@ -36,7 +36,7 @@ MemDeck is a Progressive Web App — install it on your phone or desktop for off
 
 ### Multi-language
 
-Available in English, French, Spanish, and German.
+Available in English, French, Spanish, German, Italian, Dutch, and Portuguese.
 
 ### Dark / Light Mode
 

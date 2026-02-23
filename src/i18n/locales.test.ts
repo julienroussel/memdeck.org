@@ -3,6 +3,9 @@ import de from "./locales/de.json";
 import en from "./locales/en.json";
 import es from "./locales/es.json";
 import fr from "./locales/fr.json";
+import itLocale from "./locales/it.json";
+import nl from "./locales/nl.json";
+import pt from "./locales/pt.json";
 
 /**
  * Recursively extracts all nested keys from an object as dot-separated paths.
@@ -31,6 +34,9 @@ const locales = [
   { code: "fr", data: fr },
   { code: "es", data: es },
   { code: "de", data: de },
+  { code: "it", data: itLocale },
+  { code: "nl", data: nl },
+  { code: "pt", data: pt },
 ] as const;
 
 describe("locale key parity", () => {
