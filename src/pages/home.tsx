@@ -10,7 +10,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconBook2 } from "@tabler/icons-react";
-import { useMemo } from "react";
+import { startTransition, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { CardSpread } from "../components/card-spread/card-spread";
@@ -32,6 +32,14 @@ export const Home = () => {
     () => (stack ? cardItems([...stack.order]) : null),
     [stack]
   );
+
+  const [showSpread, setShowSpread] = useState(false);
+
+  useEffect(() => {
+    startTransition(() => {
+      setShowSpread(true);
+    });
+  }, []);
 
   return (
     <div className="fullMantineContainerHeight">
@@ -70,7 +78,6 @@ export const Home = () => {
               <StackPicker />
               <Space h="lg" />
               <Card
-                aria-label={t("home.guideCardAriaLabel")}
                 component={Link}
                 padding="lg"
                 radius="md"
@@ -101,7 +108,7 @@ export const Home = () => {
           )}
         </Grid.Col>
         <Grid.Col span={12} style={{ height: "100%" }}>
-          {stackKey !== "" && stackCards && (
+          {stackKey !== "" && stackCards && showSpread && (
             <>
               <Space h="lg" />
               <Text>

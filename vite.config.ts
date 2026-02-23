@@ -1,5 +1,5 @@
 import { execSync } from "node:child_process";
-import react from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react-swc";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
@@ -18,7 +18,7 @@ export default defineConfig({
       registerType: "prompt",
       injectRegister: false,
       workbox: {
-        globPatterns: ["**/*.{js,css,html}", "cards/*.svg"],
+        globPatterns: ["**/*.{js,css,html,webp}", "cards/*.svg"],
         // Locale chunks (locale-*.js) are lazy-loaded on demand —
         // exclude them from precaching to avoid downloading all locales upfront.
         globIgnores: ["assets/locale-*.js"],
@@ -63,39 +63,39 @@ export default defineConfig({
         background_color: "#ffffff",
         icons: [
           {
-            src: "/memdeck-logo-white.png",
+            src: "/memdeck-logo-white.webp",
             sizes: "512x512",
-            type: "image/png",
+            type: "image/webp",
             purpose: "any",
           },
           {
-            src: "/memdeck-logo-black.png",
+            src: "/memdeck-logo-black.webp",
             sizes: "512x512",
-            type: "image/png",
+            type: "image/webp",
             purpose: "any",
           },
           {
-            src: "/memdeck-logo-white.png",
+            src: "/memdeck-logo-white.webp",
             sizes: "512x512",
-            type: "image/png",
+            type: "image/webp",
             purpose: "maskable",
           },
           {
-            src: "/memdeck-white.png",
+            src: "/memdeck-white.webp",
             sizes: "192x192",
-            type: "image/png",
+            type: "image/webp",
             purpose: "any",
           },
           {
-            src: "/memdeck-black.png",
+            src: "/memdeck-black.webp",
             sizes: "192x192",
-            type: "image/png",
+            type: "image/webp",
             purpose: "any",
           },
           {
-            src: "/memdeck-white.png",
+            src: "/memdeck-white.webp",
             sizes: "192x192",
-            type: "image/png",
+            type: "image/webp",
             purpose: "maskable",
           },
         ],

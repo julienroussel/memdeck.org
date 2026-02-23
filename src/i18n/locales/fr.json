@@ -53,6 +53,7 @@
   },
   "header": {
     "githubAriaLabel": "Github",
+    "toggleNav": "Ouvrir le menu de navigation",
     "toggleColorScheme": "Changer le thème de couleur",
     "helpAriaLabel": "Aide",
     "languageAriaLabel": "Langue"
@@ -68,7 +69,6 @@
     "welcome": "Bienvenue sur MemDeck",
     "intro": "J'espère que ces outils vous aideront à progresser dans l'apprentissage de votre stack. Consultez le <guideLink>guide</guideLink> pour un aperçu de tout ce que MemDeck offre. Besoin d'aide ou une idée manque ? Contactez-moi sur <githubLink>Github</githubLink> !",
     "firstTimer": "Bienvenue, nouveau venu ! Choisissez votre stack préféré ci-dessous pour débloquer toutes les fonctionnalités. Vous pouvez changer à tout moment via le sélecteur en bas du menu.",
-    "guideCardAriaLabel": "Lire le guide MemDeck",
     "guideCardTitle": "Nouveau ? Lisez le Guide",
     "guideCardDescription": "Découvrez tous les modes d'entraînement et comment tirer le meilleur parti de MemDeck.",
     "selectedStack": "Votre stack sélectionné est <bold>{{stackName}}</bold>"

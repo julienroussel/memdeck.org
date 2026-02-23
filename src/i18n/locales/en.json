@@ -53,6 +53,7 @@
   },
   "header": {
     "githubAriaLabel": "Github",
+    "toggleNav": "Toggle navigation menu",
     "toggleColorScheme": "Toggle color scheme",
     "helpAriaLabel": "Help",
     "languageAriaLabel": "Language"
@@ -68,7 +69,6 @@
     "welcome": "Welcome to MemDeck",
     "intro": "Hope these tools help you level up your memorized deck stack learning. Check out the <guideLink>guide</guideLink> for a walkthrough of everything MemDeck offers. Need a hand or think something's missing? Hit me up on <githubLink>Github</githubLink>!",
     "firstTimer": "Hey there, first-timer! Pick your favorite memorized deck stack below to unlock all the cool features. You can switch it up anytime using the selector at the bottom of the menu.",
-    "guideCardAriaLabel": "Read the MemDeck guide",
     "guideCardTitle": "New here? Read the Guide",
     "guideCardDescription": "Learn about all the training modes and how to get the most out of MemDeck.",
     "selectedStack": "Your selected stack is <bold>{{stackName}}</bold>"

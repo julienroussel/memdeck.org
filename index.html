@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="apple-touch-icon" href="/memdeck-logo-white.png">
+    <link rel="apple-touch-icon" href="/memdeck-logo-white.webp">
     <meta name="format-detection" content="telephone=no">
     <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <link
       rel="icon"
-      type="image/png"
-      href="/memdeck-black.png"
+      type="image/webp"
+      href="/memdeck-black.webp"
       media="(prefers-color-scheme: light)"
     >
     <link
       rel="icon"
-      type="image/png"
-      href="/memdeck-white.png"
+      type="image/webp"
+      href="/memdeck-white.webp"
       media="(prefers-color-scheme: dark)"
     >
     <link rel="canonical" href="https://memdeck.org/">
@@ -89,6 +89,27 @@
           "",
           window.location.pathname.slice(0, -1) + decoded + window.location.hash
         );
+      }
+    })();
+    </script>
+    <script>
+    "use strict";
+    // Apply Mantine color scheme before React boots to prevent theme flash
+    (() => {
+      try {
+        const value = window.localStorage.getItem("memdeck-app-color-scheme");
+        let scheme = "light";
+        if (value === "light" || value === "dark") {
+          scheme = value;
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          scheme = "dark";
+        }
+        document.documentElement.setAttribute(
+          "data-mantine-color-scheme",
+          scheme
+        );
+      } catch (_e) {
+        // Silently ignore localStorage access errors
       }
     })();
     </script>
