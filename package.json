@@ -13,7 +13,7 @@
     "url": "git+https://github.com/julienroussel/memdeck.org.git"
   },
   "author": "Julien Roussel",
-  "packageManager": "pnpm@10.30.0",
+  "packageManager": "pnpm@10.30.1",
   "engines": {
     "node": ">=25",
     "pnpm": ">=10"
@@ -76,7 +76,7 @@
     "react-error-boundary": "6.1.1",
     "react-ga4": "2.1.0",
     "react-i18next": "16.5.4",
-    "react-router": "7.13.0",
+    "react-router": "7.13.1",
     "web-vitals": "5.1.0"
   },
   "browserslist": {
