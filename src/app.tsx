@@ -2,7 +2,7 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "./styles.css";
 
-import { AppShell, ScrollArea } from "@mantine/core";
+import { AppShell, ScrollArea, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router";
@@ -56,6 +56,9 @@ export const App = () => {
         <AppShell.Section>
           <StackPicker />
           <ResetButton />
+          <Text aria-label="Build version" c="dimmed" size="xs" ta="center">
+            {__COMMIT_HASH__}
+          </Text>
         </AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main>
