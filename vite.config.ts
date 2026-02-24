@@ -18,7 +18,11 @@ export default defineConfig({
       registerType: "prompt",
       injectRegister: false,
       workbox: {
-        globPatterns: ["**/*.{js,css,html,webp}", "cards/*.svg"],
+        globPatterns: [
+          "**/*.{js,css,html,webp}",
+          "cards/*.svg",
+          "apple-touch-icon.png",
+        ],
         // Locale chunks (locale-*.js) are lazy-loaded on demand —
         // exclude them from precaching to avoid downloading all locales upfront.
         globIgnores: ["assets/locale-*.js"],
@@ -63,37 +67,43 @@ export default defineConfig({
         background_color: "#ffffff",
         icons: [
           {
-            src: "/memdeck-logo-white.webp",
+            src: "/apple-touch-icon.png",
+            sizes: "180x180",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
+            src: "/memdeck-icon-white-512.webp",
             sizes: "512x512",
             type: "image/webp",
             purpose: "any",
           },
           {
-            src: "/memdeck-logo-black.webp",
+            src: "/memdeck-icon-black-512.webp",
             sizes: "512x512",
             type: "image/webp",
             purpose: "any",
           },
           {
-            src: "/memdeck-logo-white.webp",
+            src: "/memdeck-icon-white-512.webp",
             sizes: "512x512",
             type: "image/webp",
             purpose: "maskable",
           },
           {
-            src: "/memdeck-white.webp",
+            src: "/memdeck-icon-white-192.webp",
             sizes: "192x192",
             type: "image/webp",
             purpose: "any",
           },
           {
-            src: "/memdeck-black.webp",
+            src: "/memdeck-icon-black-192.webp",
             sizes: "192x192",
             type: "image/webp",
             purpose: "any",
           },
           {
-            src: "/memdeck-white.webp",
+            src: "/memdeck-icon-white-192.webp",
             sizes: "192x192",
             type: "image/webp",
             purpose: "maskable",
