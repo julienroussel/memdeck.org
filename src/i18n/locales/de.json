@@ -135,6 +135,15 @@
       "letter": "Buchstabe",
       "dealtCard": "Ausgeteilte Karte",
       "resultCount": "{{count}} Ergebnisse"
+    },
+    "sequences": {
+      "title": "Stay-Stack-Sequenzen",
+      "description": "Zeige die zyklischen Sequenzen, die durch das Austeilen jeder N-ten Karte aus deinem Stapel entstehen.",
+      "stepLabel": "Schrittgröße",
+      "summary": "{{cycleCount}} Zyklen mit je {{cycleLength}} Karten",
+      "cycleLabel": "Zyklus {{current}} von {{total}}",
+      "position": "#",
+      "card": "Karte"
     }
   },
   "timer": {

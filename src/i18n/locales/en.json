@@ -135,6 +135,15 @@
       "letter": "Letter",
       "dealtCard": "Card dealt",
       "resultCount": "{{count}} results"
+    },
+    "sequences": {
+      "title": "Stay Stack Sequences",
+      "description": "View the cyclical sequences formed by dealing every Nth card from your stack.",
+      "stepLabel": "Step size",
+      "summary": "{{cycleCount}} cycles of {{cycleLength}} cards each",
+      "cycleLabel": "Cycle {{current}} of {{total}}",
+      "position": "#",
+      "card": "Card"
     }
   },
   "timer": {

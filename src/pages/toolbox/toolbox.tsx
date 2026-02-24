@@ -7,6 +7,7 @@ import { useLocalDb } from "../../utils/localstorage";
 import { CardSpelling } from "./card-spelling";
 import { FaroShuffle } from "./faro-shuffle";
 import { StackLookup } from "./stack-lookup";
+import { StayStack } from "./stay-stack";
 
 export const Toolbox = () => {
   const { t } = useTranslation();
@@ -74,6 +75,19 @@ export const Toolbox = () => {
           </Accordion.Control>
           <Accordion.Panel>
             <CardSpelling />
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="sequences">
+          <Accordion.Control>
+            <Group gap="sm" wrap="wrap">
+              <Text fw={500}>{t("toolbox.sequences.title")}</Text>
+              <Text c="dimmed" size="sm">
+                {t("toolbox.sequences.description")}
+              </Text>
+            </Group>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <StayStack />
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>

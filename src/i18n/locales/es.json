@@ -135,6 +135,15 @@
       "letter": "Letra",
       "dealtCard": "Carta repartida",
       "resultCount": "{{count}} resultados"
+    },
+    "sequences": {
+      "title": "Secuencias Stay Stack",
+      "description": "Visualiza las secuencias cíclicas formadas al repartir cada N-ésima carta de tu mazo.",
+      "stepLabel": "Tamaño del paso",
+      "summary": "{{cycleCount}} ciclos de {{cycleLength}} cartas cada uno",
+      "cycleLabel": "Ciclo {{current}} de {{total}}",
+      "position": "#",
+      "card": "Carta"
     }
   },
   "timer": {

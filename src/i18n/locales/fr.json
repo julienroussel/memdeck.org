@@ -135,6 +135,15 @@
       "letter": "Lettre",
       "dealtCard": "Carte distribuée",
       "resultCount": "{{count}} résultats"
+    },
+    "sequences": {
+      "title": "Séquences Stay Stack",
+      "description": "Visualisez les séquences cycliques formées en distribuant chaque Nième carte de votre pile.",
+      "stepLabel": "Taille du pas",
+      "summary": "{{cycleCount}} cycles de {{cycleLength}} cartes chacun",
+      "cycleLabel": "Cycle {{current}} sur {{total}}",
+      "position": "#",
+      "card": "Carte"
     }
   },
   "timer": {
