@@ -65,7 +65,7 @@
   },
   "home": {
     "pageTitle": "MemDeck — Memoriertes Kartendeck meistern",
-    "pageDescription": "Kostenloses Online-Tool zum Meistern von memorierten Kartensystemen wie Mnemonica, Aronson, Memorandum, Redford und Particle.",
+    "pageDescription": "Kostenloses Online-Tool zum Meistern von memorierten Kartensystemen wie Mnemonica, Aronson, Memorandum, Redford, Particle und Elephant.",
     "welcome": "Willkommen bei MemDeck",
     "intro": "Ich hoffe, diese Tools helfen dir beim Erlernen deines Stacks. Schau dir den <guideLink>Guide</guideLink> an für einen Überblick über alles, was MemDeck bietet. Brauchst du Hilfe oder fehlt etwas? Kontaktiere mich auf <githubLink>Github</githubLink>!",
     "firstTimer": "Hallo, Neuling! Wähle unten deinen Lieblings-Stack, um alle Funktionen freizuschalten. Du kannst jederzeit über den Selektor am unteren Rand des Menüs wechseln.",
@@ -260,7 +260,7 @@
     "gettingStarted": {
       "title": "Erste Schritte",
       "intro": "MemDeck ist ein Trainingstool für Zauberkünstler und Gedächtnisenthusiasten, die ein memoriertes Kartendeck meistern wollen. Es hilft dir, Kartenpositionen durch Flashcard-Übungen und Dienstprogramme zu trainieren, damit du jede Karte an jeder Position abrufen kannst — sofort.",
-      "selectStack": "Um zu beginnen, wähle einen Stack über das Dropdown am unteren Rand der Seitenleiste. MemDeck unterstützt fünf klassische memorierte Kartensysteme:",
+      "selectStack": "Um zu beginnen, wähle einen Stack über das Dropdown am unteren Rand der Seitenleiste. MemDeck unterstützt sechs memorierte Kartensysteme:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
@@ -292,7 +292,11 @@
     "toolbox": {
       "title": "Werkzeugkasten",
       "requiresStack": "Stack erforderlich",
-      "description": "Eine Sammlung von Dienstprogrammen für Stack-Analyse und Auftrittsvorbereitung. Nutze diese Tools, um deinen Stack zu erkunden, Karten nach Position zu suchen und dich auf Auftritte vorzubereiten.",
+      "description": "Eine Sammlung von Dienstprogrammen für Stack-Analyse und Auftrittsvorbereitung. Der Werkzeugkasten enthält:",
+      "lookupItem": "<bold>Stack-Nachschlagen</bold> — durchsuche deinen Stack nach Kartenname oder Positionsnummer",
+      "faroItem": "<bold>Faro-Mischen</bold> — sieh die Auswirkung perfekter Faro-Mischvorgänge auf deine Stack-Reihenfolge",
+      "spellingItem": "<bold>Kartenbuchstabieren</bold> — erkunde, wie viele Buchstaben der Name jeder Karte hat und wo das Buchstabieren in deinem Stack landet",
+      "sequencesItem": "<bold>Stay-Stack-Sequenzen</bold> — zeige die zyklischen Sequenzen, die durch das Austeilen jeder N-ten Karte entstehen",
       "link": "Zum Werkzeugkasten"
     },
     "stats": {
@@ -311,7 +315,10 @@
       "dataLocal": "Alle deine Daten bleiben in deinem Browser — nichts wird an einen Server gesendet.",
       "darkMode": "Wechsle zwischen dunklem und hellem Modus mit dem Symbol in der Kopfzeile.",
       "gearIcon": "In den Trainingsmodi tippe auf das Zahnrad-Symbol, um Einstellungen für Timer, Sitzungslänge und Modusoptionen zu öffnen.",
-      "switchStacks": "Das Wechseln von Stacks verliert keine Daten — der Fortschritt wird pro Stack verfolgt."
+      "switchStacks": "Das Wechseln von Stacks verliert keine Daten — der Fortschritt wird pro Stack verfolgt.",
+      "pwa": "Installiere MemDeck als App auf deinem Gerät für Offline-Zugriff.",
+      "language": "Ändere die Anzeigesprache über die Sprachauswahl in der Kopfzeile.",
+      "reset": "Verwende die Zurücksetzen-Schaltfläche im Menü, um alle Daten zu löschen und neu zu beginnen."
     }
   }
 }

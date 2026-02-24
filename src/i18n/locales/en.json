@@ -65,7 +65,7 @@
   },
   "home": {
     "pageTitle": "MemDeck — Mastering memorized deck",
-    "pageDescription": "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, and Particle.",
+    "pageDescription": "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, Particle, and Elephant.",
     "welcome": "Welcome to MemDeck",
     "intro": "Hope these tools help you level up your memorized deck stack learning. Check out the <guideLink>guide</guideLink> for a walkthrough of everything MemDeck offers. Need a hand or think something's missing? Hit me up on <githubLink>Github</githubLink>!",
     "firstTimer": "Hey there, first-timer! Pick your favorite memorized deck stack below to unlock all the cool features. You can switch it up anytime using the selector at the bottom of the menu.",
@@ -260,7 +260,7 @@
     "gettingStarted": {
       "title": "Getting Started",
       "intro": "MemDeck is a training tool for magicians and memory enthusiasts who want to master a memorized deck. It helps you drill card positions through flashcard exercises and utilities so you can recall any card at any position — instantly.",
-      "selectStack": "To get started, select a stack using the dropdown at the bottom of the sidebar. MemDeck supports five classic memorized deck systems:",
+      "selectStack": "To get started, select a stack using the dropdown at the bottom of the sidebar. MemDeck supports six memorized deck systems:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
@@ -292,7 +292,11 @@
     "toolbox": {
       "title": "Toolbox",
       "requiresStack": "Requires stack",
-      "description": "A collection of memorized deck utilities for stack analysis and performance work. Use these tools to explore your selected stack, look up cards by position, and prepare for performances.",
+      "description": "A collection of memorized deck utilities for stack analysis and performance work. The toolbox includes:",
+      "lookupItem": "<bold>Stack Lookup</bold> — search your stack by card name or position number",
+      "faroItem": "<bold>Faro Shuffle</bold> — see the effect of perfect faro shuffles on your stack order",
+      "spellingItem": "<bold>Card Spelling</bold> — explore how many letters each card's name has and where spelling lands in your stack",
+      "sequencesItem": "<bold>Stay Stack Sequences</bold> — view the cyclical sequences formed by dealing every Nth card",
       "link": "Go to Toolbox"
     },
     "stats": {
@@ -311,7 +315,10 @@
       "dataLocal": "All your data stays in your browser — nothing is sent to a server.",
       "darkMode": "Toggle between dark and light mode using the icon in the header.",
       "gearIcon": "In training modes, tap the gear icon to open settings for timer, session length, and mode options.",
-      "switchStacks": "Switching stacks doesn't lose your data — progress is tracked per stack."
+      "switchStacks": "Switching stacks doesn't lose your data — progress is tracked per stack.",
+      "pwa": "Install MemDeck as an app on your device for offline access.",
+      "language": "Change the display language using the language selector in the header.",
+      "reset": "Use the reset button in the menu to clear all data and start fresh."
     }
   }
 }
