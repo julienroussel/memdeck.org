@@ -53,29 +53,29 @@
   },
   "header": {
     "githubAriaLabel": "Github",
-    "toggleNav": "Ouvrir le menu de navigation",
+    "toggleNav": "Afficher/masquer le menu de navigation",
     "toggleColorScheme": "Changer le thème de couleur",
     "helpAriaLabel": "Aide",
     "languageAriaLabel": "Langue"
   },
   "help": {
     "title": "Qu'est-ce que MemDeck ?",
-    "description": "MemDeck est votre outil de référence pour maîtriser un jeu de cartes mémorisé. Que vous soyez magicien, passionné de mémoire ou simplement curieux, MemDeck propose des exercices simples pour entraîner et tester vos compétences.",
-    "githubCta": "Passez sur la <githubLink>page GitHub</githubLink> du projet si vous avez besoin d'aide ou souhaitez proposer une fonctionnalité. Petit rappel : cet outil mise sur la simplicité, et c'est un projet personnel développé sur mon temps libre."
+    "description": "MemDeck est votre outil de référence pour maîtriser un jeu de cartes mémorisé. Que vous soyez magicien, passionné de mémoire ou simplement curieux, MemDeck propose des exercices simples pour entraîner et tester vos connaissances.",
+    "githubCta": "Faites un tour sur la <githubLink>page GitHub</githubLink> du projet si vous avez besoin d'aide ou souhaitez proposer une fonctionnalité. Petit rappel : cet outil privilégie la simplicité, et c'est un projet personnel développé sur mon temps libre."
   },
   "home": {
     "pageTitle": "MemDeck — Maîtrisez votre jeu mémorisé",
-    "pageDescription": "Outil en ligne gratuit pour maîtriser les systèmes de jeux mémorisés comme Mnemonica, Aronson, Memorandum, Redford, Particle et Elephant.",
+    "pageDescription": "Outil en ligne gratuit pour maîtriser les systèmes de jeu mémorisé comme Mnemonica, Aronson, Memorandum, Redford, Particle et Elephant.",
     "welcome": "Bienvenue sur MemDeck",
-    "intro": "J'espère que ces outils vous aideront à progresser dans l'apprentissage de votre stack. Consultez le <guideLink>guide</guideLink> pour un aperçu de tout ce que MemDeck offre. Besoin d'aide ou une idée manque ? Contactez-moi sur <githubLink>Github</githubLink> !",
-    "firstTimer": "Bienvenue, nouveau venu ! Choisissez votre stack préféré ci-dessous pour débloquer toutes les fonctionnalités. Vous pouvez changer à tout moment via le sélecteur en bas du menu.",
-    "guideCardTitle": "Nouveau ? Lisez le Guide",
+    "intro": "J'espère que ces outils vous aideront à progresser dans l'apprentissage de votre stack. Consultez le <guideLink>guide</guideLink> pour un aperçu de tout ce que MemDeck offre. Besoin d'aide ou il manque quelque chose ? Contactez-moi sur <githubLink>Github</githubLink> !",
+    "firstTimer": "Bienvenue ! Choisissez votre stack préféré ci-dessous pour débloquer toutes les fonctionnalités. Vous pouvez changer à tout moment via le sélecteur en bas du menu.",
+    "guideCardTitle": "Nouveau ici ? Lisez le Guide",
     "guideCardDescription": "Découvrez tous les modes d'entraînement et comment tirer le meilleur parti de MemDeck.",
     "selectedStack": "Votre stack sélectionné est <bold>{{stackName}}</bold>"
   },
   "flashcard": {
     "pageTitle": "Entraînement Flashcard",
-    "pageDescription": "Entraînez-vous avec des exercices de flashcard interactifs. Entraînez-vous carte vers numéro, numéro vers carte, ou les deux.",
+    "pageDescription": "Entraînez-vous sur votre jeu mémorisé avec des exercices de flashcard interactifs. Carte vers numéro, numéro vers carte, ou les deux.",
     "title": "Flashcard",
     "settingsAriaLabel": "Paramètres Flashcard",
     "optionsTitle": "Options Flashcard",
@@ -83,13 +83,13 @@
     "modeCardOnly": "Carte uniquement",
     "modeCardOnlyDescription": "Dans ce mode, vous verrez une carte et devrez deviner sa position dans le stack parmi 5 options.",
     "modeBothModes": "Les deux modes",
-    "modeBothModesDescription": "Dans ce mode, vous verrez aléatoirement soit une carte soit un numéro, devinez la correspondance parmi 5 options.",
+    "modeBothModesDescription": "Dans ce mode, vous verrez aléatoirement soit une carte soit un numéro, et devrez deviner la correspondance parmi 5 options.",
     "modeNumberOnly": "Numéro uniquement",
     "modeNumberOnlyDescription": "Dans ce mode, vous verrez un numéro et devrez choisir la carte correspondante parmi 5 options."
   },
   "acaan": {
     "pageTitle": "Entraînement ACAAN",
-    "pageDescription": "Entraînez-vous aux calculs Any Card At Any Number pour votre stack mémorisé.",
+    "pageDescription": "Entraînez-vous aux calculs ACAAN (Any Card At Any Number) pour votre stack mémorisé.",
     "title": "ACAAN",
     "settingsAriaLabel": "Paramètres ACAAN",
     "optionsTitle": "Options ACAAN",
@@ -122,11 +122,11 @@
     },
     "spelling": {
       "title": "Épellation de carte",
-      "description": "Voyez combien de lettres compose le nom de chaque carte et où l'épellation atterrit dans votre stack.",
+      "description": "Voyez combien de lettres composent le nom de chaque carte et sur quelle carte l'épellation tombe dans votre stack.",
       "position": "#",
       "card": "Carte",
       "letters": "Lettres",
-      "landsOn": "Atterrit sur",
+      "landsOn": "Tombe sur",
       "selfSpelling": "Auto-épellation",
       "searchPlaceholder": "Rechercher par carte ou position...",
       "searchAriaLabel": "Rechercher des cartes par nom ou position",
@@ -138,7 +138,7 @@
     },
     "sequences": {
       "title": "Séquences Stay Stack",
-      "description": "Visualisez les séquences cycliques formées en distribuant chaque Nième carte de votre pile.",
+      "description": "Visualisez les séquences cycliques formées en distribuant chaque Nième carte de votre stack.",
       "stepLabel": "Taille du pas",
       "summary": "{{cycleCount}} cycles de {{cycleLength}} cartes chacun",
       "cycleLabel": "Cycle {{current}} sur {{total}}",
@@ -165,9 +165,9 @@
     "encouragement": {
       "perfect": "Session parfaite !",
       "greatStart": "Excellent début !",
-      "newBestStreak": "Nouveau record personnel de {{count}} !",
+      "newBestStreak": "Nouveau record personnel : série de {{count}} !",
       "improvement": "Belle amélioration ! Votre précision progresse.",
-      "consistent": "Bon travail ! Vous devenez régulier.",
+      "consistent": "Bon travail ! Vos résultats sont de plus en plus réguliers.",
       "progress": "Continuez à vous entraîner, vous progressez.",
       "keepGoing": "Chaque session renforce votre mémoire. Continuez !"
     }
@@ -181,7 +181,7 @@
     "ariaLabel": "Sélectionner un jeu mémorisé"
   },
   "resetButton": {
-    "label": "Réinitialiser",
+    "label": "Réinitialiser l'appli",
     "modalTitle": "Réinitialiser toutes les données ?",
     "modalBody": "Cela effacera tout votre historique d'entraînement, vos statistiques et vos préférences. Cette action est irréversible.",
     "confirm": "Tout réinitialiser",
@@ -194,13 +194,13 @@
   },
   "errors": {
     "somethingWentWrong": "Une erreur est survenue",
-    "languageLoadFailed": "Impossible de charger votre langue préférée. Utilisation de l'anglais."
+    "languageLoadFailed": "Impossible de charger votre langue préférée. L'anglais sera utilisé par défaut."
   },
   "stats": {
     "pageTitle": "Statistiques",
     "pageDescription": "Suivez vos progrès d'entraînement avec des graphiques de précision et un historique des sessions.",
     "title": "Statistiques",
-    "noData": "Pas encore de données. Complétez une session flashcard ou ACAAN pour voir vos statistiques ici.",
+    "noData": "Pas encore de données. Terminez une session flashcard ou ACAAN pour voir vos statistiques ici.",
     "totalSessions": "Sessions totales",
     "totalQuestions": "Questions totales",
     "overallAccuracy": "Précision globale",
@@ -208,14 +208,14 @@
     "statisticsByStack": "Statistiques par stack",
     "stack": "Stack",
     "sessions": "Sessions",
-    "noStackStats": "Pas encore de statistiques. Complétez une session pour voir les données par stack.",
+    "noStackStats": "Pas encore de statistiques. Terminez une session pour voir les données par stack.",
     "sessionHistory": "Historique des sessions",
     "sessionHistoryCaption": "Historique des sessions",
     "date": "Date",
     "mode": "Mode",
     "score": "Score",
     "noSessions": "Aucune session enregistrée.",
-    "accuracyTrend": "Tendance de précision",
+    "accuracyTrend": "Tendance de la précision",
     "filterAll": "Tous",
     "filterFlashcard": "Flashcard",
     "filterAcaan": "ACAAN",
@@ -227,18 +227,18 @@
   "resources": {
     "pageTitle": "Ressources",
     "pageDescription": "Livres et ressources sélectionnés pour la magie avec jeu mémorisé, dont Mnemonica de Tamariz et The Aronson Approach.",
-    "title": "Ressources pour jeux mémorisés",
-    "intro": "Explorez une collection de ressources pour vous aider à maîtriser l'art des jeux mémorisés. Il manque une ressource ? Contactez-moi ou soumettez une pull request sur <githubLink>Github</githubLink>.",
+    "title": "Ressources sur les jeux mémorisés",
+    "intro": "Explorez une sélection de ressources pour vous aider à maîtriser l'art des jeux mémorisés. Il manque une ressource ? Faites-moi signe ou proposez une pull request sur <githubLink>Github</githubLink>.",
     "otherResources": "Autres ressources",
     "descriptions": {
-      "mnemonica": "L'œuvre définitive sur le stack Mnemonica avec des tours, principes et théories approfondies.",
+      "mnemonica": "L'œuvre de référence sur le stack Mnemonica avec des tours, des principes et des théories approfondies.",
       "aronsonApproach": "Présente le Stack Aronson, ses applications et plusieurs routines puissantes.",
       "boundToPlease": "Compilation des premiers travaux d'Aronson, essentielle pour le travail de stack.",
       "memoriesAreMade": "Un ouvrage plus court offrant des applications pratiques pour le jeu mémorisé.",
-      "magicRainbow": "Pas uniquement sur les jeux mémorisés, mais essentiel pour approfondir la pensée magique.",
+      "magicRainbow": "Pas uniquement sur les jeux mémorisés, mais essentiel pour enrichir votre réflexion sur la magie.",
       "inOrderToAmaze": "Routines brillantes et effets avec des techniques de jeu mémorisé.",
       "memorandum": "Jeu mémorisé unique avec des effets puissants et des réflexions profondes.",
-      "temporarilyOutOfOrder": "Une plongée dans le stack Redford avec des routines polyvalentes et des principes indépendants du stack.",
+      "temporarilyOutOfOrder": "Une plongée approfondie dans le stack Redford avec des routines polyvalentes et des principes indépendants du stack.",
       "applesauce": "Élargit le stack Redford avec de nouveaux effets, idées et applications.",
       "sleightlyOutOfOrder": "Techniques avancées et effets utilisant un stack mémorisé avec intégration de manipulation.",
       "particleSystem": "Nouveau jeu mémorisé permettant de couper à n'importe quelle carte nommée sans regarder, avec des avantages intégrés et des routines puissantes."
@@ -259,8 +259,8 @@
     "subtitle": "Tout ce que vous devez savoir sur MemDeck et ses fonctionnalités.",
     "gettingStarted": {
       "title": "Premiers pas",
-      "intro": "MemDeck est un outil d'entraînement pour les magiciens et passionnés de mémoire qui veulent maîtriser un jeu mémorisé. Il vous aide à réviser les positions des cartes grâce à des exercices de flashcard et des utilitaires pour pouvoir rappeler n'importe quelle carte à n'importe quelle position — instantanément.",
-      "selectStack": "Pour commencer, sélectionnez un stack dans le menu déroulant en bas de la barre latérale. MemDeck prend en charge six systèmes de jeux mémorisés :",
+      "intro": "MemDeck est un outil d'entraînement pour les magiciens et passionnés de mémoire qui veulent maîtriser un jeu mémorisé. Il vous aide à réviser les positions des cartes grâce à des exercices de flashcard et des utilitaires, pour retrouver n'importe quelle carte à n'importe quelle position — instantanément.",
+      "selectStack": "Pour commencer, sélectionnez un stack dans le menu déroulant en bas de la barre latérale. MemDeck prend en charge six systèmes de jeu mémorisé :",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
@@ -275,18 +275,18 @@
     "flashcardTraining": {
       "title": "Entraînement Flashcard",
       "requiresStack": "Nécessite un stack",
-      "intro": "Le mode d'entraînement principal. On vous montre une invite et vous devez retrouver la carte ou la position correspondante dans votre stack. Trois modes sont disponibles :",
+      "intro": "Le mode d'entraînement principal. On vous présente une carte ou un numéro et vous devez retrouver la correspondance dans votre stack. Trois modes sont disponibles :",
       "cardOnlyItem": "<bold>Carte uniquement</bold> — une carte est montrée, retrouvez son numéro de position",
       "numberOnlyItem": "<bold>Numéro uniquement</bold> — un numéro de position est montré, retrouvez la carte",
       "bothItem": "<bold>Les deux</bold> — alterne aléatoirement entre les deux",
-      "settings": "Appuyez sur l'icône d'engrenage pour ouvrir les paramètres. Vous pouvez activer un chronomètre optionnel et choisir entre un entraînement libre ou des sessions structurées de 10, 20, 30 ou 52 cartes. Le suivi des scores montre votre précision et votre série en cours.",
+      "settings": "Appuyez sur l'icône d'engrenage pour ouvrir les paramètres. Vous pouvez activer un chronomètre optionnel et choisir entre un entraînement libre ou des sessions structurées de 10, 20, 30 ou 52 cartes. Le suivi du score affiche votre précision et votre série en cours.",
       "link": "Aller à l'entraînement Flashcard"
     },
     "acaanTraining": {
       "title": "Entraînement ACAAN",
       "requiresStack": "Nécessite un stack",
       "intro": "ACAAN signifie « Any Card At Any Number » — un effet classique où un spectateur nomme n'importe quelle carte et n'importe quel numéro, et la carte se trouve exactement à cette position dans le jeu.",
-      "description": "Dans ce mode, on vous montre une carte et une position cible. Votre travail est de calculer la profondeur de coupe nécessaire pour déplacer la carte à cette position. Entrez une valeur de 0 à 51. Le chronomètre et les options de session fonctionnent comme en mode Flashcard.",
+      "description": "Dans ce mode, on vous montre une carte et une position cible. Vous devez calculer la profondeur de coupe nécessaire pour amener la carte à cette position. Entrez une valeur de 0 à 51. Le chronomètre et les options de session fonctionnent comme en mode Flashcard.",
       "link": "Aller à l'entraînement ACAAN"
     },
     "toolbox": {
@@ -295,27 +295,27 @@
       "description": "Une collection d'utilitaires pour l'analyse de stack et le travail de performance. La boîte à outils comprend :",
       "lookupItem": "<bold>Recherche de stack</bold> — recherchez dans votre stack par nom de carte ou numéro de position",
       "faroItem": "<bold>Mélange Faro</bold> — visualisez l'effet des mélanges faro parfaits sur l'ordre de votre stack",
-      "spellingItem": "<bold>Épellation de carte</bold> — voyez combien de lettres compose le nom de chaque carte et où l'épellation atterrit dans votre stack",
+      "spellingItem": "<bold>Épellation de carte</bold> — voyez combien de lettres composent le nom de chaque carte et où l'épellation tombe dans votre stack",
       "sequencesItem": "<bold>Séquences Stay Stack</bold> — visualisez les séquences cycliques formées en distribuant chaque Nième carte",
       "link": "Aller à la boîte à outils"
     },
     "stats": {
       "title": "Statistiques",
       "noStackRequired": "Aucun stack requis",
-      "description": "Suivez vos progrès au fil du temps. La page Statistiques comprend des cartes de vue d'ensemble, un graphique de tendance de précision (coloré et filtrable par mode), un tableau de ventilation par stack et un historique de sessions paginé. Toutes les données sont stockées localement dans votre navigateur.",
+      "description": "Suivez vos progrès au fil du temps. La page Statistiques comprend des indicateurs de synthèse, un graphique de tendance de précision (coloré et filtrable par mode), un tableau de répartition par stack et un historique de sessions paginé. Toutes les données sont stockées localement dans votre navigateur.",
       "link": "Voir les statistiques"
     },
     "resources": {
       "title": "Ressources",
-      "description": "Une collection de livres et PDFs sur la théorie des jeux mémorisés, les routines et les techniques d'entraînement d'auteurs de référence.",
+      "description": "Une collection de livres et PDF d'auteurs de référence sur la théorie des jeux mémorisés, les routines et les techniques d'entraînement.",
       "link": "Parcourir les ressources"
     },
     "tips": {
       "title": "Conseils",
       "dataLocal": "Toutes vos données restent dans votre navigateur — rien n'est envoyé à un serveur.",
-      "darkMode": "Basculez entre le mode sombre et clair avec l'icône dans l'en-tête.",
+      "darkMode": "Basculez entre le mode sombre et le mode clair avec l'icône dans l'en-tête.",
       "gearIcon": "Dans les modes d'entraînement, appuyez sur l'icône d'engrenage pour ouvrir les paramètres de chronomètre, durée de session et options de mode.",
-      "switchStacks": "Changer de stack ne perd pas vos données — les progrès sont suivis par stack.",
+      "switchStacks": "Changer de stack ne fait pas perdre vos données — les progrès sont suivis par stack.",
       "pwa": "Installez MemDeck comme application sur votre appareil pour un accès hors ligne.",
       "language": "Changez la langue d'affichage avec le sélecteur de langue dans l'en-tête.",
       "reset": "Utilisez le bouton de réinitialisation dans le menu pour effacer toutes les données et repartir de zéro."

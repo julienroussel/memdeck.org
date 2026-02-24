@@ -60,17 +60,17 @@
   },
   "help": {
     "title": "O que é o MemDeck?",
-    "description": "MemDeck é a sua ferramenta ideal para dominar um baralho memorizado. Seja você mágico, entusiasta de memória ou simplesmente curioso sobre memorização, o MemDeck oferece exercícios diretos para treinar e testar as suas habilidades.",
-    "githubCta": "Visite a <githubLink>página do GitHub</githubLink> do projeto se precisar de ajuda ou quiser sugerir uma funcionalidade. Nota: esta ferramenta foca na simplicidade e é um projeto pessoal desenvolvido no meu tempo livre."
+    "description": "MemDeck é a sua ferramenta ideal para dominar um baralho memorizado. Quer seja mágico, entusiasta de memória ou simplesmente curioso sobre memorização, o MemDeck oferece exercícios diretos para treinar e testar as suas capacidades.",
+    "githubCta": "Visite a <githubLink>página do GitHub</githubLink> do projeto se precisar de ajuda ou quiser sugerir uma funcionalidade. Nota: esta ferramenta aposta na simplicidade e é um projeto pessoal desenvolvido no meu tempo livre."
   },
   "home": {
     "pageTitle": "MemDeck — Domine o baralho memorizado",
     "pageDescription": "Ferramenta online gratuita para dominar sistemas de baralho memorizado como Mnemonica, Aronson, Memorandum, Redford, Particle e Elephant.",
     "welcome": "Bem-vindo ao MemDeck",
-    "intro": "Espero que estas ferramentas te ajudem a melhorar o aprendizado do teu stack. Consulta o <guideLink>guia</guideLink> para uma visão geral de tudo o que o MemDeck oferece. Precisa de ajuda ou acha que falta algo? Contacte-me no <githubLink>Github</githubLink>!",
-    "firstTimer": "Olá, primeira vez aqui! Escolha o seu stack favorito abaixo para desbloquear todas as funcionalidades. Pode mudar a qualquer momento usando o seletor no fundo do menu.",
+    "intro": "Espero que estas ferramentas o ajudem a melhorar a aprendizagem do seu stack. Consulte o <guideLink>guia</guideLink> para uma visão geral de tudo o que o MemDeck oferece. Precisa de ajuda ou acha que falta algo? Contacte-me no <githubLink>Github</githubLink>!",
+    "firstTimer": "Olá, primeira vez aqui! Escolha o seu stack favorito abaixo para desbloquear todas as funcionalidades. Pode mudar a qualquer momento usando o seletor na parte inferior do menu.",
     "guideCardTitle": "Novo aqui? Leia o Guia",
-    "guideCardDescription": "Conheça todos os modos de treino e como tirar o máximo do MemDeck.",
+    "guideCardDescription": "Conheça todos os modos de treino e como tirar o máximo partido do MemDeck.",
     "selectedStack": "O seu stack selecionado é <bold>{{stackName}}</bold>"
   },
   "flashcard": {
@@ -83,16 +83,16 @@
     "modeCardOnly": "Apenas carta",
     "modeCardOnlyDescription": "Neste modo, verá uma carta e terá de adivinhar a sua posição no stack entre 5 opções.",
     "modeBothModes": "Ambos os modos",
-    "modeBothModesDescription": "Neste modo, verá aleatoriamente uma carta ou um número, adivinhe a correspondência entre 5 opções.",
+    "modeBothModesDescription": "Neste modo, verá aleatoriamente uma carta ou um número — adivinhe a correspondência entre 5 opções.",
     "modeNumberOnly": "Apenas número",
     "modeNumberOnlyDescription": "Neste modo, verá um número e terá de escolher a carta correspondente entre 5 opções."
   },
   "acaan": {
     "pageTitle": "Treino ACAAN",
-    "pageDescription": "Pratique cálculos Any Card At Any Number para o seu stack memorizado.",
+    "pageDescription": "Pratique cálculos de ACAAN para o seu stack memorizado.",
     "title": "ACAAN",
-    "settingsAriaLabel": "Configurações ACAAN",
-    "optionsTitle": "Opções ACAAN",
+    "settingsAriaLabel": "Configurações do ACAAN",
+    "optionsTitle": "Opções do ACAAN",
     "cutDepthAriaLabel": "Profundidade de corte",
     "cutDepthPlaceholder": "Profundidade de corte"
   },
@@ -111,12 +111,12 @@
       "resultCount": "{{count}} cartas encontradas"
     },
     "faro": {
-      "title": "Baralhar Faro",
-      "description": "Veja o efeito de baralhadas faro perfeitas na ordem do seu stack.",
-      "typeLabel": "Tipo de baralhada",
+      "title": "Mistura Faro",
+      "description": "Veja o efeito de misturas faro perfeitas na ordem do seu stack.",
+      "typeLabel": "Tipo de mistura",
       "out": "Out",
       "in": "In",
-      "countLabel": "Número de baralhadas",
+      "countLabel": "Número de misturas",
       "position": "#",
       "card": "Carta"
     },
@@ -131,14 +131,14 @@
       "searchPlaceholder": "Pesquisar por carta ou posição...",
       "searchAriaLabel": "Pesquisar cartas por nome ou posição",
       "noResults": "Nenhuma carta encontrada",
-      "detailTitle": "Detalhes da soletração",
+      "detailTitle": "Detalhe da soletração",
       "letter": "Letra",
       "dealtCard": "Carta distribuída",
       "resultCount": "{{count}} resultados"
     },
     "sequences": {
       "title": "Sequências Stay Stack",
-      "description": "Visualize as sequências cíclicas formadas ao distribuir cada N-ésima carta do seu baralho.",
+      "description": "Visualize as sequências cíclicas formadas ao distribuir cada N-ésima carta do seu stack.",
       "stepLabel": "Tamanho do passo",
       "summary": "{{cycleCount}} ciclos de {{cycleLength}} cartas cada",
       "cycleLabel": "Ciclo {{current}} de {{total}}",
@@ -167,7 +167,7 @@
       "greatStart": "Ótimo começo!",
       "newBestStreak": "Novo recorde pessoal de {{count}}!",
       "improvement": "Ótima melhoria! A sua precisão está a aumentar.",
-      "consistent": "Bom trabalho! Está a ficar consistente.",
+      "consistent": "Bom trabalho! Está cada vez mais consistente.",
       "progress": "Continue a praticar, está a fazer progressos.",
       "keepGoing": "Cada sessão fortalece a sua memória. Continue assim!"
     }
@@ -214,7 +214,7 @@
     "date": "Data",
     "mode": "Modo",
     "score": "Pontuação",
-    "noSessions": "Nenhuma sessão registada.",
+    "noSessions": "Ainda nenhuma sessão registada.",
     "accuracyTrend": "Tendência de precisão",
     "filterAll": "Todos",
     "filterFlashcard": "Flashcard",
@@ -228,28 +228,28 @@
     "pageTitle": "Recursos",
     "pageDescription": "Livros e recursos selecionados para magia com baralho memorizado, incluindo Mnemonica de Tamariz e The Aronson Approach.",
     "title": "Recursos de Baralho Memorizado",
-    "intro": "Explore uma coleção de recursos para ajudá-lo a dominar a arte dos baralhos memorizados. Falta algum recurso? Contacte-me ou envie um pull request no <githubLink>Github</githubLink>.",
+    "intro": "Explore uma seleção de recursos para o ajudar a dominar a arte dos baralhos memorizados. Falta algum recurso? Contacte-me ou envie um pull request no <githubLink>Github</githubLink>.",
     "otherResources": "Outros recursos",
     "descriptions": {
       "mnemonica": "A obra definitiva sobre o stack Mnemonica com truques, princípios e teorias aprofundadas.",
       "aronsonApproach": "Apresenta o Stack Aronson, as suas aplicações e várias rotinas poderosas.",
       "boundToPlease": "Compilação dos primeiros trabalhos de Aronson, essencial para o trabalho com stacks.",
       "memoriesAreMade": "Uma obra mais curta que oferece aplicações práticas para o baralho memorizado.",
-      "magicRainbow": "Não é apenas sobre baralhos memorizados, mas essencial para aprofundar o pensamento mágico.",
+      "magicRainbow": "Não é apenas sobre baralhos memorizados, mas é essencial para aprofundar o pensamento mágico.",
       "inOrderToAmaze": "Rotinas brilhantes e efeitos com técnicas de baralho memorizado.",
-      "memorandum": "Baralho memorizado único com efeitos poderosos e insights profundos.",
+      "memorandum": "Baralho memorizado único com efeitos poderosos e reflexões profundas.",
       "temporarilyOutOfOrder": "Uma imersão no stack Redford com rotinas versáteis e princípios independentes do stack.",
-      "applesauce": "Expande o stack Redford com novos efeitos, ideias e aplicações.",
+      "applesauce": "Expande o stack Redford com novos efeitos, ideias e aplicações para trabalho com stacks.",
       "sleightlyOutOfOrder": "Técnicas avançadas e efeitos com stack memorizado e integração de manipulação.",
-      "particleSystem": "Novo baralho memorizado que permite cortar para qualquer carta nomeada sem olhar, com benefícios integrados e rotinas poderosas."
+      "particleSystem": "Novo baralho memorizado que permite cortar para qualquer carta nomeada sem olhar, com benefícios integrados e uma variedade de rotinas poderosas."
     }
   },
   "about": {
     "pageTitle": "Sobre",
     "pageDescription": "Informações de contacto e links para o projeto MemDeck.",
     "title": "Sobre",
-    "intro": "MemDeck é um projeto pessoal criado por Julien Roussel. Não hesite em entrar em contacto através dos links abaixo.",
-    "githubDescription": "Código fonte, relatórios de bugs e pedidos de funcionalidades",
+    "intro": "MemDeck é um projeto pessoal criado por Julien Roussel. Não hesite em contactar-me através dos links abaixo.",
+    "githubDescription": "Código-fonte, relatórios de bugs e pedidos de funcionalidades",
     "linktreeDescription": "Mais sobre mim e os meus outros projetos"
   },
   "guide": {
@@ -260,7 +260,7 @@
     "gettingStarted": {
       "title": "Primeiros passos",
       "intro": "MemDeck é uma ferramenta de treino para mágicos e entusiastas de memória que querem dominar um baralho memorizado. Ajuda-o a praticar as posições das cartas através de flashcards e utilitários para recordar qualquer carta em qualquer posição — instantaneamente.",
-      "selectStack": "Para começar, selecione um stack no menu suspenso no fundo da barra lateral. O MemDeck suporta seis sistemas de baralho memorizado:",
+      "selectStack": "Para começar, selecione um stack no menu suspenso na parte inferior da barra lateral. O MemDeck suporta seis sistemas de baralho memorizado:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
@@ -294,7 +294,7 @@
       "requiresStack": "Requer stack",
       "description": "Uma coleção de utilitários para análise de stack e trabalho de performance. As ferramentas incluem:",
       "lookupItem": "<bold>Consulta do Stack</bold> — pesquise no seu stack por nome da carta ou número de posição",
-      "faroItem": "<bold>Baralhar Faro</bold> — veja o efeito de baralhadas faro perfeitas na ordem do seu stack",
+      "faroItem": "<bold>Mistura Faro</bold> — veja o efeito de misturas faro perfeitas na ordem do seu stack",
       "spellingItem": "<bold>Soletração de Cartas</bold> — veja quantas letras tem o nome de cada carta e onde a soletração cai no seu stack",
       "sequencesItem": "<bold>Sequências Stay Stack</bold> — visualize as sequências cíclicas formadas ao distribuir cada N-ésima carta",
       "link": "Ir para Ferramentas"
@@ -302,7 +302,7 @@
     "stats": {
       "title": "Estatísticas",
       "noStackRequired": "Nenhum stack necessário",
-      "description": "Acompanhe o seu progresso ao longo do tempo. A página de Estatísticas inclui cartões de resumo, um gráfico de tendência de precisão (colorido e filtrável por modo), uma tabela de detalhe por stack e um histórico de sessões paginado. Todos os dados são armazenados localmente no seu navegador.",
+      "description": "Acompanhe o seu progresso ao longo do tempo. A página de Estatísticas inclui painéis de resumo, um gráfico de tendência de precisão (codificado por cores e filtrável por modo), uma tabela de detalhe por stack e um histórico de sessões paginado. Todos os dados são armazenados localmente no seu navegador.",
       "link": "Ir para Estatísticas"
     },
     "resources": {
@@ -318,7 +318,7 @@
       "switchStacks": "Mudar de stack não apaga os seus dados — o progresso é acompanhado por stack.",
       "pwa": "Instale o MemDeck como app no seu dispositivo para acesso offline.",
       "language": "Mude o idioma de exibição usando o seletor de idioma no cabeçalho.",
-      "reset": "Use o botão de repor no menu para apagar todos os dados e recomeçar do zero."
+      "reset": "Use o botão de repor no menu para apagar todos os dados e começar de novo."
     }
   }
 }
