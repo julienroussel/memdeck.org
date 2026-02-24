@@ -1,9 +1,3 @@
 {
-  "ignoreDependencies": [
-    "@biomejs/biome",
-    "globals",
-    "lefthook",
-    "lint-staged"
-  ],
-  "ignore": ["src/vite-env.d.ts"]
+  "ignoreDependencies": ["@biomejs/biome", "globals", "lefthook", "lint-staged"]
 }
