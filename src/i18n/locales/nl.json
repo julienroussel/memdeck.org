@@ -65,7 +65,7 @@
   },
   "home": {
     "pageTitle": "MemDeck — Beheers je gememoriseerde kaartspel",
-    "pageDescription": "Gratis online tool voor het beheersen van gememoriseerde kaartsystemen zoals Mnemonica, Aronson, Memorandum, Redford en Particle.",
+    "pageDescription": "Gratis online tool voor het beheersen van gememoriseerde kaartsystemen zoals Mnemonica, Aronson, Memorandum, Redford, Particle en Elephant.",
     "welcome": "Welkom bij MemDeck",
     "intro": "Hopelijk helpen deze tools je om je stack beter te leren. Bekijk de <guideLink>gids</guideLink> voor een overzicht van alles wat MemDeck biedt. Hulp nodig of mist er iets? Neem contact op via <githubLink>Github</githubLink>!",
     "firstTimer": "Welkom, nieuwkomer! Kies hieronder je favoriete stack om alle functies te ontgrendelen. Je kunt op elk moment wisselen via de selector onderaan het menu.",
@@ -260,7 +260,7 @@
     "gettingStarted": {
       "title": "Aan de slag",
       "intro": "MemDeck is een trainingstool voor goochelaars en geheugenliefhebbers die een gememoriseerd kaartspel willen beheersen. Het helpt je kaartposities te oefenen met flashcards en hulpmiddelen zodat je elke kaart op elke positie kunt herinneren — direct.",
-      "selectStack": "Om te beginnen, selecteer een stack in het dropdown-menu onderaan de zijbalk. MemDeck ondersteunt vijf klassieke gememoriseerde kaartsystemen:",
+      "selectStack": "Om te beginnen, selecteer een stack in het dropdown-menu onderaan de zijbalk. MemDeck ondersteunt zes gememoriseerde kaartsystemen:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
@@ -292,7 +292,11 @@
     "toolbox": {
       "title": "Gereedschap",
       "requiresStack": "Vereist een stack",
-      "description": "Een verzameling hulpmiddelen voor stack-analyse en optredenvoorbereiding. Gebruik deze tools om je stack te verkennen, kaarten op positie op te zoeken en je voor te bereiden op optredens.",
+      "description": "Een verzameling hulpmiddelen voor stack-analyse en optredenvoorbereiding. Het gereedschap bevat:",
+      "lookupItem": "<bold>Stack opzoeken</bold> — zoek in je stack op kaartnaam of positienummer",
+      "faroItem": "<bold>Faro Shuffle</bold> — bekijk het effect van perfecte faro shuffles op de volgorde van je stack",
+      "spellingItem": "<bold>Kaart Spelling</bold> — bekijk hoeveel letters elke kaartnaam heeft en waar de spelling in je stack uitkomt",
+      "sequencesItem": "<bold>Stay Stack Sequenties</bold> — bekijk de cyclische sequenties die ontstaan door elke Nde kaart te delen",
       "link": "Ga naar Gereedschap"
     },
     "stats": {
@@ -311,7 +315,10 @@
       "dataLocal": "Al je gegevens blijven in je browser — er wordt niets naar een server gestuurd.",
       "darkMode": "Wissel tussen donkere en lichte modus met het pictogram in de header.",
       "gearIcon": "Tik in trainingsmodi op het tandwielpictogram om instellingen te openen voor timer, sessieduur en modusopties.",
-      "switchStacks": "Van stack wisselen verliest je gegevens niet — voortgang wordt per stack bijgehouden."
+      "switchStacks": "Van stack wisselen verliest je gegevens niet — voortgang wordt per stack bijgehouden.",
+      "pwa": "Installeer MemDeck als app op je apparaat voor offline toegang.",
+      "language": "Wijzig de weergavetaal via de taalkiezer in de header.",
+      "reset": "Gebruik de resetknop in het menu om alle gegevens te wissen en opnieuw te beginnen."
     }
   }
 }

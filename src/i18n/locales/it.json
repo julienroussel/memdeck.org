@@ -65,7 +65,7 @@
   },
   "home": {
     "pageTitle": "MemDeck — Padroneggia il mazzo memorizzato",
-    "pageDescription": "Strumento online gratuito per padroneggiare sistemi di mazzi memorizzati come Mnemonica, Aronson, Memorandum, Redford e Particle.",
+    "pageDescription": "Strumento online gratuito per padroneggiare sistemi di mazzi memorizzati come Mnemonica, Aronson, Memorandum, Redford, Particle ed Elephant.",
     "welcome": "Benvenuto su MemDeck",
     "intro": "Spero che questi strumenti ti aiutino a migliorare nell'apprendimento del tuo stack. Consulta la <guideLink>guida</guideLink> per una panoramica di tutto ciò che MemDeck offre. Hai bisogno di aiuto o pensi che manchi qualcosa? Contattami su <githubLink>Github</githubLink>!",
     "firstTimer": "Benvenuto, nuovo arrivato! Scegli il tuo stack preferito qui sotto per sbloccare tutte le funzionalità. Puoi cambiarlo in qualsiasi momento usando il selettore in fondo al menu.",
@@ -260,7 +260,7 @@
     "gettingStarted": {
       "title": "Per iniziare",
       "intro": "MemDeck è uno strumento di allenamento per maghi e appassionati di memoria che vogliono padroneggiare un mazzo memorizzato. Ti aiuta a esercitarti sulle posizioni delle carte tramite flashcard ed utilità per richiamare qualsiasi carta in qualsiasi posizione — istantaneamente.",
-      "selectStack": "Per iniziare, seleziona uno stack dal menu a tendina in fondo alla barra laterale. MemDeck supporta cinque sistemi classici di mazzi memorizzati:",
+      "selectStack": "Per iniziare, seleziona uno stack dal menu a tendina in fondo alla barra laterale. MemDeck supporta sei sistemi di mazzi memorizzati:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
@@ -292,7 +292,11 @@
     "toolbox": {
       "title": "Strumenti",
       "requiresStack": "Richiede uno stack",
-      "description": "Una raccolta di utilità per l'analisi dello stack e il lavoro di performance. Usa questi strumenti per esplorare il tuo stack, cercare carte per posizione e prepararti per le esibizioni.",
+      "description": "Una raccolta di utilità per l'analisi dello stack e il lavoro di performance. Gli strumenti includono:",
+      "lookupItem": "<bold>Ricerca nello stack</bold> — cerca nel tuo stack per nome della carta o numero di posizione",
+      "faroItem": "<bold>Mescolata Faro</bold> — visualizza l'effetto delle mescolate faro perfette sull'ordine del tuo stack",
+      "spellingItem": "<bold>Spelling delle carte</bold> — scopri quante lettere ha il nome di ogni carta e dove lo spelling atterra nel tuo stack",
+      "sequencesItem": "<bold>Sequenze Stay Stack</bold> — visualizza le sequenze cicliche formate distribuendo ogni N-esima carta",
       "link": "Vai agli strumenti"
     },
     "stats": {
@@ -311,7 +315,10 @@
       "dataLocal": "Tutti i tuoi dati restano nel tuo browser — nulla viene inviato a un server.",
       "darkMode": "Passa dalla modalità scura a quella chiara usando l'icona nell'intestazione.",
       "gearIcon": "Nelle modalità di allenamento, tocca l'icona dell'ingranaggio per aprire le impostazioni di timer, durata sessione e opzioni di modalità.",
-      "switchStacks": "Cambiare stack non cancella i tuoi dati — i progressi sono monitorati per stack."
+      "switchStacks": "Cambiare stack non cancella i tuoi dati — i progressi sono monitorati per stack.",
+      "pwa": "Installa MemDeck come app sul tuo dispositivo per l'accesso offline.",
+      "language": "Cambia la lingua di visualizzazione usando il selettore di lingua nell'intestazione.",
+      "reset": "Usa il pulsante di ripristino nel menu per cancellare tutti i dati e ricominciare da zero."
     }
   }
 }
