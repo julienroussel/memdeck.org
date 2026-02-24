@@ -135,6 +135,15 @@
       "letter": "Letter",
       "dealtCard": "Gedeelde kaart",
       "resultCount": "{{count}} resultaten"
+    },
+    "sequences": {
+      "title": "Stay Stack Sequenties",
+      "description": "Bekijk de cyclische sequenties die ontstaan door elke Nde kaart uit je stapel te delen.",
+      "stepLabel": "Stapgrootte",
+      "summary": "{{cycleCount}} cycli van {{cycleLength}} kaarten elk",
+      "cycleLabel": "Cyclus {{current}} van {{total}}",
+      "position": "#",
+      "card": "Kaart"
     }
   },
   "timer": {
