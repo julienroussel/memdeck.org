@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-MemDeck is a memorized deck training tool for magicians and memory enthusiasts. It helps users master famous memorized deck systems (Mnemonica, Aronson, Memorandum, Redford, Particle) through flashcard exercises and utilities.
+MemDeck is a memorized deck training tool for magicians and memory enthusiasts. It helps users master famous memorized deck systems (Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant) through flashcard exercises and utilities.
 
 The project is a React SPA using TypeScript, Mantine UI, and Vite. It runs entirely client-side with no backend, using localStorage for persistence.
 

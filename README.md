@@ -51,6 +51,7 @@ Toggle themes freely. Your preference is saved across sessions.
 | Memorandum | Woody Aragon |
 | Redford | Patrick Redford |
 | Particle | Joshua Jay |
+| Elephant | Pierre Boc & Yves Meret |
 
 ## Getting Started
 
