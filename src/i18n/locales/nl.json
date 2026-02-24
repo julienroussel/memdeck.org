@@ -53,7 +53,7 @@
   },
   "header": {
     "githubAriaLabel": "Github",
-    "toggleNav": "Navigatiemenu openen",
+    "toggleNav": "Navigatiemenu in-/uitklappen",
     "toggleColorScheme": "Kleurthema wisselen",
     "helpAriaLabel": "Help",
     "languageAriaLabel": "Taal"
@@ -75,7 +75,7 @@
   },
   "flashcard": {
     "pageTitle": "Flashcard Training",
-    "pageDescription": "Oefen met interactieve flashcard-oefeningen. Train kaart naar nummer, nummer naar kaart, of beide.",
+    "pageDescription": "Oefen je gememoriseerde kaartspel met interactieve flashcard-oefeningen. Train kaart naar nummer, nummer naar kaart, of beide.",
     "title": "Flashcard",
     "settingsAriaLabel": "Flashcard-instellingen",
     "optionsTitle": "Flashcard-opties",
@@ -83,18 +83,18 @@
     "modeCardOnly": "Alleen kaart",
     "modeCardOnlyDescription": "In deze modus zie je een kaart en moet je de positie in de stack raden uit 5 opties.",
     "modeBothModes": "Beide modi",
-    "modeBothModesDescription": "In deze modus krijg je willekeurig een kaart of een nummer te zien. Raad de match uit 5 opties.",
+    "modeBothModesDescription": "In deze modus krijg je willekeurig een kaart of een nummer te zien. Raad het juiste antwoord uit 5 opties.",
     "modeNumberOnly": "Alleen nummer",
     "modeNumberOnlyDescription": "In deze modus zie je een nummer en moet je de bijbehorende kaart kiezen uit 5 opties."
   },
   "acaan": {
     "pageTitle": "ACAAN Training",
-    "pageDescription": "Oefen Any Card At Any Number berekeningen voor je gememoriseerde stack.",
+    "pageDescription": "Oefen Any Card At Any Number-berekeningen voor je gememoriseerde stack.",
     "title": "ACAAN",
     "settingsAriaLabel": "ACAAN-instellingen",
     "optionsTitle": "ACAAN-opties",
-    "cutDepthAriaLabel": "Snijdiepte",
-    "cutDepthPlaceholder": "Snijdiepte"
+    "cutDepthAriaLabel": "Coupeerdiepte",
+    "cutDepthPlaceholder": "Coupeerdiepte"
   },
   "toolbox": {
     "pageTitle": "Gereedschap",
@@ -121,24 +121,24 @@
       "card": "Kaart"
     },
     "spelling": {
-      "title": "Kaart Spelling",
+      "title": "Kaartspelling",
       "description": "Bekijk hoeveel letters elke kaartnaam heeft en waar de spelling in je stack uitkomt.",
       "position": "#",
       "card": "Kaart",
       "letters": "Letters",
-      "landsOn": "Komt op",
-      "selfSpelling": "Zelf-spelling",
+      "landsOn": "Landt op",
+      "selfSpelling": "Zelfspelling",
       "searchPlaceholder": "Zoek op kaart of positie...",
       "searchAriaLabel": "Zoek kaarten op naam of positie",
       "noResults": "Geen overeenkomende kaarten",
-      "detailTitle": "Spelling-detail",
+      "detailTitle": "Spellingoverzicht",
       "letter": "Letter",
-      "dealtCard": "Gedeelde kaart",
+      "dealtCard": "Uitgedeelde kaart",
       "resultCount": "{{count}} resultaten"
     },
     "sequences": {
-      "title": "Stay Stack Sequenties",
-      "description": "Bekijk de cyclische sequenties die ontstaan door elke Nde kaart uit je stapel te delen.",
+      "title": "Stay Stack-sequenties",
+      "description": "Bekijk de cyclische sequenties die ontstaan door elke N-de kaart uit je stack te delen.",
       "stepLabel": "Stapgrootte",
       "summary": "{{cycleCount}} cycli van {{cycleLength}} kaarten elk",
       "cycleLabel": "Cyclus {{current}} van {{total}}",
@@ -198,7 +198,7 @@
   },
   "stats": {
     "pageTitle": "Statistieken",
-    "pageDescription": "Volg je trainingsvoortgang met nauwkeurigheidsgrafiekenen sessiegeschiedenis.",
+    "pageDescription": "Volg je trainingsvoortgang met nauwkeurigheidsgrafieken en sessiegeschiedenis.",
     "title": "Statistieken",
     "noData": "Nog geen gegevens. Voltooi een flashcard- of ACAAN-sessie om je statistieken hier te zien.",
     "totalSessions": "Totaal sessies",
@@ -232,16 +232,16 @@
     "otherResources": "Overige bronnen",
     "descriptions": {
       "mnemonica": "Het definitieve werk over de Mnemonica-stack met trucs, principes en diepgaande theorieën.",
-      "aronsonApproach": "Introduceert de Aronson Stack, toepassingen en krachtige routines.",
-      "boundToPlease": "Verzameling van Aronsons vroege werken, essentieel voor stackwerk.",
+      "aronsonApproach": "Introduceert de Aronson-stack, toepassingen en krachtige routines.",
+      "boundToPlease": "Verzameling van Aronsons vroegere werken, essentieel voor stackwerk.",
       "memoriesAreMade": "Een korter werk met praktische toepassingen voor het gememoriseerde kaartspel.",
       "magicRainbow": "Niet alleen over gememoriseerde kaartspellen, maar essentieel voor het verdiepen van magisch denken.",
       "inOrderToAmaze": "Briljante routines en effecten met gememoriseerde kaarttechnieken.",
       "memorandum": "Uniek gememoriseerd kaartspel met krachtige effecten en diepgaande inzichten.",
       "temporarilyOutOfOrder": "Een diepe duik in de Redford-stack met veelzijdige routines en stack-onafhankelijke principes.",
-      "applesauce": "Breidt de Redford-stack uit met nieuwe effecten, ideeën en toepassingen.",
-      "sleightlyOutOfOrder": "Geavanceerde technieken en effecten met een gememoriseerde stack en sleight-of-hand integratie.",
-      "particleSystem": "Nieuw gememoriseerd kaartspel waarmee je zonder te kijken naar elke genoemde kaart kunt knippen, met ingebouwde voordelen en krachtige routines."
+      "applesauce": "Breidt de Redford-stack uit met nieuwe effecten, ideeën en toepassingen voor stackwerk.",
+      "sleightlyOutOfOrder": "Geavanceerde technieken en effecten met een gememoriseerde stack en handvaardigheidstechnieken.",
+      "particleSystem": "Nieuw gememoriseerd kaartspel waarmee je naar elke genoemde kaart kunt couperen zonder te kijken, met ingebouwde voordelen en krachtige routines."
     }
   },
   "about": {
@@ -254,13 +254,13 @@
   },
   "guide": {
     "pageTitle": "Gids",
-    "pageDescription": "Leer hoe je de trainingsmodi van MemDeck gebruikt: Flashcard-oefeningen, ACAAN, sessiemonitoring en tips om je stack te beheersen.",
+    "pageDescription": "Leer hoe je de trainingsmodi van MemDeck gebruikt: Flashcard-oefeningen, ACAAN, sessiebijhouding en tips om je stack te beheersen.",
     "title": "Gids",
     "subtitle": "Alles wat je moet weten over MemDeck en zijn functies.",
     "gettingStarted": {
       "title": "Aan de slag",
       "intro": "MemDeck is een trainingstool voor goochelaars en geheugenliefhebbers die een gememoriseerd kaartspel willen beheersen. Het helpt je kaartposities te oefenen met flashcards en hulpmiddelen zodat je elke kaart op elke positie kunt herinneren — direct.",
-      "selectStack": "Om te beginnen, selecteer een stack in het dropdown-menu onderaan de zijbalk. MemDeck ondersteunt zes gememoriseerde kaartsystemen:",
+      "selectStack": "Om te beginnen, selecteer een stack in het keuzemenu onderaan de zijbalk. MemDeck ondersteunt zes gememoriseerde kaartsystemen:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
@@ -275,9 +275,9 @@
     "flashcardTraining": {
       "title": "Flashcard Training",
       "requiresStack": "Vereist een stack",
-      "intro": "De belangrijkste trainingsmodus. Je krijgt een aanwijzing en moet de bijbehorende kaart of positie in je stack herinneren. Drie modi beschikbaar:",
-      "cardOnlyItem": "<bold>Alleen kaart</bold> — een kaart wordt getoond, herinner het positienummer",
-      "numberOnlyItem": "<bold>Alleen nummer</bold> — een positienummer wordt getoond, herinner de kaart",
+      "intro": "De belangrijkste trainingsmodus. Je krijgt een opgave en moet de bijbehorende kaart of positie in je stack zien te herinneren. Drie modi beschikbaar:",
+      "cardOnlyItem": "<bold>Alleen kaart</bold> — een kaart wordt getoond, herinner je het positienummer",
+      "numberOnlyItem": "<bold>Alleen nummer</bold> — een positienummer wordt getoond, herinner je de kaart",
       "bothItem": "<bold>Beide</bold> — wisselt willekeurig tussen de twee",
       "settings": "Tik op het tandwielpictogram om instellingen te openen. Je kunt een optionele timer activeren en kiezen tussen vrij oefenen of gestructureerde sessies van 10, 20, 30 of 52 kaarten. De scoretracker toont je nauwkeurigheid en huidige reeks.",
       "link": "Ga naar Flashcard Training"
@@ -286,23 +286,23 @@
       "title": "ACAAN Training",
       "requiresStack": "Vereist een stack",
       "intro": "ACAAN staat voor \"Any Card At Any Number\" — een klassiek effect waarbij een toeschouwer een willekeurige kaart en een willekeurig nummer noemt, en de kaart precies op die positie in het kaartspel wordt gevonden.",
-      "description": "In deze modus krijg je een kaart en een doelpositie te zien. Je moet de snijdiepte berekenen die nodig is om de kaart naar die positie te verplaatsen. Voer een waarde in van 0 tot 51. Timer- en sessieopties werken hetzelfde als bij Flashcard.",
+      "description": "In deze modus krijg je een kaart en een doelpositie te zien. Je moet de coupeerdiepte berekenen die nodig is om de kaart naar die positie te verplaatsen. Voer een waarde in van 0 tot 51. Timer- en sessieopties werken hetzelfde als bij Flashcard.",
       "link": "Ga naar ACAAN Training"
     },
     "toolbox": {
       "title": "Gereedschap",
       "requiresStack": "Vereist een stack",
-      "description": "Een verzameling hulpmiddelen voor stack-analyse en optredenvoorbereiding. Het gereedschap bevat:",
+      "description": "Een verzameling hulpmiddelen voor stack-analyse en voorbereiding op optredens. Het gereedschap bevat:",
       "lookupItem": "<bold>Stack opzoeken</bold> — zoek in je stack op kaartnaam of positienummer",
       "faroItem": "<bold>Faro Shuffle</bold> — bekijk het effect van perfecte faro shuffles op de volgorde van je stack",
-      "spellingItem": "<bold>Kaart Spelling</bold> — bekijk hoeveel letters elke kaartnaam heeft en waar de spelling in je stack uitkomt",
-      "sequencesItem": "<bold>Stay Stack Sequenties</bold> — bekijk de cyclische sequenties die ontstaan door elke Nde kaart te delen",
+      "spellingItem": "<bold>Kaartspelling</bold> — bekijk hoeveel letters elke kaartnaam heeft en waar de spelling in je stack uitkomt",
+      "sequencesItem": "<bold>Stay Stack-sequenties</bold> — bekijk de cyclische sequenties die ontstaan door elke N-de kaart te delen",
       "link": "Ga naar Gereedschap"
     },
     "stats": {
       "title": "Statistieken",
       "noStackRequired": "Geen stack vereist",
-      "description": "Volg je voortgang in de tijd. De Statistiekenpagina bevat overzichtskaarten, een nauwkeurigheidstrendgrafiek (gekleurd en filterbaar per modus), een breakdown-tabel per stack en gepagineerde sessiegeschiedenis. Alle gegevens worden lokaal in je browser opgeslagen.",
+      "description": "Volg je voortgang in de tijd. De Statistiekenpagina bevat overzichtskaarten, een nauwkeurigheidstrendgrafiek (gekleurd en filterbaar per modus), een uitsplitsing per stack en gepagineerde sessiegeschiedenis. Alle gegevens worden lokaal in je browser opgeslagen.",
       "link": "Bekijk statistieken"
     },
     "resources": {
@@ -315,7 +315,7 @@
       "dataLocal": "Al je gegevens blijven in je browser — er wordt niets naar een server gestuurd.",
       "darkMode": "Wissel tussen donkere en lichte modus met het pictogram in de header.",
       "gearIcon": "Tik in trainingsmodi op het tandwielpictogram om instellingen te openen voor timer, sessieduur en modusopties.",
-      "switchStacks": "Van stack wisselen verliest je gegevens niet — voortgang wordt per stack bijgehouden.",
+      "switchStacks": "Als je van stack wisselt, raak je geen gegevens kwijt — voortgang wordt per stack bijgehouden.",
       "pwa": "Installeer MemDeck als app op je apparaat voor offline toegang.",
       "language": "Wijzig de weergavetaal via de taalkiezer in de header.",
       "reset": "Gebruik de resetknop in het menu om alle gegevens te wissen en opnieuw te beginnen."
