@@ -6,6 +6,96 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-640x1136-light.png"
+      media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (prefers-color-scheme: light)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-640x1136-dark.png"
+      media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (prefers-color-scheme: dark)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-750x1334-light.png"
+      media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (prefers-color-scheme: light)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-750x1334-dark.png"
+      media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (prefers-color-scheme: dark)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-1125x2436-light.png"
+      media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (prefers-color-scheme: light)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-1125x2436-dark.png"
+      media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (prefers-color-scheme: dark)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-828x1792-light.png"
+      media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (prefers-color-scheme: light)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-828x1792-dark.png"
+      media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (prefers-color-scheme: dark)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-1242x2688-light.png"
+      media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (prefers-color-scheme: light)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-1242x2688-dark.png"
+      media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (prefers-color-scheme: dark)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-1170x2532-light.png"
+      media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (prefers-color-scheme: light)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-1170x2532-dark.png"
+      media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (prefers-color-scheme: dark)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-1284x2778-light.png"
+      media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (prefers-color-scheme: light)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-1284x2778-dark.png"
+      media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (prefers-color-scheme: dark)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-1179x2556-light.png"
+      media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (prefers-color-scheme: light)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-1179x2556-dark.png"
+      media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (prefers-color-scheme: dark)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-1290x2796-light.png"
+      media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (prefers-color-scheme: light)"
+    >
+    <link
+      rel="apple-touch-startup-image"
+      href="/splash/splash-1290x2796-dark.png"
+      media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (prefers-color-scheme: dark)"
+    >
     <meta name="format-detection" content="telephone=no">
     <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
@@ -113,8 +203,65 @@
       }
     })();
     </script>
+    <style>
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      transition: opacity 0.3s ease-out;
+    }
+    #splash.splash-hidden {
+      pointer-events: none;
+      opacity: 0;
+    }
+    .splash-logo {
+      width: 60%;
+      max-width: 480px;
+      height: auto;
+    }
+    html[data-mantine-color-scheme="dark"] #splash {
+      background: #111;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #splash {
+        transition: none;
+      }
+    }
+    </style>
   </head>
   <body>
+    <div id="splash" aria-hidden="true" role="presentation">
+      <img
+        id="splash-logo"
+        class="splash-logo"
+        src="/memdeck-logo-white.webp"
+        alt=""
+        width="1002"
+        height="648"
+        fetchpriority="high"
+        decoding="sync"
+      >
+    </div>
+    <script>
+    "use strict";
+    (() => {
+      if (
+        document.documentElement.getAttribute("data-mantine-color-scheme") ===
+        "dark"
+      ) {
+        const img = document.getElementById("splash-logo");
+        if (img) {
+          img.src = "/memdeck-logo-black.webp";
+          img.width = 990;
+          img.height = 634;
+        }
+      }
+    })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

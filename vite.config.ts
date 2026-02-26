@@ -23,9 +23,9 @@ export default defineConfig({
           "cards/*.svg",
           "apple-touch-icon.png",
         ],
-        // Locale chunks (locale-*.js) are lazy-loaded on demand —
-        // exclude them from precaching to avoid downloading all locales upfront.
-        globIgnores: ["assets/locale-*.js"],
+        // Locale chunks are lazy-loaded on demand; splash PNGs are only
+        // used by iOS — exclude both from precaching.
+        globIgnores: ["assets/locale-*.js", "splash/*.png"],
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/404\.html$/],
         runtimeCaching: [
