@@ -13,7 +13,7 @@
     "url": "git+https://github.com/julienroussel/memdeck.org.git"
   },
   "author": "Julien Roussel",
-  "packageManager": "pnpm@10.30.2",
+  "packageManager": "pnpm@10.30.3",
   "engines": {
     "node": ">=25",
     "pnpm": ">=10"
@@ -44,7 +44,7 @@
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",
     "@testing-library/user-event": "14.6.1",
-    "@types/node": "25.3.0",
+    "@types/node": "25.3.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react-swc": "4.2.3",
@@ -61,7 +61,7 @@
     "postcss-simple-vars": "7.0.1",
     "sharp": "0.34.5",
     "typescript": "5.9.3",
-    "ultracite": "7.2.3",
+    "ultracite": "7.2.4",
     "vite": "7.3.1",
     "vite-plugin-pwa": "1.2.0",
     "vitest": "4.0.18",
