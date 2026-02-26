@@ -11,6 +11,7 @@ import { Header } from "./components/header";
 import { NavLinks } from "./components/nav-links";
 import { ResetButton } from "./components/reset-button";
 import { StackPicker } from "./components/stack-picker";
+import { useSplashRemoval } from "./hooks/use-splash-removal";
 import { Routes } from "./routes";
 import { analytics } from "./services/analytics";
 
@@ -34,6 +35,8 @@ export const App = () => {
   useEffect(() => {
     analytics.trackPageView(location.pathname);
   }, [location.pathname]);
+
+  useSplashRemoval();
 
   return (
     <AppShell
