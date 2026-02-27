@@ -14,7 +14,6 @@ import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import { analytics } from "../../services/analytics";
-import type { PlayingCard } from "../../types/playingcard";
 import { cardItems, numberItems } from "../../types/typeguards";
 import { formatCardName } from "../../utils/card-formatting";
 import { FlashcardOptions } from "./flashcard-options";
@@ -84,14 +83,6 @@ export const Flashcard = () => {
     [choices]
   );
 
-  const handleNumberChoice = useCallback(
-    (item: number) => submitAnswer(item),
-    [submitAnswer]
-  );
-  const handleCardChoice = useCallback(
-    (item: PlayingCard) => submitAnswer(item),
-    [submitAnswer]
-  );
   return (
     <div className="fullMantineContainerHeight">
       <Grid
@@ -154,14 +145,14 @@ export const Flashcard = () => {
               canMove={false}
               hasCursor={true}
               items={numberChoices}
-              onItemClick={handleNumberChoice}
+              onItemClick={submitAnswer}
             />
           ) : (
             <CardSpread
               canMove={false}
               hasCursor={true}
               items={cardChoices}
-              onItemClick={handleCardChoice}
+              onItemClick={submitAnswer}
             />
           )}
           <FlashcardOptions close={close} opened={options} />
