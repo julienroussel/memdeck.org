@@ -11,10 +11,10 @@ import { useLocalDb } from "../utils/localstorage";
 import {
   aggregateStatsEntries,
   createEmptyStatsEntry,
-  isAllTimeStats,
   parseStatsKey,
   statsKey,
-} from "../utils/session";
+} from "../utils/session-stats";
+import { isAllTimeStats } from "../utils/session-typeguards";
 
 const isDefined = (
   entry: AllTimeStatsEntry | undefined

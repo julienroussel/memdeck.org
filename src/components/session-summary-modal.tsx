@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import type { SessionSummary } from "../types/session";
-import { formatDuration, toAccuracyPercent } from "../utils/session";
+import { formatDuration, toAccuracyPercent } from "../utils/session-formatting";
 import { StatDisplay } from "./stat-display";
 
 type SessionSummaryModalProps = {

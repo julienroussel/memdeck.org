@@ -2,7 +2,10 @@ import { SimpleGrid } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { StatDisplay } from "../../components/stat-display";
 import type { AllTimeStatsEntry } from "../../types/session";
-import { calculateAccuracy, toAccuracyPercent } from "../../utils/session";
+import {
+  calculateAccuracy,
+  toAccuracyPercent,
+} from "../../utils/session-formatting";
 
 type StatsOverviewProps = {
   stats: AllTimeStatsEntry;

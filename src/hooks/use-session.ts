@@ -9,13 +9,14 @@ import type {
   TrainingMode,
 } from "../types/session";
 import type { StackKey } from "../types/stacks";
+import { finalizeSession } from "../utils/session-persistence";
 import {
   applyAnswerOutcome,
   deriveActiveSession,
   deriveIsStructuredSession,
-  finalizeSession,
   meetsMinimumSaveThreshold,
-} from "../utils/session";
+} from "../utils/session-phase";
+import { useSessionRecording } from "./use-session-recording";
 
 export type { SessionPhase } from "../types/session";
 
@@ -107,68 +108,8 @@ export const useSession = ({
     [mode, stackKey, tryFinalizeSession]
   );
 
-  const recordCorrect = useCallback(() => {
-    setStatus((prev) => {
-      if (prev.phase !== "active") {
-        return prev;
-      }
-      const newStreak = prev.session.currentStreak + 1;
-      return {
-        phase: "active",
-        session: {
-          ...prev.session,
-          successes: prev.session.successes + 1,
-          currentStreak: newStreak,
-          bestStreak: Math.max(prev.session.bestStreak, newStreak),
-        },
-      };
-    });
-  }, []);
-
-  const recordIncorrect = useCallback(() => {
-    setStatus((prev) => {
-      if (prev.phase !== "active") {
-        return prev;
-      }
-      return {
-        phase: "active",
-        session: {
-          ...prev.session,
-          fails: prev.session.fails + 1,
-          currentStreak: 0,
-        },
-      };
-    });
-  }, []);
-
-  const recordQuestionAdvanced = useCallback(() => {
-    setStatus((prev) => {
-      if (prev.phase !== "active") {
-        return prev;
-      }
-      const newCompleted = prev.session.questionsCompleted + 1;
-      const { config } = prev.session;
-
-      // Auto-complete structured session when done — schedule finalization
-      // via the ref so side effects run outside this pure updater.
-      if (
-        config.type === "structured" &&
-        newCompleted >= config.totalQuestions
-      ) {
-        const updatedSession = {
-          ...prev.session,
-          questionsCompleted: newCompleted,
-        };
-        pendingFinalizationRef.current = updatedSession;
-        return { phase: "active", session: updatedSession };
-      }
-
-      return {
-        phase: "active",
-        session: { ...prev.session, questionsCompleted: newCompleted },
-      };
-    });
-  }, []);
+  const { recordCorrect, recordIncorrect, recordQuestionAdvanced } =
+    useSessionRecording({ setStatus, pendingFinalizationRef });
 
   const handleAnswer = useCallback(
     (outcome: AnswerOutcome) => {

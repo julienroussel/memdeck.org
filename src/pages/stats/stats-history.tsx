@@ -3,7 +3,10 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { SessionRecord } from "../../types/session";
 import { stacks } from "../../types/stacks";
-import { formatDuration, toAccuracyPercent } from "../../utils/session";
+import {
+  formatDuration,
+  toAccuracyPercent,
+} from "../../utils/session-formatting";
 
 export const PAGE_SIZE = 20;
 

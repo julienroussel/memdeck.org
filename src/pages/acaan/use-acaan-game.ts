@@ -88,12 +88,6 @@ export const gameReducer = (
         fails: state.fails + 1,
       };
     case "TIMEOUT":
-      return {
-        ...state,
-        fails: state.fails + 1,
-        scenario: action.payload.newScenario,
-        timeRemaining: state.timerDuration,
-      };
     case "REVEAL_ANSWER":
       return {
         ...state,

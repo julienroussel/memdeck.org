@@ -17,7 +17,7 @@ import {
 } from "../../types/session";
 import { stacks } from "../../types/stacks";
 import { includes } from "../../utils/includes";
-import { toAccuracyPercent } from "../../utils/session";
+import { toAccuracyPercent } from "../../utils/session-formatting";
 
 /** Valid i18n keys for stats translations, derived from en.json */
 type StatsI18nKey = `stats.${keyof (typeof en)["stats"] & string}`;

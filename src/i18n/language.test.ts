@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LANGUAGE_LSK } from "../constants";
+import { createMockLocalStorage } from "../test-utils/mock-local-storage";
 import {
   changeLanguage,
   detectLanguage,
@@ -16,17 +17,7 @@ vi.mock("i18next", () => ({
   },
 }));
 
-const storage = new Map<string, string>();
-const mockLocalStorage = {
-  getItem: (key: string) => storage.get(key) ?? null,
-  setItem: (key: string, value: string) => storage.set(key, value),
-  removeItem: (key: string) => storage.delete(key),
-  clear: () => storage.clear(),
-  get length() {
-    return storage.size;
-  },
-  key: (_index: number) => null,
-};
+const { storage, mockLocalStorage } = createMockLocalStorage();
 
 Object.defineProperty(globalThis, "localStorage", {
   value: mockLocalStorage,
