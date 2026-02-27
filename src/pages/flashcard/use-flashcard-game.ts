@@ -134,14 +134,6 @@ export const gameReducer = (
         fails: state.fails + 1,
       };
     case "TIMEOUT":
-      return {
-        ...state,
-        fails: state.fails + 1,
-        card: action.payload.newCard,
-        choices: action.payload.newChoices,
-        display: action.payload.newDisplay,
-        timeRemaining: state.timerDuration,
-      };
     case "REVEAL_ANSWER":
       return {
         ...state,

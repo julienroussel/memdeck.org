@@ -4,7 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useAllTimeStats } from "../../hooks/use-all-time-stats";
 import { isStackKey } from "../../hooks/use-selected-stack";
 import { stacks } from "../../types/stacks";
-import { calculateAccuracy, toAccuracyPercent } from "../../utils/session";
+import {
+  calculateAccuracy,
+  toAccuracyPercent,
+} from "../../utils/session-formatting";
 
 const stackKeys = Object.keys(stacks).filter(isStackKey);
 

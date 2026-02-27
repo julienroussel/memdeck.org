@@ -3,7 +3,10 @@ import { IconFlame, IconTargetArrow, IconTrophy } from "@tabler/icons-react";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import type { ActiveSession } from "../types/session";
-import { calculateAccuracy, toAccuracyPercent } from "../utils/session";
+import {
+  calculateAccuracy,
+  toAccuracyPercent,
+} from "../utils/session-formatting";
 import { Score } from "./score";
 
 type SessionBannerProps = {

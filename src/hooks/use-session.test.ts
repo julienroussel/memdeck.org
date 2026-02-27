@@ -1,20 +1,13 @@
 /**
- * These tests cover the pure logic extracted from the useSession hook:
- * session phase derivation, structured session detection, and answer
- * outcome routing. They validate the centralized logic that was
- * previously duplicated across Flashcard and ACAAN pages.
+ * These tests exercise the full useSession hook by mocking React primitives
+ * with a minimal state-machine simulation, following the same approach used
+ * by use-session-history.test.ts and use-all-time-stats.test.ts.
  *
- * The second section ("useSession hook") exercises the full stateful hook
- * by mocking React primitives with a minimal state-machine simulation,
- * following the same approach used by use-session-history.test.ts and
- * use-all-time-stats.test.ts.
+ * Pure function tests for deriveActiveSession, deriveIsStructuredSession,
+ * and applyAnswerOutcome live in their colocated file session-phase.test.ts.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type {
-  ActiveSession,
-  AnswerOutcome,
-  SessionSummary,
-} from "../types/session";
+import type { ActiveSession } from "../types/session";
 import type { StackKey } from "../types/stacks";
 import type { SessionPhase } from "./use-session";
 
@@ -47,7 +40,7 @@ const mockEventBusEmit = {
 };
 
 // Mock finalizeSession to delegate to the mocked persistence functions.
-// This is needed because finalizeSession now lives in ../utils/session alongside
+// This is needed because finalizeSession now lives in ../utils/session-persistence alongside
 // the functions it calls, so vi.mock cannot intercept its internal references.
 const mockFinalizeSession = vi.fn((session: ActiveSession) => {
   const record = mockBuildSessionRecord(session);
@@ -98,18 +91,12 @@ vi.mock("react", async () => {
   };
 });
 
-vi.mock("../utils/session", async () => {
-  const actual =
-    await vi.importActual<typeof import("../utils/session")>(
-      "../utils/session"
-    );
+vi.mock("../utils/session-persistence", async () => {
+  const actual = await vi.importActual<
+    typeof import("../utils/session-persistence")
+  >("../utils/session-persistence");
   return {
     ...actual,
-    buildSessionRecord: (...args: unknown[]) => mockBuildSessionRecord(...args),
-    saveSessionRecord: (...args: unknown[]) => mockSaveSessionRecord(...args),
-    computeSessionSummary: (...args: unknown[]) =>
-      mockComputeSessionSummary(...args),
-    updateAllTimeStats: (...args: unknown[]) => mockUpdateAllTimeStats(...args),
     finalizeSession: (session: ActiveSession) => mockFinalizeSession(session),
   };
 });
@@ -119,147 +106,7 @@ vi.mock("../services/event-bus", () => ({
 }));
 
 // Dynamic imports after mocks are wired up (vi.mock is hoisted above these)
-const { applyAnswerOutcome, deriveActiveSession, deriveIsStructuredSession } =
-  await import("../utils/session");
 const { useSession } = await import("./use-session");
-
-// ---------------------------------------------------------------------------
-// Helpers shared across test sections
-// ---------------------------------------------------------------------------
-
-const makeActiveSession = (
-  overrides: Partial<ActiveSession> = {}
-): ActiveSession => ({
-  id: "test-session",
-  mode: "flashcard",
-  stackKey: "mnemonica",
-  config: { type: "open" },
-  startedAt: "2025-01-01T00:00:00.000Z",
-  successes: 0,
-  fails: 0,
-  questionsCompleted: 0,
-  currentStreak: 0,
-  bestStreak: 0,
-  ...overrides,
-});
-
-const makeSummary = (): SessionSummary => ({
-  record: {
-    id: "test-record",
-    mode: "flashcard",
-    stackKey: "mnemonica",
-    config: { type: "open" },
-    startedAt: "2025-01-01T00:00:00.000Z",
-    endedAt: "2025-01-01T00:05:00.000Z",
-    durationSeconds: 300,
-    successes: 8,
-    fails: 2,
-    questionsCompleted: 10,
-    accuracy: 0.8,
-    bestStreak: 5,
-  },
-  encouragement: { key: "session.encouragement.consistent" },
-  isAccuracyImprovement: false,
-  isNewGlobalBestStreak: false,
-  previousAverageAccuracy: null,
-});
-
-// ---------------------------------------------------------------------------
-// Pure function tests (deriveActiveSession, deriveIsStructuredSession, etc.)
-// ---------------------------------------------------------------------------
-
-describe("deriveActiveSession", () => {
-  it("returns the session when phase is active", () => {
-    const session = makeActiveSession();
-    const status: SessionPhase = { phase: "active", session };
-
-    expect(deriveActiveSession(status)).toBe(session);
-  });
-
-  it("returns null when phase is idle", () => {
-    const status: SessionPhase = { phase: "idle" };
-
-    expect(deriveActiveSession(status)).toBeNull();
-  });
-
-  it("returns null when phase is summary", () => {
-    const status: SessionPhase = { phase: "summary", summary: makeSummary() };
-
-    expect(deriveActiveSession(status)).toBeNull();
-  });
-});
-
-describe("deriveIsStructuredSession", () => {
-  it("returns true for a structured session config", () => {
-    const session = makeActiveSession({
-      config: { type: "structured", totalQuestions: 20 },
-    });
-
-    expect(deriveIsStructuredSession(session)).toBe(true);
-  });
-
-  it("returns false for an open session config", () => {
-    const session = makeActiveSession({ config: { type: "open" } });
-
-    expect(deriveIsStructuredSession(session)).toBe(false);
-  });
-
-  it("returns false when activeSession is null", () => {
-    expect(deriveIsStructuredSession(null)).toBe(false);
-  });
-});
-
-describe("applyAnswerOutcome", () => {
-  const createCallbacks = () => ({
-    recordCorrect: vi.fn(),
-    recordIncorrect: vi.fn(),
-    recordQuestionAdvanced: vi.fn(),
-  });
-
-  it("calls recordCorrect and recordQuestionAdvanced for a correct answer that advances", () => {
-    const callbacks = createCallbacks();
-    const outcome: AnswerOutcome = { correct: true, questionAdvanced: true };
-
-    applyAnswerOutcome(outcome, callbacks);
-
-    expect(callbacks.recordCorrect).toHaveBeenCalledOnce();
-    expect(callbacks.recordIncorrect).not.toHaveBeenCalled();
-    expect(callbacks.recordQuestionAdvanced).toHaveBeenCalledOnce();
-  });
-
-  it("calls recordIncorrect only for a wrong answer that does not advance", () => {
-    const callbacks = createCallbacks();
-    const outcome: AnswerOutcome = { correct: false, questionAdvanced: false };
-
-    applyAnswerOutcome(outcome, callbacks);
-
-    expect(callbacks.recordCorrect).not.toHaveBeenCalled();
-    expect(callbacks.recordIncorrect).toHaveBeenCalledOnce();
-    expect(callbacks.recordQuestionAdvanced).not.toHaveBeenCalled();
-  });
-
-  it("calls recordIncorrect and recordQuestionAdvanced for a wrong answer that advances (e.g. timeout)", () => {
-    const callbacks = createCallbacks();
-    const outcome: AnswerOutcome = { correct: false, questionAdvanced: true };
-
-    applyAnswerOutcome(outcome, callbacks);
-
-    expect(callbacks.recordCorrect).not.toHaveBeenCalled();
-    expect(callbacks.recordIncorrect).toHaveBeenCalledOnce();
-    expect(callbacks.recordQuestionAdvanced).toHaveBeenCalledOnce();
-  });
-
-  it("calls recordCorrect only for a correct answer that does not advance", () => {
-    const callbacks = createCallbacks();
-    const outcome: AnswerOutcome = { correct: true, questionAdvanced: false };
-
-    applyAnswerOutcome(outcome, callbacks);
-
-    expect(callbacks.recordCorrect).toHaveBeenCalledOnce();
-    expect(callbacks.recordIncorrect).not.toHaveBeenCalled();
-    expect(callbacks.recordQuestionAdvanced).not.toHaveBeenCalled();
-  });
-});
 
 // ---------------------------------------------------------------------------
 // useSession hook integration tests
@@ -556,5 +403,61 @@ describe("useSession hook", () => {
     expect(mockComputeSessionSummary).toHaveBeenCalled();
     expect(mockUpdateAllTimeStats).toHaveBeenCalled();
     expect(mockEventBusEmit.SESSION_COMPLETED).toHaveBeenCalled();
+  });
+
+  it("dismissSummary returns to idle from summary phase", () => {
+    const result = initHook();
+    result.startSession({ type: "structured", totalQuestions: 10 });
+
+    let updated = rerenderAndFlush();
+
+    // Complete a structured session to reach summary phase
+    for (let i = 0; i < 10; i++) {
+      updated.handleAnswer({ correct: true, questionAdvanced: true });
+      updated = rerenderAndFlush();
+    }
+    // Flush finalization effect + re-render to read summary state
+    updated = rerenderAndFlush();
+
+    expect(updated.status.phase).toBe("summary");
+
+    // Dismiss the summary
+    updated.dismissSummary();
+    updated = rerenderAndFlush();
+
+    expect(updated.status.phase).toBe("idle");
+    expect(updated.activeSession).toBeNull();
+  });
+
+  it("startNewSession dismisses summary and starts a new session with the same config", () => {
+    const result = initHook();
+    result.startSession({ type: "structured", totalQuestions: 10 });
+
+    let updated = rerenderAndFlush();
+
+    // Complete a structured session to reach summary phase
+    for (let i = 0; i < 10; i++) {
+      updated.handleAnswer({ correct: true, questionAdvanced: true });
+      updated = rerenderAndFlush();
+    }
+    // Flush finalization effect + re-render to read summary state
+    updated = rerenderAndFlush();
+
+    expect(updated.status.phase).toBe("summary");
+
+    // Start a new session from the summary screen
+    updated.startNewSession();
+    updated = rerenderAndFlush();
+
+    expect(updated.status.phase).toBe("active");
+    expect(updated.activeSession).not.toBeNull();
+    expect(updated.activeSession?.config).toEqual({
+      type: "structured",
+      totalQuestions: 10,
+    });
+    // Should be a fresh session with zero counters
+    expect(updated.activeSession?.successes).toBe(0);
+    expect(updated.activeSession?.fails).toBe(0);
+    expect(updated.activeSession?.questionsCompleted).toBe(0);
   });
 });
