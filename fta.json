@@ -1,0 +1,4 @@
+{
+  "score_cap": 90,
+  "exclude_filenames": ["*.test.{ts,tsx}"]
+}
