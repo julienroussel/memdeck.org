@@ -5,13 +5,14 @@ import type { AnswerOutcome } from "../../types/session";
 import { createDeckPosition, stacks } from "../../types/stacks";
 import { formatCardName } from "../../utils/card-formatting";
 import {
+  createInitialState,
   type GameAction,
   type GameState,
   gameReducer,
   generateNewCardAndChoices,
   isCorrectAnswer,
-  useFlashcardGame,
-} from "./use-flashcard-game";
+} from "./flashcard-game-reducer";
+import { useFlashcardGame } from "./use-flashcard-game";
 
 const INDEX_ANSWER_PATTERN = /^\d+$/;
 
@@ -268,6 +269,60 @@ describe("isCorrectAnswer", () => {
   });
 });
 
+describe("createInitialState", () => {
+  it("creates state with an initial card and choices from the stack", () => {
+    const state = createInitialState(testStack, 15);
+
+    expect(state.card).toBeDefined();
+    expect(state.card.index).toBeGreaterThanOrEqual(1);
+    expect(state.card.index).toBeLessThanOrEqual(52);
+    expect(state.choices).toHaveLength(5);
+
+    for (const choice of state.choices) {
+      const cardInStack = testStack.some(
+        (c) => c.suit === choice.card.suit && c.rank === choice.card.rank
+      );
+      expect(cardInStack).toBe(true);
+    }
+  });
+
+  it("sets successes and fails to 0", () => {
+    const state = createInitialState(testStack, 15);
+
+    expect(state.successes).toBe(0);
+    expect(state.fails).toBe(0);
+  });
+
+  it("sets display to card", () => {
+    const state = createInitialState(testStack, 15);
+
+    expect(state.display).toBe("card");
+  });
+
+  it("sets timeRemaining to the provided timerDuration", () => {
+    const state = createInitialState(testStack, 25);
+
+    expect(state.timeRemaining).toBe(25);
+  });
+
+  it("sets timerDuration to the provided value", () => {
+    const state = createInitialState(testStack, 30);
+
+    expect(state.timerDuration).toBe(30);
+  });
+
+  it("generates choices that include the selected card", () => {
+    const state = createInitialState(testStack, 15);
+
+    const hasSelectedCard = state.choices.some(
+      (c) =>
+        c.card.suit === state.card.card.suit &&
+        c.card.rank === state.card.card.rank
+    );
+    expect(hasSelectedCard).toBe(true);
+  });
+});
+
 describe("flashcard game utils", () => {
   it("getRandomDisplayMode returns card or index", async () => {
     const { getRandomDisplayMode } = await import("./utils");
@@ -377,6 +432,253 @@ describe("gameReducer", () => {
     });
   });
 
+  describe("CORRECT_ANSWER action", () => {
+    it("increments successes", () => {
+      const state = createTestState({ successes: 2 });
+      const { card: newCard, choices: newChoices } =
+        generateNewCardAndChoices(testStack);
+      const action: GameAction = {
+        type: "CORRECT_ANSWER",
+        payload: { newCard, newChoices, newDisplay: "card" },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.successes).toBe(3);
+    });
+
+    it("does not change fails", () => {
+      const state = createTestState({ fails: 4 });
+      const { card: newCard, choices: newChoices } =
+        generateNewCardAndChoices(testStack);
+      const action: GameAction = {
+        type: "CORRECT_ANSWER",
+        payload: { newCard, newChoices, newDisplay: "card" },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.fails).toBe(4);
+    });
+
+    it("advances to a new card with new choices and display", () => {
+      const state = createTestState({ display: "index" });
+      const { card: newCard, choices: newChoices } =
+        generateNewCardAndChoices(testStack);
+      const action: GameAction = {
+        type: "CORRECT_ANSWER",
+        payload: { newCard, newChoices, newDisplay: "card" },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.card).toEqual(newCard);
+      expect(newState.choices).toEqual(newChoices);
+      expect(newState.display).toBe("card");
+    });
+
+    it("resets timeRemaining to timerDuration", () => {
+      const state = createTestState({
+        timeRemaining: 3,
+        timerDuration: 15,
+      });
+      const { card: newCard, choices: newChoices } =
+        generateNewCardAndChoices(testStack);
+      const action: GameAction = {
+        type: "CORRECT_ANSWER",
+        payload: { newCard, newChoices, newDisplay: "card" },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.timeRemaining).toBe(15);
+    });
+  });
+
+  describe("WRONG_ANSWER action", () => {
+    it("increments fails", () => {
+      const state = createTestState({ fails: 2 });
+      const action: GameAction = { type: "WRONG_ANSWER" };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.fails).toBe(3);
+    });
+
+    it("does not change successes", () => {
+      const state = createTestState({ successes: 5 });
+      const action: GameAction = { type: "WRONG_ANSWER" };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.successes).toBe(5);
+    });
+
+    it("does not reset the timer", () => {
+      const state = createTestState({
+        timeRemaining: 7,
+        timerDuration: 15,
+      });
+      const action: GameAction = { type: "WRONG_ANSWER" };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.timeRemaining).toBe(7);
+    });
+
+    it("does not change card, choices, or display", () => {
+      const state = createTestState();
+      const action: GameAction = { type: "WRONG_ANSWER" };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.card).toEqual(state.card);
+      expect(newState.choices).toEqual(state.choices);
+      expect(newState.display).toBe(state.display);
+    });
+  });
+
+  describe("TICK action", () => {
+    it("decrements timeRemaining by 1", () => {
+      const state = createTestState({ timeRemaining: 10 });
+      const action: GameAction = { type: "TICK" };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.timeRemaining).toBe(9);
+    });
+
+    it("does not decrement below 0", () => {
+      const state = createTestState({ timeRemaining: 0 });
+      const action: GameAction = { type: "TICK" };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.timeRemaining).toBe(0);
+    });
+
+    it("does not change scores, card, choices, or display", () => {
+      const state = createTestState({ successes: 3, fails: 1 });
+      const action: GameAction = { type: "TICK" };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.successes).toBe(3);
+      expect(newState.fails).toBe(1);
+      expect(newState.card).toEqual(state.card);
+      expect(newState.choices).toEqual(state.choices);
+      expect(newState.display).toBe(state.display);
+    });
+  });
+
+  describe("RESET_TIMER action", () => {
+    it("resets timeRemaining to the provided duration", () => {
+      const state = createTestState({
+        timeRemaining: 3,
+        timerDuration: 15,
+      });
+      const action: GameAction = {
+        type: "RESET_TIMER",
+        payload: { duration: 20 },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.timeRemaining).toBe(20);
+    });
+
+    it("updates timerDuration to the provided duration", () => {
+      const state = createTestState({ timerDuration: 15 });
+      const action: GameAction = {
+        type: "RESET_TIMER",
+        payload: { duration: 30 },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.timerDuration).toBe(30);
+    });
+
+    it("does not change scores, card, choices, or display", () => {
+      const state = createTestState({ successes: 2, fails: 1 });
+      const action: GameAction = {
+        type: "RESET_TIMER",
+        payload: { duration: 20 },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.successes).toBe(2);
+      expect(newState.fails).toBe(1);
+      expect(newState.card).toEqual(state.card);
+      expect(newState.choices).toEqual(state.choices);
+      expect(newState.display).toBe(state.display);
+    });
+  });
+
+  describe("TIMEOUT action", () => {
+    it("increments fails", () => {
+      const state = createTestState({ fails: 2 });
+      const { card: newCard, choices: newChoices } =
+        generateNewCardAndChoices(testStack);
+      const action: GameAction = {
+        type: "TIMEOUT",
+        payload: { newCard, newChoices, newDisplay: "card" },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.fails).toBe(3);
+    });
+
+    it("does not change successes", () => {
+      const state = createTestState({ successes: 5 });
+      const { card: newCard, choices: newChoices } =
+        generateNewCardAndChoices(testStack);
+      const action: GameAction = {
+        type: "TIMEOUT",
+        payload: { newCard, newChoices, newDisplay: "card" },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.successes).toBe(5);
+    });
+
+    it("advances to a new card with new choices and display", () => {
+      const state = createTestState({ display: "index" });
+      const { card: newCard, choices: newChoices } =
+        generateNewCardAndChoices(testStack);
+      const action: GameAction = {
+        type: "TIMEOUT",
+        payload: { newCard, newChoices, newDisplay: "card" },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.card).toEqual(newCard);
+      expect(newState.choices).toEqual(newChoices);
+      expect(newState.display).toBe("card");
+    });
+
+    it("resets timeRemaining to timerDuration", () => {
+      const state = createTestState({
+        timeRemaining: 0,
+        timerDuration: 15,
+      });
+      const { card: newCard, choices: newChoices } =
+        generateNewCardAndChoices(testStack);
+      const action: GameAction = {
+        type: "TIMEOUT",
+        payload: { newCard, newChoices, newDisplay: "card" },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.timeRemaining).toBe(15);
+    });
+  });
+
   describe("RESET_GAME action", () => {
     it("resets scores to zero", () => {
       const state = createTestState({ successes: 5, fails: 3 });
@@ -424,6 +726,18 @@ describe("gameReducer", () => {
 
       expect(newState.timerDuration).toBe(30);
       expect(newState.timeRemaining).toBe(30);
+    });
+
+    it("resets display to card", () => {
+      const state = createTestState({ display: "index" });
+      const action: GameAction = {
+        type: "RESET_GAME",
+        payload: { stackOrder: testStack, timerDuration: 15 },
+      };
+
+      const newState = gameReducer(state, action);
+
+      expect(newState.display).toBe("card");
     });
   });
 });

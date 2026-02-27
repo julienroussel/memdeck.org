@@ -10,8 +10,9 @@ import {
   type GameAction,
   type GameState,
   gameReducer,
-  useAcaanGame,
-} from "./use-acaan-game";
+  getCurrentCutDepth,
+} from "./acaan-game-reducer";
+import { useAcaanGame } from "./use-acaan-game";
 
 vi.mock("@mantine/notifications", () => ({
   notifications: { show: vi.fn() },
@@ -97,6 +98,38 @@ describe("formatCutDepthMessage", () => {
   it("formats message for edge positions", () => {
     const message = formatCutDepthMessage(1, 52, 1);
     expect(message).toBe("Position 1 → 52, cut depth: 1");
+  });
+});
+
+describe("getCurrentCutDepth", () => {
+  it("returns the cut depth for a standard scenario", () => {
+    const scenario: AcaanScenario = {
+      card: mnemonica.order[9],
+      cardPosition: createDeckPosition(10),
+      targetPosition: createDeckPosition(25),
+    };
+
+    expect(getCurrentCutDepth(scenario)).toBe(37);
+  });
+
+  it("returns 0 when card is already at the target position", () => {
+    const scenario: AcaanScenario = {
+      card: mnemonica.order[19],
+      cardPosition: createDeckPosition(20),
+      targetPosition: createDeckPosition(20),
+    };
+
+    expect(getCurrentCutDepth(scenario)).toBe(0);
+  });
+
+  it("returns the correct cut depth when cardPosition is greater than targetPosition", () => {
+    const scenario: AcaanScenario = {
+      card: mnemonica.order[24],
+      cardPosition: createDeckPosition(25),
+      targetPosition: createDeckPosition(10),
+    };
+
+    expect(getCurrentCutDepth(scenario)).toBe(15);
   });
 });
 

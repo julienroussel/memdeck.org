@@ -16,6 +16,7 @@ import {
   deriveIsStructuredSession,
   meetsMinimumSaveThreshold,
 } from "../utils/session-phase";
+import { useSessionAutoSave } from "./use-session-auto-save";
 import { useSessionRecording } from "./use-session-recording";
 
 export type { SessionPhase } from "../types/session";
@@ -164,44 +165,7 @@ export const useSession = ({
     }
   }, [autoStart, status.phase, startSession]);
 
-  // Auto-save on stack change
-  const prevStackKeyRef = useRef(stackKey);
-  useEffect(() => {
-    if (prevStackKeyRef.current !== stackKey) {
-      prevStackKeyRef.current = stackKey;
-      if (
-        statusRef.current.phase === "active" &&
-        meetsMinimumSaveThreshold(statusRef.current.session)
-      ) {
-        const summary = tryFinalizeSession(statusRef.current.session);
-        if (summary !== null) {
-          setStatus({ phase: "summary", summary });
-        }
-      } else if (statusRef.current.phase === "active") {
-        setStatus({ phase: "idle" });
-      }
-    }
-  }, [stackKey, tryFinalizeSession]);
-
-  // Auto-save on unmount and beforeunload
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      const current = statusRef.current;
-      if (
-        current.phase === "active" &&
-        meetsMinimumSaveThreshold(current.session)
-      ) {
-        tryFinalizeSession(current.session);
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      handleBeforeUnload();
-    };
-  }, [tryFinalizeSession]);
+  useSessionAutoSave({ stackKey, statusRef, setStatus, tryFinalizeSession });
 
   const activeSession = deriveActiveSession(status);
   const isStructuredSession = deriveIsStructuredSession(activeSession);
