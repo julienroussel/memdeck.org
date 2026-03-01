@@ -19,6 +19,7 @@ updates:
     labels:
       - 'dependencies'
     groups:
+      # Catch-all for remaining packages; dependency-review job gates merges
       all-minor-patch:
         update-types:
           - minor
@@ -26,16 +27,28 @@ updates:
       mantine:
         patterns:
           - '@mantine/*'
+        update-types:
+          - minor
+          - patch
       react:
         patterns:
           - '@types/react'
           - '@types/react-dom'
           - 'react'
           - 'react-dom'
+        update-types:
+          - minor
+          - patch
       react-router:
         patterns:
           - '@react-router/*'
+        update-types:
+          - minor
+          - patch
       vitest:
         patterns:
           - '@vitest/*'
           - 'vitest'
+        update-types:
+          - minor
+          - patch
