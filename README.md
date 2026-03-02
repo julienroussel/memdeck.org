@@ -70,7 +70,6 @@ pnpm run lint          # Check formatting and lint rules (Biome)
 pnpm run typecheck     # Type checking
 pnpm run test          # Unit tests (Vitest)
 pnpm run test:e2e      # E2E tests (Playwright)
-pnpm run validate      # Full validation (knip + lint + typecheck + fta)
 pnpm run build         # Production build
 ```
 

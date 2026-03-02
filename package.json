@@ -33,8 +33,7 @@
     "test:e2e:debug": "playwright test --debug",
     "fta": "fta --config-path fta.json src",
     "lighthouse": "lhci autorun",
-    "generate:splash": "node scripts/generate-splash-images.ts",
-    "validate": "pnpm run knip && pnpm run lint && pnpm run typecheck && pnpm run fta"
+    "generate:splash": "node scripts/generate-splash-images.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.4",

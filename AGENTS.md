@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -38,18 +38,17 @@ pnpm run test:e2e
 # Check for unused dependencies/exports
 pnpm run knip
 
-# Full validation (knip + lint + typecheck + fta)
-pnpm run validate
-
 # Build for production
 pnpm run build
 
 # Preview production build
 pnpm run preview
 
-# Analyze bundle (after build)
+# Check file complexity
 pnpm run fta
 ```
+
+Run `pnpm run fta` after making significant changes to verify file complexity stays within acceptable thresholds.
 
 ## Code Architecture
 
@@ -74,7 +73,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 
 ### Application Structure
 
-- **Routing**: `BrowserRouter` via React Router in `src/Routes.tsx`. GitHub Pages SPA support via `public/404.html` redirect
+- **Routing**: Route definitions in `src/routes.tsx`, `BrowserRouter` in `src/provider.tsx`. GitHub Pages SPA support via `public/404.html` redirect
 - **UI Framework**: Mantine with custom color scheme management stored in localStorage
 - **Pages**: Self-contained in `src/pages/` — each training mode is its own page
 - **Components**: Reusable UI in `src/components/` (e.g., `CardSpread`, `StackPicker`, `NumberCard`)
@@ -85,17 +84,24 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 ### Key Features
 
 - **Flashcard Mode** (`src/pages/flashcard/`): Main training feature with three modes (card-only, index-only, both)
-- **ACAAN** (`src/pages/acaan.tsx`): Any Card At Any Number calculator
-- **Toolbox** (`src/pages/toolbox.tsx`): Collection of memorized deck utilities
+- **ACAAN** (`src/pages/acaan/`): Any Card At Any Number calculator
+- **Toolbox** (`src/pages/toolbox/`): Collection of memorized deck utilities
+- **Stats** (`src/pages/stats/`): Session history and accuracy statistics
+- **Guide** (`src/pages/guide/`): Getting started and training instructions
 
 ## TypeScript Standards
 
-- **No `any`.** Use `unknown` at system boundaries, proper types everywhere else.
-- **No `as` casts except at system boundaries** (e.g., parsing localStorage JSON). Every `as` is a code smell that needs justification. Use `satisfies` for type validation without widening.
+**Strict typing is mandatory.** This project enforces full TypeScript strictness — loose or weak typings are never acceptable. Every type must be precise, narrowed, and intentional. Code that compiles but uses escape hatches (`any`, unnecessary `as` casts, `@ts-ignore`, `@ts-expect-error`) to sidestep the type system will be rejected. When in doubt, write the stricter type. Run `pnpm run typecheck` and fix all errors before considering any change complete.
+
+- **No `any`.** Use `unknown` at system boundaries, proper types everywhere else. Do not use `any` as a shortcut to silence type errors — find and fix the root cause instead.
+- **`as` casts are prohibited.** Do not use `as` to coerce types. Instead, use type guards, discriminated unions, `satisfies`, or restructure the code so the compiler can infer the correct type. If — and only if — no other solution exists (e.g., parsing untyped JSON from localStorage or an external API), an `as` cast may be used as a last resort. Every `as` must include a comment justifying why it is necessary and must be validated during code review before it is accepted.
+- **No `@ts-ignore` or `@ts-expect-error`.** Fix the type error properly rather than suppressing it.
+- **No implicit `any`.** All function parameters, return types for exported functions, and callback arguments must be explicitly typed. Rely on inference only where the compiler can fully resolve the type.
 - **Prefer discriminated unions over optional fields with boolean flags.** Use `{ status: 'loading' } | { status: 'success'; data: T } | { status: 'error'; error: Error }` instead of `{ isLoading: boolean; data?: T; error?: Error }`. This makes impossible states unrepresentable.
 - **Derive types from runtime data.** Use `typeof`, `keyof`, `ReturnType`, and mapped types to keep types in sync with values. Don't duplicate type definitions that can be inferred.
 - **Use `as const` for literal types and immutable data** (already used extensively for card/stack definitions).
 - **Use type narrowing over assertions.** Prefer type guards and control flow narrowing to validate types at runtime.
+- **Generic constraints must be tight.** Use `<T extends SpecificType>` rather than unconstrained `<T>` when the generic is expected to satisfy a shape.
 
 ## React Standards
 
@@ -136,19 +142,15 @@ This project uses **Ultracite** (a Biome preset) for formatting and linting.
 
 ## Configuration Files
 
-- **knip.json**: Dependency and export checker config. `isbot` is an ignored transitive dependency from React Router
-- **eslint.config.js**: Flat config format using TypeScript ESLint, import plugin, and React hooks
+- **knip.json**: Dependency and export checker config. Ignores `@biomejs/biome`, `globals`, and `lefthook`
 - **tsconfig.json**: Project references to `tsconfig.app.json` and `tsconfig.node.json`
 - **vite.config.ts**: Minimal Vite config with React plugin
 - **vitest.config.ts**: Test runner configuration
 - **playwright.config.ts**: E2E test configuration
 
-## Local Storage Keys
+## Constants
 
-Defined in `src/constants.ts`:
-
-- `SELECTED_STACK_LSK`: Currently selected memorized deck
-- `FLASHCARD_OPTION_LSK`: Flashcard mode preference
+Application constants are defined in `src/constants.ts`, including localStorage keys (suffixed `_LSK`), card dimensions, and site metadata.
 
 ## Adding a New Memorized Deck
 
