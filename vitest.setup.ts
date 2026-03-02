@@ -9,6 +9,8 @@ i18n
   .use(initReactI18next)
   .init({ ...i18nConfig, initImmediate: false, showSupportNotice: false });
 
+// globals: false is set in vitest.config.ts, so @testing-library/react cannot
+// detect the global afterEach to register auto-cleanup. Register it explicitly.
 afterEach(() => {
   cleanup();
 });

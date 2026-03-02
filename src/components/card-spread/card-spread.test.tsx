@@ -3,6 +3,9 @@ import { describe, expect, it, vi } from "vitest";
 import { render } from "../../test-utils";
 import {
   AceOfHearts,
+  FiveOfHearts,
+  FourOfHearts,
+  SixOfHearts,
   ThreeOfHearts,
   TwoOfHearts,
 } from "../../types/suits/hearts";
@@ -134,60 +137,141 @@ describe("CardSpread", () => {
   });
 
   describe("Keyboard navigation", () => {
-    it("ArrowLeft key event does not crash", () => {
-      const cards = [AceOfHearts, TwoOfHearts, ThreeOfHearts];
-      render(<CardSpread items={cardItems(cards)} />);
+    // The component tracks an `offset` value that shifts all cards visually.
+    // Each card receives a CSS custom property `--i` computed as:
+    //   index + 1 - (items.length / 2) + offset
+    // ArrowRight increases offset by KEYBOARD_STEP (3), ArrowLeft decreases it.
+    // maxOffset = items.length / 2. Using 6 cards: maxOffset = 3, KEYBOARD_STEP = 3.
+    // Initial offset = 0, so card[0] --i = 0 + 1 - 3 + 0 = -2.
+    // After ArrowRight: offset = 3, card[0] --i = 1.
+    // After ArrowLeft: offset = -3, card[0] --i = -5.
+
+    const sixUniqueCards = [
+      AceOfHearts,
+      TwoOfHearts,
+      ThreeOfHearts,
+      FourOfHearts,
+      FiveOfHearts,
+      SixOfHearts,
+    ];
+
+    const getFirstOption = () => {
+      const options = screen.getAllByRole("option");
+      const first = options[0];
+      if (!first) {
+        throw new Error("Expected at least one option element");
+      }
+      return first;
+    };
+
+    const getCssVar = (el: HTMLElement, name: string) =>
+      el.style.getPropertyValue(name);
+
+    it("ArrowRight increases the offset, shifting card CSS positions forward", () => {
+      render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
       const listbox = screen.getByRole("listbox");
-      expect(() => {
-        fireEvent.keyDown(listbox, { key: "ArrowLeft" });
-      }).not.toThrow();
+      const firstCard = getFirstOption();
+
+      expect(getCssVar(firstCard, "--i")).toBe("-2");
+
+      fireEvent.keyDown(listbox, { key: "ArrowRight" });
+
+      expect(getCssVar(firstCard, "--i")).toBe("1");
     });
 
-    it("ArrowRight key event does not crash", () => {
-      const cards = [AceOfHearts, TwoOfHearts, ThreeOfHearts];
-      render(<CardSpread items={cardItems(cards)} />);
+    it("ArrowLeft decreases the offset, shifting card CSS positions backward", () => {
+      render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
       const listbox = screen.getByRole("listbox");
-      expect(() => {
-        fireEvent.keyDown(listbox, { key: "ArrowRight" });
-      }).not.toThrow();
+      const firstCard = getFirstOption();
+
+      expect(getCssVar(firstCard, "--i")).toBe("-2");
+
+      fireEvent.keyDown(listbox, { key: "ArrowLeft" });
+
+      expect(getCssVar(firstCard, "--i")).toBe("-5");
     });
 
-    it("multiple keyboard events do not crash", () => {
-      const cards = [AceOfHearts, TwoOfHearts, ThreeOfHearts];
-      render(<CardSpread items={cardItems(cards)} />);
+    it("ArrowRight clamps at the maximum offset and stops changing", () => {
+      render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
       const listbox = screen.getByRole("listbox");
-      expect(() => {
-        fireEvent.keyDown(listbox, { key: "ArrowLeft" });
-        fireEvent.keyDown(listbox, { key: "ArrowRight" });
-        fireEvent.keyDown(listbox, { key: "ArrowLeft" });
-        fireEvent.keyDown(listbox, { key: "ArrowRight" });
-      }).not.toThrow();
+      const firstCard = getFirstOption();
+
+      // One press reaches maxOffset (3 === KEYBOARD_STEP for 6 cards).
+      fireEvent.keyDown(listbox, { key: "ArrowRight" });
+      expect(getCssVar(firstCard, "--i")).toBe("1");
+
+      // Additional presses should not change the value beyond the boundary.
+      fireEvent.keyDown(listbox, { key: "ArrowRight" });
+      expect(getCssVar(firstCard, "--i")).toBe("1");
     });
 
-    it("keyboard events do not crash when canMove is false", () => {
-      const cards = [AceOfHearts, TwoOfHearts, ThreeOfHearts];
-      render(<CardSpread canMove={false} items={cardItems(cards)} />);
+    it("ArrowLeft clamps at the minimum offset and stops changing", () => {
+      render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
       const listbox = screen.getByRole("listbox");
-      expect(() => {
-        fireEvent.keyDown(listbox, { key: "ArrowLeft" });
-        fireEvent.keyDown(listbox, { key: "ArrowRight" });
-      }).not.toThrow();
+      const firstCard = getFirstOption();
+
+      // One press reaches -maxOffset (-3 === -KEYBOARD_STEP for 6 cards).
+      fireEvent.keyDown(listbox, { key: "ArrowLeft" });
+      expect(getCssVar(firstCard, "--i")).toBe("-5");
+
+      // Additional presses should not change the value beyond the boundary.
+      fireEvent.keyDown(listbox, { key: "ArrowLeft" });
+      expect(getCssVar(firstCard, "--i")).toBe("-5");
     });
 
-    it("other keyboard events do not crash", () => {
-      const cards = [AceOfHearts, TwoOfHearts, ThreeOfHearts];
-      render(<CardSpread items={cardItems(cards)} />);
+    it("ArrowRight then ArrowLeft returns cards to their original positions", () => {
+      render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
       const listbox = screen.getByRole("listbox");
-      expect(() => {
-        fireEvent.keyDown(listbox, { key: "Enter" });
-        fireEvent.keyDown(listbox, { key: "Escape" });
-        fireEvent.keyDown(listbox, { key: "Tab" });
-      }).not.toThrow();
+      const firstCard = getFirstOption();
+      const initialValue = getCssVar(firstCard, "--i");
+
+      fireEvent.keyDown(listbox, { key: "ArrowRight" });
+      fireEvent.keyDown(listbox, { key: "ArrowLeft" });
+
+      expect(getCssVar(firstCard, "--i")).toBe(initialValue);
+    });
+
+    it("when canMove=false, ArrowRight does not change card positions", () => {
+      render(<CardSpread canMove={false} items={cardItems(sixUniqueCards)} />);
+
+      const listbox = screen.getByRole("listbox");
+      const firstCard = getFirstOption();
+      const initialValue = getCssVar(firstCard, "--i");
+
+      fireEvent.keyDown(listbox, { key: "ArrowRight" });
+
+      expect(getCssVar(firstCard, "--i")).toBe(initialValue);
+    });
+
+    it("when canMove=false, ArrowLeft does not change card positions", () => {
+      render(<CardSpread canMove={false} items={cardItems(sixUniqueCards)} />);
+
+      const listbox = screen.getByRole("listbox");
+      const firstCard = getFirstOption();
+      const initialValue = getCssVar(firstCard, "--i");
+
+      fireEvent.keyDown(listbox, { key: "ArrowLeft" });
+
+      expect(getCssVar(firstCard, "--i")).toBe(initialValue);
+    });
+
+    it("unhandled keys such as Enter, Escape, and Tab do not change card positions", () => {
+      render(<CardSpread items={cardItems(sixUniqueCards)} />);
+
+      const listbox = screen.getByRole("listbox");
+      const firstCard = getFirstOption();
+      const initialValue = getCssVar(firstCard, "--i");
+
+      fireEvent.keyDown(listbox, { key: "Enter" });
+      fireEvent.keyDown(listbox, { key: "Escape" });
+      fireEvent.keyDown(listbox, { key: "Tab" });
+
+      expect(getCssVar(firstCard, "--i")).toBe(initialValue);
     });
   });
 
@@ -230,14 +314,15 @@ describe("CardSpread", () => {
       expect(options).toHaveLength(1);
     });
 
-    it("onItemClick is optional and component works without it", () => {
+    it("clicking a card without onItemClick is a no-op", () => {
       const cards = [AceOfHearts, TwoOfHearts];
       render(<CardSpread items={cardItems(cards)} />);
 
       const firstCard = screen.getByLabelText("Ace of Hearts");
-      expect(() => {
-        fireEvent.click(firstCard);
-      }).not.toThrow();
+      fireEvent.click(firstCard);
+
+      expect(firstCard).toBeInTheDocument();
+      expect(screen.getByLabelText("2 of Hearts")).toBeInTheDocument();
     });
   });
 });

@@ -1,6 +1,6 @@
 import { timerReducerCases } from "../../hooks/use-game-timer";
 import type { ResetGameAction } from "../../hooks/use-reset-game-on-stack-change";
-import type { Stack } from "../../types/stacks";
+import type { DeckPosition, Stack } from "../../types/stacks";
 import {
   type AcaanScenario,
   calculateCutDepth,
@@ -38,8 +38,8 @@ export const getCurrentCutDepth = (scenario: AcaanScenario): number =>
   calculateCutDepth(scenario.cardPosition, scenario.targetPosition);
 
 export const formatCutDepthMessage = (
-  cardPosition: number,
-  targetPosition: number,
+  cardPosition: DeckPosition,
+  targetPosition: DeckPosition,
   cutDepth: number
 ): string => {
   const cutDepthText = cutDepth === 0 ? "0 (no cut needed)" : String(cutDepth);

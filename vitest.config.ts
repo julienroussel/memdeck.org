@@ -35,10 +35,10 @@ export default defineConfig({
       ],
       thresholds: {
         // Global thresholds - UI components lower overall coverage
-        lines: 45,
-        functions: 25,
-        branches: 30,
-        statements: 45,
+        lines: 55,
+        functions: 40,
+        branches: 40,
+        statements: 55,
         // Per-glob thresholds — set just below current values as a ratchet.
         // Raise them as coverage improves; never lower without justification.
         "src/hooks/**/*.ts": {
@@ -58,6 +58,12 @@ export default defineConfig({
           functions: 80,
           branches: 70,
           statements: 85,
+        },
+        "src/services/**/*.ts": {
+          lines: 90,
+          functions: 90,
+          branches: 85,
+          statements: 90,
         },
       },
     },
