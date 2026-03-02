@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       run-checks:
-        description: Run lint, typecheck, and tests before building
+        description: Run knip, lint, typecheck, and tests before building
         type: boolean
         default: true
       upload-pages-artifact:
@@ -29,9 +29,18 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Run validation
+      - name: Check unused dependencies and exports
         if: inputs.run-checks
-        run: pnpm run validate
+        run: pnpm run knip
+      - name: Lint
+        if: inputs.run-checks
+        run: pnpm run lint
+      - name: Typecheck
+        if: inputs.run-checks
+        run: pnpm run typecheck
+      - name: Check file complexity
+        if: inputs.run-checks
+        run: pnpm run fta
       - name: Run unit tests with coverage
         # Coverage runs on every check (CI only, skipped on deploy) to maintain threshold visibility.
         # For this project size the instrumentation overhead is negligible (~33s total).
@@ -69,7 +78,7 @@ jobs:
     if: inputs.run-checks
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -95,17 +104,18 @@ jobs:
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+          key: playwright-${{ runner.os }}-chromium-webkit-${{ steps.playwright-version.outputs.version }}
           restore-keys: |
             playwright-${{ runner.os }}-
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium webkit
       - name: Install Playwright OS dependencies
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm exec playwright install-deps chromium
+        run: pnpm exec playwright install-deps chromium webkit
+      # Runs all projects configured in playwright.config.ts (chromium + webkit)
       - name: Run E2E tests
-        run: pnpm exec playwright test --project=chromium
+        run: pnpm exec playwright test
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
