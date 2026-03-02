@@ -81,22 +81,38 @@ const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
 
 describe("formatCutDepthMessage", () => {
   it("formats message with non-zero cut depth", () => {
-    const message = formatCutDepthMessage(10, 5, 5);
+    const message = formatCutDepthMessage(
+      createDeckPosition(10),
+      createDeckPosition(5),
+      5
+    );
     expect(message).toBe("Position 10 → 5, cut depth: 5");
   });
 
   it("formats message with large cut depth", () => {
-    const message = formatCutDepthMessage(5, 10, 47);
+    const message = formatCutDepthMessage(
+      createDeckPosition(5),
+      createDeckPosition(10),
+      47
+    );
     expect(message).toBe("Position 5 → 10, cut depth: 47");
   });
 
   it("formats message with special text when cut depth is zero", () => {
-    const message = formatCutDepthMessage(10, 10, 0);
+    const message = formatCutDepthMessage(
+      createDeckPosition(10),
+      createDeckPosition(10),
+      0
+    );
     expect(message).toBe("Position 10 → 10, cut depth: 0 (no cut needed)");
   });
 
   it("formats message for edge positions", () => {
-    const message = formatCutDepthMessage(1, 52, 1);
+    const message = formatCutDepthMessage(
+      createDeckPosition(1),
+      createDeckPosition(52),
+      1
+    );
     expect(message).toBe("Position 1 → 52, cut depth: 1");
   });
 });
