@@ -35,12 +35,20 @@ export const TimerDisplay = memo(function TimerDisplay({
               {timeRemaining}s
             </Text>
           </Group>
-          <Progress
-            animated={timeRemaining > 0}
-            color={timerColor}
-            size="lg"
-            value={timerProgress}
-          />
+          <Progress.Root size="lg">
+            <Progress.Section
+              animated={timeRemaining > 0}
+              aria-label={`${t("timer.timeRemaining")}: ${timeRemaining}s`}
+              aria-valuemax={100}
+              aria-valuemin={0}
+              aria-valuenow={timerProgress}
+              aria-valuetext={`${timeRemaining}s`}
+              color={timerColor}
+              role="progressbar"
+              value={timerProgress}
+              withAria={false}
+            />
+          </Progress.Root>
         </div>
       </Center>
       <Space h="lg" />

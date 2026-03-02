@@ -1,4 +1,5 @@
 import { Group, SegmentedControl, Stack, Switch, Text } from "@mantine/core";
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import type { TimerDuration, TimerSettings } from "../types/timer";
 import { isValidDuration, TIMER_DURATION_OPTIONS } from "../utils/timer";
@@ -19,6 +20,7 @@ export const TimerSettingsControl = ({
   onDurationChange,
 }: TimerSettingsControlProps) => {
   const { t } = useTranslation();
+  const durationLabelId = useId();
 
   const handleTimerToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     onEnabledChange(event.currentTarget.checked);
@@ -40,8 +42,11 @@ export const TimerSettingsControl = ({
       />
       {timerSettings.enabled && (
         <Group gap="xs">
-          <Text size="sm">{t("timer.timeLimit")}</Text>
+          <Text id={durationLabelId} size="sm">
+            {t("timer.timeLimit")}
+          </Text>
           <SegmentedControl
+            aria-labelledby={durationLabelId}
             data={TIMER_DURATION_OPTIONS}
             onChange={handleDurationChange}
             size="xs"
