@@ -1,4 +1,5 @@
 import type en from "../i18n/locales/en.json";
+import type { FlashcardMode } from "./flashcard";
 import type { StackKey } from "./stacks";
 
 /** Training mode identifier (extensible for future modes) */
@@ -14,10 +15,9 @@ export type SessionConfig =
   | { type: "structured"; totalQuestions: SessionPreset }
   | { type: "open" };
 
-/** Runtime state of an active session */
-export type ActiveSession = {
+/** Shared fields for an active session */
+type ActiveSessionBase = {
   id: string;
-  mode: TrainingMode;
   stackKey: StackKey;
   config: SessionConfig;
   startedAt: string;
@@ -28,10 +28,14 @@ export type ActiveSession = {
   bestStreak: number;
 };
 
-/** Persisted session record (immutable snapshot) */
-export type SessionRecord = {
+/** Runtime state of an active session */
+export type ActiveSession =
+  | (ActiveSessionBase & { mode: "flashcard"; flashcardMode: FlashcardMode })
+  | (ActiveSessionBase & { mode: "acaan" });
+
+/** Shared fields for a persisted session record */
+type SessionRecordBase = {
   id: string;
-  mode: TrainingMode;
   stackKey: StackKey;
   config: SessionConfig;
   startedAt: string;
@@ -43,6 +47,11 @@ export type SessionRecord = {
   accuracy: number;
   bestStreak: number;
 };
+
+/** Persisted session record (immutable snapshot) */
+export type SessionRecord =
+  | (SessionRecordBase & { mode: "flashcard"; flashcardMode?: FlashcardMode })
+  | (SessionRecordBase & { mode: "acaan" });
 
 /** Aggregated all-time stats entry */
 export type AllTimeStatsEntry = {

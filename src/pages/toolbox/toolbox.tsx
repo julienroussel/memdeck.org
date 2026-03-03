@@ -9,11 +9,15 @@ import { FaroShuffle } from "./faro-shuffle";
 import { StackLookup } from "./stack-lookup";
 import { StayStack } from "./stay-stack";
 
+const isStringArray = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every((v) => typeof v === "string");
+
 export const Toolbox = () => {
   const { t } = useTranslation();
   const [openSections, setOpenSections] = useLocalDb<string[]>(
     TOOLBOX_SECTIONS_LSK,
-    []
+    [],
+    isStringArray
   );
 
   const handleSectionsChange = (sections: string[]) => {

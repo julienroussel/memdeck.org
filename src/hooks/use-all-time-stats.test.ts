@@ -359,37 +359,8 @@ describe("useAllTimeStats", () => {
   });
 
   describe("invalid data handling", () => {
-    it("returns empty stats when validation fails", () => {
-      // Invalid data structure (array instead of object)
-      const invalidStats: unknown = [];
-
-      mockedUseLocalDb.mockReturnValue([invalidStats, vi.fn(), vi.fn()]);
-
-      const result = useAllTimeStats();
-
-      expect(result.stats).toEqual({});
-    });
-
-    it("returns empty stats when entries have invalid types", () => {
-      // Invalid entry structure
-      const invalidStats: unknown = {
-        "flashcard:mnemonica": {
-          totalSessions: "not a number",
-          totalQuestions: 10,
-        },
-      };
-
-      mockedUseLocalDb.mockReturnValue([invalidStats, vi.fn(), vi.fn()]);
-
-      const result = useAllTimeStats();
-
-      expect(result.stats).toEqual({});
-    });
-
-    it("getStats returns empty entry when stats are invalid", () => {
-      const invalidStats = { invalid: "data" };
-
-      mockedUseLocalDb.mockReturnValue([invalidStats, vi.fn(), vi.fn()]);
+    it("getStats returns empty entry for missing key", () => {
+      mockedUseLocalDb.mockReturnValue([{}, vi.fn(), vi.fn()]);
 
       const result = useAllTimeStats();
 

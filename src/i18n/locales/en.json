@@ -78,21 +78,34 @@
     "pageDescription": "Practice your memorized deck with interactive flashcard drills. Train card-to-number, number-to-card, or both.",
     "title": "Flashcard",
     "settingsAriaLabel": "Flashcard settings",
-    "optionsTitle": "Flashcard options",
-    "pickOneMode": "Pick one mode",
+    "modePosition": "Position",
+    "modeNeighbor": "Neighbor",
+    "subModeCard": "Card",
+    "subModeNumber": "Number",
+    "subModeBoth": "Both",
+    "primaryModeAriaLabel": "Training mode",
+    "positionSubModeAriaLabel": "Position mode variant",
+    "neighborDirectionAriaLabel": "Neighbor direction",
     "modeCardOnly": "Card only",
     "modeCardOnlyDescription": "In this mode, you'll see a card and need to guess its position in the stack from 5 options.",
     "modeBothModes": "Both modes",
     "modeBothModesDescription": "In this mode, you'll be randomly shown either a card or a number, guess its match from 5 options.",
     "modeNumberOnly": "Number only",
-    "modeNumberOnlyDescription": "In this mode, you'll see a number and need to pick the corresponding card from 5 options."
+    "modeNumberOnlyDescription": "In this mode, you'll see a number and need to pick the corresponding card from 5 options.",
+    "modeNeighborDescription": "In this mode, you'll see a card with a direction arrow and need to pick the neighboring card in the stack.",
+    "neighborBefore": "Before",
+    "neighborAfter": "After",
+    "neighborRandom": "Random",
+    "neighborArrowBefore": "Card before",
+    "neighborArrowAfter": "Card after",
+    "activeModePosition": "Position mode",
+    "activeModeNeighbor": "Neighbor mode"
   },
   "acaan": {
     "pageTitle": "ACAAN Training",
     "pageDescription": "Practice Any Card At Any Number calculations for your memorized deck stack.",
     "title": "ACAAN",
     "settingsAriaLabel": "ACAAN settings",
-    "optionsTitle": "ACAAN options",
     "cutDepthAriaLabel": "Cut depth",
     "cutDepthPlaceholder": "Cut depth"
   },
@@ -153,6 +166,7 @@
   },
   "session": {
     "startSession": "Start session:",
+    "startSessionTooltip": "Start a session",
     "startPresetAriaLabel": "Start {{count}} question session",
     "progressAriaLabel": "Progress: {{progress}}",
     "accuracyAriaLabel": "Accuracy: {{percent}}%",
@@ -175,6 +189,9 @@
   "score": {
     "correctAriaLabel": "Correct answers: {{count}}",
     "incorrectAriaLabel": "Incorrect answers: {{count}}"
+  },
+  "numberCard": {
+    "ariaLabel": "Position {{number}}"
   },
   "stackPicker": {
     "placeholder": "Please choose a stack",
@@ -221,8 +238,15 @@
     "filterAcaan": "ACAAN",
     "noFilterMatch": "No sessions match this filter.",
     "chartTooltip": "{{mode}} · {{stack}} · {{successes}}/{{total}}",
+    "chartTooltipWithSubMode": "{{mode}} ({{subMode}}) · {{stack}} · {{successes}}/{{total}}",
     "modeFlashcard": "Flashcard",
-    "modeAcaan": "ACAAN"
+    "modeAcaan": "ACAAN",
+    "subModePosition": "Position",
+    "subModeNeighbor": "Neighbor",
+    "filterPosition": "Position",
+    "filterNeighbor": "Neighbor",
+    "filterByModeAriaLabel": "Filter by mode",
+    "filterBySubModeAriaLabel": "Filter by flashcard sub-mode"
   },
   "resources": {
     "pageTitle": "Resources",
@@ -275,11 +299,12 @@
     "flashcardTraining": {
       "title": "Flashcard Training",
       "requiresStack": "Requires stack",
-      "intro": "The main training mode. You're shown a prompt and must recall the matching card or position in your selected stack. Three modes are available:",
+      "intro": "The main training mode. You're shown a prompt and must recall the matching card or position in your selected stack. Four modes are available:",
       "cardOnlyItem": "<bold>Card Only</bold> — shown a card, recall its position number",
       "numberOnlyItem": "<bold>Number Only</bold> — shown a position number, recall the card",
       "bothItem": "<bold>Both</bold> — randomly alternates between the two",
-      "settings": "Tap the gear icon to open settings. You can enable an optional timer and choose between free-form practice or structured sessions with 10, 20, 30, or 52 card presets. Score tracking shows your accuracy and current streak.",
+      "neighborItem": "<bold>Neighbor</bold> — shown a card with a direction arrow, pick the adjacent card in the stack",
+      "settings": "Tap the gear icon to switch between Position and Neighbor modes and adjust timer settings. Use the play icon to start a structured session with 10, 20, 30, or 52 card presets, or practice free-form without a session.",
       "link": "Go to Flashcard Training"
     },
     "acaanTraining": {
@@ -302,7 +327,7 @@
     "stats": {
       "title": "Stats",
       "noStackRequired": "No stack required",
-      "description": "Track your progress over time. The Stats page includes overview cards, an accuracy trend chart (color-coded and filterable by mode), a per-stack breakdown table, and paginated session history. All data is stored locally in your browser.",
+      "description": "Track your progress over time. The Stats page includes overview cards, an accuracy trend chart (filterable by mode and flashcard sub-mode), a per-stack breakdown table, and paginated session history. All data is stored locally in your browser.",
       "link": "Go to Stats"
     },
     "resources": {
@@ -314,7 +339,7 @@
       "title": "Tips",
       "dataLocal": "All your data stays in your browser — nothing is sent to a server.",
       "darkMode": "Toggle between dark and light mode using the icon in the header.",
-      "gearIcon": "In training modes, tap the gear icon to open settings for timer, session length, and mode options.",
+      "gearIcon": "In training modes, tap the gear icon to adjust mode and timer settings, or the play icon to start a session.",
       "switchStacks": "Switching stacks doesn't lose your data — progress is tracked per stack.",
       "pwa": "Install MemDeck as an app on your device for offline access.",
       "language": "Change the display language using the language selector in the header.",

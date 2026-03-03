@@ -33,6 +33,7 @@ export const SPREAD_CARD_HEIGHT = Math.round(
   SPREAD_CARD_WIDTH * CARD_ASPECT_RATIO
 );
 
+export const NEIGHBOR_DIRECTION_LSK = "memdeck-app-neighbor-direction";
 export const LANGUAGE_LSK = "memdeck-app-language";
 export const TOOLBOX_SECTIONS_LSK = "memdeck-app-toolbox-sections";
 

@@ -78,21 +78,34 @@
     "pageDescription": "Allenati con esercizi flashcard interattivi. Pratica carta verso numero, numero verso carta, o entrambi.",
     "title": "Flashcard",
     "settingsAriaLabel": "Impostazioni Flashcard",
-    "optionsTitle": "Opzioni Flashcard",
-    "pickOneMode": "Scegli una modalità",
+    "modePosition": "Posizione",
+    "modeNeighbor": "Vicino",
+    "subModeCard": "Carta",
+    "subModeNumber": "Numero",
+    "subModeBoth": "Entrambi",
+    "primaryModeAriaLabel": "Modalità di allenamento",
+    "positionSubModeAriaLabel": "Variante modalità posizione",
+    "neighborDirectionAriaLabel": "Direzione del vicino",
     "modeCardOnly": "Solo carta",
     "modeCardOnlyDescription": "In questa modalità vedrai una carta e dovrai indovinare la sua posizione nello stack tra 5 opzioni.",
     "modeBothModes": "Entrambe le modalità",
     "modeBothModesDescription": "In questa modalità vedrai casualmente una carta o un numero: indovina la corrispondenza tra 5 opzioni.",
     "modeNumberOnly": "Solo numero",
-    "modeNumberOnlyDescription": "In questa modalità vedrai un numero e dovrai scegliere la carta corrispondente tra 5 opzioni."
+    "modeNumberOnlyDescription": "In questa modalità vedrai un numero e dovrai scegliere la carta corrispondente tra 5 opzioni.",
+    "modeNeighborDescription": "In questa modalità vedrai una carta con una freccia di direzione e dovrai scegliere la carta adiacente nello stack.",
+    "neighborBefore": "Prima",
+    "neighborAfter": "Dopo",
+    "neighborRandom": "Casuale",
+    "neighborArrowBefore": "Carta precedente",
+    "neighborArrowAfter": "Carta successiva",
+    "activeModePosition": "Modalità posizione",
+    "activeModeNeighbor": "Modalità vicino"
   },
   "acaan": {
     "pageTitle": "Allenamento ACAAN",
     "pageDescription": "Allenati con i calcoli Any Card At Any Number per il tuo stack memorizzato.",
     "title": "ACAAN",
     "settingsAriaLabel": "Impostazioni ACAAN",
-    "optionsTitle": "Opzioni ACAAN",
     "cutDepthAriaLabel": "Profondità del taglio",
     "cutDepthPlaceholder": "Profondità del taglio"
   },
@@ -153,6 +166,7 @@
   },
   "session": {
     "startSession": "Inizia sessione:",
+    "startSessionTooltip": "Inizia una sessione",
     "startPresetAriaLabel": "Inizia sessione da {{count}} domande",
     "progressAriaLabel": "Progresso: {{progress}}",
     "accuracyAriaLabel": "Precisione: {{percent}}%",
@@ -175,6 +189,9 @@
   "score": {
     "correctAriaLabel": "Risposte corrette: {{count}}",
     "incorrectAriaLabel": "Risposte errate: {{count}}"
+  },
+  "numberCard": {
+    "ariaLabel": "Posizione {{number}}"
   },
   "stackPicker": {
     "placeholder": "Scegli uno stack",
@@ -221,8 +238,15 @@
     "filterAcaan": "ACAAN",
     "noFilterMatch": "Nessuna sessione corrisponde a questo filtro.",
     "chartTooltip": "{{mode}} · {{stack}} · {{successes}}/{{total}}",
+    "chartTooltipWithSubMode": "{{mode}} ({{subMode}}) · {{stack}} · {{successes}}/{{total}}",
     "modeFlashcard": "Flashcard",
-    "modeAcaan": "ACAAN"
+    "modeAcaan": "ACAAN",
+    "subModePosition": "Posizione",
+    "subModeNeighbor": "Vicino",
+    "filterPosition": "Posizione",
+    "filterNeighbor": "Vicino",
+    "filterByModeAriaLabel": "Filtra per modalità",
+    "filterBySubModeAriaLabel": "Filtra per sotto-modalità flashcard"
   },
   "resources": {
     "pageTitle": "Risorse",
@@ -275,11 +299,12 @@
     "flashcardTraining": {
       "title": "Allenamento Flashcard",
       "requiresStack": "Richiede uno stack",
-      "intro": "La modalità di allenamento principale. Ti viene mostrato un indizio e devi ricordare la carta o la posizione corrispondente nel tuo stack. Tre modalità disponibili:",
+      "intro": "La modalità di allenamento principale. Ti viene mostrato un suggerimento e devi ricordare la carta o la posizione corrispondente nel tuo stack. Quattro modalità disponibili:",
       "cardOnlyItem": "<bold>Solo carta</bold> — viene mostrata una carta, ricorda il suo numero di posizione",
       "numberOnlyItem": "<bold>Solo numero</bold> — viene mostrato un numero di posizione, ricorda la carta",
       "bothItem": "<bold>Entrambe</bold> — alterna casualmente tra le due",
-      "settings": "Tocca l'icona dell'ingranaggio per aprire le impostazioni. Puoi attivare un timer opzionale e scegliere tra pratica libera o sessioni strutturate da 10, 20, 30 o 52 carte. Il monitoraggio del punteggio mostra la tua precisione e la serie attuale.",
+      "neighborItem": "<bold>Vicino</bold> — viene mostrata una carta con una freccia di direzione, scegli la carta adiacente nello stack",
+      "settings": "Tocca l'icona dell'ingranaggio per passare tra le modalità Posizione e Vicino e regolare le impostazioni del timer. Usa l'icona di riproduzione per iniziare una sessione strutturata da 10, 20, 30 o 52 carte, o pratica liberamente senza sessione.",
       "link": "Vai all'allenamento Flashcard"
     },
     "acaanTraining": {
@@ -302,7 +327,7 @@
     "stats": {
       "title": "Statistiche",
       "noStackRequired": "Nessuno stack richiesto",
-      "description": "Monitora i tuoi progressi nel tempo. La pagina Statistiche include schede di panoramica, un grafico dell'andamento della precisione (codificato a colori e filtrabile per modalità), una tabella di dettaglio per stack e una cronologia delle sessioni paginata. Tutti i dati sono archiviati localmente nel tuo browser.",
+      "description": "Monitora i tuoi progressi nel tempo. La pagina Statistiche include schede di riepilogo, un grafico dell'andamento della precisione (filtrabile per modalità e sotto-modalità flashcard), una tabella di dettaglio per stack e una cronologia delle sessioni paginata. Tutti i dati sono archiviati localmente nel tuo browser.",
       "link": "Vai alle statistiche"
     },
     "resources": {
@@ -314,7 +339,7 @@
       "title": "Consigli",
       "dataLocal": "Tutti i tuoi dati restano nel tuo browser — nulla viene inviato a un server.",
       "darkMode": "Alterna tra modalità scura e chiara usando l'icona nella barra in alto.",
-      "gearIcon": "Nelle modalità di allenamento, tocca l'icona dell'ingranaggio per aprire le impostazioni di timer, durata della sessione e opzioni di modalità.",
+      "gearIcon": "Nelle modalità di allenamento, tocca l'icona dell'ingranaggio per le impostazioni di modalità e timer, o l'icona di riproduzione per iniziare una sessione.",
       "switchStacks": "Cambiare stack non fa perdere i tuoi dati — i progressi sono monitorati per stack.",
       "pwa": "Installa MemDeck come app sul tuo dispositivo per l'accesso offline.",
       "language": "Cambia la lingua di visualizzazione usando il selettore di lingua nella barra in alto.",

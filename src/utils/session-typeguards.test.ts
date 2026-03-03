@@ -47,6 +47,40 @@ describe("isSessionRecord", () => {
     const invalidModeRecord = { ...makeRecord(), mode: "invalid" };
     expect(isSessionRecord(invalidModeRecord)).toBe(false);
   });
+
+  it("returns true for a valid record with flashcardMode 'neighbor'", () => {
+    expect(isSessionRecord(makeRecord({ flashcardMode: "neighbor" }))).toBe(
+      true
+    );
+  });
+
+  it("returns true for a valid record with flashcardMode 'cardonly'", () => {
+    expect(isSessionRecord(makeRecord({ flashcardMode: "cardonly" }))).toBe(
+      true
+    );
+  });
+
+  it("returns true for a record without flashcardMode (backward compat)", () => {
+    const record = makeRecord();
+    if (record.mode === "flashcard") {
+      expect(record.flashcardMode).toBeUndefined();
+    }
+    expect(isSessionRecord(record)).toBe(true);
+  });
+
+  it("returns false for a record with invalid flashcardMode", () => {
+    const badRecord = { ...makeRecord(), flashcardMode: "invalid" };
+    expect(isSessionRecord(badRecord)).toBe(false);
+  });
+
+  it("returns false for acaan record with flashcardMode present", () => {
+    const badRecord = {
+      ...makeRecord(),
+      mode: "acaan",
+      flashcardMode: "neighbor",
+    };
+    expect(isSessionRecord(badRecord)).toBe(false);
+  });
 });
 
 describe("isSessionRecordArray", () => {

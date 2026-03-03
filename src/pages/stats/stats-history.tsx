@@ -1,12 +1,16 @@
 import { Button, Group, Table, Text, Title } from "@mantine/core";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { SessionRecord } from "../../types/session";
+import type en from "../../i18n/locales/en.json";
+import type { SessionRecord, TrainingMode } from "../../types/session";
 import { stacks } from "../../types/stacks";
 import {
   formatDuration,
   toAccuracyPercent,
 } from "../../utils/session-formatting";
+
+/** Valid i18n keys for stats translations, derived from en.json */
+type StatsI18nKey = `stats.${keyof (typeof en)["stats"] & string}`;
 
 export const PAGE_SIZE = 20;
 
@@ -22,6 +26,26 @@ export const formatDate = (iso: string): string => {
     hour: "2-digit",
     minute: "2-digit",
   });
+};
+
+const MODE_LABELS = {
+  flashcard: "stats.modeFlashcard",
+  acaan: "stats.modeAcaan",
+} as const satisfies Record<TrainingMode, StatsI18nKey>;
+
+const formatModeLabel = (
+  record: SessionRecord,
+  t: (key: StatsI18nKey) => string
+): string => {
+  const baseLabel = t(MODE_LABELS[record.mode]);
+  if (record.mode !== "flashcard" || record.flashcardMode === undefined) {
+    return baseLabel;
+  }
+  const subMode =
+    record.flashcardMode === "neighbor"
+      ? t("stats.subModeNeighbor")
+      : t("stats.subModePosition");
+  return `${baseLabel} · ${subMode}`;
 };
 
 export const StatsHistory = ({ history }: StatsHistoryProps) => {
@@ -60,7 +84,7 @@ export const StatsHistory = ({ history }: StatsHistoryProps) => {
           {visibleHistory.map((record) => (
             <Table.Tr key={record.id}>
               <Table.Td>{formatDate(record.startedAt)}</Table.Td>
-              <Table.Td>{record.mode}</Table.Td>
+              <Table.Td>{formatModeLabel(record, t)}</Table.Td>
               <Table.Td>
                 {stacks[record.stackKey]?.name ?? record.stackKey}
               </Table.Td>

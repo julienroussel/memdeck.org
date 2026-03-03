@@ -13,9 +13,9 @@ const TIMED_MODE_PATTERN = /timed mode/i;
 const START_SESSION_PATTERN = /start \d+ question session/i;
 const STOP_PATTERN = /stop/i;
 const PROGRESS_ARIA_PATTERN = /progress:/i;
-const ACAAN_OPTIONS_PATTERN = /ACAAN options/i;
 const PROGRESS_PATTERN = /\/\d+/;
 const CARD_SRC_PATTERN = /cards\/(.+)\.svg/;
+const SESSION_TOOLTIP_PATTERN = /start a session/i;
 
 /**
  * Mnemonica stack order as image filename fragments (without "cards/" prefix and ".svg" suffix).
@@ -319,7 +319,7 @@ test.describe("ACAAN Training", () => {
     if (await timerSwitch.isChecked()) {
       await timerSwitch.click();
     }
-    await page.keyboard.press("Escape");
+    await settingsButton.click();
 
     const cutDepthInput = page.getByLabel(CUT_DEPTH_PATTERN);
     const checkButton = page.getByRole("button", { name: CHECK_PATTERN });
@@ -351,51 +351,43 @@ test.describe("ACAAN Training", () => {
     expect(currentPosition).toBe(initialPosition);
   });
 
-  test("should open settings modal when settings button is clicked", async ({
+  test("should open settings popover when settings button is clicked", async ({
     page,
   }) => {
-    // Click settings button (IconSettings button)
-    const settingsButton = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") })
-      .first();
+    // Click settings button
+    const settingsButton = page.getByRole("button", {
+      name: SETTINGS_PATTERN,
+    });
     await settingsButton.click();
 
-    // Verify modal is displayed with title
-    await expect(page.getByText(ACAAN_OPTIONS_PATTERN)).toBeVisible();
-
-    // Verify timer switch is visible by its label
+    // Verify timer switch is visible in the popover
     const timerSwitch = page.getByRole("switch", { name: TIMED_MODE_PATTERN });
     await expect(timerSwitch).toBeVisible();
   });
 
-  test("should close settings modal when escaped", async ({ page }) => {
-    // Open settings
-    const settingsButton = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") })
-      .first();
+  test("should close settings popover when toggled", async ({ page }) => {
+    // Open settings popover
+    const settingsButton = page.getByRole("button", {
+      name: SETTINGS_PATTERN,
+    });
     await settingsButton.click();
 
-    // Verify modal is open
-    await expect(page.getByText(ACAAN_OPTIONS_PATTERN)).toBeVisible();
+    // Verify popover is open
+    const timerSwitch = page.getByRole("switch", { name: TIMED_MODE_PATTERN });
+    await expect(timerSwitch).toBeVisible();
 
-    // Press Escape
-    await page.keyboard.press("Escape");
+    // Click settings button again to close
+    await settingsButton.click();
 
-    // Modal should be closed
-    await expect(page.getByText(ACAAN_OPTIONS_PATTERN)).not.toBeVisible();
+    // Popover should be closed
+    await expect(timerSwitch).not.toBeVisible();
   });
 
   test("should allow toggling timer in settings", async ({ page }) => {
-    // Open settings
-    const settingsButton = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") })
-      .first();
+    // Open settings popover
+    const settingsButton = page.getByRole("button", {
+      name: SETTINGS_PATTERN,
+    });
     await settingsButton.click();
 
     // Find timer toggle switch by label
@@ -409,9 +401,9 @@ test.describe("ACAAN Training", () => {
     const newChecked = await timerSwitch.isChecked();
     expect(newChecked).toBe(!initialChecked);
 
-    // Close modal
-    await page.keyboard.press("Escape");
-    await expect(page.getByText(ACAAN_OPTIONS_PATTERN)).not.toBeVisible();
+    // Close popover
+    await settingsButton.click();
+    await expect(timerSwitch).not.toBeVisible();
 
     // Verify setting persisted in localStorage
     const timerSettings = await page.evaluate(() => {
@@ -424,12 +416,10 @@ test.describe("ACAAN Training", () => {
   });
 
   test("should persist timer settings in localStorage", async ({ page }) => {
-    // Open settings and enable timer
-    const settingsButton = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") })
-      .first();
+    // Open settings popover and enable timer
+    const settingsButton = page.getByRole("button", {
+      name: SETTINGS_PATTERN,
+    });
     await settingsButton.click();
 
     const timerSwitch = page.getByRole("switch", { name: TIMED_MODE_PATTERN });
@@ -441,9 +431,9 @@ test.describe("ACAAN Training", () => {
       await expect(timerSwitch).toBeChecked();
     }
 
-    // Close modal
-    await page.keyboard.press("Escape");
-    await expect(page.getByText(ACAAN_OPTIONS_PATTERN)).not.toBeVisible();
+    // Close popover
+    await settingsButton.click();
+    await expect(timerSwitch).not.toBeVisible();
 
     // Check localStorage directly
     const timerSettings = await page.evaluate(() => {
@@ -456,15 +446,20 @@ test.describe("ACAAN Training", () => {
     expect(timerSettings).toHaveProperty("duration");
   });
 
-  test("should start a session when start session button is clicked", async ({
+  test("should start a session when session popover preset is clicked", async ({
     page,
   }) => {
-    // Session preset buttons (e.g. "10", "20", "30", "52") are rendered by SessionStartControls
+    // Open session popover
+    const sessionButton = page.getByRole("button", {
+      name: SESSION_TOOLTIP_PATTERN,
+    });
+    await sessionButton.click();
+
+    // Click a session preset button inside the popover
     const startButton = page
       .getByRole("button", { name: START_SESSION_PATTERN })
       .first();
     await expect(startButton).toBeVisible();
-
     await startButton.click();
 
     // Session banner should appear — look for its progress badge and stop button
@@ -479,12 +474,16 @@ test.describe("ACAAN Training", () => {
   test("should display session banner when session is active", async ({
     page,
   }) => {
-    // Start a session via a preset button
+    // Open session popover and start a session
+    const sessionButton = page.getByRole("button", {
+      name: SESSION_TOOLTIP_PATTERN,
+    });
+    await sessionButton.click();
+
     const startButton = page
       .getByRole("button", { name: START_SESSION_PATTERN })
       .first();
     await expect(startButton).toBeVisible();
-
     await startButton.click();
 
     // Session banner should be visible with progress badge
@@ -509,21 +508,22 @@ test.describe("ACAAN Training", () => {
     await expect(failBadge).toBeVisible();
   });
 
-  test("should replace session start controls with banner during structured session", async ({
+  test("should replace score with banner during structured session", async ({
     page,
   }) => {
+    // Open session popover and start a structured session
+    const sessionButton = page.getByRole("button", {
+      name: SESSION_TOOLTIP_PATTERN,
+    });
+    await sessionButton.click();
+
     const startButton = page
       .getByRole("button", { name: START_SESSION_PATTERN })
       .first();
-
-    // Initially session start controls should be visible
     await expect(startButton).toBeVisible();
-
-    // Start structured session
     await startButton.click();
 
-    // Session start controls should be replaced by the session banner
-    await expect(startButton).not.toBeVisible();
+    // Session banner should appear with progress badge
     const progressBadge = page.getByLabel(PROGRESS_ARIA_PATTERN);
     await expect(progressBadge).toBeVisible();
   });
@@ -616,12 +616,10 @@ test.describe("ACAAN Training", () => {
   });
 
   test("should display timer when timer is enabled", async ({ page }) => {
-    // Open settings
-    const settingsButton = page
-      .getByRole("main")
-      .locator("button")
-      .filter({ has: page.locator("svg") })
-      .first();
+    // Open settings popover
+    const settingsButton = page.getByRole("button", {
+      name: SETTINGS_PATTERN,
+    });
     await settingsButton.click();
 
     // Enable timer
@@ -633,9 +631,9 @@ test.describe("ACAAN Training", () => {
       await expect(timerSwitch).toBeChecked();
     }
 
-    // Close modal
-    await page.keyboard.press("Escape");
-    await expect(page.getByText(ACAAN_OPTIONS_PATTERN)).not.toBeVisible();
+    // Close popover
+    await settingsButton.click();
+    await expect(timerSwitch).not.toBeVisible();
 
     // Timer display should now be visible (format like "30" or "15")
     // The TimerDisplay component shows seconds remaining

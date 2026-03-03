@@ -23,10 +23,14 @@ type SelectedStackResult =
       setStackKey: (key: string) => void;
     };
 
+const isStackKeyOrEmpty = (value: unknown): value is StackKey | "" =>
+  typeof value === "string" && (value === "" || value in stacks);
+
 export const useSelectedStack = (): SelectedStackResult => {
   const [selectedStackKey, setSelectedStackKey] = useLocalDb<StackKey | "">(
     SELECTED_STACK_LSK,
-    ""
+    "",
+    isStackKeyOrEmpty
   );
 
   const setStackKey = (key: string) => {

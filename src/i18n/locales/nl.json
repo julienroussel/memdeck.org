@@ -78,21 +78,34 @@
     "pageDescription": "Oefen je gememoriseerde kaartspel met interactieve flashcard-oefeningen. Train kaart naar nummer, nummer naar kaart, of beide.",
     "title": "Flashcard",
     "settingsAriaLabel": "Flashcard-instellingen",
-    "optionsTitle": "Flashcard-opties",
-    "pickOneMode": "Kies een modus",
+    "modePosition": "Positie",
+    "modeNeighbor": "Buur",
+    "subModeCard": "Kaart",
+    "subModeNumber": "Nummer",
+    "subModeBoth": "Beide",
+    "primaryModeAriaLabel": "Trainingsmodus",
+    "positionSubModeAriaLabel": "Positiemodus-variant",
+    "neighborDirectionAriaLabel": "Buurrichting",
     "modeCardOnly": "Alleen kaart",
     "modeCardOnlyDescription": "In deze modus zie je een kaart en moet je de positie in de stack raden uit 5 opties.",
     "modeBothModes": "Beide modi",
     "modeBothModesDescription": "In deze modus krijg je willekeurig een kaart of een nummer te zien. Raad het juiste antwoord uit 5 opties.",
     "modeNumberOnly": "Alleen nummer",
-    "modeNumberOnlyDescription": "In deze modus zie je een nummer en moet je de bijbehorende kaart kiezen uit 5 opties."
+    "modeNumberOnlyDescription": "In deze modus zie je een nummer en moet je de bijbehorende kaart kiezen uit 5 opties.",
+    "modeNeighborDescription": "In deze modus zie je een kaart met een richtingspijl en moet je de naburige kaart in de stack kiezen.",
+    "neighborBefore": "Ervoor",
+    "neighborAfter": "Erna",
+    "neighborRandom": "Willekeurig",
+    "neighborArrowBefore": "Kaart ervoor",
+    "neighborArrowAfter": "Kaart erna",
+    "activeModePosition": "Positiemodus",
+    "activeModeNeighbor": "Buurmodus"
   },
   "acaan": {
     "pageTitle": "ACAAN Training",
     "pageDescription": "Oefen Any Card At Any Number-berekeningen voor je gememoriseerde stack.",
     "title": "ACAAN",
     "settingsAriaLabel": "ACAAN-instellingen",
-    "optionsTitle": "ACAAN-opties",
     "cutDepthAriaLabel": "Coupeerdiepte",
     "cutDepthPlaceholder": "Coupeerdiepte"
   },
@@ -153,6 +166,7 @@
   },
   "session": {
     "startSession": "Sessie starten:",
+    "startSessionTooltip": "Sessie starten",
     "startPresetAriaLabel": "Start sessie van {{count}} vragen",
     "progressAriaLabel": "Voortgang: {{progress}}",
     "accuracyAriaLabel": "Nauwkeurigheid: {{percent}}%",
@@ -175,6 +189,9 @@
   "score": {
     "correctAriaLabel": "Correcte antwoorden: {{count}}",
     "incorrectAriaLabel": "Foute antwoorden: {{count}}"
+  },
+  "numberCard": {
+    "ariaLabel": "Positie {{number}}"
   },
   "stackPicker": {
     "placeholder": "Kies een stack",
@@ -221,8 +238,15 @@
     "filterAcaan": "ACAAN",
     "noFilterMatch": "Geen sessies komen overeen met dit filter.",
     "chartTooltip": "{{mode}} · {{stack}} · {{successes}}/{{total}}",
+    "chartTooltipWithSubMode": "{{mode}} ({{subMode}}) · {{stack}} · {{successes}}/{{total}}",
     "modeFlashcard": "Flashcard",
-    "modeAcaan": "ACAAN"
+    "modeAcaan": "ACAAN",
+    "subModePosition": "Positie",
+    "subModeNeighbor": "Buur",
+    "filterPosition": "Positie",
+    "filterNeighbor": "Buur",
+    "filterByModeAriaLabel": "Filter op modus",
+    "filterBySubModeAriaLabel": "Filter op flashcard-submodus"
   },
   "resources": {
     "pageTitle": "Bronnen",
@@ -275,11 +299,12 @@
     "flashcardTraining": {
       "title": "Flashcard Training",
       "requiresStack": "Vereist een stack",
-      "intro": "De belangrijkste trainingsmodus. Je krijgt een opgave en moet de bijbehorende kaart of positie in je stack zien te herinneren. Drie modi beschikbaar:",
+      "intro": "De belangrijkste trainingsmodus. Je krijgt een opgave en moet de bijbehorende kaart of positie in je stack herinneren. Vier modi beschikbaar:",
       "cardOnlyItem": "<bold>Alleen kaart</bold> — een kaart wordt getoond, herinner je het positienummer",
       "numberOnlyItem": "<bold>Alleen nummer</bold> — een positienummer wordt getoond, herinner je de kaart",
       "bothItem": "<bold>Beide</bold> — wisselt willekeurig tussen de twee",
-      "settings": "Tik op het tandwielpictogram om instellingen te openen. Je kunt een optionele timer activeren en kiezen tussen vrij oefenen of gestructureerde sessies van 10, 20, 30 of 52 kaarten. De scoretracker toont je nauwkeurigheid en huidige reeks.",
+      "neighborItem": "<bold>Buur</bold> — een kaart met een richtingspijl wordt getoond, kies de naburige kaart in de stack",
+      "settings": "Tik op het tandwielpictogram om te wisselen tussen Positie- en Buur-modus en timer-instellingen aan te passen. Gebruik het afspeelpictogram voor een gestructureerde sessie van 10, 20, 30 of 52 kaarten, of oefen vrij zonder sessie.",
       "link": "Ga naar Flashcard Training"
     },
     "acaanTraining": {
@@ -302,7 +327,7 @@
     "stats": {
       "title": "Statistieken",
       "noStackRequired": "Geen stack vereist",
-      "description": "Volg je voortgang in de tijd. De Statistiekenpagina bevat overzichtskaarten, een nauwkeurigheidstrendgrafiek (gekleurd en filterbaar per modus), een uitsplitsing per stack en gepagineerde sessiegeschiedenis. Alle gegevens worden lokaal in je browser opgeslagen.",
+      "description": "Volg je voortgang in de tijd. De statistiekenpagina bevat overzichtskaarten, een nauwkeurigheidstrendgrafiek (filterbaar per modus en flashcard-submodus), een uitsplitsing per stack en gepagineerde sessiegeschiedenis. Alle gegevens worden lokaal in je browser opgeslagen.",
       "link": "Bekijk statistieken"
     },
     "resources": {
@@ -314,7 +339,7 @@
       "title": "Tips",
       "dataLocal": "Al je gegevens blijven in je browser — er wordt niets naar een server gestuurd.",
       "darkMode": "Wissel tussen donkere en lichte modus met het pictogram in de header.",
-      "gearIcon": "Tik in trainingsmodi op het tandwielpictogram om instellingen te openen voor timer, sessieduur en modusopties.",
+      "gearIcon": "Gebruik in trainingsmodi het tandwielpictogram voor modus- en timer-instellingen, of het afspeelpictogram om een sessie te starten.",
       "switchStacks": "Als je van stack wisselt, raak je geen gegevens kwijt — voortgang wordt per stack bijgehouden.",
       "pwa": "Installeer MemDeck als app op je apparaat voor offline toegang.",
       "language": "Wijzig de weergavetaal via de taalkiezer in de header.",

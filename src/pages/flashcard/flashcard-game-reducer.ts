@@ -1,5 +1,6 @@
 import { timerReducerCases } from "../../hooks/use-game-timer";
 import type { ResetGameAction } from "../../hooks/use-reset-game-on-stack-change";
+import type { FlashcardMode, NeighborDirection } from "../../types/flashcard";
 import type { PlayingCard } from "../../types/playingcard";
 import { shuffle } from "../../types/shuffle";
 import {
@@ -8,7 +9,15 @@ import {
   type Stack,
 } from "../../types/stacks";
 import { isPlayingCard } from "../../types/typeguards";
-import { generateUniqueCardChoices } from "../../utils/card-selection";
+import {
+  generateNeighborChoices,
+  generateUniqueCardChoices,
+} from "../../utils/card-selection";
+import {
+  getNeighborCard,
+  type ResolvedDirection,
+  resolveDirection,
+} from "../../utils/neighbor";
 import type { DisplayMode } from "./utils";
 
 // --- Types ---
@@ -16,40 +25,41 @@ import type { DisplayMode } from "./utils";
 export type GameState = {
   successes: number;
   fails: number;
+  /** The card displayed as the question prompt */
   card: PlayingCardPosition;
+  /** The card the user must select as the answer. Same as `card` for standard modes. */
+  answerCard: PlayingCardPosition;
   choices: PlayingCardPosition[];
   display: DisplayMode;
+  /** The resolved direction for neighbor mode, or null for standard modes */
+  resolvedDirection: ResolvedDirection | null;
   timeRemaining: number;
   timerDuration: number;
 };
 
-type TimeoutAction = {
-  type: "TIMEOUT";
-  payload: {
-    newCard: PlayingCardPosition;
-    newChoices: PlayingCardPosition[];
-    newDisplay: DisplayMode;
-  };
+export type AdvancePayload = {
+  newCard: PlayingCardPosition;
+  newAnswerCard: PlayingCardPosition;
+  newChoices: PlayingCardPosition[];
+  newDisplay: DisplayMode;
+  newResolvedDirection: ResolvedDirection | null;
 };
 
-export type GameAction =
+type TimeoutAction = {
+  type: "TIMEOUT";
+  payload: AdvancePayload;
+};
+
+type GameAction =
   | {
       type: "CORRECT_ANSWER";
-      payload: {
-        newCard: PlayingCardPosition;
-        newChoices: PlayingCardPosition[];
-        newDisplay: DisplayMode;
-      };
+      payload: AdvancePayload;
     }
   | { type: "WRONG_ANSWER" }
   | TimeoutAction
   | {
       type: "REVEAL_ANSWER";
-      payload: {
-        newCard: PlayingCardPosition;
-        newChoices: PlayingCardPosition[];
-        newDisplay: DisplayMode;
-      };
+      payload: AdvancePayload;
     }
   | { type: "TICK" }
   | { type: "RESET_TIMER"; payload: { duration: number } }
@@ -65,6 +75,29 @@ export const generateNewCardAndChoices = (
   return { card: newCard, choices: newChoices };
 };
 
+export const generateNeighborCardAndChoices = (
+  stackOrder: Stack,
+  direction: NeighborDirection
+): {
+  card: PlayingCardPosition;
+  answerCard: PlayingCardPosition;
+  choices: PlayingCardPosition[];
+  resolvedDirection: ResolvedDirection;
+} => {
+  const questionCard = getRandomPlayingCard(stackOrder);
+  const resolved = resolveDirection(direction);
+  const answerCard = getNeighborCard(stackOrder, questionCard, resolved);
+  const choices = shuffle(
+    generateNeighborChoices(stackOrder, answerCard, questionCard)
+  );
+  return {
+    card: questionCard,
+    answerCard,
+    choices,
+    resolvedDirection: resolved,
+  };
+};
+
 export const isCorrectAnswer = (
   item: PlayingCard | number,
   card: PlayingCardPosition
@@ -73,17 +106,40 @@ export const isCorrectAnswer = (
     ? item.suit === card.card.suit && item.rank === card.card.rank
     : item === card.index;
 
-export const createInitialState = (
-  stackOrder: Stack,
-  timerDuration: number
-): GameState => {
+type InitialStateConfig = {
+  stackOrder: Stack;
+  timerDuration: number;
+} & (
+  | { flashcardMode: "neighbor"; neighborDirection: NeighborDirection }
+  | { flashcardMode?: Exclude<FlashcardMode, "neighbor"> }
+);
+
+export const createInitialState = (config: InitialStateConfig): GameState => {
+  const { stackOrder, timerDuration } = config;
+  if (config.flashcardMode === "neighbor") {
+    const { card, answerCard, choices, resolvedDirection } =
+      generateNeighborCardAndChoices(stackOrder, config.neighborDirection);
+    return {
+      successes: 0,
+      fails: 0,
+      card,
+      answerCard,
+      choices,
+      display: "card",
+      resolvedDirection,
+      timeRemaining: timerDuration,
+      timerDuration,
+    };
+  }
   const { card, choices } = generateNewCardAndChoices(stackOrder);
   return {
     successes: 0,
     fails: 0,
     card,
+    answerCard: card,
     choices,
     display: "card",
+    resolvedDirection: null,
     timeRemaining: timerDuration,
     timerDuration,
   };
@@ -101,8 +157,10 @@ export const gameReducer = (
         ...state,
         successes: state.successes + 1,
         card: action.payload.newCard,
+        answerCard: action.payload.newAnswerCard,
         choices: action.payload.newChoices,
         display: action.payload.newDisplay,
+        resolvedDirection: action.payload.newResolvedDirection,
         timeRemaining: state.timerDuration,
       };
     // Note: WRONG_ANSWER intentionally does NOT reset the timer or advance to next card.
@@ -118,8 +176,10 @@ export const gameReducer = (
         ...state,
         fails: state.fails + 1,
         card: action.payload.newCard,
+        answerCard: action.payload.newAnswerCard,
         choices: action.payload.newChoices,
         display: action.payload.newDisplay,
+        resolvedDirection: action.payload.newResolvedDirection,
         timeRemaining: state.timerDuration,
       };
     case "TICK":
@@ -127,10 +187,7 @@ export const gameReducer = (
     case "RESET_TIMER":
       return timerReducerCases.RESET_TIMER(state, action.payload.duration);
     case "RESET_GAME":
-      return createInitialState(
-        action.payload.stackOrder,
-        action.payload.timerDuration
-      );
+      return createInitialState(action.payload);
     default: {
       const _exhaustive: never = action;
       return _exhaustive;

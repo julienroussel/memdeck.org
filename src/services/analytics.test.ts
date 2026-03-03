@@ -158,6 +158,16 @@ describe("analytics", () => {
       });
     });
 
+    it("tracks NEIGHBOR_DIRECTION_CHANGED event via event bus", () => {
+      eventBus.emit.NEIGHBOR_DIRECTION_CHANGED({ direction: "before" });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Settings",
+        action: "Neighbor Direction Changed",
+        label: "before",
+      });
+    });
+
     it("tracks SESSION_COMPLETED with accuracy via event bus", () => {
       eventBus.emit.SESSION_COMPLETED({
         mode: "flashcard",
@@ -459,6 +469,38 @@ describe("analytics", () => {
         category: "Flashcard",
         action: "Mode Changed",
         label: "bothmodes",
+      });
+    });
+  });
+
+  describe("trackNeighborDirectionChanged", () => {
+    it("sends direction changed event for 'before'", () => {
+      analytics.trackNeighborDirectionChanged("before");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Settings",
+        action: "Neighbor Direction Changed",
+        label: "before",
+      });
+    });
+
+    it("sends direction changed event for 'after'", () => {
+      analytics.trackNeighborDirectionChanged("after");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Settings",
+        action: "Neighbor Direction Changed",
+        label: "after",
+      });
+    });
+
+    it("sends direction changed event for 'random'", () => {
+      analytics.trackNeighborDirectionChanged("random");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Settings",
+        action: "Neighbor Direction Changed",
+        label: "random",
       });
     });
   });

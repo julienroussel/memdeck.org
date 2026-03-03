@@ -39,7 +39,8 @@ describe("useTimerSettings", () => {
 
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
       FLASHCARD_TIMER_LSK,
-      expect.any(Object)
+      expect.any(Object),
+      expect.any(Function)
     );
   });
 
