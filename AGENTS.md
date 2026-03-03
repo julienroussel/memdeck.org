@@ -139,6 +139,7 @@ This project uses **Ultracite** (a Biome preset) for formatting and linting.
 - **Fix issues**: `pnpm run lint` to check, `npx ultracite fix` to auto-fix
 - Most formatting and common issues are automatically fixable by Biome
 - Run lint before committing to ensure compliance
+- **Linter auto-removes unused imports.** The linter runs automatically on file save and strips any import that is not yet referenced in the file. When adding a new import that is used in code you're about to write, **always use the `Write` tool to write the full file** (or at minimum an `Edit` that includes both the import and its usage in a single operation). Never add an import line by itself via `Edit` — the linter will remove it before you can add the code that uses it.
 
 ## Configuration Files
 
