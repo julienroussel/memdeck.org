@@ -95,19 +95,13 @@ test.describe("User Journeys", () => {
       Number.parseInt(failsText || "0", 10);
     expect(totalScore).toBeGreaterThan(0);
 
-    // User can access settings to change mode (settings button in main area)
-    const settingsButton = page.getByRole("button", {
-      name: "Flashcard settings",
+    // User can change mode via settings popover
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+    const secondarySelector = page.getByRole("radiogroup", {
+      name: "Position mode variant",
     });
-    await settingsButton.click();
-    await expect(page.getByRole("dialog")).toBeVisible();
-
-    // Change to card-only mode
-    await page.locator("text=Card only").first().click();
-
-    // Close modal
-    await page.keyboard.press("Escape");
-    await expect(page.getByRole("dialog")).not.toBeVisible();
+    await secondarySelector.getByText("Card").click();
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
 
     // Mode should be saved (localStorage values are JSON-stringified)
     const mode = await page.evaluate(() => {
@@ -304,17 +298,13 @@ test.describe("User Journeys", () => {
     await page.locator("a:has-text('Flashcard')").first().click();
     await page.waitForLoadState("networkidle");
 
-    // Settings button is in main content area (not header)
-    const settingsButton = page.getByRole("button", {
-      name: "Flashcard settings",
+    // Open settings popover and select number-only mode
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+    const secondarySelector = page.getByRole("radiogroup", {
+      name: "Position mode variant",
     });
-    await settingsButton.click();
-    await expect(page.getByRole("dialog")).toBeVisible();
-
-    await page.locator("text=Number only").first().click();
-
-    await page.keyboard.press("Escape");
-    await expect(page.getByRole("dialog")).not.toBeVisible();
+    await secondarySelector.getByText("Number").click();
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
 
     // Simulate inactivity by reloading
     await page.reload();

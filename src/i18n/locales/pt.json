@@ -78,21 +78,34 @@
     "pageDescription": "Pratique o seu baralho memorizado com exercícios interativos de flashcard. Treine carta para número, número para carta, ou ambos.",
     "title": "Flashcard",
     "settingsAriaLabel": "Configurações do Flashcard",
-    "optionsTitle": "Opções do Flashcard",
-    "pickOneMode": "Escolha um modo",
+    "modePosition": "Posição",
+    "modeNeighbor": "Vizinho",
+    "subModeCard": "Carta",
+    "subModeNumber": "Número",
+    "subModeBoth": "Ambos",
+    "primaryModeAriaLabel": "Modo de treino",
+    "positionSubModeAriaLabel": "Variante do modo posição",
+    "neighborDirectionAriaLabel": "Direção do vizinho",
     "modeCardOnly": "Apenas carta",
     "modeCardOnlyDescription": "Neste modo, verá uma carta e terá de adivinhar a sua posição no stack entre 5 opções.",
     "modeBothModes": "Ambos os modos",
     "modeBothModesDescription": "Neste modo, verá aleatoriamente uma carta ou um número — adivinhe a correspondência entre 5 opções.",
     "modeNumberOnly": "Apenas número",
-    "modeNumberOnlyDescription": "Neste modo, verá um número e terá de escolher a carta correspondente entre 5 opções."
+    "modeNumberOnlyDescription": "Neste modo, verá um número e terá de escolher a carta correspondente entre 5 opções.",
+    "modeNeighborDescription": "Neste modo, verá uma carta com uma seta de direção e terá de escolher a carta vizinha no stack.",
+    "neighborBefore": "Antes",
+    "neighborAfter": "Depois",
+    "neighborRandom": "Aleatório",
+    "neighborArrowBefore": "Carta anterior",
+    "neighborArrowAfter": "Carta seguinte",
+    "activeModePosition": "Modo posição",
+    "activeModeNeighbor": "Modo vizinho"
   },
   "acaan": {
     "pageTitle": "Treino ACAAN",
     "pageDescription": "Pratique cálculos de ACAAN para o seu stack memorizado.",
     "title": "ACAAN",
     "settingsAriaLabel": "Configurações do ACAAN",
-    "optionsTitle": "Opções do ACAAN",
     "cutDepthAriaLabel": "Profundidade de corte",
     "cutDepthPlaceholder": "Profundidade de corte"
   },
@@ -153,6 +166,7 @@
   },
   "session": {
     "startSession": "Iniciar sessão:",
+    "startSessionTooltip": "Iniciar uma sessão",
     "startPresetAriaLabel": "Iniciar sessão de {{count}} perguntas",
     "progressAriaLabel": "Progresso: {{progress}}",
     "accuracyAriaLabel": "Precisão: {{percent}}%",
@@ -175,6 +189,9 @@
   "score": {
     "correctAriaLabel": "Respostas corretas: {{count}}",
     "incorrectAriaLabel": "Respostas incorretas: {{count}}"
+  },
+  "numberCard": {
+    "ariaLabel": "Posição {{number}}"
   },
   "stackPicker": {
     "placeholder": "Escolha um stack",
@@ -221,8 +238,15 @@
     "filterAcaan": "ACAAN",
     "noFilterMatch": "Nenhuma sessão corresponde a este filtro.",
     "chartTooltip": "{{mode}} · {{stack}} · {{successes}}/{{total}}",
+    "chartTooltipWithSubMode": "{{mode}} ({{subMode}}) · {{stack}} · {{successes}}/{{total}}",
     "modeFlashcard": "Flashcard",
-    "modeAcaan": "ACAAN"
+    "modeAcaan": "ACAAN",
+    "subModePosition": "Posição",
+    "subModeNeighbor": "Vizinho",
+    "filterPosition": "Posição",
+    "filterNeighbor": "Vizinho",
+    "filterByModeAriaLabel": "Filtrar por modo",
+    "filterBySubModeAriaLabel": "Filtrar por submodo de flashcard"
   },
   "resources": {
     "pageTitle": "Recursos",
@@ -275,11 +299,12 @@
     "flashcardTraining": {
       "title": "Treino Flashcard",
       "requiresStack": "Requer stack",
-      "intro": "O modo de treino principal. É-lhe mostrado um estímulo e deve recordar a carta ou posição correspondente no seu stack. Três modos disponíveis:",
+      "intro": "O modo de treino principal. É-lhe mostrado um estímulo e deve recordar a carta ou posição correspondente no seu stack. Quatro modos disponíveis:",
       "cardOnlyItem": "<bold>Apenas carta</bold> — é mostrada uma carta, recorde o seu número de posição",
       "numberOnlyItem": "<bold>Apenas número</bold> — é mostrado um número de posição, recorde a carta",
       "bothItem": "<bold>Ambos</bold> — alterna aleatoriamente entre os dois",
-      "settings": "Toque no ícone de engrenagem para abrir as configurações. Pode ativar um temporizador opcional e escolher entre prática livre ou sessões estruturadas de 10, 20, 30 ou 52 cartas. O acompanhamento de pontuação mostra a sua precisão e sequência atual.",
+      "neighborItem": "<bold>Vizinho</bold> — é-lhe mostrada uma carta com uma seta de direção, escolha a carta adjacente no stack",
+      "settings": "Toque no ícone de engrenagem para alternar entre os modos Posição e Vizinho e ajustar as definições do temporizador. Use o ícone de reprodução para iniciar uma sessão estruturada de 10, 20, 30 ou 52 cartas, ou pratique livremente sem sessão.",
       "link": "Ir para Treino Flashcard"
     },
     "acaanTraining": {
@@ -302,7 +327,7 @@
     "stats": {
       "title": "Estatísticas",
       "noStackRequired": "Nenhum stack necessário",
-      "description": "Acompanhe o seu progresso ao longo do tempo. A página de Estatísticas inclui painéis de resumo, um gráfico de tendência de precisão (codificado por cores e filtrável por modo), uma tabela de detalhe por stack e um histórico de sessões paginado. Todos os dados são armazenados localmente no seu navegador.",
+      "description": "Acompanhe o seu progresso ao longo do tempo. A página de Estatísticas inclui painéis de resumo, um gráfico de tendência de precisão (filtrável por modo e sub-modo de flashcard), uma tabela de detalhe por stack e um histórico de sessões paginado. Todos os dados são armazenados localmente no seu navegador.",
       "link": "Ir para Estatísticas"
     },
     "resources": {
@@ -314,7 +339,7 @@
       "title": "Dicas",
       "dataLocal": "Todos os seus dados ficam no seu navegador — nada é enviado para um servidor.",
       "darkMode": "Alterne entre modo escuro e claro usando o ícone no cabeçalho.",
-      "gearIcon": "Nos modos de treino, toque no ícone de engrenagem para abrir as configurações de temporizador, duração de sessão e opções de modo.",
+      "gearIcon": "Nos modos de treino, toque no ícone de engrenagem para ajustar as definições de modo e temporizador, ou no ícone de reprodução para iniciar uma sessão.",
       "switchStacks": "Mudar de stack não apaga os seus dados — o progresso é acompanhado por stack.",
       "pwa": "Instale o MemDeck como app no seu dispositivo para acesso offline.",
       "language": "Mude o idioma de exibição usando o seletor de idioma no cabeçalho.",

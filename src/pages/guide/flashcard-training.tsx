@@ -37,6 +37,12 @@ export const FlashcardTraining = () => {
             i18nKey="guide.flashcardTraining.bothItem"
           />
         </List.Item>
+        <List.Item>
+          <Trans
+            components={{ bold: <Text fw={600} span /> }}
+            i18nKey="guide.flashcardTraining.neighborItem"
+          />
+        </List.Item>
       </List>
       <Space h="sm" />
       <Text>{t("guide.flashcardTraining.settings")}</Text>

@@ -24,6 +24,7 @@ test.describe("Statistics Page", () => {
     mode: string;
     stackKey: string;
     config: { type: string; totalQuestions: number };
+    flashcardMode?: string;
     startedAt: string;
     endedAt: string;
     durationSeconds: number;
@@ -314,7 +315,7 @@ test.describe("Statistics Page", () => {
     await expect(sessionHistoryTable.getByText(SCORE_PATTERN)).toBeVisible();
 
     // Table should contain session data
-    await expect(sessionHistoryTable.getByText("flashcard")).toBeVisible();
+    await expect(sessionHistoryTable.getByText("Flashcard")).toBeVisible();
     await expect(sessionHistoryTable.getByText("8/10")).toBeVisible();
     await expect(sessionHistoryTable.getByText("80%")).toBeVisible();
 
@@ -689,5 +690,243 @@ test.describe("Statistics Page", () => {
     await expect(page.getByRole("heading", { name: "Stats" })).toBeVisible();
     await expect(page.getByText(TOTAL_SESSIONS_PATTERN).first()).toBeVisible();
     await expect(page.getByText("80%").first()).toBeVisible();
+  });
+
+  test("should show sub-filter when Flashcard filter is selected", async ({
+    page,
+  }) => {
+    await seedAndNavigate(
+      page,
+      [
+        makeSession({
+          id: "pos-1",
+          flashcardMode: "cardonly",
+          successes: 9,
+          fails: 1,
+          accuracy: 0.9,
+          bestStreak: 7,
+        }),
+        makeSession({
+          id: "neigh-1",
+          flashcardMode: "neighbor",
+          startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
+          endedAt: new Date("2026-02-10T11:05:00Z").toISOString(),
+          successes: 7,
+          fails: 3,
+          accuracy: 0.7,
+          bestStreak: 4,
+        }),
+      ],
+      { "flashcard:mnemonica": makeStats({ totalSessions: 2 }) }
+    );
+
+    // Sub-filter should not be visible initially (main filter is "All")
+    const subFilter = page.getByRole("radiogroup", {
+      name: "Filter by flashcard sub-mode",
+    });
+    await expect(subFilter).not.toBeVisible();
+
+    // Click "Flashcard" filter
+    const mainFilter = page.getByRole("radiogroup", {
+      name: "Filter by mode",
+    });
+    await mainFilter.getByText("Flashcard", { exact: true }).click();
+
+    // Sub-filter should now be visible
+    await expect(subFilter).toBeVisible();
+    await expect(subFilter.getByText("All", { exact: true })).toBeVisible();
+    await expect(
+      subFilter.getByText("Position", { exact: true })
+    ).toBeVisible();
+    await expect(
+      subFilter.getByText("Neighbor", { exact: true })
+    ).toBeVisible();
+  });
+
+  test("should filter accuracy chart by flashcard sub-mode", async ({
+    page,
+  }) => {
+    await seedAndNavigate(
+      page,
+      [
+        makeSession({
+          id: "pos-sub-1",
+          flashcardMode: "bothmodes",
+          successes: 9,
+          fails: 1,
+          accuracy: 0.9,
+          bestStreak: 7,
+        }),
+        makeSession({
+          id: "neigh-sub-1",
+          flashcardMode: "neighbor",
+          startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
+          endedAt: new Date("2026-02-10T11:05:00Z").toISOString(),
+          successes: 6,
+          fails: 4,
+          accuracy: 0.6,
+          bestStreak: 3,
+        }),
+      ],
+      { "flashcard:mnemonica": makeStats({ totalSessions: 2 }) }
+    );
+
+    // Select Flashcard filter
+    const mainFilter = page.getByRole("radiogroup", {
+      name: "Filter by mode",
+    });
+    await mainFilter.getByText("Flashcard", { exact: true }).click();
+
+    // Both sessions should show (2 progress bars)
+    const progressBars = page.getByRole("progressbar");
+    await expect(progressBars).toHaveCount(2);
+
+    // Select Neighbor sub-filter
+    const subFilter = page.getByRole("radiogroup", {
+      name: "Filter by flashcard sub-mode",
+    });
+    await subFilter.getByText("Neighbor", { exact: true }).click();
+
+    // Only neighbor session should show (1 progress bar)
+    await expect(progressBars).toHaveCount(1);
+    await expect(page.locator("text=60%").first()).toBeVisible();
+
+    // Select Position sub-filter
+    await subFilter.getByText("Position", { exact: true }).click();
+
+    // Only position session should show (1 progress bar)
+    await expect(progressBars).toHaveCount(1);
+    await expect(page.locator("text=90%").first()).toBeVisible();
+  });
+
+  test("should reset sub-filter when switching main filter", async ({
+    page,
+  }) => {
+    await seedAndNavigate(
+      page,
+      [
+        makeSession({
+          id: "reset-1",
+          flashcardMode: "neighbor",
+          successes: 8,
+          fails: 2,
+          accuracy: 0.8,
+          bestStreak: 5,
+        }),
+        makeSession({
+          id: "reset-2",
+          mode: "acaan",
+          startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
+          endedAt: new Date("2026-02-10T11:05:00Z").toISOString(),
+          successes: 7,
+          fails: 3,
+          accuracy: 0.7,
+          bestStreak: 4,
+        }),
+      ],
+      {
+        "flashcard:mnemonica": makeStats(),
+        "acaan:mnemonica": makeStats({
+          totalSuccesses: 7,
+          totalFails: 3,
+          globalBestStreak: 4,
+        }),
+      }
+    );
+
+    const mainFilter = page.getByRole("radiogroup", {
+      name: "Filter by mode",
+    });
+
+    // Select Flashcard, then Neighbor sub-filter
+    await mainFilter.getByText("Flashcard", { exact: true }).click();
+    const subFilter = page.getByRole("radiogroup", {
+      name: "Filter by flashcard sub-mode",
+    });
+    await subFilter.getByText("Neighbor", { exact: true }).click();
+
+    // Switch to ACAAN
+    await mainFilter.getByText("ACAAN", { exact: true }).click();
+
+    // Sub-filter should disappear
+    await expect(subFilter).not.toBeVisible();
+
+    // Switch back to Flashcard
+    await mainFilter.getByText("Flashcard", { exact: true }).click();
+
+    // Sub-filter should reappear with "All" selected (reset)
+    await expect(subFilter).toBeVisible();
+    // The "All" option should be active (the segmented control re-renders with value "all")
+    const allOption = subFilter.getByText("All", { exact: true });
+    await expect(allOption).toBeVisible();
+  });
+
+  test("should show sub-mode labels in history table", async ({ page }) => {
+    await seedAndNavigate(
+      page,
+      [
+        makeSession({
+          id: "label-1",
+          flashcardMode: "neighbor",
+          successes: 8,
+          fails: 2,
+          accuracy: 0.8,
+          bestStreak: 5,
+        }),
+        makeSession({
+          id: "label-2",
+          flashcardMode: "cardonly",
+          startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
+          endedAt: new Date("2026-02-10T11:05:00Z").toISOString(),
+          successes: 9,
+          fails: 1,
+          accuracy: 0.9,
+          bestStreak: 7,
+        }),
+      ],
+      { "flashcard:mnemonica": makeStats({ totalSessions: 2 }) }
+    );
+
+    const table = page.getByRole("table").last();
+    await expect(table).toContainText("Flashcard · Neighbor");
+    await expect(table).toContainText("Flashcard · Position");
+  });
+
+  test("should show legacy records without flashcardMode as plain Flashcard", async ({
+    page,
+  }) => {
+    await seedAndNavigate(
+      page,
+      [
+        makeSession({
+          id: "legacy-1",
+          // No flashcardMode — simulates a legacy record
+          successes: 8,
+          fails: 2,
+          accuracy: 0.8,
+          bestStreak: 5,
+        }),
+      ],
+      { "flashcard:mnemonica": makeStats() }
+    );
+
+    // History table should show "Flashcard" without sub-mode suffix
+    const table = page.getByRole("table").last();
+    const modeCell = table.locator("tbody tr td:nth-child(2)").first();
+    await expect(modeCell).toHaveText("Flashcard");
+
+    // In the accuracy chart, select Flashcard > Position sub-filter
+    const mainFilter = page.getByRole("radiogroup", {
+      name: "Filter by mode",
+    });
+    await mainFilter.getByText("Flashcard", { exact: true }).click();
+    const subFilter = page.getByRole("radiogroup", {
+      name: "Filter by flashcard sub-mode",
+    });
+    await subFilter.getByText("Position", { exact: true }).click();
+
+    // Legacy record should still appear under "Position" filter
+    const progressBars = page.getByRole("progressbar");
+    await expect(progressBars).toHaveCount(1);
   });
 });

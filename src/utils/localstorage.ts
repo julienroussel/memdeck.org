@@ -4,8 +4,8 @@ import { readLocalStorageValue, useLocalStorage } from "@mantine/hooks";
  * Reads and validates a value from localStorage.
  * Returns the stored value if valid, or the default value otherwise.
  *
- * When a `validate` type guard is provided, the raw value is checked
- * before being returned. If validation fails, `defaultValue` is returned.
+ * The `validate` type guard checks the raw value before returning it.
+ * If validation fails, `defaultValue` is returned.
  *
  * Note: Intentionally logs warnings in DEV mode when stored data
  * fails validation or cannot be read, to aid debugging localStorage issues.
@@ -13,7 +13,7 @@ import { readLocalStorageValue, useLocalStorage } from "@mantine/hooks";
 export const getStoredValue = <T>(
   key: string,
   defaultValue: T,
-  validate?: (value: unknown) => value is T
+  validate: (value: unknown) => value is T
 ): T => {
   try {
     const raw: unknown = readLocalStorageValue({ key });
@@ -22,14 +22,14 @@ export const getStoredValue = <T>(
       return defaultValue;
     }
 
-    if (validate && !validate(raw)) {
+    if (!validate(raw)) {
       if (import.meta.env.DEV) {
         console.warn(`[localStorage] Validation failed for key "${key}":`, raw);
       }
       return defaultValue;
     }
 
-    return raw as T;
+    return raw;
   } catch (error) {
     if (import.meta.env.DEV) {
       console.warn(`[localStorage] Failed to read key "${key}":`, error);
@@ -44,9 +44,10 @@ export const getStoredValue = <T>(
  */
 export const useLocalDb = <T>(
   key: string,
-  defaultValue: T
+  defaultValue: T,
+  validate: (value: unknown) => value is T
 ): [T, (value: T | ((prevState: T) => T)) => void, () => void] =>
   useLocalStorage({
     key,
-    defaultValue: getStoredValue(key, defaultValue),
+    defaultValue: getStoredValue(key, defaultValue, validate),
   });

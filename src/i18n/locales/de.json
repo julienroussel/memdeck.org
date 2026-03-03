@@ -78,21 +78,34 @@
     "pageDescription": "Übe dein memoriertes Kartendeck mit interaktiven Flashcard-Übungen. Trainiere Karte-zu-Nummer, Nummer-zu-Karte oder beides.",
     "title": "Flashcard",
     "settingsAriaLabel": "Flashcard-Einstellungen",
-    "optionsTitle": "Flashcard-Optionen",
-    "pickOneMode": "Wähle einen Modus",
+    "modePosition": "Position",
+    "modeNeighbor": "Nachbar",
+    "subModeCard": "Karte",
+    "subModeNumber": "Nummer",
+    "subModeBoth": "Beide",
+    "primaryModeAriaLabel": "Trainingsmodus",
+    "positionSubModeAriaLabel": "Positionsmodus-Variante",
+    "neighborDirectionAriaLabel": "Nachbarrichtung",
     "modeCardOnly": "Nur Karte",
     "modeCardOnlyDescription": "In diesem Modus siehst du eine Karte und musst ihre Position im Stack aus 5 Optionen erraten.",
     "modeBothModes": "Beide Modi",
     "modeBothModesDescription": "In diesem Modus wird zufällig entweder eine Karte oder eine Nummer gezeigt, errate die Zuordnung aus 5 Optionen.",
     "modeNumberOnly": "Nur Nummer",
-    "modeNumberOnlyDescription": "In diesem Modus siehst du eine Nummer und musst die entsprechende Karte aus 5 Optionen auswählen."
+    "modeNumberOnlyDescription": "In diesem Modus siehst du eine Nummer und musst die entsprechende Karte aus 5 Optionen auswählen.",
+    "modeNeighborDescription": "In diesem Modus siehst du eine Karte mit einem Richtungspfeil und musst die benachbarte Karte im Stack auswählen.",
+    "neighborBefore": "Davor",
+    "neighborAfter": "Danach",
+    "neighborRandom": "Zufällig",
+    "neighborArrowBefore": "Karte davor",
+    "neighborArrowAfter": "Karte danach",
+    "activeModePosition": "Positionsmodus",
+    "activeModeNeighbor": "Nachbarmodus"
   },
   "acaan": {
     "pageTitle": "ACAAN-Training",
     "pageDescription": "Übe ACAAN-Berechnungen (Any Card At Any Number) für deinen memorierten Stack.",
     "title": "ACAAN",
     "settingsAriaLabel": "ACAAN-Einstellungen",
-    "optionsTitle": "ACAAN-Optionen",
     "cutDepthAriaLabel": "Abhebentiefe",
     "cutDepthPlaceholder": "Abhebentiefe"
   },
@@ -153,6 +166,7 @@
   },
   "session": {
     "startSession": "Sitzung starten:",
+    "startSessionTooltip": "Sitzung starten",
     "startPresetAriaLabel": "Sitzung mit {{count}} Fragen starten",
     "progressAriaLabel": "Fortschritt: {{progress}}",
     "accuracyAriaLabel": "Genauigkeit: {{percent}}%",
@@ -175,6 +189,9 @@
   "score": {
     "correctAriaLabel": "Richtige Antworten: {{count}}",
     "incorrectAriaLabel": "Falsche Antworten: {{count}}"
+  },
+  "numberCard": {
+    "ariaLabel": "Position {{number}}"
   },
   "stackPicker": {
     "placeholder": "Bitte wähle einen Stack",
@@ -221,8 +238,15 @@
     "filterAcaan": "ACAAN",
     "noFilterMatch": "Keine Sitzungen entsprechen diesem Filter.",
     "chartTooltip": "{{mode}} · {{stack}} · {{successes}}/{{total}}",
+    "chartTooltipWithSubMode": "{{mode}} ({{subMode}}) · {{stack}} · {{successes}}/{{total}}",
     "modeFlashcard": "Flashcard",
-    "modeAcaan": "ACAAN"
+    "modeAcaan": "ACAAN",
+    "subModePosition": "Position",
+    "subModeNeighbor": "Nachbar",
+    "filterPosition": "Position",
+    "filterNeighbor": "Nachbar",
+    "filterByModeAriaLabel": "Nach Modus filtern",
+    "filterBySubModeAriaLabel": "Nach Flashcard-Untermodus filtern"
   },
   "resources": {
     "pageTitle": "Ressourcen",
@@ -275,11 +299,12 @@
     "flashcardTraining": {
       "title": "Flashcard-Training",
       "requiresStack": "Stack erforderlich",
-      "intro": "Der Haupttrainingsmodus. Dir wird ein Hinweis gezeigt und du musst die passende Karte oder Position in deinem Stack abrufen. Drei Modi sind verfügbar:",
+      "intro": "Der Haupttrainingsmodus. Dir wird ein Hinweis gezeigt und du musst die passende Karte oder Position in deinem Stack abrufen. Vier Modi sind verfügbar:",
       "cardOnlyItem": "<bold>Nur Karte</bold> — eine Karte wird gezeigt, nenne ihre Positionsnummer",
       "numberOnlyItem": "<bold>Nur Nummer</bold> — eine Positionsnummer wird gezeigt, nenne die Karte",
       "bothItem": "<bold>Beide</bold> — wechselt zufällig zwischen beiden",
-      "settings": "Tippe auf das Zahnrad-Symbol, um die Einstellungen zu öffnen. Du kannst einen optionalen Timer aktivieren und zwischen freiem Üben und strukturierten Sitzungen mit 10, 20, 30 oder 52 Karten wählen. Die Auswertung zeigt deine Genauigkeit und aktuelle Serie.",
+      "neighborItem": "<bold>Nachbar</bold> — eine Karte mit Richtungspfeil wird gezeigt, wähle die benachbarte Karte im Stack",
+      "settings": "Tippe auf das Zahnrad-Symbol, um zwischen den Modi Position und Nachbar zu wechseln und Timer-Einstellungen anzupassen. Verwende das Play-Symbol für eine strukturierte Sitzung mit 10, 20, 30 oder 52 Karten, oder übe frei ohne Sitzung.",
       "link": "Zum Flashcard-Training"
     },
     "acaanTraining": {
@@ -302,7 +327,7 @@
     "stats": {
       "title": "Statistiken",
       "noStackRequired": "Kein Stack erforderlich",
-      "description": "Verfolge deinen Fortschritt über die Zeit. Die Statistik-Seite umfasst Übersichtskarten, ein Genauigkeitstrend-Diagramm (farbcodiert und filterbar nach Modus), eine Aufschlüsselung nach Stack und einen paginierten Sitzungsverlauf. Alle Daten werden lokal in deinem Browser gespeichert.",
+      "description": "Verfolge deinen Fortschritt über die Zeit. Die Statistik-Seite umfasst Übersichtskarten, ein Genauigkeitstrend-Diagramm (filterbar nach Modus und Flashcard-Untermodus), eine Aufschlüsselung nach Stack und einen paginierten Sitzungsverlauf. Alle Daten werden lokal in deinem Browser gespeichert.",
       "link": "Zu den Statistiken"
     },
     "resources": {
@@ -314,7 +339,7 @@
       "title": "Tipps",
       "dataLocal": "Alle deine Daten bleiben in deinem Browser — nichts wird an einen Server gesendet.",
       "darkMode": "Wechsle zwischen dunklem und hellem Modus mit dem Symbol in der Kopfzeile.",
-      "gearIcon": "Tippe in den Trainingsmodi auf das Zahnrad-Symbol, um Einstellungen für Timer, Sitzungslänge und Modusoptionen zu öffnen.",
+      "gearIcon": "Verwende in den Trainingsmodi das Zahnrad-Symbol für Modus- und Timer-Einstellungen oder das Play-Symbol zum Starten einer Sitzung.",
       "switchStacks": "Beim Wechseln von Stacks gehen keine Daten verloren — der Fortschritt wird pro Stack verfolgt.",
       "pwa": "Installiere MemDeck als App auf deinem Gerät für Offline-Zugriff.",
       "language": "Ändere die Anzeigesprache über die Sprachauswahl in der Kopfzeile.",

@@ -1,3 +1,4 @@
+import { isFlashcardMode } from "../types/flashcard";
 import {
   type AllTimeStats,
   type SessionConfig,
@@ -52,21 +53,44 @@ export const isSessionRecord = (value: unknown): value is SessionRecord => {
   ) {
     return false;
   }
-  return (
-    typeof value.id === "string" &&
-    typeof value.mode === "string" &&
-    includes(TRAINING_MODES, value.mode) &&
-    typeof value.stackKey === "string" &&
-    isSessionConfig(value.config) &&
-    typeof value.startedAt === "string" &&
-    typeof value.endedAt === "string" &&
-    typeof value.durationSeconds === "number" &&
-    typeof value.successes === "number" &&
-    typeof value.fails === "number" &&
-    typeof value.questionsCompleted === "number" &&
-    typeof value.accuracy === "number" &&
-    typeof value.bestStreak === "number"
-  );
+  if (
+    !(
+      typeof value.id === "string" &&
+      typeof value.mode === "string" &&
+      includes(TRAINING_MODES, value.mode) &&
+      typeof value.stackKey === "string" &&
+      isSessionConfig(value.config) &&
+      typeof value.startedAt === "string" &&
+      typeof value.endedAt === "string" &&
+      typeof value.durationSeconds === "number" &&
+      typeof value.successes === "number" &&
+      typeof value.fails === "number" &&
+      typeof value.questionsCompleted === "number" &&
+      typeof value.accuracy === "number" &&
+      typeof value.bestStreak === "number"
+    )
+  ) {
+    return false;
+  }
+  // For flashcard mode, validate flashcardMode if present
+  if (value.mode === "flashcard") {
+    if (
+      "flashcardMode" in value &&
+      value.flashcardMode !== undefined &&
+      !isFlashcardMode(value.flashcardMode)
+    ) {
+      return false;
+    }
+    return true;
+  }
+  // For acaan mode, flashcardMode should not be present
+  if (value.mode === "acaan") {
+    if ("flashcardMode" in value && value.flashcardMode !== undefined) {
+      return false;
+    }
+    return true;
+  }
+  return false;
 };
 
 export const isSessionRecordArray = (
@@ -89,6 +113,8 @@ export const isAllTimeStats = (value: unknown): value is AllTimeStats => {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     return false;
   }
+  // System boundary: value is validated structurally below; cast is needed because
+  // Object.entries() requires Record<string, unknown> but value is typed as object.
   const record = value as Record<string, unknown>;
   return Object.entries(record).every(([key, entry]) => {
     if (!isStatsKey(key)) {

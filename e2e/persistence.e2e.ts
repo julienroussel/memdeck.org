@@ -49,12 +49,12 @@ test.describe("localStorage Persistence", () => {
     await page.locator("a:has-text('Flashcard')").first().click();
     await page.waitForLoadState("networkidle");
 
-    // Open options and change mode
+    // Open settings popover and select card-only mode
     await page.getByRole("button", { name: "Flashcard settings" }).click();
-    await expect(page.getByRole("dialog")).toBeVisible();
-
-    // Select card-only mode
-    await page.locator("text=Card only").first().click();
+    const secondarySelector = page.getByRole("radiogroup", {
+      name: "Position mode variant",
+    });
+    await secondarySelector.getByText("Card").click();
 
     // Verify localStorage (Mantine's useLocalStorage stores JSON stringified values)
     const savedMode = await page.evaluate(() => {
@@ -62,11 +62,8 @@ test.describe("localStorage Persistence", () => {
     });
     expect(savedMode).toBe('"cardonly"');
 
-    // Close options
-    await page.keyboard.press("Escape");
-    await expect(page.getByRole("dialog")).not.toBeVisible();
-
-    // Reload page
+    // Close popover and reload page
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
     await page.reload();
     await page.waitForLoadState("networkidle");
 
@@ -124,13 +121,15 @@ test.describe("localStorage Persistence", () => {
     await page.locator("a:has-text('Flashcard')").first().click();
     await page.waitForLoadState("networkidle");
 
+    // Open settings popover and select number-only mode
     await page.getByRole("button", { name: "Flashcard settings" }).click();
-    await expect(page.getByRole("dialog")).toBeVisible();
+    const secondarySelector = page.getByRole("radiogroup", {
+      name: "Position mode variant",
+    });
+    await secondarySelector.getByText("Number").click();
 
-    await page.locator("text=Number only").first().click();
-
-    await page.keyboard.press("Escape");
-    await expect(page.getByRole("dialog")).not.toBeVisible();
+    // Close settings popover
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
 
     // Set theme to dark (use switch track, Mantine hides the actual checkbox)
     const themeSwitchTrack = page.locator(".mantine-Switch-track").first();

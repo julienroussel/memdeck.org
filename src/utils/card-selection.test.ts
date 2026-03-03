@@ -4,7 +4,10 @@ import {
   type PlayingCardPosition,
   stacks,
 } from "../types/stacks";
-import { generateUniqueCardChoices } from "./card-selection";
+import {
+  generateNeighborChoices,
+  generateUniqueCardChoices,
+} from "./card-selection";
 
 const testStack = stacks.mnemonica.order;
 
@@ -129,5 +132,83 @@ describe("generateUniqueCardChoices", () => {
 
     expect(choices[0]).toEqual(initialChoices[0]);
     expect(choices[1]).toEqual(initialChoices[1]);
+  });
+});
+
+describe("generateNeighborChoices", () => {
+  // Position 1 in mnemonica = FourOfClubs, position 2 = TwoOfHearts
+  const answerCard: PlayingCardPosition = {
+    index: createDeckPosition(2),
+    card: testStack[1],
+  };
+  const questionCard: PlayingCardPosition = {
+    index: createDeckPosition(1),
+    card: testStack[0],
+  };
+
+  it("returns the default number of choices (5)", () => {
+    const choices = generateNeighborChoices(
+      testStack,
+      answerCard,
+      questionCard
+    );
+
+    expect(choices).toHaveLength(5);
+  });
+
+  it("returns the specified number of choices when totalChoices is provided", () => {
+    const choices = generateNeighborChoices(
+      testStack,
+      answerCard,
+      questionCard,
+      8
+    );
+
+    expect(choices).toHaveLength(8);
+  });
+
+  it("always includes the answerCard in the result", () => {
+    const choices = generateNeighborChoices(
+      testStack,
+      answerCard,
+      questionCard
+    );
+
+    const hasAnswer = choices.some(
+      (c) =>
+        c.card.suit === answerCard.card.suit &&
+        c.card.rank === answerCard.card.rank
+    );
+    expect(hasAnswer).toBe(true);
+  });
+
+  it("never includes the questionCard in the result", () => {
+    // Run multiple times to reduce false-pass probability
+    for (let i = 0; i < 20; i++) {
+      const choices = generateNeighborChoices(
+        testStack,
+        answerCard,
+        questionCard
+      );
+
+      const hasQuestion = choices.some(
+        (c) =>
+          c.card.suit === questionCard.card.suit &&
+          c.card.rank === questionCard.card.rank
+      );
+      expect(hasQuestion).toBe(false);
+    }
+  });
+
+  it("returns choices with unique indices (no duplicate positions)", () => {
+    const choices = generateNeighborChoices(
+      testStack,
+      answerCard,
+      questionCard
+    );
+
+    const indices = choices.map((c) => c.index);
+    const uniqueIndices = new Set(indices);
+    expect(uniqueIndices.size).toBe(indices.length);
   });
 });

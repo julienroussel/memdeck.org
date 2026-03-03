@@ -1,37 +1,29 @@
-import { Center, Grid, Image, Space } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import type { CSSProperties } from "react";
+import { Grid, Space, Text } from "@mantine/core";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CardSpread } from "../../components/card-spread/card-spread";
-import { NumberCard } from "../../components/number-card";
 import { RevealButton } from "../../components/reveal-button";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
 import { TrainingHeader } from "../../components/training-header";
-import { CARD_HEIGHT, CARD_WIDTH } from "../../constants";
+import { FLASHCARD_OPTION_LSK, NEIGHBOR_DIRECTION_LSK } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
+import { useFlashcardTimer } from "../../hooks/use-flashcard-timer";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import { analytics } from "../../services/analytics";
+import { eventBus } from "../../services/event-bus";
+import {
+  type FlashcardMode,
+  isFlashcardMode,
+  isNeighborDirection,
+  type NeighborDirection,
+} from "../../types/flashcard";
 import { cardItems, numberItems } from "../../types/typeguards";
-import { formatCardName } from "../../utils/card-formatting";
-import { FlashcardOptions } from "./flashcard-options";
+import { useLocalDb } from "../../utils/localstorage";
+import { FlashcardCardDisplay } from "./flashcard-card-display";
+import { FlashcardSettingsContent } from "./flashcard-settings-content";
 import { useFlashcardGame } from "./use-flashcard-game";
-
-const CARD_VISIBLE_STYLE: CSSProperties = {
-  visibility: "visible",
-  position: "relative",
-  top: 0,
-  left: 0,
-};
-
-const CARD_HIDDEN_STYLE: CSSProperties = {
-  visibility: "hidden",
-  position: "absolute",
-  top: 0,
-  left: 0,
-};
 
 export const Flashcard = () => {
   const { t } = useTranslation();
@@ -40,6 +32,19 @@ export const Flashcard = () => {
     description: t("flashcard.pageDescription"),
   });
   const { stackKey, stackOrder, stackName } = useRequiredStack();
+
+  const [mode, setMode] = useLocalDb<FlashcardMode>(
+    FLASHCARD_OPTION_LSK,
+    "bothmodes",
+    isFlashcardMode
+  );
+  const [neighborDirection, setNeighborDirection] =
+    useLocalDb<NeighborDirection>(
+      NEIGHBOR_DIRECTION_LSK,
+      "random",
+      isNeighborDirection
+    );
+
   const {
     status,
     startSession,
@@ -49,7 +54,37 @@ export const Flashcard = () => {
     activeSession,
     stopSession,
     dismissSummary,
-  } = useSession({ mode: "flashcard", stackKey, autoStart: true });
+  } = useSession({
+    mode: "flashcard",
+    stackKey,
+    flashcardMode: mode,
+    autoStart: true,
+  });
+
+  const handleModeChange = useCallback(
+    (value: FlashcardMode) => {
+      if (!isFlashcardMode(value)) {
+        return;
+      }
+      setMode(value);
+      eventBus.emit.FLASHCARD_MODE_CHANGED({ mode: value });
+    },
+    [setMode]
+  );
+
+  const handleDirectionChange = useCallback(
+    (value: NeighborDirection) => {
+      if (!isNeighborDirection(value)) {
+        return;
+      }
+      setNeighborDirection(value);
+      eventBus.emit.NEIGHBOR_DIRECTION_CHANGED({ direction: value });
+    },
+    [setNeighborDirection]
+  );
+
+  const { timerSettings, setTimerEnabled, setTimerDuration } =
+    useFlashcardTimer();
 
   const {
     score,
@@ -57,17 +92,31 @@ export const Flashcard = () => {
     choices,
     shouldShowCard,
     timeRemaining,
-    timerEnabled,
     timerDuration,
+    isNeighborMode,
+    resolvedDirection,
     submitAnswer,
     revealAnswer,
-  } = useFlashcardGame(stackOrder, stackName, { onAnswer: handleAnswer });
-  const [options, { open, close }] = useDisclosure(false);
+  } = useFlashcardGame(
+    stackOrder,
+    stackName,
+    mode,
+    neighborDirection,
+    timerSettings,
+    { onAnswer: handleAnswer }
+  );
 
-  const handleOpenSettings = useCallback(() => {
-    analytics.trackFeatureUsed("Flashcard Settings");
-    open();
-  }, [open]);
+  const handleTimerEnabledChange = useCallback(
+    (enabled: boolean) => {
+      analytics.trackEvent(
+        "Settings",
+        `Timer ${enabled ? "Enabled" : "Disabled"}`,
+        "Flashcard"
+      );
+      setTimerEnabled(enabled);
+    },
+    [setTimerEnabled]
+  );
 
   const handleRevealAnswer = useCallback(() => {
     analytics.trackFeatureUsed("Reveal Answer - Flashcard");
@@ -97,50 +146,52 @@ export const Flashcard = () => {
           <TrainingHeader
             activeSession={activeSession}
             isStructuredSession={isStructuredSession}
-            onOpenSettings={handleOpenSettings}
             onStartSession={startSession}
             onStopSession={stopSession}
             score={score}
-            settingsAriaLabel={t("flashcard.settingsAriaLabel")}
-            title={t("flashcard.title")}
+            sessionTooltip={t("session.startSessionTooltip")}
+            settingsContent={
+              <FlashcardSettingsContent
+                mode={mode}
+                neighborDirection={neighborDirection}
+                onDirectionChange={handleDirectionChange}
+                onDurationChange={setTimerDuration}
+                onModeChange={handleModeChange}
+                onTimerEnabledChange={handleTimerEnabledChange}
+                timerSettings={timerSettings}
+              />
+            }
+            settingsTooltip={t("flashcard.settingsAriaLabel")}
+            title={
+              <>
+                {t("flashcard.title")}
+                <Text c="dimmed" fs="italic" size="xs">
+                  {mode === "neighbor"
+                    ? t("flashcard.activeModeNeighbor")
+                    : t("flashcard.activeModePosition")}
+                </Text>
+              </>
+            }
           />
         </Grid.Col>
         <Grid.Col span={12}>
           <Space h="xl" />
-          {timerEnabled && (
+          {timerSettings.enabled && (
             <TimerDisplay
               timeRemaining={timeRemaining}
               timerDuration={timerDuration}
             />
           )}
-          <Center>
-            <div
-              style={{
-                position: "relative",
-                width: CARD_WIDTH,
-                height: CARD_HEIGHT,
-              }}
-            >
-              <Image
-                alt={formatCardName(card.card)}
-                className="cardShadow"
-                h={CARD_HEIGHT}
-                src={card.card.image}
-                style={shouldShowCard ? CARD_VISIBLE_STYLE : CARD_HIDDEN_STYLE}
-                w={CARD_WIDTH}
-              />
-              <NumberCard
-                fontSize={60}
-                number={card.index}
-                style={shouldShowCard ? CARD_HIDDEN_STYLE : CARD_VISIBLE_STYLE}
-                width={CARD_WIDTH}
-              />
-            </div>
-          </Center>
+          <FlashcardCardDisplay
+            card={card}
+            isNeighborMode={isNeighborMode}
+            resolvedDirection={resolvedDirection}
+            shouldShowCard={shouldShowCard}
+          />
           <Space h="xl" />
         </Grid.Col>
         <Grid.Col span={12} style={{ height: "100%" }}>
-          {shouldShowCard ? (
+          {!isNeighborMode && shouldShowCard ? (
             <CardSpread
               canMove={false}
               hasCursor={true}
@@ -155,7 +206,6 @@ export const Flashcard = () => {
               onItemClick={submitAnswer}
             />
           )}
-          <FlashcardOptions close={close} opened={options} />
         </Grid.Col>
       </Grid>
       {status.phase === "summary" && (

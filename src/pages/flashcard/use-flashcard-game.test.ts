@@ -1,31 +1,19 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { PlayingCard } from "../../types/playingcard";
 import type { AnswerOutcome } from "../../types/session";
-import { createDeckPosition, stacks } from "../../types/stacks";
+import { stacks } from "../../types/stacks";
+import type { TimerSettings } from "../../types/timer";
 import { formatCardName } from "../../utils/card-formatting";
-import {
-  createInitialState,
-  type GameAction,
-  type GameState,
-  gameReducer,
-  generateNewCardAndChoices,
-  isCorrectAnswer,
-} from "./flashcard-game-reducer";
 import { useFlashcardGame } from "./use-flashcard-game";
 
 const INDEX_ANSWER_PATTERN = /^\d+$/;
+
+const defaultTimerSettings: TimerSettings = { enabled: false, duration: 15 };
 
 // --- Mocks for hook-level tests ---
 
 vi.mock("@mantine/notifications", () => ({
   notifications: { show: vi.fn() },
-}));
-
-vi.mock("../../hooks/use-flashcard-timer", () => ({
-  useFlashcardTimer: () => ({
-    timerSettings: { enabled: false, duration: 15 },
-  }),
 }));
 
 vi.mock("../../utils/localstorage", () => ({
@@ -72,676 +60,6 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-// Helper to create a test state with sensible defaults
-const createTestState = (overrides: Partial<GameState> = {}): GameState => {
-  const { card, choices } = generateNewCardAndChoices(testStack);
-  return {
-    successes: 0,
-    fails: 0,
-    card,
-    choices,
-    display: "card",
-    timeRemaining: 15,
-    timerDuration: 15,
-    ...overrides,
-  };
-};
-
-describe("generateNewCardAndChoices", () => {
-  it("returns a valid card position", () => {
-    const { card } = generateNewCardAndChoices(testStack);
-
-    expect(card.index).toBeGreaterThanOrEqual(1);
-    expect(card.index).toBeLessThanOrEqual(52);
-    expect(card.card).toBeDefined();
-    expect(card.card.suit).toBeDefined();
-    expect(card.card.rank).toBeDefined();
-  });
-
-  it("returns 5 choices", () => {
-    const { choices } = generateNewCardAndChoices(testStack);
-
-    expect(choices).toHaveLength(5);
-  });
-
-  it("includes the target card in choices", () => {
-    const { card, choices } = generateNewCardAndChoices(testStack);
-
-    const hasTargetCard = choices.some(
-      (c) => c.card.suit === card.card.suit && c.card.rank === card.card.rank
-    );
-    expect(hasTargetCard).toBe(true);
-  });
-
-  it("returns unique choices", () => {
-    const { choices } = generateNewCardAndChoices(testStack);
-
-    const indices = choices.map((c) => c.index);
-    const uniqueIndices = new Set(indices);
-    expect(uniqueIndices.size).toBe(5);
-  });
-
-  it("shuffles the choices", () => {
-    // Run multiple times to verify shuffling occurs
-    const results = new Set<string>();
-
-    for (let i = 0; i < 50; i++) {
-      const { choices } = generateNewCardAndChoices(testStack);
-      const order = choices.map((c) => c.index).join(",");
-      results.add(order);
-    }
-
-    // With shuffling, we should see multiple different orderings
-    expect(results.size).toBeGreaterThan(1);
-  });
-
-  it("works with different stacks", () => {
-    const aronsonResult = generateNewCardAndChoices(stacks.aronson.order);
-    const redfordResult = generateNewCardAndChoices(stacks.redford.order);
-
-    expect(aronsonResult.choices).toHaveLength(5);
-    expect(redfordResult.choices).toHaveLength(5);
-  });
-
-  it("returns card from the provided stack", () => {
-    const { card } = generateNewCardAndChoices(testStack);
-
-    const cardInStack = testStack.some(
-      (c) => c.suit === card.card.suit && c.rank === card.card.rank
-    );
-    expect(cardInStack).toBe(true);
-  });
-
-  it("returns choices from the provided stack", () => {
-    const { choices } = generateNewCardAndChoices(testStack);
-
-    for (const choice of choices) {
-      const cardInStack = testStack.some(
-        (c) => c.suit === choice.card.suit && c.rank === choice.card.rank
-      );
-      expect(cardInStack).toBe(true);
-    }
-  });
-});
-
-describe("isCorrectAnswer", () => {
-  const testCard = {
-    index: createDeckPosition(10),
-    card: testStack[9],
-  };
-
-  describe("with PlayingCard answer", () => {
-    it("returns true when card matches by suit and rank", () => {
-      const answer = testCard.card;
-
-      expect(isCorrectAnswer(answer, testCard)).toBe(true);
-    });
-
-    it("returns true for card with same suit and rank but different reference", () => {
-      const answer: PlayingCard = { ...testCard.card };
-
-      expect(isCorrectAnswer(answer, testCard)).toBe(true);
-    });
-
-    it("returns false when suit differs", () => {
-      const differentSuitCard = testStack.find(
-        (c) => c.suit !== testCard.card.suit
-      );
-
-      if (differentSuitCard) {
-        expect(isCorrectAnswer(differentSuitCard, testCard)).toBe(false);
-      }
-    });
-
-    it("returns false when rank differs", () => {
-      const differentRankCard = testStack.find(
-        (c) => c.suit === testCard.card.suit && c.rank !== testCard.card.rank
-      );
-
-      if (differentRankCard) {
-        expect(isCorrectAnswer(differentRankCard, testCard)).toBe(false);
-      }
-    });
-
-    it("returns false when both suit and rank differ", () => {
-      const differentCard = testStack.find(
-        (c) => c.suit !== testCard.card.suit && c.rank !== testCard.card.rank
-      );
-
-      if (differentCard) {
-        expect(isCorrectAnswer(differentCard, testCard)).toBe(false);
-      }
-    });
-  });
-
-  describe("with number answer", () => {
-    it("returns true when index matches exactly", () => {
-      expect(isCorrectAnswer(testCard.index, testCard)).toBe(true);
-    });
-
-    it("returns false when index differs by one", () => {
-      expect(isCorrectAnswer(testCard.index + 1, testCard)).toBe(false);
-      expect(isCorrectAnswer(testCard.index - 1, testCard)).toBe(false);
-    });
-
-    it("returns false for zero", () => {
-      expect(isCorrectAnswer(0, testCard)).toBe(false);
-    });
-
-    it("returns false for negative numbers", () => {
-      expect(isCorrectAnswer(-1, testCard)).toBe(false);
-    });
-
-    it("returns false for numbers outside valid range", () => {
-      expect(isCorrectAnswer(53, testCard)).toBe(false);
-      expect(isCorrectAnswer(100, testCard)).toBe(false);
-    });
-  });
-
-  describe("edge cases", () => {
-    it("correctly handles index 1", () => {
-      const firstCard = {
-        index: createDeckPosition(1),
-        card: testStack[0],
-      };
-
-      expect(isCorrectAnswer(1, firstCard)).toBe(true);
-      expect(isCorrectAnswer(2, firstCard)).toBe(false);
-    });
-
-    it("correctly handles index 52", () => {
-      const lastCard = {
-        index: createDeckPosition(52),
-        card: testStack[51],
-      };
-
-      expect(isCorrectAnswer(52, lastCard)).toBe(true);
-      expect(isCorrectAnswer(51, lastCard)).toBe(false);
-    });
-
-    it("distinguishes between card and number answers", () => {
-      // A number that matches the index should return true
-      expect(isCorrectAnswer(testCard.index, testCard)).toBe(true);
-
-      // The card itself should also return true
-      expect(isCorrectAnswer(testCard.card, testCard)).toBe(true);
-    });
-  });
-});
-
-describe("createInitialState", () => {
-  it("creates state with an initial card and choices from the stack", () => {
-    const state = createInitialState(testStack, 15);
-
-    expect(state.card).toBeDefined();
-    expect(state.card.index).toBeGreaterThanOrEqual(1);
-    expect(state.card.index).toBeLessThanOrEqual(52);
-    expect(state.choices).toHaveLength(5);
-
-    for (const choice of state.choices) {
-      const cardInStack = testStack.some(
-        (c) => c.suit === choice.card.suit && c.rank === choice.card.rank
-      );
-      expect(cardInStack).toBe(true);
-    }
-  });
-
-  it("sets successes and fails to 0", () => {
-    const state = createInitialState(testStack, 15);
-
-    expect(state.successes).toBe(0);
-    expect(state.fails).toBe(0);
-  });
-
-  it("sets display to card", () => {
-    const state = createInitialState(testStack, 15);
-
-    expect(state.display).toBe("card");
-  });
-
-  it("sets timeRemaining to the provided timerDuration", () => {
-    const state = createInitialState(testStack, 25);
-
-    expect(state.timeRemaining).toBe(25);
-  });
-
-  it("sets timerDuration to the provided value", () => {
-    const state = createInitialState(testStack, 30);
-
-    expect(state.timerDuration).toBe(30);
-  });
-
-  it("generates choices that include the selected card", () => {
-    const state = createInitialState(testStack, 15);
-
-    const hasSelectedCard = state.choices.some(
-      (c) =>
-        c.card.suit === state.card.card.suit &&
-        c.card.rank === state.card.card.rank
-    );
-    expect(hasSelectedCard).toBe(true);
-  });
-});
-
-describe("flashcard game utils", () => {
-  it("getRandomDisplayMode returns card or index", async () => {
-    const { getRandomDisplayMode } = await import("./utils");
-
-    const results = new Set<string>();
-
-    for (let i = 0; i < 100; i++) {
-      results.add(getRandomDisplayMode());
-    }
-
-    expect(results.has("card") || results.has("index")).toBe(true);
-  });
-
-  it("getRandomDisplayMode with mocked random returns card", async () => {
-    vi.spyOn(Math, "random").mockReturnValue(0);
-
-    const { getRandomDisplayMode } = await import("./utils");
-    const result = getRandomDisplayMode();
-
-    expect(result).toBe("card");
-
-    vi.restoreAllMocks();
-  });
-
-  it("getRandomDisplayMode with mocked random returns index", async () => {
-    vi.spyOn(Math, "random").mockReturnValue(0.99);
-
-    const { getRandomDisplayMode } = await import("./utils");
-    const result = getRandomDisplayMode();
-
-    expect(result).toBe("index");
-
-    vi.restoreAllMocks();
-  });
-
-  it("wrongAnswerNotification has correct properties", async () => {
-    const { wrongAnswerNotification } = await import("./utils");
-
-    expect(wrongAnswerNotification.color).toBe("red");
-    expect(wrongAnswerNotification.title).toBe("Wrong answer");
-    expect(wrongAnswerNotification.message).toBe("Try again!");
-    expect(wrongAnswerNotification.autoClose).toBeDefined();
-  });
-});
-
-describe("gameReducer", () => {
-  describe("REVEAL_ANSWER action", () => {
-    it("increments fails", () => {
-      const state = createTestState({ fails: 2 });
-      const { card: newCard, choices: newChoices } =
-        generateNewCardAndChoices(testStack);
-      const action: GameAction = {
-        type: "REVEAL_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.fails).toBe(3);
-    });
-
-    it("does not change successes", () => {
-      const state = createTestState({ successes: 5 });
-      const { card: newCard, choices: newChoices } =
-        generateNewCardAndChoices(testStack);
-      const action: GameAction = {
-        type: "REVEAL_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.successes).toBe(5);
-    });
-
-    it("advances to a new card", () => {
-      const state = createTestState();
-      const { card: newCard, choices: newChoices } =
-        generateNewCardAndChoices(testStack);
-      const action: GameAction = {
-        type: "REVEAL_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "index" },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.card).toEqual(newCard);
-      expect(newState.choices).toEqual(newChoices);
-      expect(newState.display).toBe("index");
-    });
-
-    it("resets timeRemaining to timerDuration", () => {
-      const state = createTestState({
-        timeRemaining: 3,
-        timerDuration: 15,
-      });
-      const { card: newCard, choices: newChoices } =
-        generateNewCardAndChoices(testStack);
-      const action: GameAction = {
-        type: "REVEAL_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.timeRemaining).toBe(15);
-    });
-  });
-
-  describe("CORRECT_ANSWER action", () => {
-    it("increments successes", () => {
-      const state = createTestState({ successes: 2 });
-      const { card: newCard, choices: newChoices } =
-        generateNewCardAndChoices(testStack);
-      const action: GameAction = {
-        type: "CORRECT_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.successes).toBe(3);
-    });
-
-    it("does not change fails", () => {
-      const state = createTestState({ fails: 4 });
-      const { card: newCard, choices: newChoices } =
-        generateNewCardAndChoices(testStack);
-      const action: GameAction = {
-        type: "CORRECT_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.fails).toBe(4);
-    });
-
-    it("advances to a new card with new choices and display", () => {
-      const state = createTestState({ display: "index" });
-      const { card: newCard, choices: newChoices } =
-        generateNewCardAndChoices(testStack);
-      const action: GameAction = {
-        type: "CORRECT_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.card).toEqual(newCard);
-      expect(newState.choices).toEqual(newChoices);
-      expect(newState.display).toBe("card");
-    });
-
-    it("resets timeRemaining to timerDuration", () => {
-      const state = createTestState({
-        timeRemaining: 3,
-        timerDuration: 15,
-      });
-      const { card: newCard, choices: newChoices } =
-        generateNewCardAndChoices(testStack);
-      const action: GameAction = {
-        type: "CORRECT_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.timeRemaining).toBe(15);
-    });
-  });
-
-  describe("WRONG_ANSWER action", () => {
-    it("increments fails", () => {
-      const state = createTestState({ fails: 2 });
-      const action: GameAction = { type: "WRONG_ANSWER" };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.fails).toBe(3);
-    });
-
-    it("does not change successes", () => {
-      const state = createTestState({ successes: 5 });
-      const action: GameAction = { type: "WRONG_ANSWER" };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.successes).toBe(5);
-    });
-
-    it("does not reset the timer", () => {
-      const state = createTestState({
-        timeRemaining: 7,
-        timerDuration: 15,
-      });
-      const action: GameAction = { type: "WRONG_ANSWER" };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.timeRemaining).toBe(7);
-    });
-
-    it("does not change card, choices, or display", () => {
-      const state = createTestState();
-      const action: GameAction = { type: "WRONG_ANSWER" };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.card).toEqual(state.card);
-      expect(newState.choices).toEqual(state.choices);
-      expect(newState.display).toBe(state.display);
-    });
-  });
-
-  describe("TICK action", () => {
-    it("decrements timeRemaining by 1", () => {
-      const state = createTestState({ timeRemaining: 10 });
-      const action: GameAction = { type: "TICK" };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.timeRemaining).toBe(9);
-    });
-
-    it("does not decrement below 0", () => {
-      const state = createTestState({ timeRemaining: 0 });
-      const action: GameAction = { type: "TICK" };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.timeRemaining).toBe(0);
-    });
-
-    it("does not change scores, card, choices, or display", () => {
-      const state = createTestState({ successes: 3, fails: 1 });
-      const action: GameAction = { type: "TICK" };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.successes).toBe(3);
-      expect(newState.fails).toBe(1);
-      expect(newState.card).toEqual(state.card);
-      expect(newState.choices).toEqual(state.choices);
-      expect(newState.display).toBe(state.display);
-    });
-  });
-
-  describe("RESET_TIMER action", () => {
-    it("resets timeRemaining to the provided duration", () => {
-      const state = createTestState({
-        timeRemaining: 3,
-        timerDuration: 15,
-      });
-      const action: GameAction = {
-        type: "RESET_TIMER",
-        payload: { duration: 20 },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.timeRemaining).toBe(20);
-    });
-
-    it("updates timerDuration to the provided duration", () => {
-      const state = createTestState({ timerDuration: 15 });
-      const action: GameAction = {
-        type: "RESET_TIMER",
-        payload: { duration: 30 },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.timerDuration).toBe(30);
-    });
-
-    it("does not change scores, card, choices, or display", () => {
-      const state = createTestState({ successes: 2, fails: 1 });
-      const action: GameAction = {
-        type: "RESET_TIMER",
-        payload: { duration: 20 },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.successes).toBe(2);
-      expect(newState.fails).toBe(1);
-      expect(newState.card).toEqual(state.card);
-      expect(newState.choices).toEqual(state.choices);
-      expect(newState.display).toBe(state.display);
-    });
-  });
-
-  describe("TIMEOUT action", () => {
-    it("increments fails", () => {
-      const state = createTestState({ fails: 2 });
-      const { card: newCard, choices: newChoices } =
-        generateNewCardAndChoices(testStack);
-      const action: GameAction = {
-        type: "TIMEOUT",
-        payload: { newCard, newChoices, newDisplay: "card" },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.fails).toBe(3);
-    });
-
-    it("does not change successes", () => {
-      const state = createTestState({ successes: 5 });
-      const { card: newCard, choices: newChoices } =
-        generateNewCardAndChoices(testStack);
-      const action: GameAction = {
-        type: "TIMEOUT",
-        payload: { newCard, newChoices, newDisplay: "card" },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.successes).toBe(5);
-    });
-
-    it("advances to a new card with new choices and display", () => {
-      const state = createTestState({ display: "index" });
-      const { card: newCard, choices: newChoices } =
-        generateNewCardAndChoices(testStack);
-      const action: GameAction = {
-        type: "TIMEOUT",
-        payload: { newCard, newChoices, newDisplay: "card" },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.card).toEqual(newCard);
-      expect(newState.choices).toEqual(newChoices);
-      expect(newState.display).toBe("card");
-    });
-
-    it("resets timeRemaining to timerDuration", () => {
-      const state = createTestState({
-        timeRemaining: 0,
-        timerDuration: 15,
-      });
-      const { card: newCard, choices: newChoices } =
-        generateNewCardAndChoices(testStack);
-      const action: GameAction = {
-        type: "TIMEOUT",
-        payload: { newCard, newChoices, newDisplay: "card" },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.timeRemaining).toBe(15);
-    });
-  });
-
-  describe("RESET_GAME action", () => {
-    it("resets scores to zero", () => {
-      const state = createTestState({ successes: 5, fails: 3 });
-      const action: GameAction = {
-        type: "RESET_GAME",
-        payload: { stackOrder: testStack, timerDuration: 15 },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.successes).toBe(0);
-      expect(newState.fails).toBe(0);
-    });
-
-    it("generates a new card and choices from the provided stack", () => {
-      const state = createTestState();
-      const action: GameAction = {
-        type: "RESET_GAME",
-        payload: { stackOrder: testStack, timerDuration: 15 },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.card).toBeDefined();
-      expect(newState.card.index).toBeGreaterThanOrEqual(1);
-      expect(newState.card.index).toBeLessThanOrEqual(52);
-      expect(newState.choices).toHaveLength(5);
-
-      for (const choice of newState.choices) {
-        const cardInStack = testStack.some(
-          (c) => c.suit === choice.card.suit && c.rank === choice.card.rank
-        );
-        expect(cardInStack).toBe(true);
-      }
-    });
-
-    it("resets timeRemaining to the provided timerDuration", () => {
-      const state = createTestState({ timeRemaining: 3, timerDuration: 15 });
-      const action: GameAction = {
-        type: "RESET_GAME",
-        payload: { stackOrder: testStack, timerDuration: 30 },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.timerDuration).toBe(30);
-      expect(newState.timeRemaining).toBe(30);
-    });
-
-    it("resets display to card", () => {
-      const state = createTestState({ display: "index" });
-      const action: GameAction = {
-        type: "RESET_GAME",
-        payload: { stackOrder: testStack, timerDuration: 15 },
-      };
-
-      const newState = gameReducer(state, action);
-
-      expect(newState.display).toBe("card");
-    });
-  });
-});
-
 describe("useFlashcardGame hook", () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -753,7 +71,13 @@ describe("useFlashcardGame hook", () => {
         await import("@mantine/notifications")
       );
       const { result } = renderHook(() =>
-        useFlashcardGame(testStack, "Mnemonica")
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "bothmodes",
+          "random",
+          defaultTimerSettings
+        )
       );
 
       // Default mode is "bothmodes", initial display is "card", so the answer is the index
@@ -777,7 +101,13 @@ describe("useFlashcardGame hook", () => {
       vi.spyOn(Math, "random").mockReturnValue(0.99);
 
       const { result } = renderHook(() =>
-        useFlashcardGame(testStack, "Mnemonica")
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "bothmodes",
+          "random",
+          defaultTimerSettings
+        )
       );
 
       // Reveal once to advance past the initial "card" display
@@ -801,7 +131,13 @@ describe("useFlashcardGame hook", () => {
 
     it("increments fails count", () => {
       const { result } = renderHook(() =>
-        useFlashcardGame(testStack, "Mnemonica")
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "bothmodes",
+          "random",
+          defaultTimerSettings
+        )
       );
 
       expect(result.current.score.fails).toBe(0);
@@ -815,7 +151,13 @@ describe("useFlashcardGame hook", () => {
 
     it("advances to a new card", () => {
       const { result } = renderHook(() =>
-        useFlashcardGame(testStack, "Mnemonica")
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "bothmodes",
+          "random",
+          defaultTimerSettings
+        )
       );
 
       const cardBefore = result.current.card;
@@ -840,7 +182,14 @@ describe("useFlashcardGame hook", () => {
     it("calls onAnswer with correct: false and questionAdvanced: true", () => {
       const onAnswer = vi.fn<(outcome: AnswerOutcome) => void>();
       const { result } = renderHook(() =>
-        useFlashcardGame(testStack, "Mnemonica", { onAnswer })
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "bothmodes",
+          "random",
+          defaultTimerSettings,
+          { onAnswer }
+        )
       );
 
       act(() => {
@@ -855,7 +204,13 @@ describe("useFlashcardGame hook", () => {
 
     it("does not change successes count", () => {
       const { result } = renderHook(() =>
-        useFlashcardGame(testStack, "Mnemonica")
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "bothmodes",
+          "random",
+          defaultTimerSettings
+        )
       );
 
       expect(result.current.score.successes).toBe(0);
@@ -870,7 +225,13 @@ describe("useFlashcardGame hook", () => {
     it("emits FLASHCARD_ANSWER event with correct: false", async () => {
       const { eventBus } = await import("../../services/event-bus");
       const { result } = renderHook(() =>
-        useFlashcardGame(testStack, "Mnemonica")
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "bothmodes",
+          "random",
+          defaultTimerSettings
+        )
       );
 
       act(() => {
@@ -888,7 +249,13 @@ describe("useFlashcardGame hook", () => {
     it("emits FLASHCARD_ANSWER event with correct: true on correct answer", async () => {
       const { eventBus } = await import("../../services/event-bus");
       const { result } = renderHook(() =>
-        useFlashcardGame(testStack, "Mnemonica")
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "bothmodes",
+          "random",
+          defaultTimerSettings
+        )
       );
 
       const correctCard = result.current.card.card;
@@ -906,7 +273,13 @@ describe("useFlashcardGame hook", () => {
     it("emits FLASHCARD_ANSWER event with correct: false on wrong answer", async () => {
       const { eventBus } = await import("../../services/event-bus");
       const { result } = renderHook(() =>
-        useFlashcardGame(testStack, "Mnemonica")
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "bothmodes",
+          "random",
+          defaultTimerSettings
+        )
       );
 
       const currentCard = result.current.card.card;
@@ -927,6 +300,49 @@ describe("useFlashcardGame hook", () => {
         stackName: "Mnemonica",
       });
     });
+
+    it("treats a correct number answer as correct in numberonly mode", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "numberonly",
+          "random",
+          defaultTimerSettings
+        )
+      );
+
+      const correctIndex = result.current.card.index;
+      expect(result.current.score.successes).toBe(0);
+
+      act(() => {
+        result.current.submitAnswer(correctIndex);
+      });
+
+      expect(result.current.score.successes).toBe(1);
+    });
+
+    it("accumulates successes across multiple correct answers", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "cardonly",
+          "random",
+          defaultTimerSettings
+        )
+      );
+
+      expect(result.current.score.successes).toBe(0);
+
+      for (let i = 1; i <= 3; i++) {
+        const correctCard = result.current.card.card;
+        act(() => {
+          result.current.submitAnswer(correctCard);
+        });
+        expect(result.current.score.successes).toBe(i);
+      }
+    });
   });
 
   describe("handleTimeout", () => {
@@ -938,7 +354,15 @@ describe("useFlashcardGame hook", () => {
         __getCapturedOnTimeout: () => (() => void) | undefined;
       };
 
-      renderHook(() => useFlashcardGame(testStack, "Mnemonica"));
+      renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "bothmodes",
+          "random",
+          defaultTimerSettings
+        )
+      );
 
       const onTimeout = gameTimerMock.__getCapturedOnTimeout();
       expect(onTimeout).toBeDefined();
@@ -955,6 +379,248 @@ describe("useFlashcardGame hook", () => {
         correct: false,
         stackName: "Mnemonica",
       });
+    });
+  });
+
+  describe("shouldShowCard", () => {
+    it("returns true when mode is cardonly", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "cardonly",
+          "random",
+          defaultTimerSettings
+        )
+      );
+
+      expect(result.current.shouldShowCard).toBe(true);
+    });
+
+    it("returns false when mode is numberonly", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "numberonly",
+          "random",
+          defaultTimerSettings
+        )
+      );
+
+      expect(result.current.shouldShowCard).toBe(false);
+    });
+
+    it("returns true when mode is bothmodes and display is card", () => {
+      // Initial display is always "card" from createInitialState
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "bothmodes",
+          "random",
+          defaultTimerSettings
+        )
+      );
+
+      expect(result.current.shouldShowCard).toBe(true);
+    });
+
+    it("returns false when mode is bothmodes and display is index", () => {
+      // Force Math.random to return 0.99 so getRandomDisplayMode picks "index"
+      vi.spyOn(Math, "random").mockReturnValue(0.99);
+
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "bothmodes",
+          "random",
+          defaultTimerSettings
+        )
+      );
+
+      // Initial display is "card"; advance to get a new display mode
+      const correctCard = result.current.card.card;
+      act(() => {
+        result.current.submitAnswer(correctCard);
+      });
+
+      // After advancing, display should be "index" because Math.random returns 0.99
+      expect(result.current.shouldShowCard).toBe(false);
+    });
+  });
+
+  describe("neighbor mode", () => {
+    it("sets isNeighborMode to true when mode is 'neighbor'", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "neighbor",
+          "before",
+          defaultTimerSettings
+        )
+      );
+
+      expect(result.current.isNeighborMode).toBe(true);
+    });
+
+    it("sets isNeighborMode to false for non-neighbor modes", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "cardonly",
+          "before",
+          defaultTimerSettings
+        )
+      );
+
+      expect(result.current.isNeighborMode).toBe(false);
+    });
+
+    it("returns a non-null resolvedDirection in neighbor mode", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "neighbor",
+          "before",
+          defaultTimerSettings
+        )
+      );
+
+      expect(result.current.resolvedDirection).not.toBeNull();
+      expect(["before", "after"]).toContain(result.current.resolvedDirection);
+    });
+
+    it("returns shouldShowCard as true in neighbor mode", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "neighbor",
+          "after",
+          defaultTimerSettings
+        )
+      );
+
+      expect(result.current.shouldShowCard).toBe(true);
+    });
+
+    it("increments successes when submitting the correct neighbor card", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "neighbor",
+          "before",
+          defaultTimerSettings
+        )
+      );
+
+      const questionCard = result.current.card;
+      const direction = result.current.resolvedDirection;
+      expect(direction).not.toBeNull();
+
+      // Compute the expected neighbor index
+      let expectedIndex: number;
+      if (direction === "before") {
+        expectedIndex = questionCard.index === 1 ? 52 : questionCard.index - 1;
+      } else {
+        expectedIndex = questionCard.index === 52 ? 1 : questionCard.index + 1;
+      }
+
+      // Find the answer card in the choices
+      const answerChoice = result.current.choices.find(
+        (c) => c.index === expectedIndex
+      );
+      expect(answerChoice).toBeDefined();
+
+      // The answer card should differ from the question card
+      expect(answerChoice?.index).not.toBe(questionCard.index);
+
+      expect(result.current.score.successes).toBe(0);
+
+      act(() => {
+        if (answerChoice) {
+          result.current.submitAnswer(answerChoice.card);
+        }
+      });
+
+      expect(result.current.score.successes).toBe(1);
+    });
+
+    it("increments fails and does not advance on wrong answer in neighbor mode", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "neighbor",
+          "before",
+          defaultTimerSettings
+        )
+      );
+
+      const questionCard = result.current.card;
+      const direction = result.current.resolvedDirection;
+      expect(direction).not.toBeNull();
+
+      // Compute the expected neighbor index to find a wrong choice
+      let expectedIndex: number;
+      if (direction === "before") {
+        expectedIndex = questionCard.index === 1 ? 52 : questionCard.index - 1;
+      } else {
+        expectedIndex = questionCard.index === 52 ? 1 : questionCard.index + 1;
+      }
+
+      // Find a wrong choice (not the correct neighbor)
+      const wrongChoice = result.current.choices.find(
+        (c) => c.index !== expectedIndex
+      );
+      expect(wrongChoice).toBeDefined();
+
+      const choicesBefore = result.current.choices;
+      expect(result.current.score.fails).toBe(0);
+
+      act(() => {
+        if (wrongChoice) {
+          result.current.submitAnswer(wrongChoice.card);
+        }
+      });
+
+      expect(result.current.score.fails).toBe(1);
+      expect(result.current.card).toEqual(questionCard);
+      expect(result.current.choices).toEqual(choicesBefore);
+    });
+
+    it("shows a notification with the card name when revealing answer in neighbor mode", async () => {
+      const { notifications } = vi.mocked(
+        await import("@mantine/notifications")
+      );
+
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "neighbor",
+          "before",
+          defaultTimerSettings
+        )
+      );
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(notifications.show).toHaveBeenCalledWith(
+        expect.objectContaining({
+          color: "yellow",
+          // In neighbor mode, the reveal message should be a card name (not a number)
+          message: expect.not.stringMatching(INDEX_ANSWER_PATTERN),
+        })
+      );
     });
   });
 });

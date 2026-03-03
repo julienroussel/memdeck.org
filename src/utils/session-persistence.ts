@@ -24,9 +24,8 @@ export const buildSessionRecord = (session: ActiveSession): SessionRecord => {
     (endTime - new Date(session.startedAt).getTime()) / 1000
   );
 
-  return {
+  const baseRecord = {
     id: session.id,
-    mode: session.mode,
     stackKey: session.stackKey,
     config: session.config,
     startedAt: session.startedAt,
@@ -38,6 +37,16 @@ export const buildSessionRecord = (session: ActiveSession): SessionRecord => {
     accuracy: calculateAccuracy(session.successes, session.fails),
     bestStreak: session.bestStreak,
   };
+
+  if (session.mode === "flashcard") {
+    return {
+      ...baseRecord,
+      mode: "flashcard" as const,
+      flashcardMode: session.flashcardMode,
+    };
+  }
+
+  return { ...baseRecord, mode: "acaan" as const };
 };
 
 // --- Persistence ---

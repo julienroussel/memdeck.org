@@ -1,6 +1,6 @@
 import ReactGA from "react-ga4";
 import { type Metric, onCLS, onINP, onLCP } from "web-vitals";
-import type { FlashcardMode } from "../types/flashcard";
+import type { FlashcardMode, NeighborDirection } from "../types/flashcard";
 import type { SessionConfig, TrainingMode } from "../types/session";
 import { eventBus } from "./event-bus";
 
@@ -38,6 +38,10 @@ const subscribeToEvents = () => {
 
   eventBus.subscribe.FLASHCARD_MODE_CHANGED(({ mode }) => {
     analytics.trackFlashcardModeChanged(mode);
+  });
+
+  eventBus.subscribe.NEIGHBOR_DIRECTION_CHANGED(({ direction }) => {
+    analytics.trackNeighborDirectionChanged(direction);
   });
 
   eventBus.subscribe.ACAAN_ANSWER(({ correct, stackName }) => {
@@ -109,6 +113,17 @@ export const analytics = {
       category: "Flashcard",
       action: "Mode Changed",
       label: mode,
+    });
+  },
+
+  trackNeighborDirectionChanged: (direction: NeighborDirection) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "Settings",
+      action: "Neighbor Direction Changed",
+      label: direction,
     });
   },
 

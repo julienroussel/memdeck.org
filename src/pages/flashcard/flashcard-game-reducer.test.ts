@@ -8,6 +8,7 @@ import type { GameState } from "./flashcard-game-reducer";
 import {
   createInitialState,
   gameReducer,
+  generateNeighborCardAndChoices,
   generateNewCardAndChoices,
   isCorrectAnswer,
 } from "./flashcard-game-reducer";
@@ -39,8 +40,10 @@ const makeState = (overrides: Partial<GameState> = {}): GameState => ({
   successes: 0,
   fails: 0,
   card: cardAtPos1,
+  answerCard: cardAtPos1,
   choices: makeChoices(),
   display: "card",
+  resolvedDirection: null,
   timeRemaining: 30,
   timerDuration: 30,
   ...overrides,
@@ -112,6 +115,83 @@ describe("generateNewCardAndChoices", () => {
   });
 });
 
+describe("generateNeighborCardAndChoices", () => {
+  it("returns question card, answer card, choices, and resolved direction", () => {
+    const result = generateNeighborCardAndChoices(stackOrder, "before");
+
+    expect(result).toHaveProperty("card");
+    expect(result).toHaveProperty("answerCard");
+    expect(result).toHaveProperty("choices");
+    expect(result).toHaveProperty("resolvedDirection");
+  });
+
+  it("sets answer card to the neighbor of the question card for 'before' direction", () => {
+    const result = generateNeighborCardAndChoices(stackOrder, "before");
+
+    // The answer should be the card before the question in the stack
+    expect(result.resolvedDirection).toBe("before");
+    // The question and answer indices should differ by 1 (with wrap-around)
+    const expectedIndex = result.card.index === 1 ? 52 : result.card.index - 1;
+    expect(result.answerCard.index).toBe(expectedIndex);
+  });
+
+  it("sets answer card to the neighbor of the question card for 'after' direction", () => {
+    const result = generateNeighborCardAndChoices(stackOrder, "after");
+
+    expect(result.resolvedDirection).toBe("after");
+    const expectedIndex = result.card.index === 52 ? 1 : result.card.index + 1;
+    expect(result.answerCard.index).toBe(expectedIndex);
+  });
+
+  it("resolves 'random' direction to 'before' or 'after'", () => {
+    const directions = new Set<string>();
+    for (let i = 0; i < 50; i++) {
+      const result = generateNeighborCardAndChoices(stackOrder, "random");
+      directions.add(result.resolvedDirection);
+    }
+    expect(directions.has("before")).toBe(true);
+    expect(directions.has("after")).toBe(true);
+    for (const d of directions) {
+      expect(["before", "after"]).toContain(d);
+    }
+  });
+
+  it("includes the answer card in choices but not the question card", () => {
+    for (let i = 0; i < 10; i++) {
+      const result = generateNeighborCardAndChoices(stackOrder, "before");
+
+      const hasAnswer = result.choices.some(
+        (c) =>
+          c.card.suit === result.answerCard.card.suit &&
+          c.card.rank === result.answerCard.card.rank
+      );
+      expect(hasAnswer).toBe(true);
+
+      const hasQuestion = result.choices.some(
+        (c) =>
+          c.card.suit === result.card.card.suit &&
+          c.card.rank === result.card.card.rank
+      );
+      expect(hasQuestion).toBe(false);
+    }
+  });
+
+  it("shuffles choices so the answer is not always first", () => {
+    const answerPositions = new Set<number>();
+    for (let i = 0; i < 50; i++) {
+      const result = generateNeighborCardAndChoices(stackOrder, "before");
+      const answerIndex = result.choices.findIndex(
+        (c) =>
+          c.card.suit === result.answerCard.card.suit &&
+          c.card.rank === result.answerCard.card.rank
+      );
+      answerPositions.add(answerIndex);
+    }
+    // The answer should appear at multiple positions, not always at 0
+    expect(answerPositions.size).toBeGreaterThan(1);
+  });
+});
+
 describe("isCorrectAnswer", () => {
   describe("when item is a PlayingCard", () => {
     it("returns true when suit and rank match the card at the position", () => {
@@ -163,28 +243,28 @@ describe("isCorrectAnswer", () => {
 
 describe("createInitialState", () => {
   it("returns state with zero successes and fails", () => {
-    const state = createInitialState(stackOrder, 30);
+    const state = createInitialState({ stackOrder, timerDuration: 30 });
     expect(state.successes).toBe(0);
     expect(state.fails).toBe(0);
   });
 
   it("sets timeRemaining equal to the provided timerDuration", () => {
-    const state = createInitialState(stackOrder, 45);
+    const state = createInitialState({ stackOrder, timerDuration: 45 });
     expect(state.timeRemaining).toBe(45);
   });
 
   it("sets timerDuration to the provided value", () => {
-    const state = createInitialState(stackOrder, 45);
+    const state = createInitialState({ stackOrder, timerDuration: 45 });
     expect(state.timerDuration).toBe(45);
   });
 
   it("defaults display mode to 'card'", () => {
-    const state = createInitialState(stackOrder, 30);
+    const state = createInitialState({ stackOrder, timerDuration: 30 });
     expect(state.display).toBe("card");
   });
 
   it("includes a valid card with index and card properties", () => {
-    const state = createInitialState(stackOrder, 30);
+    const state = createInitialState({ stackOrder, timerDuration: 30 });
     expect(state.card).toHaveProperty("index");
     expect(state.card).toHaveProperty("card");
     expect(state.card.index).toBeGreaterThanOrEqual(1);
@@ -192,21 +272,68 @@ describe("createInitialState", () => {
   });
 
   it("includes a choices array", () => {
-    const state = createInitialState(stackOrder, 30);
+    const state = createInitialState({ stackOrder, timerDuration: 30 });
     expect(Array.isArray(state.choices)).toBe(true);
     expect(state.choices.length).toBeGreaterThan(0);
   });
 
   it("includes the card among the choices", () => {
-    const state = createInitialState(stackOrder, 30);
+    const state = createInitialState({ stackOrder, timerDuration: 30 });
     const found = state.choices.some((c) => c.index === state.card.index);
     expect(found).toBe(true);
   });
 
   it("works with different timer durations", () => {
-    const state = createInitialState(stackOrder, 60);
+    const state = createInitialState({ stackOrder, timerDuration: 60 });
     expect(state.timeRemaining).toBe(60);
     expect(state.timerDuration).toBe(60);
+  });
+
+  it("generates a neighbor question when flashcardMode is 'neighbor'", () => {
+    const state = createInitialState({
+      stackOrder,
+      timerDuration: 30,
+      flashcardMode: "neighbor",
+      neighborDirection: "before",
+    });
+    expect(state.resolvedDirection).toBe("before");
+    expect(state.answerCard).not.toBe(state.card);
+  });
+
+  it("resolves direction for neighbor mode with 'after'", () => {
+    const state = createInitialState({
+      stackOrder,
+      timerDuration: 30,
+      flashcardMode: "neighbor",
+      neighborDirection: "after",
+    });
+    expect(state.resolvedDirection).toBe("after");
+  });
+
+  it("resolves random direction to 'before' or 'after' in neighbor mode", () => {
+    const state = createInitialState({
+      stackOrder,
+      timerDuration: 30,
+      flashcardMode: "neighbor",
+      neighborDirection: "random",
+    });
+    expect(["before", "after"]).toContain(state.resolvedDirection);
+  });
+
+  it("generates a standard question when flashcardMode is not 'neighbor'", () => {
+    const state = createInitialState({
+      stackOrder,
+      timerDuration: 30,
+      flashcardMode: "cardonly",
+    });
+    expect(state.resolvedDirection).toBeNull();
+    expect(state.answerCard).toBe(state.card);
+  });
+
+  it("generates a standard question when flashcardMode is undefined", () => {
+    const state = createInitialState({ stackOrder, timerDuration: 30 });
+    expect(state.resolvedDirection).toBeNull();
+    expect(state.answerCard).toBe(state.card);
   });
 });
 
@@ -219,7 +346,13 @@ describe("gameReducer", () => {
       const state = makeState({ successes: 3 });
       const next = gameReducer(state, {
         type: "CORRECT_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: null,
+        },
       });
       expect(next.successes).toBe(4);
     });
@@ -228,7 +361,13 @@ describe("gameReducer", () => {
       const state = makeState({ fails: 2 });
       const next = gameReducer(state, {
         type: "CORRECT_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: null,
+        },
       });
       expect(next.fails).toBe(2);
     });
@@ -237,16 +376,30 @@ describe("gameReducer", () => {
       const state = makeState();
       const next = gameReducer(state, {
         type: "CORRECT_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: null,
+        },
       });
       expect(next.card).toBe(newCard);
+      expect(next.answerCard).toBe(newCard);
+      expect(next.resolvedDirection).toBeNull();
     });
 
     it("replaces choices with the new choices from payload", () => {
       const state = makeState();
       const next = gameReducer(state, {
         type: "CORRECT_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "index" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "index",
+          newResolvedDirection: null,
+        },
       });
       expect(next.choices).toBe(newChoices);
     });
@@ -255,7 +408,13 @@ describe("gameReducer", () => {
       const state = makeState({ display: "card" });
       const next = gameReducer(state, {
         type: "CORRECT_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "index" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "index",
+          newResolvedDirection: null,
+        },
       });
       expect(next.display).toBe("index");
     });
@@ -264,9 +423,34 @@ describe("gameReducer", () => {
       const state = makeState({ timeRemaining: 5, timerDuration: 30 });
       const next = gameReducer(state, {
         type: "CORRECT_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: null,
+        },
       });
       expect(next.timeRemaining).toBe(30);
+    });
+
+    it("updates answerCard and resolvedDirection with neighbor mode payload", () => {
+      const newAnswerCard = makeCardPosition(AceOfHearts, 51);
+      const state = makeState();
+      const next = gameReducer(state, {
+        type: "CORRECT_ANSWER",
+        payload: {
+          newCard,
+          newAnswerCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: "before",
+        },
+      });
+      expect(next.card).toBe(newCard);
+      expect(next.answerCard).toBe(newAnswerCard);
+      expect(next.answerCard).not.toBe(next.card);
+      expect(next.resolvedDirection).toBe("before");
     });
   });
 
@@ -311,7 +495,13 @@ describe("gameReducer", () => {
       const state = makeState({ fails: 1 });
       const next = gameReducer(state, {
         type: "TIMEOUT",
-        payload: { newCard, newChoices, newDisplay: "card" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: null,
+        },
       });
       expect(next.fails).toBe(2);
     });
@@ -320,16 +510,30 @@ describe("gameReducer", () => {
       const state = makeState();
       const next = gameReducer(state, {
         type: "TIMEOUT",
-        payload: { newCard, newChoices, newDisplay: "card" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: null,
+        },
       });
       expect(next.card).toBe(newCard);
+      expect(next.answerCard).toBe(newCard);
+      expect(next.resolvedDirection).toBeNull();
     });
 
     it("replaces choices with the new choices from payload", () => {
       const state = makeState();
       const next = gameReducer(state, {
         type: "TIMEOUT",
-        payload: { newCard, newChoices, newDisplay: "card" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: null,
+        },
       });
       expect(next.choices).toBe(newChoices);
     });
@@ -338,7 +542,13 @@ describe("gameReducer", () => {
       const state = makeState({ display: "card" });
       const next = gameReducer(state, {
         type: "TIMEOUT",
-        payload: { newCard, newChoices, newDisplay: "index" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "index",
+          newResolvedDirection: null,
+        },
       });
       expect(next.display).toBe("index");
     });
@@ -347,7 +557,13 @@ describe("gameReducer", () => {
       const state = makeState({ timeRemaining: 0, timerDuration: 30 });
       const next = gameReducer(state, {
         type: "TIMEOUT",
-        payload: { newCard, newChoices, newDisplay: "card" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: null,
+        },
       });
       expect(next.timeRemaining).toBe(30);
     });
@@ -356,7 +572,13 @@ describe("gameReducer", () => {
       const state = makeState({ successes: 4 });
       const next = gameReducer(state, {
         type: "TIMEOUT",
-        payload: { newCard, newChoices, newDisplay: "card" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: null,
+        },
       });
       expect(next.successes).toBe(4);
     });
@@ -367,7 +589,13 @@ describe("gameReducer", () => {
       const state = makeState({ fails: 0 });
       const next = gameReducer(state, {
         type: "REVEAL_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: null,
+        },
       });
       expect(next.fails).toBe(1);
     });
@@ -376,7 +604,13 @@ describe("gameReducer", () => {
       const state = makeState();
       const next = gameReducer(state, {
         type: "REVEAL_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: null,
+        },
       });
       expect(next.card).toBe(newCard);
     });
@@ -385,7 +619,13 @@ describe("gameReducer", () => {
       const state = makeState({ timeRemaining: 12, timerDuration: 30 });
       const next = gameReducer(state, {
         type: "REVEAL_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: null,
+        },
       });
       expect(next.timeRemaining).toBe(30);
     });
@@ -394,7 +634,13 @@ describe("gameReducer", () => {
       const state = makeState({ successes: 9 });
       const next = gameReducer(state, {
         type: "REVEAL_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "card" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "card",
+          newResolvedDirection: null,
+        },
       });
       expect(next.successes).toBe(9);
     });
@@ -403,11 +649,23 @@ describe("gameReducer", () => {
       const state = makeState({ fails: 1, successes: 2, timeRemaining: 3 });
       const fromTimeout = gameReducer(state, {
         type: "TIMEOUT",
-        payload: { newCard, newChoices, newDisplay: "index" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "index",
+          newResolvedDirection: null,
+        },
       });
       const fromReveal = gameReducer(state, {
         type: "REVEAL_ANSWER",
-        payload: { newCard, newChoices, newDisplay: "index" },
+        payload: {
+          newCard,
+          newAnswerCard: newCard,
+          newChoices,
+          newDisplay: "index",
+          newResolvedDirection: null,
+        },
       });
       expect(fromReveal).toEqual(fromTimeout);
     });
@@ -546,6 +804,56 @@ describe("gameReducer", () => {
       expect(next.timeRemaining).toBe(30);
       expect(next.timerDuration).toBe(30);
       expect(next.display).toBe("card");
+    });
+
+    it("resets to neighbor mode when flashcardMode is 'neighbor' with neighborDirection", () => {
+      const state = makeState({ successes: 10, fails: 5 });
+      const next = gameReducer(state, {
+        type: "RESET_GAME",
+        payload: {
+          stackOrder,
+          timerDuration: 30,
+          flashcardMode: "neighbor",
+          neighborDirection: "before",
+        },
+      });
+
+      expect(next.successes).toBe(0);
+      expect(next.fails).toBe(0);
+      expect(next.resolvedDirection).toBe("before");
+      expect(next.answerCard).not.toBe(next.card);
+    });
+
+    it("sets resolvedDirection and produces a different answerCard than card in neighbor mode", () => {
+      const state = makeState();
+      const next = gameReducer(state, {
+        type: "RESET_GAME",
+        payload: {
+          stackOrder,
+          timerDuration: 30,
+          flashcardMode: "neighbor",
+          neighborDirection: "after",
+        },
+      });
+
+      expect(next.resolvedDirection).toBe("after");
+      expect(next.answerCard.index).not.toBe(next.card.index);
+    });
+
+    it("resolves random direction in neighbor mode RESET_GAME", () => {
+      const state = makeState();
+      const next = gameReducer(state, {
+        type: "RESET_GAME",
+        payload: {
+          stackOrder,
+          timerDuration: 30,
+          flashcardMode: "neighbor",
+          neighborDirection: "random",
+        },
+      });
+
+      expect(["before", "after"]).toContain(next.resolvedDirection);
+      expect(next.answerCard.index).not.toBe(next.card.index);
     });
   });
 });

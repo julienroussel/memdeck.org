@@ -1,10 +1,11 @@
-import type { FlashcardMode } from "../types/flashcard";
+import type { FlashcardMode, NeighborDirection } from "../types/flashcard";
 import type { SessionConfig, TrainingMode } from "../types/session";
 
 type AnalyticsEvents = {
   STACK_SELECTED: { stackName: string };
   FLASHCARD_ANSWER: { correct: boolean; stackName: string };
   FLASHCARD_MODE_CHANGED: { mode: FlashcardMode };
+  NEIGHBOR_DIRECTION_CHANGED: { direction: NeighborDirection };
   ACAAN_ANSWER: { correct: boolean; stackName: string };
   SESSION_STARTED: { mode: TrainingMode; config: SessionConfig };
   SESSION_COMPLETED: {
@@ -31,6 +32,8 @@ type EventBus<TEvents extends Record<string, unknown>> = {
 function createEventBus<TEvents extends Record<string, unknown>>(
   eventNames: ReadonlyArray<keyof TEvents>
 ): EventBus<TEvents> {
+  // Factory pattern: objects are incrementally built in the loop below.
+  // The `as` casts are safe because every key from eventNames is populated before the function returns.
   const emit = {} as EventBus<TEvents>["emit"];
   const subscribe = {} as EventBus<TEvents>["subscribe"];
 
@@ -57,6 +60,7 @@ export const eventBus = createEventBus<AnalyticsEvents>([
   "STACK_SELECTED",
   "FLASHCARD_ANSWER",
   "FLASHCARD_MODE_CHANGED",
+  "NEIGHBOR_DIRECTION_CHANGED",
   "ACAAN_ANSWER",
   "SESSION_STARTED",
   "SESSION_COMPLETED",

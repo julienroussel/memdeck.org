@@ -78,21 +78,34 @@
     "pageDescription": "Entraînez-vous sur votre jeu mémorisé avec des exercices de flashcard interactifs. Carte vers numéro, numéro vers carte, ou les deux.",
     "title": "Flashcard",
     "settingsAriaLabel": "Paramètres Flashcard",
-    "optionsTitle": "Options Flashcard",
-    "pickOneMode": "Choisissez un mode",
+    "modePosition": "Position",
+    "modeNeighbor": "Voisin",
+    "subModeCard": "Carte",
+    "subModeNumber": "Numéro",
+    "subModeBoth": "Les deux",
+    "primaryModeAriaLabel": "Mode d'entraînement",
+    "positionSubModeAriaLabel": "Variante du mode position",
+    "neighborDirectionAriaLabel": "Direction du voisin",
     "modeCardOnly": "Carte uniquement",
     "modeCardOnlyDescription": "Dans ce mode, vous verrez une carte et devrez deviner sa position dans le stack parmi 5 options.",
     "modeBothModes": "Les deux modes",
     "modeBothModesDescription": "Dans ce mode, vous verrez aléatoirement soit une carte soit un numéro, et devrez deviner la correspondance parmi 5 options.",
     "modeNumberOnly": "Numéro uniquement",
-    "modeNumberOnlyDescription": "Dans ce mode, vous verrez un numéro et devrez choisir la carte correspondante parmi 5 options."
+    "modeNumberOnlyDescription": "Dans ce mode, vous verrez un numéro et devrez choisir la carte correspondante parmi 5 options.",
+    "modeNeighborDescription": "Dans ce mode, vous verrez une carte avec une flèche de direction et devrez choisir la carte voisine dans le stack.",
+    "neighborBefore": "Avant",
+    "neighborAfter": "Après",
+    "neighborRandom": "Aléatoire",
+    "neighborArrowBefore": "Carte précédente",
+    "neighborArrowAfter": "Carte suivante",
+    "activeModePosition": "Mode position",
+    "activeModeNeighbor": "Mode voisin"
   },
   "acaan": {
     "pageTitle": "Entraînement ACAAN",
     "pageDescription": "Entraînez-vous aux calculs ACAAN (Any Card At Any Number) pour votre stack mémorisé.",
     "title": "ACAAN",
     "settingsAriaLabel": "Paramètres ACAAN",
-    "optionsTitle": "Options ACAAN",
     "cutDepthAriaLabel": "Profondeur de coupe",
     "cutDepthPlaceholder": "Profondeur de coupe"
   },
@@ -153,6 +166,7 @@
   },
   "session": {
     "startSession": "Démarrer une session :",
+    "startSessionTooltip": "Démarrer une session",
     "startPresetAriaLabel": "Démarrer une session de {{count}} questions",
     "progressAriaLabel": "Progression : {{progress}}",
     "accuracyAriaLabel": "Précision : {{percent}} %",
@@ -175,6 +189,9 @@
   "score": {
     "correctAriaLabel": "Réponses correctes : {{count}}",
     "incorrectAriaLabel": "Réponses incorrectes : {{count}}"
+  },
+  "numberCard": {
+    "ariaLabel": "Position {{number}}"
   },
   "stackPicker": {
     "placeholder": "Veuillez choisir un stack",
@@ -221,8 +238,15 @@
     "filterAcaan": "ACAAN",
     "noFilterMatch": "Aucune session ne correspond à ce filtre.",
     "chartTooltip": "{{mode}} · {{stack}} · {{successes}}/{{total}}",
+    "chartTooltipWithSubMode": "{{mode}} ({{subMode}}) · {{stack}} · {{successes}}/{{total}}",
     "modeFlashcard": "Flashcard",
-    "modeAcaan": "ACAAN"
+    "modeAcaan": "ACAAN",
+    "subModePosition": "Position",
+    "subModeNeighbor": "Voisin",
+    "filterPosition": "Position",
+    "filterNeighbor": "Voisin",
+    "filterByModeAriaLabel": "Filtrer par mode",
+    "filterBySubModeAriaLabel": "Filtrer par sous-mode de flashcard"
   },
   "resources": {
     "pageTitle": "Ressources",
@@ -275,11 +299,12 @@
     "flashcardTraining": {
       "title": "Entraînement Flashcard",
       "requiresStack": "Nécessite un stack",
-      "intro": "Le mode d'entraînement principal. On vous présente une carte ou un numéro et vous devez retrouver la correspondance dans votre stack. Trois modes sont disponibles :",
+      "intro": "Le mode d'entraînement principal. On vous présente une carte ou un numéro et vous devez retrouver la correspondance dans votre stack. Quatre modes sont disponibles :",
       "cardOnlyItem": "<bold>Carte uniquement</bold> — une carte est montrée, retrouvez son numéro de position",
       "numberOnlyItem": "<bold>Numéro uniquement</bold> — un numéro de position est montré, retrouvez la carte",
       "bothItem": "<bold>Les deux</bold> — alterne aléatoirement entre les deux",
-      "settings": "Appuyez sur l'icône d'engrenage pour ouvrir les paramètres. Vous pouvez activer un chronomètre optionnel et choisir entre un entraînement libre ou des sessions structurées de 10, 20, 30 ou 52 cartes. Le suivi du score affiche votre précision et votre série en cours.",
+      "neighborItem": "<bold>Voisin</bold> — on vous montre une carte avec une flèche de direction, choisissez la carte adjacente dans le stack",
+      "settings": "Appuyez sur l'icône d'engrenage pour basculer entre les modes Position et Voisin et ajuster les paramètres du chronomètre. Utilisez l'icône de lecture pour démarrer une session structurée de 10, 20, 30 ou 52 cartes, ou pratiquez librement sans session.",
       "link": "Aller à l'entraînement Flashcard"
     },
     "acaanTraining": {
@@ -302,7 +327,7 @@
     "stats": {
       "title": "Statistiques",
       "noStackRequired": "Aucun stack requis",
-      "description": "Suivez vos progrès au fil du temps. La page Statistiques comprend des indicateurs de synthèse, un graphique de tendance de précision (coloré et filtrable par mode), un tableau de répartition par stack et un historique de sessions paginé. Toutes les données sont stockées localement dans votre navigateur.",
+      "description": "Suivez vos progrès au fil du temps. La page Statistiques comprend des indicateurs de synthèse, un graphique de tendance de précision (filtrable par mode et sous-mode flashcard), un tableau de répartition par stack et un historique de sessions paginé. Toutes les données sont stockées localement dans votre navigateur.",
       "link": "Voir les statistiques"
     },
     "resources": {
@@ -314,7 +339,7 @@
       "title": "Conseils",
       "dataLocal": "Toutes vos données restent dans votre navigateur — rien n'est envoyé à un serveur.",
       "darkMode": "Basculez entre le mode sombre et le mode clair avec l'icône dans l'en-tête.",
-      "gearIcon": "Dans les modes d'entraînement, appuyez sur l'icône d'engrenage pour ouvrir les paramètres de chronomètre, durée de session et options de mode.",
+      "gearIcon": "Dans les modes d'entraînement, appuyez sur l'icône d'engrenage pour régler les paramètres de mode et de chronomètre, ou sur l'icône de lecture pour démarrer une session.",
       "switchStacks": "Changer de stack ne fait pas perdre vos données — les progrès sont suivis par stack.",
       "pwa": "Installez MemDeck comme application sur votre appareil pour un accès hors ligne.",
       "language": "Changez la langue d'affichage avec le sélecteur de langue dans l'en-tête.",

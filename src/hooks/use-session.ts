@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { eventBus } from "../services/event-bus";
+import type { FlashcardMode } from "../types/flashcard";
 import type {
   ActiveSession,
   AnswerOutcome,
@@ -24,6 +25,7 @@ export type { SessionPhase } from "../types/session";
 type UseSessionOptions = {
   mode: TrainingMode;
   stackKey: StackKey;
+  flashcardMode?: FlashcardMode;
   autoStart?: boolean;
 };
 
@@ -41,6 +43,7 @@ type UseSessionResult = {
 export const useSession = ({
   mode,
   stackKey,
+  flashcardMode,
   autoStart = false,
 }: UseSessionOptions): UseSessionResult => {
   const [status, setStatus] = useState<SessionPhase>({ phase: "idle" });
@@ -91,9 +94,8 @@ export const useSession = ({
 
       finalizedIdsRef.current.clear();
 
-      const session: ActiveSession = {
+      const baseSession = {
         id: crypto.randomUUID(),
-        mode,
         stackKey,
         config,
         startedAt: new Date().toISOString(),
@@ -103,10 +105,19 @@ export const useSession = ({
         currentStreak: 0,
         bestStreak: 0,
       };
+
+      const session: ActiveSession =
+        mode === "flashcard"
+          ? {
+              ...baseSession,
+              mode: "flashcard" as const,
+              flashcardMode: flashcardMode ?? "bothmodes",
+            }
+          : { ...baseSession, mode: "acaan" as const };
       setStatus({ phase: "active", session });
       eventBus.emit.SESSION_STARTED({ mode, config });
     },
-    [mode, stackKey, tryFinalizeSession]
+    [mode, stackKey, flashcardMode, tryFinalizeSession]
   );
 
   const { recordCorrect, recordIncorrect, recordQuestionAdvanced } =

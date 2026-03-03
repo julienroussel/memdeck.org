@@ -6,23 +6,24 @@ import {
   Image,
   NumberInput,
   Space,
+  Stack,
   Text,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NumberCard } from "../../components/number-card";
 import { RevealButton } from "../../components/reveal-button";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
+import { TimerSettingsControl } from "../../components/timer-settings-control";
 import { TrainingHeader } from "../../components/training-header";
 import { CARD_HEIGHT, CARD_WIDTH, DECK_SIZE } from "../../constants";
+import { useAcaanTimer } from "../../hooks/use-acaan-timer";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import { analytics } from "../../services/analytics";
 import { formatCardName } from "../../utils/card-formatting";
-import { AcaanOptions } from "./acaan-options";
 import { useAcaanGame } from "./use-acaan-game";
 
 /** Maximum valid cut depth (deck size - 1) */
@@ -59,12 +60,20 @@ export const Acaan = () => {
     submitAnswer,
     revealAnswer,
   } = useAcaanGame(stackOrder, stackName, { onAnswer: handleAnswer });
-  const [options, { open, close }] = useDisclosure(false);
 
-  const handleOpenSettings = useCallback(() => {
-    analytics.trackFeatureUsed("ACAAN Settings");
-    open();
-  }, [open]);
+  const { timerSettings, setTimerEnabled, setTimerDuration } = useAcaanTimer();
+
+  const handleTimerEnabledChange = useCallback(
+    (enabled: boolean) => {
+      analytics.trackEvent(
+        "Settings",
+        `Timer ${enabled ? "Enabled" : "Disabled"}`,
+        "ACAAN"
+      );
+      setTimerEnabled(enabled);
+    },
+    [setTimerEnabled]
+  );
 
   const handleRevealAnswer = useCallback(() => {
     analytics.trackFeatureUsed("Reveal Answer - ACAAN");
@@ -111,11 +120,20 @@ export const Acaan = () => {
           <TrainingHeader
             activeSession={activeSession}
             isStructuredSession={isStructuredSession}
-            onOpenSettings={handleOpenSettings}
             onStartSession={startSession}
             onStopSession={stopSession}
             score={score}
-            settingsAriaLabel={t("acaan.settingsAriaLabel")}
+            sessionTooltip={t("session.startSessionTooltip")}
+            settingsContent={
+              <Stack gap="md" p="xs">
+                <TimerSettingsControl
+                  onDurationChange={setTimerDuration}
+                  onEnabledChange={handleTimerEnabledChange}
+                  timerSettings={timerSettings}
+                />
+              </Stack>
+            }
+            settingsTooltip={t("acaan.settingsAriaLabel")}
             title={t("acaan.title")}
           />
         </Grid.Col>
@@ -172,9 +190,6 @@ export const Acaan = () => {
               </Button>
             </Group>
           </Center>
-        </Grid.Col>
-        <Grid.Col span={12} style={{ height: "100%" }}>
-          <AcaanOptions close={close} opened={options} />
         </Grid.Col>
       </Grid>
       {status.phase === "summary" && (

@@ -2,28 +2,12 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "../test-utils";
-import type { ActiveSession } from "../types/session";
+import { makeActiveSession } from "../test-utils/session-factories";
 import { SessionBanner } from "./session-banner";
-
-const createMockSession = (
-  overrides?: Partial<ActiveSession>
-): ActiveSession => ({
-  id: "test-session-id",
-  mode: "flashcard",
-  stackKey: "mnemonica",
-  config: { type: "structured", totalQuestions: 10 },
-  startedAt: new Date().toISOString(),
-  successes: 0,
-  fails: 0,
-  questionsCompleted: 0,
-  currentStreak: 0,
-  bestStreak: 0,
-  ...overrides,
-});
 
 describe("SessionBanner", () => {
   it("renders progress as completed/total for structured sessions", () => {
-    const session = createMockSession({
+    const session = makeActiveSession({
       config: { type: "structured", totalQuestions: 20 },
       questionsCompleted: 8,
     });
@@ -36,7 +20,7 @@ describe("SessionBanner", () => {
   });
 
   it("renders progress as just the count for open sessions", () => {
-    const session = createMockSession({
+    const session = makeActiveSession({
       config: { type: "open" },
       questionsCompleted: 15,
     });
@@ -49,7 +33,7 @@ describe("SessionBanner", () => {
   });
 
   it("renders the Score component with correct success and fail counts", () => {
-    const session = createMockSession({
+    const session = makeActiveSession({
       successes: 12,
       fails: 3,
     });
@@ -66,7 +50,7 @@ describe("SessionBanner", () => {
   });
 
   it("renders accuracy percentage", () => {
-    const session = createMockSession({
+    const session = makeActiveSession({
       successes: 7,
       fails: 3,
       // 7/(7+3) = 0.7 = 70%
@@ -80,7 +64,7 @@ describe("SessionBanner", () => {
   });
 
   it("renders current streak count", () => {
-    const session = createMockSession({
+    const session = makeActiveSession({
       currentStreak: 5,
     });
 
@@ -92,7 +76,7 @@ describe("SessionBanner", () => {
   });
 
   it("renders best streak count", () => {
-    const session = createMockSession({
+    const session = makeActiveSession({
       bestStreak: 8,
     });
 
@@ -106,7 +90,7 @@ describe("SessionBanner", () => {
   it("calls onStop when the Stop button is clicked", async () => {
     const user = userEvent.setup();
     const handleStop = vi.fn();
-    const session = createMockSession();
+    const session = makeActiveSession();
 
     render(<SessionBanner onStop={handleStop} session={session} />);
 

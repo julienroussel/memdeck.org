@@ -197,35 +197,6 @@ describe("useSessionHistory", () => {
     expect(filtered).toEqual([]);
   });
 
-  it("returns empty history when localStorage contains invalid data", () => {
-    const invalidData = { not: "an array" };
-    mockedUseLocalDb.mockReturnValue([
-      invalidData,
-      mockSetValue,
-      mockRemoveValue,
-    ]);
-
-    const result = useSessionHistory();
-
-    expect(result.history).toEqual([]);
-  });
-
-  it("returns empty history when localStorage contains array with invalid records", () => {
-    const invalidRecords = [
-      { id: "test", invalid: true },
-      makeRecord({ id: "valid-record" }),
-    ];
-    mockedUseLocalDb.mockReturnValue([
-      invalidRecords,
-      mockSetValue,
-      mockRemoveValue,
-    ]);
-
-    const result = useSessionHistory();
-
-    expect(result.history).toEqual([]);
-  });
-
   it("returns all matching sessions when multiple stacks are used", () => {
     const records = [
       makeRecord({ id: "mnemonica-1", stackKey: "mnemonica" }),

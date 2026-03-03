@@ -11,6 +11,14 @@ const DEFAULT_TIMER_SETTINGS: TimerSettings = {
   duration: 15,
 };
 
+const isTimerSettings = (value: unknown): value is TimerSettings =>
+  typeof value === "object" &&
+  value !== null &&
+  "enabled" in value &&
+  typeof value.enabled === "boolean" &&
+  "duration" in value &&
+  typeof value.duration === "number";
+
 export type UseTimerSettingsResult = {
   timerSettings: TimerSettings;
   setTimerEnabled: (enabled: boolean) => void;
@@ -32,7 +40,8 @@ export const useTimerSettings = (
 ): UseTimerSettingsResult => {
   const [timerSettings, setTimerSettings] = useLocalDb<TimerSettings>(
     storageKey,
-    DEFAULT_TIMER_SETTINGS
+    DEFAULT_TIMER_SETTINGS,
+    isTimerSettings
   );
 
   const setTimerEnabled = useCallback(

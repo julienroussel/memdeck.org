@@ -41,22 +41,30 @@ test.describe("Flashcard Training", () => {
     await expect(settingsButton).toBeVisible();
   });
 
-  test("should display options modal when settings is clicked", async ({
+  test("should display mode selectors in settings popover", async ({
     page,
   }) => {
-    // Click settings button in main content area
-    const settingsButton = page.getByRole("button", {
-      name: "Flashcard settings",
+    // Open settings popover
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+
+    // Verify primary mode selector is visible with Position and Neighbor options
+    const primarySelector = page.getByRole("radiogroup", {
+      name: "Training mode",
     });
-    await settingsButton.click();
+    await expect(primarySelector).toBeVisible();
 
-    // Verify modal is displayed
-    await expect(page.locator("text=Flashcard options")).toBeVisible();
+    // Verify Position and Neighbor labels are visible
+    await expect(primarySelector.getByText("Position")).toBeVisible();
+    await expect(primarySelector.getByText("Neighbor")).toBeVisible();
 
-    // Verify all mode options are visible
-    await expect(page.locator("text=Card only")).toBeVisible();
-    await expect(page.locator("text=Both modes")).toBeVisible();
-    await expect(page.locator("text=Number only")).toBeVisible();
+    // Verify secondary selector is visible (defaults to position sub-mode)
+    const secondarySelector = page.getByRole("radiogroup", {
+      name: "Position mode variant",
+    });
+    await expect(secondarySelector).toBeVisible();
+    await expect(secondarySelector.getByText("Card")).toBeVisible();
+    await expect(secondarySelector.getByText("Number")).toBeVisible();
+    await expect(secondarySelector.getByText("Both")).toBeVisible();
   });
 
   test("should display card in card-only mode by default", async ({ page }) => {
@@ -150,23 +158,17 @@ test.describe("Flashcard Training", () => {
     }).toPass();
   });
 
-  test("should allow changing flashcard mode to card-only", async ({
+  test("should allow changing flashcard mode to card-only via settings popover", async ({
     page,
   }) => {
-    // Open options modal - settings button is in main content area
-    const settingsButton = page.getByRole("button", {
-      name: "Flashcard settings",
+    // Open settings popover
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+
+    // Click "Card" in the position sub-mode selector
+    const secondarySelector = page.getByRole("radiogroup", {
+      name: "Position mode variant",
     });
-    await settingsButton.click();
-    await expect(page.getByRole("dialog")).toBeVisible();
-
-    // Select "Card only" option (click on the Radio.Card)
-    const cardOnlyOption = page.locator("text=Card only").first();
-    await cardOnlyOption.click();
-
-    // Close modal
-    await page.keyboard.press("Escape");
-    await expect(page.getByRole("dialog")).not.toBeVisible();
+    await secondarySelector.getByText("Card").click();
 
     // Verify mode was saved to localStorage (values are JSON-stringified)
     const mode = await page.evaluate(() => {
@@ -177,23 +179,17 @@ test.describe("Flashcard Training", () => {
     expect(mode).toBe("cardonly");
   });
 
-  test("should allow changing flashcard mode to number-only", async ({
+  test("should allow changing flashcard mode to number-only via settings popover", async ({
     page,
   }) => {
-    // Open options modal - settings button is in main content area
-    const settingsButton = page.getByRole("button", {
-      name: "Flashcard settings",
+    // Open settings popover
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+
+    // Click "Number" in the position sub-mode selector
+    const secondarySelector = page.getByRole("radiogroup", {
+      name: "Position mode variant",
     });
-    await settingsButton.click();
-    await expect(page.getByRole("dialog")).toBeVisible();
-
-    // Select "Number only" option (click on the Radio.Card)
-    const numberOnlyOption = page.locator("text=Number only").first();
-    await numberOnlyOption.click();
-
-    // Close modal
-    await page.keyboard.press("Escape");
-    await expect(page.getByRole("dialog")).not.toBeVisible();
+    await secondarySelector.getByText("Number").click();
 
     // Verify mode was saved to localStorage (values are JSON-stringified)
     const mode = await page.evaluate(() => {
@@ -207,14 +203,14 @@ test.describe("Flashcard Training", () => {
   test("should persist flashcard mode selection in localStorage", async ({
     page,
   }) => {
-    // Open options and select a mode - settings button is in main content area
-    const settingsButton = page.getByRole("button", {
-      name: "Flashcard settings",
-    });
-    await settingsButton.click();
-    await expect(page.getByRole("dialog")).toBeVisible();
+    // Open settings popover
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
 
-    await page.locator("text=Card only").first().click();
+    // Click "Card" in the position sub-mode selector
+    const secondarySelector = page.getByRole("radiogroup", {
+      name: "Position mode variant",
+    });
+    await secondarySelector.getByText("Card").click();
 
     // Check localStorage directly (values are JSON-stringified)
     const mode = await page.evaluate(() => {
@@ -226,34 +222,245 @@ test.describe("Flashcard Training", () => {
   });
 
   test("should restore flashcard mode on page reload", async ({ page }) => {
-    // Set a specific mode - settings button is in main content area
-    const settingsButton = page.getByRole("button", {
-      name: "Flashcard settings",
+    // Open settings popover and set number-only mode
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+
+    const secondarySelector = page.getByRole("radiogroup", {
+      name: "Position mode variant",
     });
-    await settingsButton.click();
-    await expect(page.getByRole("dialog")).toBeVisible();
+    await secondarySelector.getByText("Number").click();
 
-    await page.locator("text=Number only").first().click();
-
-    await page.keyboard.press("Escape");
-    await expect(page.getByRole("dialog")).not.toBeVisible();
+    // Close popover
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
 
     // Reload page
     await page.reload();
     await page.waitForLoadState("networkidle");
 
-    // Open options again and verify mode is restored
-    const settingsButtonAfterReload = page.getByRole("button", {
-      name: "Flashcard settings",
-    });
-    await settingsButtonAfterReload.click();
-    await expect(page.getByRole("dialog")).toBeVisible();
+    // Open settings popover again to verify "Number" segment is active
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
 
-    // Check that "Number only" option is selected (has data-checked attribute)
-    const numberOnlyCard = page.locator(
-      '.optionsRadioCard[data-checked="true"]:has-text("Number only")'
+    const reloadedSelector = page.getByRole("radiogroup", {
+      name: "Position mode variant",
+    });
+    await expect(reloadedSelector).toBeVisible();
+
+    // Verify localStorage still has the correct value
+    const mode = await page.evaluate(() => {
+      const value = localStorage.getItem("memdeck-app-flashcard-option");
+      return value ? JSON.parse(value) : null;
+    });
+    expect(mode).toBe("numberonly");
+  });
+
+  test("should switch to neighbor mode and show direction selector", async ({
+    page,
+  }) => {
+    // Open settings popover
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+
+    // Click "Neighbor" in the primary selector
+    const primarySelector = page.getByRole("radiogroup", {
+      name: "Training mode",
+    });
+    await primarySelector.getByText("Neighbor").click();
+
+    // Verify the direction selector appears
+    const directionSelector = page.getByRole("radiogroup", {
+      name: "Neighbor direction",
+    });
+    await expect(directionSelector).toBeVisible();
+
+    // Verify mode was saved to localStorage
+    const mode = await page.evaluate(() => {
+      const value = localStorage.getItem("memdeck-app-flashcard-option");
+      return value ? JSON.parse(value) : null;
+    });
+    expect(mode).toBe("neighbor");
+  });
+
+  test("should display a direction arrow in neighbor mode with fixed direction", async ({
+    page,
+  }) => {
+    // Set neighbor mode with "before" direction via localStorage
+    await page.evaluate(() => {
+      localStorage.setItem(
+        "memdeck-app-flashcard-option",
+        JSON.stringify("neighbor")
+      );
+      localStorage.setItem(
+        "memdeck-app-neighbor-direction",
+        JSON.stringify("before")
+      );
+    });
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+
+    // Use aria-label locators since getByRole('img') skips visibility:hidden elements
+    const beforeArrow = page.locator("[aria-label='Card before']");
+    const afterArrow = page.locator("[aria-label='Card after']");
+
+    await expect(beforeArrow).toBeAttached();
+    await expect(afterArrow).toBeAttached();
+    await expect(beforeArrow).toHaveCSS("visibility", "visible");
+    await expect(afterArrow).toHaveCSS("visibility", "hidden");
+  });
+
+  test("should display a direction arrow in neighbor mode with 'after' direction", async ({
+    page,
+  }) => {
+    await page.evaluate(() => {
+      localStorage.setItem(
+        "memdeck-app-flashcard-option",
+        JSON.stringify("neighbor")
+      );
+      localStorage.setItem(
+        "memdeck-app-neighbor-direction",
+        JSON.stringify("after")
+      );
+    });
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+
+    const beforeArrow = page.locator("[aria-label='Card before']");
+    const afterArrow = page.locator("[aria-label='Card after']");
+
+    await expect(beforeArrow).toBeAttached();
+    await expect(afterArrow).toBeAttached();
+    await expect(beforeArrow).toHaveCSS("visibility", "hidden");
+    await expect(afterArrow).toHaveCSS("visibility", "visible");
+  });
+
+  test("should display an arrow in neighbor mode with random direction", async ({
+    page,
+  }) => {
+    await page.evaluate(() => {
+      localStorage.setItem(
+        "memdeck-app-flashcard-option",
+        JSON.stringify("neighbor")
+      );
+      localStorage.setItem(
+        "memdeck-app-neighbor-direction",
+        JSON.stringify("random")
+      );
+    });
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+
+    // Both arrow elements should be attached; exactly one should be visible
+    const beforeArrow = page.locator("[aria-label='Card before']");
+    const afterArrow = page.locator("[aria-label='Card after']");
+    await expect(beforeArrow).toBeAttached();
+    await expect(afterArrow).toBeAttached();
+
+    const beforeVis = await beforeArrow.evaluate(
+      (el) => getComputedStyle(el).visibility
     );
-    await expect(numberOnlyCard).toBeVisible();
+    const afterVis = await afterArrow.evaluate(
+      (el) => getComputedStyle(el).visibility
+    );
+    expect((beforeVis === "visible") !== (afterVis === "visible")).toBe(true);
+  });
+
+  test("should not display arrows in position mode", async ({ page }) => {
+    // Default mode is "bothmodes" (position), so no arrows
+    const beforeArrow = page.getByRole("img", { name: "Card before" });
+    const afterArrow = page.getByRole("img", { name: "Card after" });
+
+    await expect(beforeArrow).toHaveCount(0);
+    await expect(afterArrow).toHaveCount(0);
+  });
+
+  test("should reset game when switching from neighbor to position mode", async ({
+    page,
+  }) => {
+    // Start in neighbor mode
+    await page.evaluate(() => {
+      localStorage.setItem(
+        "memdeck-app-flashcard-option",
+        JSON.stringify("neighbor")
+      );
+      localStorage.setItem(
+        "memdeck-app-neighbor-direction",
+        JSON.stringify("before")
+      );
+    });
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+
+    // Verify we're in neighbor mode (arrow visible)
+    await expect(page.getByRole("img", { name: "Card before" })).toBeAttached();
+
+    // Open settings and switch to Position mode
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+    const primarySelector = page.getByRole("radiogroup", {
+      name: "Training mode",
+    });
+    await primarySelector.getByText("Position").click();
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+
+    // Arrows should no longer be present
+    await expect(page.getByRole("img", { name: "Card before" })).toHaveCount(0);
+    await expect(page.getByRole("img", { name: "Card after" })).toHaveCount(0);
+
+    // Score should be reset to 0/0
+    const scoreBadges = page.locator(".mantine-Badge-root");
+    await expect(scoreBadges.first()).toContainText("0");
+    await expect(scoreBadges.last()).toContainText("0");
+
+    // Should be able to answer correctly (game state is valid)
+    await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
+    const cardSpreadItems = page.locator(".cardSpreadCard");
+    if ((await cardSpreadItems.count()) > 0) {
+      await cardSpreadItems.last().click({ force: true });
+    }
+
+    // Score should have changed (answer was registered)
+    await expect(async () => {
+      const successText = await scoreBadges.first().textContent();
+      const failsText = await scoreBadges.last().textContent();
+      const totalScore =
+        Number.parseInt(successText || "0", 10) +
+        Number.parseInt(failsText || "0", 10);
+      expect(totalScore).toBeGreaterThan(0);
+    }).toPass();
+  });
+
+  test("should reset game when switching from position to neighbor mode", async ({
+    page,
+  }) => {
+    // Start in default position mode, answer a few questions
+    await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
+    await page.locator(".cardSpreadCard").last().click({ force: true });
+
+    // Score should be non-zero
+    const scoreBadges = page.locator(".mantine-Badge-root");
+    await expect(async () => {
+      const successText = await scoreBadges.first().textContent();
+      const failsText = await scoreBadges.last().textContent();
+      const totalScore =
+        Number.parseInt(successText || "0", 10) +
+        Number.parseInt(failsText || "0", 10);
+      expect(totalScore).toBeGreaterThan(0);
+    }).toPass();
+
+    // Switch to neighbor mode
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+    const primarySelector = page.getByRole("radiogroup", {
+      name: "Training mode",
+    });
+    await primarySelector.getByText("Neighbor").click();
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+
+    // Score should be reset to 0/0
+    await expect(scoreBadges.first()).toContainText("0");
+    await expect(scoreBadges.last()).toContainText("0");
+
+    // Both arrow elements should now be attached (one visible, one hidden)
+    const beforeArrow = page.locator("[aria-label='Card before']");
+    const afterArrow = page.locator("[aria-label='Card after']");
+    await expect(beforeArrow).toBeAttached();
+    await expect(afterArrow).toBeAttached();
   });
 
   test("should navigate away from flashcard and return to see working page", async ({

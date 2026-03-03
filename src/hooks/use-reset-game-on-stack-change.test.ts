@@ -1,5 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import type { FlashcardMode, NeighborDirection } from "../types/flashcard";
 import type { Stack } from "../types/stacks";
 import { stacks } from "../types/stacks";
 import {
@@ -110,5 +111,96 @@ describe("useResetGameOnStackChange", () => {
     rerender({ duration: 30 });
 
     expect(mockDispatch).not.toHaveBeenCalled();
+  });
+
+  it("includes flashcardMode and neighborDirection when extraPayload has neighbor mode", () => {
+    const mockDispatch = vi.fn();
+    const extra = {
+      flashcardMode: "neighbor" as FlashcardMode,
+      neighborDirection: "before" as NeighborDirection,
+    };
+
+    const { rerender } = renderHook(
+      ({
+        stack,
+        extraPayload,
+      }: {
+        stack: Stack;
+        extraPayload: {
+          flashcardMode: FlashcardMode;
+          neighborDirection: NeighborDirection;
+        };
+      }) => useResetGameOnStackChange(stack, 15, mockDispatch, extraPayload),
+      { initialProps: { stack: mnemonicaOrder, extraPayload: extra } }
+    );
+
+    rerender({ stack: aronsonOrder, extraPayload: extra });
+
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: "RESET_GAME",
+      payload: {
+        stackOrder: aronsonOrder,
+        timerDuration: 15,
+        flashcardMode: "neighbor",
+        neighborDirection: "before",
+      },
+    } satisfies ResetGameAction);
+  });
+
+  it("includes flashcardMode without neighborDirection when extraPayload has non-neighbor mode", () => {
+    const mockDispatch = vi.fn();
+    const extra = {
+      flashcardMode: "cardonly" as FlashcardMode,
+      neighborDirection: "after" as NeighborDirection,
+    };
+
+    const { rerender } = renderHook(
+      ({
+        stack,
+        extraPayload,
+      }: {
+        stack: Stack;
+        extraPayload: {
+          flashcardMode: FlashcardMode;
+          neighborDirection: NeighborDirection;
+        };
+      }) => useResetGameOnStackChange(stack, 15, mockDispatch, extraPayload),
+      { initialProps: { stack: mnemonicaOrder, extraPayload: extra } }
+    );
+
+    rerender({ stack: aronsonOrder, extraPayload: extra });
+
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: "RESET_GAME",
+      payload: {
+        stackOrder: aronsonOrder,
+        timerDuration: 15,
+        flashcardMode: "cardonly",
+      },
+    } satisfies ResetGameAction);
+  });
+
+  it("dispatches base payload only when extraPayload is undefined", () => {
+    const mockDispatch = vi.fn();
+
+    const { rerender } = renderHook(
+      ({ stack }: { stack: Stack }) =>
+        useResetGameOnStackChange(stack, 20, mockDispatch, undefined),
+      { initialProps: { stack: mnemonicaOrder } }
+    );
+
+    rerender({ stack: aronsonOrder });
+
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: "RESET_GAME",
+      payload: {
+        stackOrder: aronsonOrder,
+        timerDuration: 20,
+        flashcardMode: undefined,
+      },
+    } satisfies ResetGameAction);
   });
 });
