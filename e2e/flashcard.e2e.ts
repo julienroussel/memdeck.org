@@ -21,7 +21,9 @@ test.describe("Flashcard Training", () => {
 
   test("should load flashcard page with default card", async ({ page }) => {
     // Verify page loaded
-    await expect(page.locator("text=Flashcard")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Flashcard" })
+    ).toBeVisible();
 
     // Verify score badges are displayed (thumbs up/down icons with numbers)
     // Score is shown as badges with "0" text initially
