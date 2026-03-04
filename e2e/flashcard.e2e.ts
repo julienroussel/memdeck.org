@@ -15,7 +15,7 @@ test.describe("Flashcard Training", () => {
     await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard page
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
   });
 
@@ -467,11 +467,11 @@ test.describe("Flashcard Training", () => {
     page,
   }) => {
     // Navigate away
-    await page.locator("a:has-text('Home')").first().click();
+    await page.locator("#main-nav a:has-text('Home')").click();
     await page.waitForLoadState("networkidle");
 
     // Navigate back to flashcard
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // Page should load correctly with score badges and flashcard content

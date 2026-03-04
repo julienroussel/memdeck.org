@@ -84,7 +84,7 @@ test.describe("Stack Selection", () => {
     await expect(page.getByRole("main").getByText("Tamariz")).toBeVisible();
   });
 
-  test("should display card spread when stack is selected", async ({
+  test("should display quick-start buttons when stack is selected", async ({
     page,
   }) => {
     // Select a stack
@@ -94,9 +94,9 @@ test.describe("Stack Selection", () => {
       .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
-    // Wait for card images to load and verify cards are displayed
-    const cardImages = page.locator("img[src*='cards/']");
-    await expect(cardImages.first()).toBeVisible();
+    // Home page should show the selected stack name and quick-start buttons
+    await expect(page.getByRole("main").getByText("Tamariz")).toBeVisible();
+    await expect(page.getByRole("main").getByText("Quick Start")).toBeVisible();
   });
 
   test("should switch between different stacks", async ({ page }) => {
@@ -132,11 +132,11 @@ test.describe("Stack Selection", () => {
     await page.waitForLoadState("networkidle");
 
     // Navigate to resources page
-    await page.locator("a:has-text('Resources')").first().click();
+    await page.locator("#main-nav a:has-text('Resources')").click();
     await page.waitForLoadState("networkidle");
 
     // Navigate back to home
-    await page.locator("a:has-text('Home')").first().click();
+    await page.locator("#main-nav a:has-text('Home')").click();
     await page.waitForLoadState("networkidle");
 
     // Stack should still be selected

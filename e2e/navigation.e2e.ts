@@ -26,7 +26,7 @@ test.describe("Navigation", () => {
     const navLinks = ["Home", "Resources", "Flashcard", "ACAAN", "Toolbox"];
 
     for (const link of navLinks) {
-      const linkElement = page.locator(`a:has-text("${link}")`);
+      const linkElement = page.locator(`#main-nav a:has-text("${link}")`);
       await expect(linkElement).toBeVisible();
     }
   });
@@ -62,13 +62,15 @@ test.describe("Navigation", () => {
       .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
-    // Click on flashcard link
-    await page.locator("a:has-text('Flashcard')").first().click();
+    // Click on flashcard link in nav
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // Verify we're on flashcard page
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
-    await expect(page.locator("text=Flashcard")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Flashcard" })
+    ).toBeVisible();
   });
 
   test("should navigate to ACAAN page when stack is selected", async ({
@@ -81,8 +83,8 @@ test.describe("Navigation", () => {
       .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
-    // Click on ACAAN link
-    await page.locator("a:has-text('ACAAN')").first().click();
+    // Click on ACAAN link in nav
+    await page.locator("#main-nav a:has-text('ACAAN')").click();
     await page.waitForLoadState("networkidle");
 
     // Verify we're on ACAAN page
@@ -99,8 +101,8 @@ test.describe("Navigation", () => {
       .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
-    // Click on toolbox link
-    await page.locator("a:has-text('Toolbox')").first().click();
+    // Click on toolbox link in nav
+    await page.locator("#main-nav a:has-text('Toolbox')").click();
     await page.waitForLoadState("networkidle");
 
     // Verify we're on toolbox page
@@ -118,15 +120,15 @@ test.describe("Navigation", () => {
     await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
 
     // Navigate to resources
-    await page.locator("a:has-text('Resources')").first().click();
+    await page.locator("#main-nav a:has-text('Resources')").click();
     await expect(page).toHaveURL(RESOURCES_URL_PATTERN);
 
     // Navigate back to home
-    await page.locator("a:has-text('Home')").first().click();
+    await page.locator("#main-nav a:has-text('Home')").click();
     await expect(page).toHaveURL(HOME_URL_PATTERN);
   });
 
