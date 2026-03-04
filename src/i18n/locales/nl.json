@@ -324,7 +324,7 @@
       "numberOnlyItem": "<bold>Alleen nummer</bold> — een positienummer wordt getoond, herinner je de kaart",
       "bothItem": "<bold>Beide</bold> — wisselt willekeurig tussen de twee",
       "neighborItem": "<bold>Buur</bold> — een kaart met een richtingspijl wordt getoond, kies de naburige kaart in de stack",
-      "settings": "Tik op het tandwielpictogram om te wisselen tussen Positie- en Buur-modus en timer-instellingen aan te passen. Gebruik het afspeelpictogram voor een gestructureerde sessie van 10, 20, 30 of 52 kaarten, of oefen vrij zonder sessie.",
+      "settings": "Tik op het tandwielpictogram om te wisselen tussen Positie- en Buur-modus en timer-instellingen aan te passen. Gebruik het doelwitpictogram voor een gestructureerde sessie van 10, 20, 30 of 52 kaarten, of oefen vrij zonder sessie.",
       "link": "Ga naar Flashcard Training"
     },
     "acaanTraining": {
@@ -356,7 +356,7 @@
       "title": "Tips",
       "dataLocal": "Al je gegevens blijven in je browser — er wordt niets naar een server gestuurd.",
       "darkMode": "Wissel tussen donkere en lichte modus met het pictogram in de header.",
-      "gearIcon": "Gebruik in trainingsmodi het tandwielpictogram voor modus- en timer-instellingen, of het afspeelpictogram om een sessie te starten.",
+      "gearIcon": "Gebruik in trainingsmodi het tandwielpictogram voor modus- en timer-instellingen, of het doelwitpictogram om een sessie te starten.",
       "switchStacks": "Als je van stack wisselt, raak je geen gegevens kwijt — voortgang wordt per stack bijgehouden.",
       "pwa": "Installeer MemDeck als app op je apparaat voor offline toegang.",
       "language": "Wijzig de weergavetaal via de taalkiezer in de header.",

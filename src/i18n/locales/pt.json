@@ -324,7 +324,7 @@
       "numberOnlyItem": "<bold>Apenas número</bold> — é mostrado um número de posição, recorde a carta",
       "bothItem": "<bold>Ambos</bold> — alterna aleatoriamente entre os dois",
       "neighborItem": "<bold>Vizinho</bold> — é-lhe mostrada uma carta com uma seta de direção, escolha a carta adjacente no stack",
-      "settings": "Toque no ícone de engrenagem para alternar entre os modos Posição e Vizinho e ajustar as definições do temporizador. Use o ícone de reprodução para iniciar uma sessão estruturada de 10, 20, 30 ou 52 cartas, ou pratique livremente sem sessão.",
+      "settings": "Toque no ícone de engrenagem para alternar entre os modos Posição e Vizinho e ajustar as definições do temporizador. Use o ícone de alvo para iniciar uma sessão estruturada de 10, 20, 30 ou 52 cartas, ou pratique livremente sem sessão.",
       "link": "Ir para Treino Flashcard"
     },
     "acaanTraining": {
@@ -356,7 +356,7 @@
       "title": "Dicas",
       "dataLocal": "Todos os seus dados ficam no seu navegador — nada é enviado para um servidor.",
       "darkMode": "Alterne entre modo escuro e claro usando o ícone no cabeçalho.",
-      "gearIcon": "Nos modos de treino, toque no ícone de engrenagem para ajustar as definições de modo e temporizador, ou no ícone de reprodução para iniciar uma sessão.",
+      "gearIcon": "Nos modos de treino, toque no ícone de engrenagem para ajustar as definições de modo e temporizador, ou no ícone de alvo para iniciar uma sessão.",
       "switchStacks": "Mudar de stack não apaga os seus dados — o progresso é acompanhado por stack.",
       "pwa": "Instale o MemDeck como app no seu dispositivo para acesso offline.",
       "language": "Mude o idioma de exibição usando o seletor de idioma no cabeçalho.",

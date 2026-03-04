@@ -324,7 +324,7 @@
       "numberOnlyItem": "<bold>Nur Nummer</bold> — eine Positionsnummer wird gezeigt, nenne die Karte",
       "bothItem": "<bold>Beide</bold> — wechselt zufällig zwischen beiden",
       "neighborItem": "<bold>Nachbar</bold> — eine Karte mit Richtungspfeil wird gezeigt, wähle die benachbarte Karte im Stack",
-      "settings": "Tippe auf das Zahnrad-Symbol, um zwischen den Modi Position und Nachbar zu wechseln und Timer-Einstellungen anzupassen. Verwende das Play-Symbol für eine strukturierte Sitzung mit 10, 20, 30 oder 52 Karten, oder übe frei ohne Sitzung.",
+      "settings": "Tippe auf das Zahnrad-Symbol, um zwischen den Modi Position und Nachbar zu wechseln und Timer-Einstellungen anzupassen. Verwende das Zielscheiben-Symbol für eine strukturierte Sitzung mit 10, 20, 30 oder 52 Karten, oder übe frei ohne Sitzung.",
       "link": "Zum Flashcard-Training"
     },
     "acaanTraining": {
@@ -356,7 +356,7 @@
       "title": "Tipps",
       "dataLocal": "Alle deine Daten bleiben in deinem Browser — nichts wird an einen Server gesendet.",
       "darkMode": "Wechsle zwischen dunklem und hellem Modus mit dem Symbol in der Kopfzeile.",
-      "gearIcon": "Verwende in den Trainingsmodi das Zahnrad-Symbol für Modus- und Timer-Einstellungen oder das Play-Symbol zum Starten einer Sitzung.",
+      "gearIcon": "Verwende in den Trainingsmodi das Zahnrad-Symbol für Modus- und Timer-Einstellungen oder das Zielscheiben-Symbol zum Starten einer Sitzung.",
       "switchStacks": "Beim Wechseln von Stacks gehen keine Daten verloren — der Fortschritt wird pro Stack verfolgt.",
       "pwa": "Installiere MemDeck als App auf deinem Gerät für Offline-Zugriff.",
       "language": "Ändere die Anzeigesprache über die Sprachauswahl in der Kopfzeile.",

@@ -324,7 +324,7 @@
       "numberOnlyItem": "<bold>Number Only</bold> — shown a position number, recall the card",
       "bothItem": "<bold>Both</bold> — randomly alternates between the two",
       "neighborItem": "<bold>Neighbor</bold> — shown a card with a direction arrow, pick the adjacent card in the stack",
-      "settings": "Tap the gear icon to switch between Position and Neighbor modes and adjust timer settings. Use the play icon to start a structured session with 10, 20, 30, or 52 card presets, or practice free-form without a session.",
+      "settings": "Tap the gear icon to switch between Position and Neighbor modes and adjust timer settings. Use the target icon to start a structured session with 10, 20, 30, or 52 card presets, or practice free-form without a session.",
       "link": "Go to Flashcard Training"
     },
     "acaanTraining": {
@@ -356,7 +356,7 @@
       "title": "Tips",
       "dataLocal": "All your data stays in your browser — nothing is sent to a server.",
       "darkMode": "Toggle between dark and light mode using the icon in the header.",
-      "gearIcon": "In training modes, tap the gear icon to adjust mode and timer settings, or the play icon to start a session.",
+      "gearIcon": "In training modes, tap the gear icon to adjust mode and timer settings, or the target icon to start a session.",
       "switchStacks": "Switching stacks doesn't lose your data — progress is tracked per stack.",
       "pwa": "Install MemDeck as an app on your device for offline access.",
       "language": "Change the display language using the language selector in the header.",
