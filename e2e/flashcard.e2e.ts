@@ -15,13 +15,15 @@ test.describe("Flashcard Training", () => {
     await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard page
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
   });
 
   test("should load flashcard page with default card", async ({ page }) => {
     // Verify page loaded
-    await expect(page.locator("text=Flashcard")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Flashcard" })
+    ).toBeVisible();
 
     // Verify score badges are displayed (thumbs up/down icons with numbers)
     // Score is shown as badges with "0" text initially
@@ -467,11 +469,11 @@ test.describe("Flashcard Training", () => {
     page,
   }) => {
     // Navigate away
-    await page.locator("a:has-text('Home')").first().click();
+    await page.locator("#main-nav a:has-text('Home')").click();
     await page.waitForLoadState("networkidle");
 
     // Navigate back to flashcard
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // Page should load correctly with score badges and flashcard content

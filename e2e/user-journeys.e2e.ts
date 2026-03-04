@@ -11,9 +11,9 @@ test.describe("User Journeys", () => {
     await page.waitForLoadState("networkidle");
 
     await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
-    // Use more specific selector for first-timer text
+    // New users see the intro text and stack picker
     await expect(
-      page.getByText("Hey there, first-timer!", { exact: false })
+      page.getByText("Pick a stack below to get started", { exact: false })
     ).toBeVisible();
 
     // User selects a stack
@@ -33,13 +33,8 @@ test.describe("User Journeys", () => {
     // Stack name should be displayed (mnemonica's display name is "Tamariz")
     await expect(page.getByRole("main").getByText("Tamariz")).toBeVisible();
 
-    // Card spread should be displayed
-    const cardImages = page.locator("img[src*='cards/']");
-    const count = await cardImages.count();
-    expect(count).toBeGreaterThanOrEqual(1);
-
     // User can now navigate to flashcard
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // User is on flashcard page
@@ -62,7 +57,7 @@ test.describe("User Journeys", () => {
     await page.waitForLoadState("networkidle");
 
     // Go to flashcard
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // Verify training page loaded
@@ -123,7 +118,7 @@ test.describe("User Journeys", () => {
     await page.waitForLoadState("networkidle");
 
     // Go to flashcard
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // Practice a bit (use force:true due to overlapping cards)
@@ -133,7 +128,7 @@ test.describe("User Journeys", () => {
     }
 
     // Navigate to home
-    await page.locator("a:has-text('Home')").first().click();
+    await page.locator("#main-nav a:has-text('Home')").click();
     await page.waitForLoadState("networkidle");
 
     // Switch to different deck
@@ -144,7 +139,7 @@ test.describe("User Journeys", () => {
     await page.waitForLoadState("networkidle");
 
     // Go back to flashcard with new deck
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // Flashcard page should load with score badges
@@ -172,14 +167,14 @@ test.describe("User Journeys", () => {
     const pages = ["Flashcard", "ACAAN", "Toolbox", "Resources"];
 
     for (const pageName of pages) {
-      await page.locator(`a:has-text('${pageName}')`).first().click();
+      await page.locator(`#main-nav a:has-text('${pageName}')`).click();
       await page.waitForLoadState("networkidle");
 
       // Each page should load
       await expect(page.locator("body")).toBeVisible();
 
       // Navigate back to home
-      await page.locator("a:has-text('Home')").first().click();
+      await page.locator("#main-nav a:has-text('Home')").click();
       await page.waitForLoadState("networkidle");
 
       // Stack should still be selected
@@ -256,14 +251,14 @@ test.describe("User Journeys", () => {
     // Navigate to flashcard - may need to click burger menu again on mobile
     if (await burgerButton.isVisible()) {
       // Check if nav is still open, if not reopen it
-      const flashcardLink = page.locator("a:has-text('Flashcard')").first();
+      const flashcardLink = page.locator("#main-nav a:has-text('Flashcard')");
       if (!(await flashcardLink.isVisible())) {
         await burgerButton.click();
         await expect(flashcardLink).toBeVisible();
       }
     }
 
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // Flashcard should be usable on mobile
@@ -295,7 +290,7 @@ test.describe("User Journeys", () => {
     await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard and set mode
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // Open settings popover and select number-only mode

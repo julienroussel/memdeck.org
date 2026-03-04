@@ -10,7 +10,6 @@ export const FlashcardTraining = () => {
   return (
     <section>
       <SectionHeading
-        badge={{ label: t("guide.flashcardTraining.requiresStack") }}
         color="blue"
         icon={<IconPlayCardStar size={14} />}
         title={t("guide.flashcardTraining.title")}

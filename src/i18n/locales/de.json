@@ -17,7 +17,6 @@
   },
   "cards": {
     "ranks": {
-      "A": "Ass",
       "2": "2",
       "3": "3",
       "4": "4",
@@ -27,6 +26,7 @@
       "8": "8",
       "9": "9",
       "10": "10",
+      "A": "Ass",
       "J": "Bube",
       "Q": "Dame",
       "K": "König"
@@ -71,7 +71,27 @@
     "firstTimer": "Hallo, Neuling! Wähle unten deinen Lieblings-Stack, um alle Funktionen freizuschalten. Du kannst jederzeit über die Auswahl am unteren Rand des Menüs wechseln.",
     "guideCardTitle": "Neu hier? Lies die Anleitung",
     "guideCardDescription": "Erfahre alles über die Trainingsmodi und wie du das Beste aus MemDeck herausholst.",
-    "selectedStack": "Dein ausgewählter Stack ist <bold>{{stackName}}</bold>"
+    "selectedStack": "Dein ausgewählter Stack ist <bold>{{stackName}}</bold>",
+    "whatIsMemdeck": "Ein memoriertes Kartendeck ist ein vollständiges Kartenspiel in einer bestimmten Reihenfolge, die du auswendig lernst — und damit die Tür zu starker Kartenmagie und beeindruckenden Gedächtnisleistungen öffnest.",
+    "introNew": "MemDeck hilft dir, deinen Stack durch Flashcard-Übungen, ACAAN-Training und praktische Tools zu meistern. Wähle unten einen Stack aus, um loszulegen — kostenlos und vollständig in deinem Browser.",
+    "introReturning": "Bereit zum Üben? Starte eine Sitzung oder erkunde deine Tools unten.",
+    "stackPickerHint": "Nicht sicher? Mnemonica und Aronson sind beliebte Einstiegspunkte.",
+    "featuresTitle": "Was du tun kannst",
+    "featureFlashcardTitle": "Flashcard",
+    "featureFlashcardDescription": "Trainiere Karte-zu-Nummer und Nummer-zu-Karte mit zeitgesteuerten Sitzungen.",
+    "featureAcaanTitle": "ACAAN",
+    "featureAcaanDescription": "Berechne Abhebetiefen für Any-Card-At-Any-Number-Effekte.",
+    "featureToolboxTitle": "Werkzeugkasten",
+    "featureToolboxDescription": "Stack-Nachschlagen, Faro-Mischen, Karten-Buchstabieren und Stay-Stack-Sequenzen.",
+    "featureStatsTitle": "Statistiken",
+    "featureStatsDescription": "Verfolge deine Genauigkeit, Serien und den Sitzungsverlauf über die Zeit.",
+    "quickStart": "Schnellstart",
+    "statsTitle": "Dein Fortschritt",
+    "statSessions": "Sitzungen",
+    "statAccuracy": "Genauigkeit",
+    "statBestStreak": "Beste Serie",
+    "noStatsYet": "Schließe eine Sitzung ab, um deinen Fortschritt zu verfolgen.",
+    "switchStackHint": "du kannst den Stack über die Auswahl am unteren Rand des Menüs wechseln."
   },
   "flashcard": {
     "pageTitle": "Flashcard-Training",
@@ -294,11 +314,11 @@
         "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret"
       },
       "alertTitle": "Wähle zuerst einen Stack",
-      "alertDescription": "Die meisten Trainingstools erfordern einen ausgewählten Stack. Wähle einen aus, um Flashcard, ACAAN und den Werkzeugkasten freizuschalten."
+      "alertDescription": "Die meisten Trainingstools erfordern einen ausgewählten Stack. Wähle einen aus, um Flashcard, ACAAN und den Werkzeugkasten freizuschalten.",
+      "selected": "Ausgewählt"
     },
     "flashcardTraining": {
       "title": "Flashcard-Training",
-      "requiresStack": "Stack erforderlich",
       "intro": "Der Haupttrainingsmodus. Dir wird ein Hinweis gezeigt und du musst die passende Karte oder Position in deinem Stack abrufen. Vier Modi sind verfügbar:",
       "cardOnlyItem": "<bold>Nur Karte</bold> — eine Karte wird gezeigt, nenne ihre Positionsnummer",
       "numberOnlyItem": "<bold>Nur Nummer</bold> — eine Positionsnummer wird gezeigt, nenne die Karte",
@@ -309,14 +329,12 @@
     },
     "acaanTraining": {
       "title": "ACAAN-Training",
-      "requiresStack": "Stack erforderlich",
       "intro": "ACAAN steht für „Any Card At Any Number“ — ein klassischer Effekt, bei dem ein Zuschauer eine beliebige Karte und eine beliebige Zahl nennt und die Karte genau an dieser Position im Deck gefunden wird.",
       "description": "In diesem Modus wird dir eine Karte und eine Zielposition gezeigt. Deine Aufgabe ist es, die Abhebentiefe zu berechnen, um die Karte an diese Position zu bringen. Gib einen Wert von 0 bis 51 ein. Timer und Sitzungsoptionen funktionieren wie im Flashcard-Modus.",
       "link": "Zum ACAAN-Training"
     },
     "toolbox": {
       "title": "Werkzeugkasten",
-      "requiresStack": "Stack erforderlich",
       "description": "Eine Sammlung von Tools für Stack-Analyse und Auftrittsvorbereitung. Der Werkzeugkasten enthält:",
       "lookupItem": "<bold>Stack-Nachschlagen</bold> — durchsuche deinen Stack nach Kartenname oder Positionsnummer",
       "faroItem": "<bold>Faro-Mischen</bold> — sieh dir die Auswirkung perfekter Faro-Mischvorgänge auf deine Stack-Reihenfolge an",
@@ -326,7 +344,6 @@
     },
     "stats": {
       "title": "Statistiken",
-      "noStackRequired": "Kein Stack erforderlich",
       "description": "Verfolge deinen Fortschritt über die Zeit. Die Statistik-Seite umfasst Übersichtskarten, ein Genauigkeitstrend-Diagramm (filterbar nach Modus und Flashcard-Untermodus), eine Aufschlüsselung nach Stack und einen paginierten Sitzungsverlauf. Alle Daten werden lokal in deinem Browser gespeichert.",
       "link": "Zu den Statistiken"
     },

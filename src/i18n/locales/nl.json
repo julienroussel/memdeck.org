@@ -17,7 +17,6 @@
   },
   "cards": {
     "ranks": {
-      "A": "Aas",
       "2": "2",
       "3": "3",
       "4": "4",
@@ -27,6 +26,7 @@
       "8": "8",
       "9": "9",
       "10": "10",
+      "A": "Aas",
       "J": "Boer",
       "Q": "Vrouw",
       "K": "Heer"
@@ -71,7 +71,27 @@
     "firstTimer": "Welkom, nieuwkomer! Kies hieronder je favoriete stack om alle functies te ontgrendelen. Je kunt op elk moment wisselen via de selector onderaan het menu.",
     "guideCardTitle": "Nieuw hier? Lees de Gids",
     "guideCardDescription": "Ontdek alle trainingsmodi en hoe je het meeste uit MemDeck haalt.",
-    "selectedStack": "Je geselecteerde stack is <bold>{{stackName}}</bold>"
+    "selectedStack": "Je geselecteerde stack is <bold>{{stackName}}</bold>",
+    "whatIsMemdeck": "Een gememoriseerd kaartspel is een volledig spel kaarten in een vaste volgorde die je uit je hoofd leert — de sleutel tot krachtige kaarttrucs en indrukwekkende geheugenprestaties.",
+    "introNew": "MemDeck helpt je om je stack te beheersen via flashcard-oefeningen, ACAAN-training en handige hulpmiddelen. Kies hieronder een stack om te beginnen — gratis en volledig in je browser.",
+    "introReturning": "Klaar om te trainen? Start een sessie of verken je tools hieronder.",
+    "stackPickerHint": "Geen idee welke? Mnemonica en Aronson zijn populaire beginpunten.",
+    "featuresTitle": "Wat je kunt doen",
+    "featureFlashcardTitle": "Flashcards",
+    "featureFlashcardDescription": "Oefen kaart-naar-nummer en nummer-naar-kaart met sessies met timer.",
+    "featureAcaanTitle": "ACAAN",
+    "featureAcaanDescription": "Bereken coupeerdieptes voor Any Card At Any Number-effecten.",
+    "featureToolboxTitle": "Gereedschap",
+    "featureToolboxDescription": "Stack opzoeken, faro shuffles, kaartspelling en stay-stack-sequenties.",
+    "featureStatsTitle": "Statistieken",
+    "featureStatsDescription": "Volg je nauwkeurigheid, reeksen en sessiegeschiedenis in de tijd.",
+    "quickStart": "Snel starten",
+    "statsTitle": "Jouw voortgang",
+    "statSessions": "Sessies",
+    "statAccuracy": "Nauwkeurigheid",
+    "statBestStreak": "Beste reeks",
+    "noStatsYet": "Voltooi een sessie om je voortgang bij te houden.",
+    "switchStackHint": "je kunt van stack wisselen via de selector onderaan het menu."
   },
   "flashcard": {
     "pageTitle": "Flashcard Training",
@@ -294,11 +314,11 @@
         "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret"
       },
       "alertTitle": "Selecteer eerst een stack",
-      "alertDescription": "De meeste trainingstools vereisen een geselecteerde stack. Kies er een om Flashcard, ACAAN en Gereedschap te ontgrendelen."
+      "alertDescription": "De meeste trainingstools vereisen een geselecteerde stack. Kies er een om Flashcard, ACAAN en Gereedschap te ontgrendelen.",
+      "selected": "Geselecteerd"
     },
     "flashcardTraining": {
       "title": "Flashcard Training",
-      "requiresStack": "Vereist een stack",
       "intro": "De belangrijkste trainingsmodus. Je krijgt een opgave en moet de bijbehorende kaart of positie in je stack herinneren. Vier modi beschikbaar:",
       "cardOnlyItem": "<bold>Alleen kaart</bold> — een kaart wordt getoond, herinner je het positienummer",
       "numberOnlyItem": "<bold>Alleen nummer</bold> — een positienummer wordt getoond, herinner je de kaart",
@@ -309,14 +329,12 @@
     },
     "acaanTraining": {
       "title": "ACAAN Training",
-      "requiresStack": "Vereist een stack",
       "intro": "ACAAN staat voor \"Any Card At Any Number\" — een klassiek effect waarbij een toeschouwer een willekeurige kaart en een willekeurig nummer noemt, en de kaart precies op die positie in het kaartspel wordt gevonden.",
       "description": "In deze modus krijg je een kaart en een doelpositie te zien. Je moet de coupeerdiepte berekenen die nodig is om de kaart naar die positie te verplaatsen. Voer een waarde in van 0 tot 51. Timer- en sessieopties werken hetzelfde als bij Flashcard.",
       "link": "Ga naar ACAAN Training"
     },
     "toolbox": {
       "title": "Gereedschap",
-      "requiresStack": "Vereist een stack",
       "description": "Een verzameling hulpmiddelen voor stack-analyse en voorbereiding op optredens. Het gereedschap bevat:",
       "lookupItem": "<bold>Stack opzoeken</bold> — zoek in je stack op kaartnaam of positienummer",
       "faroItem": "<bold>Faro Shuffle</bold> — bekijk het effect van perfecte faro shuffles op de volgorde van je stack",
@@ -326,7 +344,6 @@
     },
     "stats": {
       "title": "Statistieken",
-      "noStackRequired": "Geen stack vereist",
       "description": "Volg je voortgang in de tijd. De statistiekenpagina bevat overzichtskaarten, een nauwkeurigheidstrendgrafiek (filterbaar per modus en flashcard-submodus), een uitsplitsing per stack en gepagineerde sessiegeschiedenis. Alle gegevens worden lokaal in je browser opgeslagen.",
       "link": "Bekijk statistieken"
     },

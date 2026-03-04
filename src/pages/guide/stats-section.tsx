@@ -10,7 +10,6 @@ export const StatsSection = () => {
   return (
     <section>
       <SectionHeading
-        badge={{ label: t("guide.stats.noStackRequired"), color: "green" }}
         color="teal"
         icon={<IconChartBar size={14} />}
         title={t("guide.stats.title")}

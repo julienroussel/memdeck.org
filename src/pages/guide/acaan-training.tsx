@@ -10,7 +10,6 @@ export const AcaanTraining = () => {
   return (
     <section>
       <SectionHeading
-        badge={{ label: t("guide.acaanTraining.requiresStack") }}
         color="violet"
         icon={<IconNumber size={14} />}
         title={t("guide.acaanTraining.title")}

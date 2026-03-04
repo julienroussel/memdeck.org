@@ -61,7 +61,7 @@ test.describe("Error Scenarios - RequireStack Guard", () => {
       .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // Verify we're on flashcard page
@@ -99,7 +99,7 @@ test.describe("Error Scenarios - Invalid localStorage Data", () => {
       .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // App should still load without crashing
@@ -133,7 +133,7 @@ test.describe("Error Scenarios - Invalid localStorage Data", () => {
       .selectOption("aronson");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // App should still load without crashing
@@ -160,7 +160,7 @@ test.describe("Error Scenarios - Invalid localStorage Data", () => {
       .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // App should still load with default behavior
@@ -188,7 +188,7 @@ test.describe("Error Scenarios - Invalid localStorage Data", () => {
       .selectOption("redford");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // App should handle type mismatch gracefully
@@ -215,7 +215,7 @@ test.describe("Error Scenarios - Invalid localStorage Data", () => {
       .selectOption("particle");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // App should still work with null/undefined values
@@ -251,7 +251,7 @@ test.describe("Error Scenarios - Invalid Stack Key", () => {
 
     // First-timer message should be visible since no valid stack is selected
     await expect(
-      page.getByText("Hey there, first-timer!", { exact: false })
+      page.getByText("Pick a stack below to get started", { exact: false })
     ).toBeVisible();
   });
 
@@ -269,7 +269,7 @@ test.describe("Error Scenarios - Invalid Stack Key", () => {
     await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
 
@@ -302,7 +302,7 @@ test.describe("Error Scenarios - Invalid Stack Key", () => {
     // App should still load, treating it as no selection
     await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
     await expect(
-      page.getByText("Hey there, first-timer!", { exact: false })
+      page.getByText("Pick a stack below to get started", { exact: false })
     ).toBeVisible();
   });
 
@@ -359,7 +359,7 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
     await expect(page.locator("body")).toBeVisible();
 
     // Navigation should still work
-    await page.locator("a:has-text('Home')").first().click();
+    await page.locator("#main-nav a:has-text('Home')").click();
     await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(HOME_URL_PATTERN);
   });
@@ -375,7 +375,7 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
     await expect(page).toHaveURL(HOME_URL_PATTERN);
 
     // Navigate to resources
-    await page.locator("a:has-text('Resources')").first().click();
+    await page.locator("#main-nav a:has-text('Resources')").click();
     await page.waitForLoadState("networkidle");
 
     // Press browser back button
@@ -401,7 +401,7 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
       .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
 
@@ -454,7 +454,7 @@ test.describe("Error Scenarios - Edge Cases", () => {
     expect(selectedValue).toBe("memorandum");
 
     // Should still be able to navigate to flashcard
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
   });
@@ -510,7 +510,7 @@ test.describe("Error Scenarios - Edge Cases", () => {
       .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // App should still function
@@ -535,7 +535,7 @@ test.describe("Error Scenarios - Edge Cases", () => {
 
     // Should show first-timer message
     await expect(
-      page.getByText("Hey there, first-timer!", { exact: false })
+      page.getByText("Pick a stack below to get started", { exact: false })
     ).toBeVisible();
 
     // Select stack and navigate
@@ -545,7 +545,7 @@ test.describe("Error Scenarios - Edge Cases", () => {
       .selectOption("aronson");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // Should work with default flashcard option
@@ -588,7 +588,7 @@ test.describe("Error Scenarios - Edge Cases", () => {
       .selectOption("mnemonica");
     await page.waitForLoadState("networkidle");
 
-    await page.locator("a:has-text('Flashcard')").first().click();
+    await page.locator("#main-nav a:has-text('Flashcard')").click();
     await page.waitForLoadState("networkidle");
 
     // Make some progress
