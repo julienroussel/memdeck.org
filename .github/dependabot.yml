@@ -24,6 +24,15 @@ updates:
         update-types:
           - minor
           - patch
+        exclude-patterns:
+          - '@mantine/*'
+          - 'react'
+          - 'react-dom'
+          - '@types/react'
+          - '@types/react-dom'
+          - '@react-router/*'
+          - '@vitest/*'
+          - 'vitest'
       mantine:
         patterns:
           - '@mantine/*'
