@@ -49,9 +49,9 @@ export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
     <Group h="100%" justify="space-between" px="md">
       <Group>
         <Burger
+          aria-controls="main-nav"
           aria-expanded={opened}
           aria-label={t("header.toggleNav")}
-          hiddenFrom="sm"
           onClick={toggle}
           opened={opened}
           size="sm"

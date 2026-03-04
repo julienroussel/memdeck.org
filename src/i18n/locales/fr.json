@@ -17,7 +17,6 @@
   },
   "cards": {
     "ranks": {
-      "A": "As",
       "2": "2",
       "3": "3",
       "4": "4",
@@ -27,6 +26,7 @@
       "8": "8",
       "9": "9",
       "10": "10",
+      "A": "As",
       "J": "Valet",
       "Q": "Dame",
       "K": "Roi"
@@ -71,7 +71,27 @@
     "firstTimer": "Bienvenue ! Choisissez votre stack préféré ci-dessous pour débloquer toutes les fonctionnalités. Vous pouvez changer à tout moment via le sélecteur en bas du menu.",
     "guideCardTitle": "Nouveau ici ? Lisez le Guide",
     "guideCardDescription": "Découvrez tous les modes d'entraînement et comment tirer le meilleur parti de MemDeck.",
-    "selectedStack": "Votre stack sélectionné est <bold>{{stackName}}</bold>"
+    "selectedStack": "Votre stack sélectionné est <bold>{{stackName}}</bold>",
+    "whatIsMemdeck": "Un jeu mémorisé est un jeu de 52 cartes dans un ordre précis que vous apprenez par cœur — ouvrant la voie à des tours de magie puissants et à des numéros de mémoire impressionnants.",
+    "introNew": "MemDeck vous aide à maîtriser votre stack grâce à des exercices de flashcard, la pratique de l'ACAAN et des utilitaires pratiques. Choisissez un stack ci-dessous pour commencer — c'est gratuit et tout fonctionne dans votre navigateur.",
+    "introReturning": "Prêt à vous entraîner ? Lancez une session ou explorez vos outils ci-dessous.",
+    "stackPickerHint": "Pas sûr de votre choix ? Mnemonica et Aronson sont d'excellents points de départ.",
+    "featuresTitle": "Ce que vous pouvez faire",
+    "featureFlashcardTitle": "Flashcard",
+    "featureFlashcardDescription": "Entraînez-vous à retrouver le numéro d'une carte et la carte à un numéro donné, avec des sessions chronométrées.",
+    "featureAcaanTitle": "ACAAN",
+    "featureAcaanDescription": "Calculez la position de coupe pour les effets Any Card At Any Number.",
+    "featureToolboxTitle": "Boîte à outils",
+    "featureToolboxDescription": "Recherche dans le stack, mélanges faro, épellation de cartes et séquences stay-stack.",
+    "featureStatsTitle": "Statistiques",
+    "featureStatsDescription": "Suivez votre précision, vos séries et votre historique de sessions au fil du temps.",
+    "quickStart": "Démarrage rapide",
+    "statsTitle": "Vos progrès",
+    "statSessions": "Sessions",
+    "statAccuracy": "Précision",
+    "statBestStreak": "Meilleure série",
+    "noStatsYet": "Terminez une session pour commencer à suivre vos progrès.",
+    "switchStackHint": "vous pouvez changer de stack via le sélecteur en bas du menu."
   },
   "flashcard": {
     "pageTitle": "Entraînement Flashcard",
@@ -294,11 +314,11 @@
         "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret"
       },
       "alertTitle": "Choisissez d'abord un stack",
-      "alertDescription": "La plupart des outils d'entraînement nécessitent un stack sélectionné. Choisissez-en un pour débloquer les modes Flashcard, ACAAN et Boîte à outils."
+      "alertDescription": "La plupart des outils d'entraînement nécessitent un stack sélectionné. Choisissez-en un pour débloquer les modes Flashcard, ACAAN et Boîte à outils.",
+      "selected": "Sélectionné"
     },
     "flashcardTraining": {
       "title": "Entraînement Flashcard",
-      "requiresStack": "Nécessite un stack",
       "intro": "Le mode d'entraînement principal. On vous présente une carte ou un numéro et vous devez retrouver la correspondance dans votre stack. Quatre modes sont disponibles :",
       "cardOnlyItem": "<bold>Carte uniquement</bold> — une carte est montrée, retrouvez son numéro de position",
       "numberOnlyItem": "<bold>Numéro uniquement</bold> — un numéro de position est montré, retrouvez la carte",
@@ -309,14 +329,12 @@
     },
     "acaanTraining": {
       "title": "Entraînement ACAAN",
-      "requiresStack": "Nécessite un stack",
       "intro": "ACAAN signifie « Any Card At Any Number » — un effet classique où un spectateur nomme n'importe quelle carte et n'importe quel numéro, et la carte se trouve exactement à cette position dans le jeu.",
       "description": "Dans ce mode, on vous montre une carte et une position cible. Vous devez calculer la profondeur de coupe nécessaire pour amener la carte à cette position. Entrez une valeur de 0 à 51. Le chronomètre et les options de session fonctionnent comme en mode Flashcard.",
       "link": "Aller à l'entraînement ACAAN"
     },
     "toolbox": {
       "title": "Boîte à outils",
-      "requiresStack": "Nécessite un stack",
       "description": "Une collection d'utilitaires pour l'analyse de stack et le travail de performance. La boîte à outils comprend :",
       "lookupItem": "<bold>Recherche de stack</bold> — recherchez dans votre stack par nom de carte ou numéro de position",
       "faroItem": "<bold>Mélange Faro</bold> — visualisez l'effet des mélanges faro parfaits sur l'ordre de votre stack",
@@ -326,7 +344,6 @@
     },
     "stats": {
       "title": "Statistiques",
-      "noStackRequired": "Aucun stack requis",
       "description": "Suivez vos progrès au fil du temps. La page Statistiques comprend des indicateurs de synthèse, un graphique de tendance de précision (filtrable par mode et sous-mode flashcard), un tableau de répartition par stack et un historique de sessions paginé. Toutes les données sont stockées localement dans votre navigateur.",
       "link": "Voir les statistiques"
     },

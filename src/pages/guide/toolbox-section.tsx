@@ -10,7 +10,6 @@ export const ToolboxSection = () => {
   return (
     <section>
       <SectionHeading
-        badge={{ label: t("guide.toolbox.requiresStack") }}
         color="yellow"
         icon={<IconTools size={14} />}
         title={t("guide.toolbox.title")}

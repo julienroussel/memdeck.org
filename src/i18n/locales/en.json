@@ -71,7 +71,27 @@
     "firstTimer": "Hey there, first-timer! Pick your favorite memorized deck stack below to unlock all the cool features. You can switch it up anytime using the selector at the bottom of the menu.",
     "guideCardTitle": "New here? Read the Guide",
     "guideCardDescription": "Learn about all the training modes and how to get the most out of MemDeck.",
-    "selectedStack": "Your selected stack is <bold>{{stackName}}</bold>"
+    "selectedStack": "Your selected stack is <bold>{{stackName}}</bold>",
+    "whatIsMemdeck": "A memorized deck is a full deck of cards in a specific order that you commit to memory — unlocking powerful card magic and mental feats.",
+    "introNew": "MemDeck helps you master your memorized deck through flashcard drills, ACAAN practice, and handy utilities. Pick a stack below to get started — it's free and runs entirely in your browser.",
+    "introReturning": "Ready to train? Jump into a session or explore your tools below.",
+    "stackPickerHint": "Not sure? Mnemonica and Aronson are popular starting points.",
+    "featuresTitle": "What you can do",
+    "featureFlashcardTitle": "Flashcard Training",
+    "featureFlashcardDescription": "Drill card-to-number and number-to-card recall with timed sessions.",
+    "featureAcaanTitle": "ACAAN Practice",
+    "featureAcaanDescription": "Calculate cut depths for Any Card At Any Number effects.",
+    "featureToolboxTitle": "Toolbox",
+    "featureToolboxDescription": "Stack lookup, faro shuffles, card spelling, and stay-stack sequences.",
+    "featureStatsTitle": "Stats & Progress",
+    "featureStatsDescription": "Track your accuracy, streaks, and session history over time.",
+    "quickStart": "Quick Start",
+    "statsTitle": "Your Progress",
+    "statSessions": "Sessions",
+    "statAccuracy": "Accuracy",
+    "statBestStreak": "Best Streak",
+    "noStatsYet": "Complete a session to start tracking your progress.",
+    "switchStackHint": "you can switch stacks using the selector at the bottom of the menu."
   },
   "flashcard": {
     "pageTitle": "Flashcard Training",
@@ -293,12 +313,12 @@
         "particle": "<bold>Particle System</bold> — Joshua Jay",
         "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret"
       },
+      "selected": "Selected",
       "alertTitle": "Pick a stack first",
       "alertDescription": "Most training tools require a selected stack to work. Pick one to unlock Flashcard, ACAAN, and Toolbox modes."
     },
     "flashcardTraining": {
       "title": "Flashcard Training",
-      "requiresStack": "Requires stack",
       "intro": "The main training mode. You're shown a prompt and must recall the matching card or position in your selected stack. Four modes are available:",
       "cardOnlyItem": "<bold>Card Only</bold> — shown a card, recall its position number",
       "numberOnlyItem": "<bold>Number Only</bold> — shown a position number, recall the card",
@@ -309,14 +329,12 @@
     },
     "acaanTraining": {
       "title": "ACAAN Training",
-      "requiresStack": "Requires stack",
       "intro": "ACAAN stands for \"Any Card At Any Number\" — a classic effect where a spectator names any card and any number, and the card is found at that exact position in the deck.",
       "description": "In this mode, you're shown a card and a target position. Your job is to calculate the cut depth needed to move the card to that position. Enter a value from 0 to 51. Timer and session options work the same as Flashcard mode.",
       "link": "Go to ACAAN Training"
     },
     "toolbox": {
       "title": "Toolbox",
-      "requiresStack": "Requires stack",
       "description": "A collection of memorized deck utilities for stack analysis and performance work. The toolbox includes:",
       "lookupItem": "<bold>Stack Lookup</bold> — search your stack by card name or position number",
       "faroItem": "<bold>Faro Shuffle</bold> — see the effect of perfect faro shuffles on your stack order",
@@ -326,7 +344,6 @@
     },
     "stats": {
       "title": "Stats",
-      "noStackRequired": "No stack required",
       "description": "Track your progress over time. The Stats page includes overview cards, an accuracy trend chart (filterable by mode and flashcard sub-mode), a per-stack breakdown table, and paginated session history. All data is stored locally in your browser.",
       "link": "Go to Stats"
     },

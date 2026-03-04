@@ -9,7 +9,7 @@ import { RequireStack } from "./components/require-stack";
 import { lazyWithReload } from "./utils/lazy-with-reload";
 
 const Home = lazyWithReload(() =>
-  import("./pages/home").then((m) => ({ default: m.Home }))
+  import("./pages/home/home").then((m) => ({ default: m.Home }))
 );
 const Guide = lazyWithReload(() =>
   import("./pages/guide/guide").then((m) => ({ default: m.Guide }))
