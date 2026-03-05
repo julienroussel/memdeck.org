@@ -13,7 +13,8 @@
     "bestStreak": "Beste reeks",
     "questions": "Vragen",
     "duration": "Duur",
-    "revealAriaLabel": "Antwoord onthullen"
+    "revealAriaLabel": "Antwoord onthullen",
+    "moreColumnsOnWiderScreen": "Extra details zijn zichtbaar op een breder scherm."
   },
   "cards": {
     "ranks": {

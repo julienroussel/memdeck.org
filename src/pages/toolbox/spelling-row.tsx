@@ -1,4 +1,4 @@
-import { Badge, Image, Table, Text } from "@mantine/core";
+import { Badge, Image, Table, Text, useMatches } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
 import type { KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
@@ -46,6 +46,7 @@ export const SpellingRow = ({
 }: SpellingRowProps) => {
   const { t } = useTranslation();
   const detailId = `spelling-detail-${entry.position}`;
+  const detailColSpan = useMatches({ base: 3, xs: 4 });
 
   const handleClick = () => {
     onToggle(entry.position);
@@ -96,7 +97,7 @@ export const SpellingRow = ({
           )}
         </Table.Td>
         <Table.Td>{entry.letterCount}</Table.Td>
-        <Table.Td style={CARD_CELL_STYLE}>
+        <Table.Td style={CARD_CELL_STYLE} visibleFrom="xs">
           {entry.landingCard ? (
             <>
               <Image
@@ -114,7 +115,7 @@ export const SpellingRow = ({
       </Table.Tr>
       {isExpanded && (
         <Table.Tr>
-          <Table.Td colSpan={4} id={detailId} p={0}>
+          <Table.Td colSpan={detailColSpan} id={detailId} p={0}>
             <Text fw={500} mb="xs" p="sm" size="sm">
               {t("toolbox.spelling.detailTitle")}: {formatCardName(entry.card)}
             </Text>

@@ -33,8 +33,12 @@ export const StatsByStack = () => {
           return (
             <Table.Tr key={key}>
               <Table.Td>{stacks[key].name}</Table.Td>
-              <Table.Td ta="center">{entry.totalSessions}</Table.Td>
-              <Table.Td ta="center">{entry.totalQuestions}</Table.Td>
+              <Table.Td ta="center" visibleFrom="xs">
+                {entry.totalSessions}
+              </Table.Td>
+              <Table.Td ta="center" visibleFrom="sm">
+                {entry.totalQuestions}
+              </Table.Td>
               <Table.Td ta="center">{toAccuracyPercent(accuracy)}%</Table.Td>
               <Table.Td ta="center">{entry.globalBestStreak}</Table.Td>
             </Table.Tr>
@@ -55,13 +59,20 @@ export const StatsByStack = () => {
   return (
     <>
       <Title order={3}>{t("stats.byStack")}</Title>
+      <Text c="dimmed" hiddenFrom="sm" size="xs">
+        {t("common.moreColumnsOnWiderScreen")}
+      </Text>
       <Table striped>
         <Table.Caption>{t("stats.statisticsByStack")}</Table.Caption>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>{t("stats.stack")}</Table.Th>
-            <Table.Th ta="center">{t("stats.sessions")}</Table.Th>
-            <Table.Th ta="center">{t("common.questions")}</Table.Th>
+            <Table.Th ta="center" visibleFrom="xs">
+              {t("stats.sessions")}
+            </Table.Th>
+            <Table.Th ta="center" visibleFrom="sm">
+              {t("common.questions")}
+            </Table.Th>
             <Table.Th ta="center">{t("common.accuracy")}</Table.Th>
             <Table.Th ta="center">{t("common.bestStreak")}</Table.Th>
           </Table.Tr>

@@ -13,7 +13,8 @@
     "bestStreak": "Meilleure série",
     "questions": "Questions",
     "duration": "Durée",
-    "revealAriaLabel": "Révéler la réponse"
+    "revealAriaLabel": "Révéler la réponse",
+    "moreColumnsOnWiderScreen": "Des détails supplémentaires sont disponibles sur un écran plus large."
   },
   "cards": {
     "ranks": {

@@ -62,28 +62,35 @@ export const CardSpelling = () => {
           {t("toolbox.spelling.noResults")}
         </Text>
       ) : (
-        <Table striped>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>{t("toolbox.spelling.position")}</Table.Th>
-              <Table.Th>{t("toolbox.spelling.card")}</Table.Th>
-              <Table.Th>{t("toolbox.spelling.letters")}</Table.Th>
-              <Table.Th>{t("toolbox.spelling.landsOn")}</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {visibleEntries.map((entry) => (
-              <SpellingRow
-                entry={entry}
-                formatCardName={formatCardName}
-                isExpanded={expandedPosition === entry.position}
-                key={entry.position}
-                onToggle={handleRowToggle}
-                stackOrder={stackOrder}
-              />
-            ))}
-          </Table.Tbody>
-        </Table>
+        <>
+          <Text c="dimmed" hiddenFrom="xs" size="xs">
+            {t("common.moreColumnsOnWiderScreen")}
+          </Text>
+          <Table striped>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>{t("toolbox.spelling.position")}</Table.Th>
+                <Table.Th>{t("toolbox.spelling.card")}</Table.Th>
+                <Table.Th>{t("toolbox.spelling.letters")}</Table.Th>
+                <Table.Th visibleFrom="xs">
+                  {t("toolbox.spelling.landsOn")}
+                </Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {visibleEntries.map((entry) => (
+                <SpellingRow
+                  entry={entry}
+                  formatCardName={formatCardName}
+                  isExpanded={expandedPosition === entry.position}
+                  key={entry.position}
+                  onToggle={handleRowToggle}
+                  stackOrder={stackOrder}
+                />
+              ))}
+            </Table.Tbody>
+          </Table>
+        </>
       )}
     </Stack>
   );

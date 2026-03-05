@@ -13,7 +13,8 @@
     "bestStreak": "Mejor racha",
     "questions": "Preguntas",
     "duration": "Duración",
-    "revealAriaLabel": "Revelar respuesta"
+    "revealAriaLabel": "Revelar respuesta",
+    "moreColumnsOnWiderScreen": "Más detalles visibles en pantallas más grandes."
   },
   "cards": {
     "ranks": {
