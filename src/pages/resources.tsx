@@ -112,6 +112,12 @@ const otherResources = [
     link: "https://www.vanishingincmagic.com/magic-books/particle-system/",
     descriptionKey: "resources.descriptions.particleSystem",
   },
+  {
+    title: "Conjuring Archive",
+    author: "Denis Behr",
+    link: "https://www.conjuringarchive.com/tree/635",
+    descriptionKey: "resources.descriptions.conjuringArchive",
+  },
 ] as const satisfies readonly Resource[];
 
 type ResourceCardProps = {
