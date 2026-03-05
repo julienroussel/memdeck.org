@@ -1,3 +1,4 @@
+import { MantineProvider } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { fireEvent, render } from "@testing-library/react";
 import { isValidElement } from "react";
@@ -92,7 +93,7 @@ describe("PwaUpdateNotifier", () => {
     if (!isValidElement(message)) {
       throw new Error("Expected ReactElement");
     }
-    const { getByRole } = render(message);
+    const { getByRole } = render(<MantineProvider>{message}</MantineProvider>);
     fireEvent.click(getByRole("button"));
 
     expect(mockUpdateServiceWorker).toHaveBeenCalledWith(true);
@@ -128,6 +129,54 @@ describe("PwaUpdateNotifier", () => {
     expect(mockUpdate).not.toHaveBeenCalled();
     vi.advanceTimersByTime(24 * 60 * 60 * 1000);
     expect(mockUpdate).toHaveBeenCalledOnce();
+
+    vi.useRealTimers();
+  });
+
+  it("clears existing interval before setting a new one on re-registration", () => {
+    vi.useFakeTimers();
+    const mockUpdate = vi.fn();
+    const fakeRegistration = {
+      update: mockUpdate,
+    } as unknown as ServiceWorkerRegistration;
+
+    mockUseRegisterSW.mockImplementation((options?: RegisterSWOptions) => {
+      options?.onRegisteredSW?.("", fakeRegistration);
+      options?.onRegisteredSW?.("", fakeRegistration);
+      return {
+        needRefresh: needRefreshState,
+        updateServiceWorker: mockUpdateServiceWorker,
+      };
+    });
+
+    render(<PwaUpdateNotifier />);
+
+    vi.advanceTimersByTime(24 * 60 * 60 * 1000);
+    expect(mockUpdate).toHaveBeenCalledOnce();
+
+    vi.useRealTimers();
+  });
+
+  it("clears the periodic update interval on unmount", () => {
+    vi.useFakeTimers();
+    const mockUpdate = vi.fn();
+    const fakeRegistration = {
+      update: mockUpdate,
+    } as unknown as ServiceWorkerRegistration;
+
+    mockUseRegisterSW.mockImplementation((options?: RegisterSWOptions) => {
+      options?.onRegisteredSW?.("", fakeRegistration);
+      return {
+        needRefresh: needRefreshState,
+        updateServiceWorker: mockUpdateServiceWorker,
+      };
+    });
+
+    const { unmount } = render(<PwaUpdateNotifier />);
+    unmount();
+
+    vi.advanceTimersByTime(24 * 60 * 60 * 1000);
+    expect(mockUpdate).not.toHaveBeenCalled();
 
     vi.useRealTimers();
   });

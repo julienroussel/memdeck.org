@@ -1,4 +1,5 @@
 import { useRegisterSW } from "virtual:pwa-register/react";
+import { Button } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -25,6 +26,9 @@ export const PwaUpdateNotifier = () => {
     immediate: true,
     onRegisteredSW(_swUrl, registration) {
       if (registration) {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
         intervalRef.current = setInterval(
           () => registration.update(),
           UPDATE_INTERVAL_MS
@@ -58,21 +62,9 @@ export const PwaUpdateNotifier = () => {
         message: (
           <>
             {t("pwaUpdate.message")}{" "}
-            <button
-              onClick={handleReload}
-              style={{
-                all: "unset",
-                display: "inline-block",
-                cursor: "pointer",
-                outline: "revert",
-                textDecoration: "underline",
-                padding: "8px 16px",
-                minHeight: "44px",
-              }}
-              type="button"
-            >
+            <Button onClick={handleReload} size="compact-sm" variant="subtle">
               {t("pwaUpdate.reload")}
-            </button>
+            </Button>
           </>
         ),
         withCloseButton: true,
