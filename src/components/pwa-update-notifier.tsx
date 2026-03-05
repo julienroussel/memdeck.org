@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { analytics } from "../services/analytics";
 
+const UPDATE_INTERVAL_MS = 24 * 60 * 60 * 1000;
+
 /**
  * Detects when a new service worker is ready and shows a Mantine notification
  * with a "Reload" button so the user can activate the update.
@@ -12,11 +14,32 @@ import { analytics } from "../services/analytics";
 export const PwaUpdateNotifier = () => {
   const { t } = useTranslation();
   const notifiedRef = useRef(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(
+    undefined
+  );
 
   const {
     needRefresh: [needRefresh],
     updateServiceWorker,
-  } = useRegisterSW({ immediate: true });
+  } = useRegisterSW({
+    immediate: true,
+    onRegisteredSW(_swUrl, registration) {
+      if (registration) {
+        intervalRef.current = setInterval(
+          () => registration.update(),
+          UPDATE_INTERVAL_MS
+        );
+      }
+    },
+  });
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (needRefresh && !notifiedRef.current) {

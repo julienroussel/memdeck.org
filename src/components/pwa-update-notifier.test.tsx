@@ -98,8 +98,37 @@ describe("PwaUpdateNotifier", () => {
     expect(mockUpdateServiceWorker).toHaveBeenCalledWith(true);
   });
 
-  it("registers the service worker with immediate option", () => {
+  it("registers the service worker with immediate option and onRegisteredSW", () => {
     render(<PwaUpdateNotifier />);
-    expect(mockUseRegisterSW).toHaveBeenCalledWith({ immediate: true });
+    expect(mockUseRegisterSW).toHaveBeenCalledWith(
+      expect.objectContaining({
+        immediate: true,
+        onRegisteredSW: expect.any(Function),
+      })
+    );
+  });
+
+  it("sets up a periodic update check when SW is registered", () => {
+    vi.useFakeTimers();
+    const mockUpdate = vi.fn();
+    const fakeRegistration = {
+      update: mockUpdate,
+    } as unknown as ServiceWorkerRegistration;
+
+    mockUseRegisterSW.mockImplementation((options?: RegisterSWOptions) => {
+      options?.onRegisteredSW?.("", fakeRegistration);
+      return {
+        needRefresh: needRefreshState,
+        updateServiceWorker: mockUpdateServiceWorker,
+      };
+    });
+
+    render(<PwaUpdateNotifier />);
+
+    expect(mockUpdate).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(24 * 60 * 60 * 1000);
+    expect(mockUpdate).toHaveBeenCalledOnce();
+
+    vi.useRealTimers();
   });
 });
