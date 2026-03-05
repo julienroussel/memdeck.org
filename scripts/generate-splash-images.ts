@@ -1,6 +1,23 @@
+import { execFileSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
+
+const hasOptipng = (() => {
+  try {
+    execFileSync("optipng", ["--version"], { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+})();
+
+const optimizePng = (filePath: string) => {
+  if (!hasOptipng) {
+    return;
+  }
+  execFileSync("optipng", ["-o7", "-quiet", filePath]);
+};
 
 interface Device {
   h: number;
@@ -26,6 +43,8 @@ const DEVICES: Device[] = [
   { w: 1284, h: 2778 },
   { w: 1179, h: 2556 },
   { w: 1290, h: 2796 },
+  { w: 1206, h: 2622 },
+  { w: 1320, h: 2868 },
 ];
 
 const THEMES: Theme[] = [
@@ -84,8 +103,12 @@ for (const theme of THEMES) {
       .png()
       .toFile(outputPath);
 
+    optimizePng(outputPath);
     console.log(`Generated ${outputPath}`);
   }
 }
 
+if (!hasOptipng) {
+  console.log("Tip: install optipng for smaller PNGs.");
+}
 console.log("Done! Generated all splash images.");

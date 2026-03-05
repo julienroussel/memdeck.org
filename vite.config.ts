@@ -18,11 +18,7 @@ export default defineConfig({
       registerType: "prompt",
       injectRegister: false,
       workbox: {
-        globPatterns: [
-          "**/*.{js,css,html,webp}",
-          "cards/*.svg",
-          "apple-touch-icon.png",
-        ],
+        globPatterns: ["**/*.{js,css,html,webp}", "cards/*.svg"],
         // Locale chunks are lazy-loaded on demand; splash PNGs are only
         // used by iOS — exclude both from precaching.
         globIgnores: ["assets/locale-*.js", "splash/*.png"],
@@ -48,7 +44,7 @@ export default defineConfig({
             options: {
               cacheName: "static-images",
               expiration: {
-                maxEntries: 20,
+                maxEntries: 50,
                 maxAgeSeconds: 365 * 24 * 60 * 60,
               },
             },
@@ -56,15 +52,62 @@ export default defineConfig({
         ],
       },
       manifest: {
+        id: "/",
         name: "MemDeck — Mastering memorized deck",
         short_name: "MemDeck",
         start_url: "/",
+        scope: "/",
         display: "standalone",
+        display_override: ["standalone", "minimal-ui"],
         orientation: "portrait",
+        categories: ["education", "utilities"],
         description:
           "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, and Particle.",
         theme_color: "#228be6",
         background_color: "#ffffff",
+        shortcuts: [
+          {
+            name: "Flashcard",
+            short_name: "Flashcard",
+            url: "/flashcard",
+            description: "Practice memorized deck with flashcard drills",
+          },
+          {
+            name: "ACAAN",
+            short_name: "ACAAN",
+            url: "/acaan",
+            description: "Any Card At Any Number calculator",
+          },
+          {
+            name: "Toolbox",
+            short_name: "Toolbox",
+            url: "/toolbox",
+            description: "Memorized deck utilities",
+          },
+        ],
+        screenshots: [
+          {
+            src: "/screenshots/home-mobile.png",
+            sizes: "780x1688",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "Home screen showing training modes and stack picker",
+          },
+          {
+            src: "/screenshots/flashcard-mobile.png",
+            sizes: "780x1688",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "Flashcard training with card and position choices",
+          },
+          {
+            src: "/screenshots/home-desktop.png",
+            sizes: "2560x1600",
+            type: "image/png",
+            form_factor: "wide",
+            label: "Desktop view with sidebar navigation and training modes",
+          },
+        ],
         icons: [
           {
             src: "/apple-touch-icon.png",
