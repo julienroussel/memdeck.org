@@ -13,7 +13,8 @@
     "bestStreak": "Best Streak",
     "questions": "Questions",
     "duration": "Duration",
-    "revealAriaLabel": "Reveal answer"
+    "revealAriaLabel": "Reveal answer",
+    "moreColumnsOnWiderScreen": "Additional details are available on wider screens."
   },
   "cards": {
     "ranks": {

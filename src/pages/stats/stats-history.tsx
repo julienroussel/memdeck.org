@@ -69,17 +69,26 @@ export const StatsHistory = ({ history }: StatsHistoryProps) => {
   return (
     <>
       <Title order={3}>{t("stats.sessionHistory")}</Title>
+      <Text c="dimmed" hiddenFrom="sm" size="xs">
+        {t("common.moreColumnsOnWiderScreen")}
+      </Text>
       <Table striped>
         <Table.Caption>{t("stats.sessionHistoryCaption")}</Table.Caption>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>{t("stats.date")}</Table.Th>
             <Table.Th>{t("stats.mode")}</Table.Th>
-            <Table.Th>{t("stats.stack")}</Table.Th>
-            <Table.Th ta="center">{t("stats.score")}</Table.Th>
+            <Table.Th visibleFrom="xs">{t("stats.stack")}</Table.Th>
+            <Table.Th ta="center" visibleFrom="xs">
+              {t("stats.score")}
+            </Table.Th>
             <Table.Th ta="center">{t("common.accuracy")}</Table.Th>
-            <Table.Th ta="center">{t("common.bestStreak")}</Table.Th>
-            <Table.Th ta="center">{t("common.duration")}</Table.Th>
+            <Table.Th ta="center" visibleFrom="sm">
+              {t("common.bestStreak")}
+            </Table.Th>
+            <Table.Th ta="center" visibleFrom="sm">
+              {t("common.duration")}
+            </Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -87,17 +96,19 @@ export const StatsHistory = ({ history }: StatsHistoryProps) => {
             <Table.Tr key={record.id}>
               <Table.Td>{formatDate(record.startedAt)}</Table.Td>
               <Table.Td>{formatModeLabel(record, t)}</Table.Td>
-              <Table.Td>
+              <Table.Td visibleFrom="xs">
                 {stacks[record.stackKey]?.name ?? record.stackKey}
               </Table.Td>
-              <Table.Td ta="center">
+              <Table.Td ta="center" visibleFrom="xs">
                 {record.successes}/{record.questionsCompleted}
               </Table.Td>
               <Table.Td ta="center">
                 {toAccuracyPercent(record.accuracy)}%
               </Table.Td>
-              <Table.Td ta="center">{record.bestStreak}</Table.Td>
-              <Table.Td ta="center">
+              <Table.Td ta="center" visibleFrom="sm">
+                {record.bestStreak}
+              </Table.Td>
+              <Table.Td ta="center" visibleFrom="sm">
                 {formatDuration(record.durationSeconds)}
               </Table.Td>
             </Table.Tr>
