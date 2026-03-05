@@ -265,7 +265,7 @@
     "pageTitle": "Statistiques",
     "pageDescription": "Suivez vos progrès d'entraînement avec des graphiques de précision et un historique des sessions.",
     "title": "Statistiques",
-    "noData": "Pas encore de données. Terminez une session flashcard ou ACAAN pour voir vos statistiques ici.",
+    "noData": "Pas encore de données. Terminez une session flashcard, ACAAN ou spot check pour voir vos statistiques ici.",
     "totalSessions": "Sessions totales",
     "totalQuestions": "Questions totales",
     "overallAccuracy": "Précision globale",

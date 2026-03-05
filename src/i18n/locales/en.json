@@ -265,7 +265,7 @@
     "pageTitle": "Stats",
     "pageDescription": "Track your memorized deck training progress with accuracy charts and session history.",
     "title": "Stats",
-    "noData": "No training data yet. Complete a flashcard or ACAAN session to see your stats here.",
+    "noData": "No training data yet. Complete a Flashcard, ACAAN, or Spot Check session to see your stats here.",
     "totalSessions": "Total Sessions",
     "totalQuestions": "Total Questions",
     "overallAccuracy": "Overall Accuracy",
