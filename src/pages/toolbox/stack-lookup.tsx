@@ -1,4 +1,11 @@
-import { Image, Table, Text, TextInput, VisuallyHidden } from "@mantine/core";
+import {
+  Group,
+  Image,
+  Table,
+  Text,
+  TextInput,
+  VisuallyHidden,
+} from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,11 +16,6 @@ import { useFormatCardName } from "./use-format-card-name";
 
 const THUMBNAIL_WIDTH = 40;
 const THUMBNAIL_HEIGHT = Math.round(THUMBNAIL_WIDTH * CARD_ASPECT_RATIO);
-const CARD_CELL_STYLE = {
-  display: "flex",
-  alignItems: "center",
-  gap: 8,
-} as const;
 
 export const StackLookup = () => {
   const { t } = useTranslation();
@@ -64,14 +66,16 @@ export const StackLookup = () => {
             {filtered.map(({ position, card }) => (
               <Table.Tr key={position}>
                 <Table.Td>{position}</Table.Td>
-                <Table.Td style={CARD_CELL_STYLE}>
-                  <Image
-                    alt=""
-                    h={THUMBNAIL_HEIGHT}
-                    src={card.image}
-                    w={THUMBNAIL_WIDTH}
-                  />
-                  {formatCardName(card)}
+                <Table.Td>
+                  <Group gap={8} wrap="nowrap">
+                    <Image
+                      alt=""
+                      h={THUMBNAIL_HEIGHT}
+                      src={card.image}
+                      w={THUMBNAIL_WIDTH}
+                    />
+                    {formatCardName(card)}
+                  </Group>
                 </Table.Td>
               </Table.Tr>
             ))}
