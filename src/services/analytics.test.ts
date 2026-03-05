@@ -197,6 +197,42 @@ describe("analytics", () => {
         value: 33,
       });
     });
+
+    it("tracks SPOT_CHECK_ANSWER correct event via event bus", () => {
+      eventBus.emit.SPOT_CHECK_ANSWER({
+        correct: true,
+        stackName: "Mnemonica",
+      });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Spot Check",
+        action: "Correct Answer",
+        label: "Mnemonica",
+      });
+    });
+
+    it("tracks SPOT_CHECK_ANSWER wrong event via event bus", () => {
+      eventBus.emit.SPOT_CHECK_ANSWER({
+        correct: false,
+        stackName: "Aronson",
+      });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Spot Check",
+        action: "Wrong Answer",
+        label: "Aronson",
+      });
+    });
+
+    it("tracks SPOT_CHECK_MODE_CHANGED event via event bus", () => {
+      eventBus.emit.SPOT_CHECK_MODE_CHANGED({ mode: "missing" });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Spot Check",
+        action: "Mode Changed",
+        label: "missing",
+      });
+    });
   });
 
   describe("initialize", () => {
@@ -559,6 +595,60 @@ describe("analytics", () => {
     });
   });
 
+  describe("trackSpotCheckAnswer", () => {
+    it("sends correct answer event", () => {
+      analytics.trackSpotCheckAnswer(true, "Mnemonica");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Spot Check",
+        action: "Correct Answer",
+        label: "Mnemonica",
+      });
+    });
+
+    it("sends wrong answer event", () => {
+      analytics.trackSpotCheckAnswer(false, "Aronson");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Spot Check",
+        action: "Wrong Answer",
+        label: "Aronson",
+      });
+    });
+  });
+
+  describe("trackSpotCheckModeChanged", () => {
+    it("sends mode change event for missing", () => {
+      analytics.trackSpotCheckModeChanged("missing");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Spot Check",
+        action: "Mode Changed",
+        label: "missing",
+      });
+    });
+
+    it("sends mode change event for swapped", () => {
+      analytics.trackSpotCheckModeChanged("swapped");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Spot Check",
+        action: "Mode Changed",
+        label: "swapped",
+      });
+    });
+
+    it("sends mode change event for moved", () => {
+      analytics.trackSpotCheckModeChanged("moved");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Spot Check",
+        action: "Mode Changed",
+        label: "moved",
+      });
+    });
+  });
+
   describe("trackSessionStarted", () => {
     it("sends session started event for structured session", () => {
       analytics.trackSessionStarted("flashcard", {
@@ -731,6 +821,18 @@ describe("analytics", () => {
 
     it("does not track session completed", () => {
       analytics.trackSessionCompleted("flashcard", 0.85);
+
+      expect(mockEvent).not.toHaveBeenCalled();
+    });
+
+    it("does not track spot check answers", () => {
+      analytics.trackSpotCheckAnswer(true, "Mnemonica");
+
+      expect(mockEvent).not.toHaveBeenCalled();
+    });
+
+    it("does not track spot check mode changes", () => {
+      analytics.trackSpotCheckModeChanged("missing");
 
       expect(mockEvent).not.toHaveBeenCalled();
     });
