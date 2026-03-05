@@ -265,7 +265,7 @@
     "pageTitle": "Estadísticas",
     "pageDescription": "Sigue tu progreso de entrenamiento con gráficos de precisión e historial de sesiones.",
     "title": "Estadísticas",
-    "noData": "Aún no hay datos de entrenamiento. Completa una sesión de Flashcard o ACAAN para ver tus estadísticas aquí.",
+    "noData": "Aún no hay datos de entrenamiento. Completa una sesión de Flashcard, ACAAN o Spot Check para ver tus estadísticas aquí.",
     "totalSessions": "Sesiones totales",
     "totalQuestions": "Preguntas totales",
     "overallAccuracy": "Precisión general",

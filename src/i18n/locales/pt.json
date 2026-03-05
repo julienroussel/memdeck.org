@@ -265,7 +265,7 @@
     "pageTitle": "Estatísticas",
     "pageDescription": "Acompanhe o seu progresso com gráficos de precisão e histórico de sessões.",
     "title": "Estatísticas",
-    "noData": "Ainda sem dados. Complete uma sessão de flashcard ou ACAAN para ver as suas estatísticas aqui.",
+    "noData": "Ainda sem dados. Complete uma sessão de flashcard, ACAAN ou spot check para ver as suas estatísticas aqui.",
     "totalSessions": "Total de sessões",
     "totalQuestions": "Total de perguntas",
     "overallAccuracy": "Precisão geral",

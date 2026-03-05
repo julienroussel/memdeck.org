@@ -265,7 +265,7 @@
     "pageTitle": "Statistiken",
     "pageDescription": "Verfolge deinen Trainingsfortschritt mit Genauigkeitsdiagrammen und Sitzungsverlauf.",
     "title": "Statistiken",
-    "noData": "Noch keine Trainingsdaten. Schließe eine Flashcard- oder ACAAN-Sitzung ab, um deine Statistiken hier zu sehen.",
+    "noData": "Noch keine Trainingsdaten. Schließe eine Flashcard-, ACAAN- oder Spot-Check-Sitzung ab, um deine Statistiken hier zu sehen.",
     "totalSessions": "Sitzungen gesamt",
     "totalQuestions": "Fragen gesamt",
     "overallAccuracy": "Gesamtgenauigkeit",

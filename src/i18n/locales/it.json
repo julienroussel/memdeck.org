@@ -265,7 +265,7 @@
     "pageTitle": "Statistiche",
     "pageDescription": "Monitora i tuoi progressi con grafici di precisione e cronologia delle sessioni.",
     "title": "Statistiche",
-    "noData": "Ancora nessun dato. Completa una sessione flashcard o ACAAN per vedere le tue statistiche qui.",
+    "noData": "Ancora nessun dato. Completa una sessione flashcard, ACAAN o spot check per vedere le tue statistiche qui.",
     "totalSessions": "Sessioni totali",
     "totalQuestions": "Domande totali",
     "overallAccuracy": "Precisione complessiva",
