@@ -64,9 +64,9 @@
     "workbox-window": "7.4.0"
   },
   "dependencies": {
-    "@mantine/core": "8.3.15",
-    "@mantine/hooks": "8.3.15",
-    "@mantine/notifications": "8.3.15",
+    "@mantine/core": "8.3.16",
+    "@mantine/hooks": "8.3.16",
+    "@mantine/notifications": "8.3.16",
     "@tabler/icons-react": "3.38.0",
     "i18next": "25.8.14",
     "react": "19.2.4",
