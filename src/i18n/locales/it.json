@@ -80,7 +80,7 @@
     "featureFlashcardTitle": "Flashcard",
     "featureFlashcardDescription": "Allenati sulla memorizzazione carta-numero e numero-carta con sessioni a tempo.",
     "featureAcaanTitle": "ACAAN",
-    "featureAcaanDescription": "Calcola il punto di taglio per gli effetti Any Card At Any Number.",
+    "featureAcaanDescription": "Calcola la profondità di taglio per gli effetti Any Card At Any Number.",
     "featureToolboxTitle": "Strumenti",
     "featureToolboxDescription": "Ricerca nello stack, mescole faro, spelling delle carte e sequenze stay-stack.",
     "featureStatsTitle": "Statistiche",
