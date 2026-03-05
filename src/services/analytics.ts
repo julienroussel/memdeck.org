@@ -2,6 +2,7 @@ import ReactGA from "react-ga4";
 import { type Metric, onCLS, onINP, onLCP } from "web-vitals";
 import type { FlashcardMode, NeighborDirection } from "../types/flashcard";
 import type { SessionConfig, TrainingMode } from "../types/session";
+import type { SpotCheckMode } from "../types/spot-check";
 import { eventBus } from "./event-bus";
 
 const TRACKING_ID = "G-36CZ6GEMKQ";
@@ -46,6 +47,14 @@ const subscribeToEvents = () => {
 
   eventBus.subscribe.ACAAN_ANSWER(({ correct, stackName }) => {
     analytics.trackAcaanAnswer(correct, stackName);
+  });
+
+  eventBus.subscribe.SPOT_CHECK_ANSWER(({ correct, stackName }) => {
+    analytics.trackSpotCheckAnswer(correct, stackName);
+  });
+
+  eventBus.subscribe.SPOT_CHECK_MODE_CHANGED(({ mode }) => {
+    analytics.trackSpotCheckModeChanged(mode);
   });
 
   eventBus.subscribe.SESSION_STARTED(({ mode, config }) => {
@@ -135,6 +144,28 @@ export const analytics = {
       category: "ACAAN",
       action: correct ? "Correct Answer" : "Wrong Answer",
       label: stackName,
+    });
+  },
+
+  trackSpotCheckAnswer: (correct: boolean, stackName: string) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "Spot Check",
+      action: correct ? "Correct Answer" : "Wrong Answer",
+      label: stackName,
+    });
+  },
+
+  trackSpotCheckModeChanged: (mode: SpotCheckMode) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "Spot Check",
+      action: "Mode Changed",
+      label: mode,
     });
   },
 
