@@ -47,6 +47,7 @@
     "tools": "Práctica",
     "flashcard": "Flashcard",
     "acaan": "ACAAN",
+    "spotCheck": "Spot Check",
     "toolbox": "Caja de herramientas",
     "disabledTooltip": "Selecciona un stack primero",
     "about": "Acerca de"
@@ -85,6 +86,8 @@
     "featureToolboxDescription": "Consulta de stack, mezclas faro, deletreo de cartas y secuencias stay-stack.",
     "featureStatsTitle": "Estadísticas",
     "featureStatsDescription": "Sigue tu precisión, rachas e historial de sesiones a lo largo del tiempo.",
+    "featureSpotCheckTitle": "Spot Check",
+    "featureSpotCheckDescription": "Entrena para detectar anomalías — cartas faltantes, intercambiadas o movidas en tu baraja.",
     "quickStart": "Inicio rápido",
     "statsTitle": "Tu progreso",
     "statSessions": "Sesiones",
@@ -128,6 +131,30 @@
     "settingsAriaLabel": "Configuración de ACAAN",
     "cutDepthAriaLabel": "Profundidad de corte",
     "cutDepthPlaceholder": "Profundidad de corte"
+  },
+  "spotCheck": {
+    "pageTitle": "Entrenamiento Spot Check",
+    "pageDescription": "Entrena tu capacidad para detectar anomalías en tu baraja memorizada — cartas faltantes, cartas intercambiadas o cartas movidas.",
+    "title": "Spot Check",
+    "settingsAriaLabel": "Configuración de Spot Check",
+    "modeMissing": "Carta faltante",
+    "modeMissingDescription": "Se retira una carta del mazo. Toca junto al hueco para identificarla.",
+    "modeSwapped": "Cartas intercambiadas",
+    "modeSwappedDescription": "Dos cartas intercambian posiciones. Toca cualquiera de las cartas mal colocadas.",
+    "modeMoved": "Carta movida",
+    "modeMovedDescription": "Una carta se mueve a una posición incorrecta. Encuentra la carta movida.",
+    "modeAriaLabel": "Modo spot check",
+    "identifyMissing": "Toca junto al hueco",
+    "identifySwapped": "Toca cualquiera de las cartas intercambiadas",
+    "identifyMoved": "Toca la carta movida",
+    "correctAnswer": "¡Correcto!",
+    "wrongAnswer": "Incorrecto — inténtalo de nuevo",
+    "timesUp": "¡Se acabó el tiempo!",
+    "movingToNext": "Pasando al siguiente puzzle.",
+    "revealTitle": "Respuesta",
+    "revealMissing": "Faltante: posición {{position}}",
+    "revealSwapped": "Intercambiadas: posiciones {{posA}} y {{posB}}",
+    "revealMoved": "Movida a la posición {{position}}"
   },
   "toolbox": {
     "pageTitle": "Caja de herramientas",
@@ -266,7 +293,16 @@
     "filterPosition": "Posición",
     "filterNeighbor": "Vecino",
     "filterByModeAriaLabel": "Filtrar por modo",
-    "filterBySubModeAriaLabel": "Filtrar por submodo de flashcard"
+    "filterBySubModeAriaLabel": "Filtrar por submodo de flashcard",
+    "modeSpotCheck": "Spot Check",
+    "filterSpotCheck": "Spot Check",
+    "subModeMissing": "Faltante",
+    "subModeSwapped": "Intercambiadas",
+    "subModeMoved": "Movida",
+    "filterMissing": "Faltante",
+    "filterSwapped": "Intercambiadas",
+    "filterMoved": "Movida",
+    "filterBySpotCheckSubModeAriaLabel": "Filtrar por submodo de spot check"
   },
   "resources": {
     "pageTitle": "Recursos",
@@ -332,6 +368,15 @@
       "intro": "ACAAN significa «Any Card At Any Number» — un efecto clásico donde un espectador nombra cualquier carta y cualquier número, y la carta se encuentra exactamente en esa posición en la baraja.",
       "description": "En este modo, se te muestra una carta y una posición objetivo. Tu tarea es calcular la profundidad de corte necesaria para mover la carta a esa posición. Introduce un valor de 0 a 51. El cronómetro y las opciones de sesión funcionan igual que en el modo Flashcard.",
       "link": "Ir al entrenamiento ACAAN"
+    },
+    "spotCheckTraining": {
+      "title": "Entrenamiento Spot Check",
+      "intro": "Entrena tu capacidad para detectar rápidamente anomalías en tu baraja memorizada extendida. Tres modos disponibles:",
+      "missingItem": "<bold>Carta faltante</bold> — se retira una carta; identifica cuál falta",
+      "swappedItem": "<bold>Cartas intercambiadas</bold> — dos cartas intercambian posiciones; toca cualquiera de las cartas mal colocadas",
+      "movedItem": "<bold>Carta movida</bold> — una carta se mueve a un lugar incorrecto; encuentra la carta movida",
+      "settings": "Usa el icono de engranaje para cambiar entre modos y ajustar el temporizador. Inicia una sesión estructurada con el icono de diana.",
+      "link": "Ir al entrenamiento Spot Check"
     },
     "toolbox": {
       "title": "Caja de herramientas",

@@ -47,6 +47,7 @@
     "tools": "Entraînement",
     "flashcard": "Flashcard",
     "acaan": "ACAAN",
+    "spotCheck": "Spot Check",
     "toolbox": "Boîte à outils",
     "disabledTooltip": "Sélectionnez d'abord un stack",
     "about": "À propos"
@@ -85,6 +86,8 @@
     "featureToolboxDescription": "Recherche dans le stack, mélanges faro, épellation de cartes et séquences stay-stack.",
     "featureStatsTitle": "Statistiques",
     "featureStatsDescription": "Suivez votre précision, vos séries et votre historique de sessions au fil du temps.",
+    "featureSpotCheckTitle": "Spot Check",
+    "featureSpotCheckDescription": "Entraînez-vous à repérer les anomalies — cartes manquantes, échangées ou déplacées dans votre jeu.",
     "quickStart": "Démarrage rapide",
     "statsTitle": "Vos progrès",
     "statSessions": "Sessions",
@@ -128,6 +131,30 @@
     "settingsAriaLabel": "Paramètres ACAAN",
     "cutDepthAriaLabel": "Profondeur de coupe",
     "cutDepthPlaceholder": "Profondeur de coupe"
+  },
+  "spotCheck": {
+    "pageTitle": "Entraînement Spot Check",
+    "pageDescription": "Entraînez votre capacité à repérer les anomalies dans votre jeu mémorisé — cartes manquantes, cartes échangées ou cartes déplacées.",
+    "title": "Spot Check",
+    "settingsAriaLabel": "Paramètres Spot Check",
+    "modeMissing": "Carte manquante",
+    "modeMissingDescription": "Une carte est retirée du jeu. Touchez à côté de l'espace vide pour l'identifier.",
+    "modeSwapped": "Cartes échangées",
+    "modeSwappedDescription": "Deux cartes échangent leurs positions. Touchez l'une des cartes mal placées.",
+    "modeMoved": "Carte déplacée",
+    "modeMovedDescription": "Une carte est déplacée à une mauvaise position. Trouvez la carte déplacée.",
+    "modeAriaLabel": "Mode spot check",
+    "identifyMissing": "Touchez à côté de l'espace vide",
+    "identifySwapped": "Touchez l'une des cartes échangées",
+    "identifyMoved": "Touchez la carte déplacée",
+    "correctAnswer": "Correct !",
+    "wrongAnswer": "Faux — réessayez",
+    "timesUp": "Temps écoulé !",
+    "movingToNext": "Passage au puzzle suivant.",
+    "revealTitle": "Réponse",
+    "revealMissing": "Manquante : position {{position}}",
+    "revealSwapped": "Échangées : positions {{posA}} et {{posB}}",
+    "revealMoved": "Déplacée à la position {{position}}"
   },
   "toolbox": {
     "pageTitle": "Boîte à outils",
@@ -266,7 +293,16 @@
     "filterPosition": "Position",
     "filterNeighbor": "Voisin",
     "filterByModeAriaLabel": "Filtrer par mode",
-    "filterBySubModeAriaLabel": "Filtrer par sous-mode de flashcard"
+    "filterBySubModeAriaLabel": "Filtrer par sous-mode de flashcard",
+    "modeSpotCheck": "Spot Check",
+    "filterSpotCheck": "Spot Check",
+    "subModeMissing": "Manquante",
+    "subModeSwapped": "Échangées",
+    "subModeMoved": "Déplacée",
+    "filterMissing": "Manquante",
+    "filterSwapped": "Échangées",
+    "filterMoved": "Déplacée",
+    "filterBySpotCheckSubModeAriaLabel": "Filtrer par sous-mode de spot check"
   },
   "resources": {
     "pageTitle": "Ressources",
@@ -332,6 +368,15 @@
       "intro": "ACAAN signifie « Any Card At Any Number » — un effet classique où un spectateur nomme n'importe quelle carte et n'importe quel numéro, et la carte se trouve exactement à cette position dans le jeu.",
       "description": "Dans ce mode, on vous montre une carte et une position cible. Vous devez calculer la profondeur de coupe nécessaire pour amener la carte à cette position. Entrez une valeur de 0 à 51. Le chronomètre et les options de session fonctionnent comme en mode Flashcard.",
       "link": "Aller à l'entraînement ACAAN"
+    },
+    "spotCheckTraining": {
+      "title": "Entraînement Spot Check",
+      "intro": "Entraînez votre capacité à détecter rapidement les anomalies dans votre jeu mémorisé étalé. Trois modes sont disponibles :",
+      "missingItem": "<bold>Carte manquante</bold> — une carte est retirée ; identifiez laquelle est absente",
+      "swappedItem": "<bold>Cartes échangées</bold> — deux cartes échangent leurs positions ; touchez l'une des cartes mal placées",
+      "movedItem": "<bold>Carte déplacée</bold> — une carte est déplacée à un mauvais endroit ; trouvez la carte déplacée",
+      "settings": "Utilisez l'icône d'engrenage pour changer de mode et ajuster les paramètres du chronomètre. Démarrez une session structurée avec l'icône de cible.",
+      "link": "Aller à l'entraînement Spot Check"
     },
     "toolbox": {
       "title": "Boîte à outils",

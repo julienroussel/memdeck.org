@@ -3,6 +3,7 @@ import {
   IconBook2,
   IconChartBar,
   IconExternalLink,
+  IconEyeSearch,
   IconHome2,
   IconInfoCircle,
   IconNumber,
@@ -80,6 +81,21 @@ export const NavLinks = memo(function NavLinks({
             leftSection={<IconPlayCardStar size={16} stroke={1.5} />}
             onClick={onClick}
             to="/flashcard"
+          />
+        </Tooltip>
+        <Tooltip
+          disabled={!isDisabled}
+          label={disabledTooltip}
+          position="right"
+        >
+          <NavLink
+            active={location.pathname === "/spot-check"}
+            component={Link}
+            disabled={isDisabled}
+            label={t("nav.spotCheck")}
+            leftSection={<IconEyeSearch size={16} stroke={1.5} />}
+            onClick={onClick}
+            to="/spot-check"
           />
         </Tooltip>
         <Tooltip

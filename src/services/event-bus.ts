@@ -1,5 +1,6 @@
 import type { FlashcardMode, NeighborDirection } from "../types/flashcard";
 import type { SessionConfig, TrainingMode } from "../types/session";
+import type { SpotCheckMode } from "../types/spot-check";
 
 type AnalyticsEvents = {
   STACK_SELECTED: { stackName: string };
@@ -7,6 +8,8 @@ type AnalyticsEvents = {
   FLASHCARD_MODE_CHANGED: { mode: FlashcardMode };
   NEIGHBOR_DIRECTION_CHANGED: { direction: NeighborDirection };
   ACAAN_ANSWER: { correct: boolean; stackName: string };
+  SPOT_CHECK_ANSWER: { correct: boolean; stackName: string };
+  SPOT_CHECK_MODE_CHANGED: { mode: SpotCheckMode };
   SESSION_STARTED: { mode: TrainingMode; config: SessionConfig };
   SESSION_COMPLETED: {
     mode: TrainingMode;
@@ -62,6 +65,8 @@ export const eventBus = createEventBus<AnalyticsEvents>([
   "FLASHCARD_MODE_CHANGED",
   "NEIGHBOR_DIRECTION_CHANGED",
   "ACAAN_ANSWER",
+  "SPOT_CHECK_ANSWER",
+  "SPOT_CHECK_MODE_CHANGED",
   "SESSION_STARTED",
   "SESSION_COMPLETED",
 ]);

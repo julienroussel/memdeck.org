@@ -2,6 +2,7 @@ import { Button, SimpleGrid, Space, Stack, Text, Title } from "@mantine/core";
 import {
   IconCards,
   IconChartBar,
+  IconEyeSearch,
   IconTarget,
   IconTools,
 } from "@tabler/icons-react";
@@ -51,7 +52,7 @@ export const HomeWithStack = ({ stackName }: HomeWithStackProps) => {
       <div>
         <Title order={4}>{t("home.quickStart")}</Title>
         <Space h="sm" />
-        <SimpleGrid cols={{ base: 2, sm: 4 }}>
+        <SimpleGrid cols={{ base: 2, sm: 5 }}>
           <Button
             component={Link}
             leftSection={<IconCards aria-hidden="true" size={18} />}
@@ -59,6 +60,15 @@ export const HomeWithStack = ({ stackName }: HomeWithStackProps) => {
             variant="light"
           >
             {t("home.featureFlashcardTitle")}
+          </Button>
+          <Button
+            color="cyan"
+            component={Link}
+            leftSection={<IconEyeSearch aria-hidden="true" size={18} />}
+            to="/spot-check"
+            variant="light"
+          >
+            {t("home.featureSpotCheckTitle")}
           </Button>
           <Button
             color="orange"

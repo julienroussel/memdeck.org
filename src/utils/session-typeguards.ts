@@ -6,6 +6,7 @@ import {
   type StatsKey,
   TRAINING_MODES,
 } from "../types/session";
+import { isSpotCheckMode } from "../types/spot-check";
 import { stacks } from "../types/stacks";
 import { includes } from "./includes";
 
@@ -86,6 +87,17 @@ export const isSessionRecord = (value: unknown): value is SessionRecord => {
   // For acaan mode, flashcardMode should not be present
   if (value.mode === "acaan") {
     if ("flashcardMode" in value && value.flashcardMode !== undefined) {
+      return false;
+    }
+    return true;
+  }
+  // For spotcheck mode, validate spotCheckMode if present
+  if (value.mode === "spotcheck") {
+    if (
+      "spotCheckMode" in value &&
+      value.spotCheckMode !== undefined &&
+      !isSpotCheckMode(value.spotCheckMode)
+    ) {
       return false;
     }
     return true;

@@ -6,6 +6,7 @@ import { AcaanTraining } from "./acaan-training";
 import { FlashcardTraining } from "./flashcard-training";
 import { GettingStarted } from "./getting-started";
 import { ResourcesSection } from "./resources-section";
+import { SpotCheckTraining } from "./spot-check-training";
 import { StatsSection } from "./stats-section";
 import { TipsSection } from "./tips-section";
 import { ToolboxSection } from "./toolbox-section";
@@ -30,6 +31,8 @@ export const Guide = () => {
       <GettingStarted />
       <Space h="xl" />
       <FlashcardTraining />
+      <Space h="xl" />
+      <SpotCheckTraining />
       <Space h="xl" />
       <AcaanTraining />
       <Space h="xl" />

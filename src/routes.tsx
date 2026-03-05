@@ -20,6 +20,11 @@ const Resources = lazyWithReload(() =>
 const Flashcard = lazyWithReload(() =>
   import("./pages/flashcard/flashcard").then((m) => ({ default: m.Flashcard }))
 );
+const SpotCheck = lazyWithReload(() =>
+  import("./pages/spot-check/spot-check").then((m) => ({
+    default: m.SpotCheck,
+  }))
+);
 const Acaan = lazyWithReload(() =>
   import("./pages/acaan/acaan").then((m) => ({ default: m.Acaan }))
 );
@@ -77,6 +82,16 @@ export const Routes = () => (
         </LazyRoute>
       }
       path="/flashcard"
+    />
+    <RouterRoute
+      element={
+        <LazyRoute>
+          <RequireStack>
+            <SpotCheck />
+          </RequireStack>
+        </LazyRoute>
+      }
+      path="/spot-check"
     />
     <RouterRoute
       element={
