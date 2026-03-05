@@ -1,4 +1,5 @@
 import {
+  Group,
   Image,
   NumberInput,
   SegmentedControl,
@@ -15,11 +16,6 @@ import { useFormatCardName } from "./use-format-card-name";
 
 const THUMBNAIL_WIDTH = 40;
 const THUMBNAIL_HEIGHT = Math.round(THUMBNAIL_WIDTH * CARD_ASPECT_RATIO);
-const CARD_CELL_STYLE = {
-  display: "flex",
-  alignItems: "center",
-  gap: 8,
-} as const;
 
 const MIN_COUNT = 0;
 const MAX_COUNT = 52;
@@ -85,14 +81,16 @@ export const FaroShuffle = () => {
           {result.map((card, index) => (
             <Table.Tr key={`${card.rank}-${card.suit}`}>
               <Table.Td>{index + 1}</Table.Td>
-              <Table.Td style={CARD_CELL_STYLE}>
-                <Image
-                  alt=""
-                  h={THUMBNAIL_HEIGHT}
-                  src={card.image}
-                  w={THUMBNAIL_WIDTH}
-                />
-                {formatCardName(card)}
+              <Table.Td>
+                <Group gap={8} wrap="nowrap">
+                  <Image
+                    alt=""
+                    h={THUMBNAIL_HEIGHT}
+                    src={card.image}
+                    w={THUMBNAIL_WIDTH}
+                  />
+                  {formatCardName(card)}
+                </Group>
               </Table.Td>
             </Table.Tr>
           ))}

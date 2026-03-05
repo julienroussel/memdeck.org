@@ -23,9 +23,6 @@ import { LanguagePicker } from "./language-picker";
 const homeLinkStyle: React.CSSProperties = {
   textDecoration: "none",
   color: "inherit",
-  display: "flex",
-  alignItems: "center",
-  gap: "var(--mantine-spacing-sm)",
 };
 
 type HeaderProps = {
@@ -56,7 +53,12 @@ export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
           opened={opened}
           size="sm"
         />
-        <Link style={homeLinkStyle} to="/">
+        <Group
+          gap="sm"
+          renderRoot={(props) => (
+            <Link {...props} style={homeLinkStyle} to="/" />
+          )}
+        >
           <Image
             alt=""
             darkHidden
@@ -78,7 +80,7 @@ export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
           <Text fw={700} tt="uppercase">
             MemDeck
           </Text>
-        </Link>
+        </Group>
       </Group>
       <Group>
         <Help />

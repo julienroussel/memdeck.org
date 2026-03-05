@@ -145,9 +145,9 @@ export const AccuracyChart = ({ history }: AccuracyChartProps) => {
                   <Progress
                     aria-label={tooltipLabel}
                     color={color}
+                    flex={1}
                     radius="sm"
                     size="md"
-                    style={{ flex: 1 }}
                     value={percent}
                   />
                 </Tooltip>
