@@ -80,7 +80,7 @@
     "featureFlashcardTitle": "Flashcard",
     "featureFlashcardDescription": "Entraînez-vous à retrouver le numéro d'une carte et la carte à un numéro donné, avec des sessions chronométrées.",
     "featureAcaanTitle": "ACAAN",
-    "featureAcaanDescription": "Calculez la position de coupe pour les effets Any Card At Any Number.",
+    "featureAcaanDescription": "Calculez la profondeur de coupe pour les effets Any Card At Any Number.",
     "featureToolboxTitle": "Boîte à outils",
     "featureToolboxDescription": "Recherche dans le stack, mélanges faro, épellation de cartes et séquences stay-stack.",
     "featureStatsTitle": "Statistiques",
