@@ -3,12 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { render } from "../../test-utils";
 import { makeSessionRecord } from "../../test-utils/session-factories";
-import {
-  AccuracyChart,
-  getAccuracyColor,
-  isFilter,
-  isFlashcardSubFilter,
-} from "./accuracy-chart";
+import { AccuracyChart, getAccuracyColor } from "./accuracy-chart";
 
 const NO_SESSIONS_MATCH_PATTERN = /no sessions match/i;
 
@@ -29,35 +24,6 @@ describe("getAccuracyColor", () => {
     expect(getAccuracyColor(0)).toBe("red");
     expect(getAccuracyColor(30)).toBe("red");
     expect(getAccuracyColor(49)).toBe("red");
-  });
-});
-
-describe("isFilter", () => {
-  it("returns true for valid filter values", () => {
-    expect(isFilter("all")).toBe(true);
-    expect(isFilter("flashcard")).toBe(true);
-    expect(isFilter("acaan")).toBe(true);
-  });
-
-  it("returns false for invalid filter values", () => {
-    expect(isFilter("invalid")).toBe(false);
-    expect(isFilter("")).toBe(false);
-    expect(isFilter("FLASHCARD")).toBe(false);
-  });
-});
-
-describe("isFlashcardSubFilter", () => {
-  it("returns true for valid sub-filter values", () => {
-    expect(isFlashcardSubFilter("all")).toBe(true);
-    expect(isFlashcardSubFilter("position")).toBe(true);
-    expect(isFlashcardSubFilter("neighbor")).toBe(true);
-  });
-
-  it("returns false for invalid sub-filter values", () => {
-    expect(isFlashcardSubFilter("invalid")).toBe(false);
-    expect(isFlashcardSubFilter("")).toBe(false);
-    expect(isFlashcardSubFilter("cardonly")).toBe(false);
-    expect(isFlashcardSubFilter("POSITION")).toBe(false);
   });
 });
 
@@ -100,11 +66,33 @@ describe("AccuracyChart", () => {
     questionsCompleted: 10,
   });
 
+  const spotCheckMissing = makeSessionRecord({
+    id: "spotcheck-missing",
+    mode: "spotcheck",
+    spotCheckMode: "missing",
+    accuracy: 0.8,
+    successes: 8,
+    fails: 2,
+    questionsCompleted: 10,
+  });
+
+  const spotCheckSwapped = makeSessionRecord({
+    id: "spotcheck-swapped",
+    mode: "spotcheck",
+    spotCheckMode: "swapped",
+    accuracy: 0.6,
+    successes: 6,
+    fails: 4,
+    questionsCompleted: 10,
+  });
+
   const allSessions = [
     neighborSession,
     positionSession,
     legacyFlashcardSession,
     acaanSession,
+    spotCheckMissing,
+    spotCheckSwapped,
   ];
 
   it("renders the sub-filter when filter is set to flashcard", async () => {
@@ -251,6 +239,73 @@ describe("AccuracyChart", () => {
       "aria-label",
       expect.stringContaining("1/25")
     );
+  });
+
+  it("renders the spot check sub-filter when filter is set to spotcheck", async () => {
+    const user = userEvent.setup();
+    render(<AccuracyChart history={allSessions} />);
+
+    const modeFilter = screen.getByRole("radiogroup", {
+      name: "Filter by mode",
+    });
+    await user.click(within(modeFilter).getByText("Spot Check"));
+
+    expect(
+      screen.getByRole("radiogroup", {
+        name: "Filter by spot check sub-mode",
+      })
+    ).toBeInTheDocument();
+  });
+
+  it("shows only missing spot check sessions when sub-filter is set to missing", async () => {
+    const user = userEvent.setup();
+    render(<AccuracyChart history={allSessions} />);
+
+    const modeFilter = screen.getByRole("radiogroup", {
+      name: "Filter by mode",
+    });
+    await user.click(within(modeFilter).getByText("Spot Check"));
+
+    const subFilter = screen.getByRole("radiogroup", {
+      name: "Filter by spot check sub-mode",
+    });
+    await user.click(within(subFilter).getByText("Missing"));
+
+    const progressBars = screen.getAllByRole("progressbar");
+    expect(progressBars).toHaveLength(1);
+    expect(progressBars[0]).toHaveAttribute(
+      "aria-label",
+      expect.stringContaining("8/10")
+    );
+  });
+
+  it("resets both sub-filters when switching between flashcard and spotcheck", async () => {
+    const user = userEvent.setup();
+    render(<AccuracyChart history={allSessions} />);
+
+    const modeFilter = screen.getByRole("radiogroup", {
+      name: "Filter by mode",
+    });
+
+    // Select flashcard → neighbor sub-filter
+    await user.click(within(modeFilter).getByText("Flashcard"));
+    const flashcardSubFilter = screen.getByRole("radiogroup", {
+      name: "Filter by flashcard sub-mode",
+    });
+    await user.click(within(flashcardSubFilter).getByText("Neighbor"));
+
+    // Switch to spotcheck → missing sub-filter
+    await user.click(within(modeFilter).getByText("Spot Check"));
+    const spotCheckSubFilter = screen.getByRole("radiogroup", {
+      name: "Filter by spot check sub-mode",
+    });
+    await user.click(within(spotCheckSubFilter).getByText("Missing"));
+
+    // Switch back to flashcard — flashcard sub-filter should be reset to "all"
+    await user.click(within(modeFilter).getByText("Flashcard"));
+    const progressBars = screen.getAllByRole("progressbar");
+    // All 3 flashcard sessions (neighbor + position + legacy) should show
+    expect(progressBars).toHaveLength(3);
   });
 
   it("resets sub-filter to all when main filter changes away from flashcard", async () => {

@@ -1,16 +1,14 @@
 import { Button, Group, Table, Text, Title } from "@mantine/core";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import type en from "../../i18n/locales/en.json";
-import type { SessionRecord, TrainingMode } from "../../types/session";
+import type { SessionRecord } from "../../types/session";
+import type { SpotCheckMode } from "../../types/spot-check";
 import { stacks } from "../../types/stacks";
 import {
   formatDuration,
   toAccuracyPercent,
 } from "../../utils/session-formatting";
-
-/** Valid i18n keys for stats translations, derived from en.json */
-type StatsI18nKey = `stats.${keyof (typeof en)["stats"] & string}`;
+import { MODE_LABELS, type StatsI18nKey } from "./stats-i18n";
 
 export const PAGE_SIZE = 20;
 
@@ -28,24 +26,28 @@ export const formatDate = (iso: string): string => {
   });
 };
 
-const MODE_LABELS = {
-  flashcard: "stats.modeFlashcard",
-  acaan: "stats.modeAcaan",
-} as const satisfies Record<TrainingMode, StatsI18nKey>;
+const SPOT_CHECK_SUB_MODE_KEYS = {
+  missing: "stats.subModeMissing",
+  swapped: "stats.subModeSwapped",
+  moved: "stats.subModeMoved",
+} as const satisfies Record<SpotCheckMode, StatsI18nKey>;
 
 const formatModeLabel = (
   record: SessionRecord,
   t: (key: StatsI18nKey) => string
 ): string => {
   const baseLabel = t(MODE_LABELS[record.mode]);
-  if (record.mode !== "flashcard" || record.flashcardMode === undefined) {
-    return baseLabel;
+  if (record.mode === "flashcard" && record.flashcardMode !== undefined) {
+    const subMode =
+      record.flashcardMode === "neighbor"
+        ? t("stats.subModeNeighbor")
+        : t("stats.subModePosition");
+    return `${baseLabel} · ${subMode}`;
   }
-  const subMode =
-    record.flashcardMode === "neighbor"
-      ? t("stats.subModeNeighbor")
-      : t("stats.subModePosition");
-  return `${baseLabel} · ${subMode}`;
+  if (record.mode === "spotcheck" && record.spotCheckMode !== undefined) {
+    return `${baseLabel} · ${t(SPOT_CHECK_SUB_MODE_KEYS[record.spotCheckMode])}`;
+  }
+  return baseLabel;
 };
 
 export const StatsHistory = ({ history }: StatsHistoryProps) => {

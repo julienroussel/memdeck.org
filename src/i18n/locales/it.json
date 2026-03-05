@@ -47,6 +47,7 @@
     "tools": "Allenamento",
     "flashcard": "Flashcard",
     "acaan": "ACAAN",
+    "spotCheck": "Spot Check",
     "toolbox": "Strumenti",
     "disabledTooltip": "Seleziona prima uno stack",
     "about": "Info"
@@ -85,6 +86,8 @@
     "featureToolboxDescription": "Ricerca nello stack, mescole faro, spelling delle carte e sequenze stay-stack.",
     "featureStatsTitle": "Statistiche",
     "featureStatsDescription": "Monitora la tua precisione, le serie e la cronologia delle sessioni nel tempo.",
+    "featureSpotCheckTitle": "Spot Check",
+    "featureSpotCheckDescription": "Allenati a individuare anomalie — carte mancanti, scambiate o spostate nel tuo mazzo.",
     "quickStart": "Guida rapida",
     "statsTitle": "I tuoi progressi",
     "statSessions": "Sessioni",
@@ -128,6 +131,30 @@
     "settingsAriaLabel": "Impostazioni ACAAN",
     "cutDepthAriaLabel": "Profondità del taglio",
     "cutDepthPlaceholder": "Profondità del taglio"
+  },
+  "spotCheck": {
+    "pageTitle": "Allenamento Spot Check",
+    "pageDescription": "Allena la tua capacità di individuare anomalie nel tuo mazzo memorizzato — carte mancanti, carte scambiate o carte spostate.",
+    "title": "Spot Check",
+    "settingsAriaLabel": "Impostazioni Spot Check",
+    "modeMissing": "Carta mancante",
+    "modeMissingDescription": "Una carta viene rimossa dal mazzo. Tocca accanto allo spazio vuoto per identificarla.",
+    "modeSwapped": "Carte scambiate",
+    "modeSwappedDescription": "Due carte scambiano posizione. Tocca una delle carte fuori posto.",
+    "modeMoved": "Carta spostata",
+    "modeMovedDescription": "Una carta viene spostata in una posizione sbagliata. Trova la carta spostata.",
+    "modeAriaLabel": "Modalità spot check",
+    "identifyMissing": "Tocca accanto allo spazio vuoto",
+    "identifySwapped": "Tocca una delle carte scambiate",
+    "identifyMoved": "Tocca la carta spostata",
+    "correctAnswer": "Corretto!",
+    "wrongAnswer": "Sbagliato — riprova",
+    "timesUp": "Tempo scaduto!",
+    "movingToNext": "Passaggio al prossimo puzzle.",
+    "revealTitle": "Risposta",
+    "revealMissing": "Mancante: posizione {{position}}",
+    "revealSwapped": "Scambiate: posizioni {{posA}} e {{posB}}",
+    "revealMoved": "Spostata alla posizione {{position}}"
   },
   "toolbox": {
     "pageTitle": "Strumenti",
@@ -266,7 +293,16 @@
     "filterPosition": "Posizione",
     "filterNeighbor": "Vicino",
     "filterByModeAriaLabel": "Filtra per modalità",
-    "filterBySubModeAriaLabel": "Filtra per sotto-modalità flashcard"
+    "filterBySubModeAriaLabel": "Filtra per sotto-modalità flashcard",
+    "modeSpotCheck": "Spot Check",
+    "filterSpotCheck": "Spot Check",
+    "subModeMissing": "Mancante",
+    "subModeSwapped": "Scambiate",
+    "subModeMoved": "Spostata",
+    "filterMissing": "Mancante",
+    "filterSwapped": "Scambiate",
+    "filterMoved": "Spostata",
+    "filterBySpotCheckSubModeAriaLabel": "Filtra per sotto-modalità spot check"
   },
   "resources": {
     "pageTitle": "Risorse",
@@ -332,6 +368,15 @@
       "intro": "ACAAN sta per \"Any Card At Any Number\" — un effetto classico in cui uno spettatore nomina una carta qualsiasi e un numero qualsiasi, e la carta si trova esattamente in quella posizione nel mazzo.",
       "description": "In questa modalità ti vengono mostrati una carta e una posizione obiettivo. Devi calcolare la profondità di taglio necessaria per spostare la carta in quella posizione. Inserisci un valore da 0 a 51. Il timer e le opzioni di sessione funzionano come nella modalità Flashcard.",
       "link": "Vai all'allenamento ACAAN"
+    },
+    "spotCheckTraining": {
+      "title": "Allenamento Spot Check",
+      "intro": "Allena la tua capacità di individuare rapidamente anomalie nel tuo mazzo memorizzato steso. Tre modalità disponibili:",
+      "missingItem": "<bold>Carta mancante</bold> — una carta viene rimossa; identifica quale manca",
+      "swappedItem": "<bold>Carte scambiate</bold> — due carte scambiano posizione; tocca una delle carte fuori posto",
+      "movedItem": "<bold>Carta spostata</bold> — una carta viene spostata in un punto sbagliato; trova la carta spostata",
+      "settings": "Usa l'icona dell'ingranaggio per cambiare modalità e regolare le impostazioni del timer. Avvia una sessione strutturata con l'icona del bersaglio.",
+      "link": "Vai all'allenamento Spot Check"
     },
     "toolbox": {
       "title": "Strumenti",

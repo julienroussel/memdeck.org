@@ -1,9 +1,10 @@
 import type en from "../i18n/locales/en.json";
 import type { FlashcardMode } from "./flashcard";
+import type { SpotCheckMode } from "./spot-check";
 import type { StackKey } from "./stacks";
 
 /** Training mode identifier (extensible for future modes) */
-export const TRAINING_MODES = ["flashcard", "acaan"] as const;
+export const TRAINING_MODES = ["flashcard", "acaan", "spotcheck"] as const;
 export type TrainingMode = (typeof TRAINING_MODES)[number];
 
 /** Session presets for structured sessions */
@@ -16,7 +17,7 @@ export type SessionConfig =
   | { type: "open" };
 
 /** Shared fields for an active session */
-type ActiveSessionBase = {
+export type ActiveSessionBase = {
   id: string;
   stackKey: StackKey;
   config: SessionConfig;
@@ -31,7 +32,8 @@ type ActiveSessionBase = {
 /** Runtime state of an active session */
 export type ActiveSession =
   | (ActiveSessionBase & { mode: "flashcard"; flashcardMode: FlashcardMode })
-  | (ActiveSessionBase & { mode: "acaan" });
+  | (ActiveSessionBase & { mode: "acaan" })
+  | (ActiveSessionBase & { mode: "spotcheck"; spotCheckMode: SpotCheckMode });
 
 /** Shared fields for a persisted session record */
 type SessionRecordBase = {
@@ -51,7 +53,11 @@ type SessionRecordBase = {
 /** Persisted session record (immutable snapshot) */
 export type SessionRecord =
   | (SessionRecordBase & { mode: "flashcard"; flashcardMode?: FlashcardMode })
-  | (SessionRecordBase & { mode: "acaan" });
+  | (SessionRecordBase & { mode: "acaan" })
+  | (SessionRecordBase & {
+      mode: "spotcheck";
+      spotCheckMode?: SpotCheckMode;
+    });
 
 /** Aggregated all-time stats entry */
 export type AllTimeStatsEntry = {

@@ -81,6 +81,26 @@ describe("isSessionRecord", () => {
     };
     expect(isSessionRecord(badRecord)).toBe(false);
   });
+
+  it("returns true for a valid spotcheck record", () => {
+    expect(isSessionRecord(makeRecord({ mode: "spotcheck" }))).toBe(true);
+  });
+
+  it("returns true for a spotcheck record with valid spotCheckMode", () => {
+    const record = {
+      ...makeRecord({ mode: "spotcheck" }),
+      spotCheckMode: "missing",
+    };
+    expect(isSessionRecord(record)).toBe(true);
+  });
+
+  it("returns false for a spotcheck record with invalid spotCheckMode", () => {
+    const record = {
+      ...makeRecord({ mode: "spotcheck" }),
+      spotCheckMode: "invalid",
+    };
+    expect(isSessionRecord(record)).toBe(false);
+  });
 });
 
 describe("isSessionRecordArray", () => {
@@ -106,6 +126,7 @@ describe("isStatsKey", () => {
     expect(isStatsKey("flashcard:mnemonica")).toBe(true);
     expect(isStatsKey("acaan:aronson")).toBe(true);
     expect(isStatsKey("flashcard:particle")).toBe(true);
+    expect(isStatsKey("spotcheck:mnemonica")).toBe(true);
   });
 
   it("returns false for strings without a colon separator", () => {
@@ -119,6 +140,7 @@ describe("isStatsKey", () => {
 
   it("returns false for unknown stack key", () => {
     expect(isStatsKey("flashcard:unknown")).toBe(false);
+    expect(isStatsKey("spotcheck:invalidstack")).toBe(false);
   });
 
   it("returns false for empty strings around separator", () => {

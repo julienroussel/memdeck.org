@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import type {
   ACAAN_TRAINER_TIMER_LSK,
   FLASHCARD_TIMER_LSK,
+  SPOT_CHECK_TIMER_LSK,
 } from "../constants";
 import type { TimerDuration, TimerSettings } from "../types/timer";
 import { useLocalDb } from "../utils/localstorage";
@@ -27,7 +28,8 @@ export type UseTimerSettingsResult = {
 
 type TimerStorageKey =
   | typeof FLASHCARD_TIMER_LSK
-  | typeof ACAAN_TRAINER_TIMER_LSK;
+  | typeof ACAAN_TRAINER_TIMER_LSK
+  | typeof SPOT_CHECK_TIMER_LSK;
 
 /**
  * Generic hook for managing timer settings.

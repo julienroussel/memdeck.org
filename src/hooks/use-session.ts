@@ -3,12 +3,13 @@ import { eventBus } from "../services/event-bus";
 import type { FlashcardMode } from "../types/flashcard";
 import type {
   ActiveSession,
+  ActiveSessionBase,
   AnswerOutcome,
   SessionConfig,
   SessionPhase,
   SessionSummary,
-  TrainingMode,
 } from "../types/session";
+import type { SpotCheckMode } from "../types/spot-check";
 import type { StackKey } from "../types/stacks";
 import { finalizeSession } from "../utils/session-persistence";
 import {
@@ -22,12 +23,21 @@ import { useSessionRecording } from "./use-session-recording";
 
 export type { SessionPhase } from "../types/session";
 
-type UseSessionOptions = {
-  mode: TrainingMode;
+type UseSessionOptionsBase = {
   stackKey: StackKey;
-  flashcardMode?: FlashcardMode;
   autoStart?: boolean;
 };
+
+type UseSessionOptions =
+  | (UseSessionOptionsBase & {
+      mode: "flashcard";
+      flashcardMode?: FlashcardMode;
+    })
+  | (UseSessionOptionsBase & { mode: "acaan" })
+  | (UseSessionOptionsBase & {
+      mode: "spotcheck";
+      spotCheckMode?: SpotCheckMode;
+    });
 
 type UseSessionResult = {
   status: SessionPhase;
@@ -40,12 +50,12 @@ type UseSessionResult = {
   dismissSummary: () => void;
 };
 
-export const useSession = ({
-  mode,
-  stackKey,
-  flashcardMode,
-  autoStart = false,
-}: UseSessionOptions): UseSessionResult => {
+export const useSession = (options: UseSessionOptions): UseSessionResult => {
+  const { mode, stackKey, autoStart = false } = options;
+  const flashcardMode =
+    options.mode === "flashcard" ? options.flashcardMode : undefined;
+  const spotCheckMode =
+    options.mode === "spotcheck" ? options.spotCheckMode : undefined;
   const [status, setStatus] = useState<SessionPhase>({ phase: "idle" });
   const statusRef = useRef(status);
   statusRef.current = status;
@@ -94,7 +104,7 @@ export const useSession = ({
 
       finalizedIdsRef.current.clear();
 
-      const baseSession = {
+      const baseSession: ActiveSessionBase = {
         id: crypto.randomUUID(),
         stackKey,
         config,
@@ -106,18 +116,26 @@ export const useSession = ({
         bestStreak: 0,
       };
 
-      const session: ActiveSession =
-        mode === "flashcard"
-          ? {
-              ...baseSession,
-              mode: "flashcard" as const,
-              flashcardMode: flashcardMode ?? "bothmodes",
-            }
-          : { ...baseSession, mode: "acaan" as const };
+      let session: ActiveSession;
+      if (mode === "flashcard") {
+        session = {
+          ...baseSession,
+          mode: "flashcard" as const,
+          flashcardMode: flashcardMode ?? "bothmodes",
+        };
+      } else if (mode === "spotcheck") {
+        session = {
+          ...baseSession,
+          mode: "spotcheck" as const,
+          spotCheckMode: spotCheckMode ?? "missing",
+        };
+      } else {
+        session = { ...baseSession, mode: "acaan" as const };
+      }
       setStatus({ phase: "active", session });
       eventBus.emit.SESSION_STARTED({ mode, config });
     },
-    [mode, stackKey, flashcardMode, tryFinalizeSession]
+    [mode, stackKey, flashcardMode, spotCheckMode, tryFinalizeSession]
   );
 
   const { recordCorrect, recordIncorrect, recordQuestionAdvanced } =

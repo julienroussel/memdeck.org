@@ -47,6 +47,7 @@
     "tools": "Oefenen",
     "flashcard": "Flashcard",
     "acaan": "ACAAN",
+    "spotCheck": "Spot Check",
     "toolbox": "Gereedschap",
     "disabledTooltip": "Selecteer eerst een stack",
     "about": "Over"
@@ -77,7 +78,7 @@
     "introReturning": "Klaar om te trainen? Start een sessie of verken je tools hieronder.",
     "stackPickerHint": "Geen idee welke? Mnemonica en Aronson zijn populaire beginpunten.",
     "featuresTitle": "Wat je kunt doen",
-    "featureFlashcardTitle": "Flashcards",
+    "featureFlashcardTitle": "Flashcard",
     "featureFlashcardDescription": "Oefen kaart-naar-nummer en nummer-naar-kaart met sessies met timer.",
     "featureAcaanTitle": "ACAAN",
     "featureAcaanDescription": "Bereken coupeerdieptes voor Any Card At Any Number-effecten.",
@@ -85,6 +86,8 @@
     "featureToolboxDescription": "Stack opzoeken, faro shuffles, kaartspelling en stay-stack-sequenties.",
     "featureStatsTitle": "Statistieken",
     "featureStatsDescription": "Volg je nauwkeurigheid, reeksen en sessiegeschiedenis in de tijd.",
+    "featureSpotCheckTitle": "Spot Check",
+    "featureSpotCheckDescription": "Train het herkennen van afwijkingen — ontbrekende, verwisselde of verplaatste kaarten in je spel.",
     "quickStart": "Snel starten",
     "statsTitle": "Jouw voortgang",
     "statSessions": "Sessies",
@@ -128,6 +131,30 @@
     "settingsAriaLabel": "ACAAN-instellingen",
     "cutDepthAriaLabel": "Coupeerdiepte",
     "cutDepthPlaceholder": "Coupeerdiepte"
+  },
+  "spotCheck": {
+    "pageTitle": "Spot Check Training",
+    "pageDescription": "Train je vermogen om afwijkingen in je gememoriseerde kaartspel te herkennen — ontbrekende kaarten, verwisselde kaarten of verplaatste kaarten.",
+    "title": "Spot Check",
+    "settingsAriaLabel": "Spot Check-instellingen",
+    "modeMissing": "Ontbrekende kaart",
+    "modeMissingDescription": "Eén kaart wordt uit het spel verwijderd. Tik naast de lege plek om de kaart te vinden.",
+    "modeSwapped": "Verwisselde kaarten",
+    "modeSwappedDescription": "Twee kaarten wisselen van positie. Tik op een van de verkeerd geplaatste kaarten.",
+    "modeMoved": "Verplaatste kaart",
+    "modeMovedDescription": "Eén kaart wordt naar een verkeerde positie verplaatst. Vind de verplaatste kaart.",
+    "modeAriaLabel": "Spot check-modus",
+    "identifyMissing": "Tik naast de lege plek",
+    "identifySwapped": "Tik op een van de verwisselde kaarten",
+    "identifyMoved": "Tik op de verplaatste kaart",
+    "correctAnswer": "Correct!",
+    "wrongAnswer": "Fout — probeer opnieuw",
+    "timesUp": "Tijd is om!",
+    "movingToNext": "Door naar de volgende puzzel.",
+    "revealTitle": "Antwoord",
+    "revealMissing": "Ontbrekend: positie {{position}}",
+    "revealSwapped": "Verwisseld: posities {{posA}} en {{posB}}",
+    "revealMoved": "Verplaatst naar positie {{position}}"
   },
   "toolbox": {
     "pageTitle": "Gereedschap",
@@ -266,7 +293,16 @@
     "filterPosition": "Positie",
     "filterNeighbor": "Buur",
     "filterByModeAriaLabel": "Filter op modus",
-    "filterBySubModeAriaLabel": "Filter op flashcard-submodus"
+    "filterBySubModeAriaLabel": "Filter op flashcard-submodus",
+    "modeSpotCheck": "Spot Check",
+    "filterSpotCheck": "Spot Check",
+    "subModeMissing": "Ontbrekend",
+    "subModeSwapped": "Verwisseld",
+    "subModeMoved": "Verplaatst",
+    "filterMissing": "Ontbrekend",
+    "filterSwapped": "Verwisseld",
+    "filterMoved": "Verplaatst",
+    "filterBySpotCheckSubModeAriaLabel": "Filter op spot check-submodus"
   },
   "resources": {
     "pageTitle": "Bronnen",
@@ -332,6 +368,15 @@
       "intro": "ACAAN staat voor \"Any Card At Any Number\" — een klassiek effect waarbij een toeschouwer een willekeurige kaart en een willekeurig nummer noemt, en de kaart precies op die positie in het kaartspel wordt gevonden.",
       "description": "In deze modus krijg je een kaart en een doelpositie te zien. Je moet de coupeerdiepte berekenen die nodig is om de kaart naar die positie te verplaatsen. Voer een waarde in van 0 tot 51. Timer- en sessieopties werken hetzelfde als bij Flashcard.",
       "link": "Ga naar ACAAN Training"
+    },
+    "spotCheckTraining": {
+      "title": "Spot Check Training",
+      "intro": "Train je vermogen om snel afwijkingen in je uitgespreide gememoriseerde kaartspel te herkennen. Drie modi beschikbaar:",
+      "missingItem": "<bold>Ontbrekende kaart</bold> — een kaart wordt verwijderd; identificeer welke ontbreekt",
+      "swappedItem": "<bold>Verwisselde kaarten</bold> — twee kaarten wisselen van positie; tik op een van de verkeerd geplaatste kaarten",
+      "movedItem": "<bold>Verplaatste kaart</bold> — een kaart wordt naar een verkeerde plek verplaatst; vind de verplaatste kaart",
+      "settings": "Gebruik het tandwielpictogram om tussen modi te wisselen en timer-instellingen aan te passen. Start een gestructureerde sessie met het doelwitpictogram.",
+      "link": "Ga naar Spot Check Training"
     },
     "toolbox": {
       "title": "Gereedschap",
