@@ -5,7 +5,7 @@ type TimerAction =
   | { type: "TICK" }
   | { type: "RESET_TIMER"; payload: { duration: number } };
 
-type UseGameTimerOptions<TTimeoutAction> = {
+type UseGameTimerOptions<TTimeoutAction extends { type: string }> = {
   timerSettings: TimerSettings;
   timeRemaining: number;
   dispatch: (action: TimerAction | TTimeoutAction) => void;
@@ -23,7 +23,7 @@ type UseGameTimerOptions<TTimeoutAction> = {
  * @param options.createTimeoutAction - Factory function to create the timeout action
  * @param options.onTimeout - Optional callback when timeout occurs (for side effects like notifications)
  */
-export const useGameTimer = <TTimeoutAction>({
+export const useGameTimer = <TTimeoutAction extends { type: string }>({
   timerSettings,
   timeRemaining,
   dispatch,
