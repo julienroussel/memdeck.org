@@ -1,4 +1,5 @@
 import { NavLink, Tooltip } from "@mantine/core";
+import type { TablerIcon } from "@tabler/icons-react";
 import {
   IconBook2,
   IconChartBar,
@@ -10,10 +11,54 @@ import {
   IconPlayCardStar,
   IconTools,
 } from "@tabler/icons-react";
-import { memo } from "react";
+import { type MouseEvent, memo, type ReactNode, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
 import { useSelectedStack } from "../hooks/use-selected-stack";
+
+function DisableableNavLink({
+  isDisabled,
+  disabledTooltip,
+  active,
+  label,
+  icon: Icon,
+  to,
+  onClick,
+}: {
+  isDisabled: boolean;
+  disabledTooltip: string;
+  active: boolean;
+  label: ReactNode;
+  icon: TablerIcon;
+  to: string;
+  onClick: (e: MouseEvent) => void;
+}) {
+  const leftSection = <Icon size={16} stroke={1.5} />;
+
+  return (
+    <Tooltip disabled={!isDisabled} label={disabledTooltip} position="right">
+      {isDisabled ? (
+        <NavLink
+          active={active}
+          aria-disabled={true}
+          disabled={true}
+          label={label}
+          leftSection={leftSection}
+          tabIndex={-1}
+        />
+      ) : (
+        <NavLink
+          active={active}
+          component={Link}
+          label={label}
+          leftSection={leftSection}
+          onClick={onClick}
+          to={to}
+        />
+      )}
+    </Tooltip>
+  );
+}
 
 export const NavLinks = memo(function NavLinks({
   onClick,
@@ -26,6 +71,17 @@ export const NavLinks = memo(function NavLinks({
   const { t } = useTranslation();
 
   const disabledTooltip = t("nav.disabledTooltip");
+
+  const handleDisabledClick = useCallback(
+    (e: MouseEvent) => {
+      if (isDisabled) {
+        e.preventDefault();
+      } else {
+        onClick();
+      }
+    },
+    [isDisabled, onClick]
+  );
 
   return (
     <>
@@ -68,66 +124,42 @@ export const NavLinks = memo(function NavLinks({
         label={t("nav.tools")}
         leftSection={<IconTools size={16} stroke={1.5} />}
       >
-        <Tooltip
-          disabled={!isDisabled}
-          label={disabledTooltip}
-          position="right"
-        >
-          <NavLink
-            active={location.pathname === "/flashcard"}
-            component={Link}
-            disabled={isDisabled}
-            label={t("nav.flashcard")}
-            leftSection={<IconPlayCardStar size={16} stroke={1.5} />}
-            onClick={onClick}
-            to="/flashcard"
-          />
-        </Tooltip>
-        <Tooltip
-          disabled={!isDisabled}
-          label={disabledTooltip}
-          position="right"
-        >
-          <NavLink
-            active={location.pathname === "/spot-check"}
-            component={Link}
-            disabled={isDisabled}
-            label={t("nav.spotCheck")}
-            leftSection={<IconEyeSearch size={16} stroke={1.5} />}
-            onClick={onClick}
-            to="/spot-check"
-          />
-        </Tooltip>
-        <Tooltip
-          disabled={!isDisabled}
-          label={disabledTooltip}
-          position="right"
-        >
-          <NavLink
-            active={location.pathname === "/acaan"}
-            component={Link}
-            disabled={isDisabled}
-            label={t("nav.acaan")}
-            leftSection={<IconNumber size={16} stroke={1.5} />}
-            onClick={onClick}
-            to="/acaan"
-          />
-        </Tooltip>
-        <Tooltip
-          disabled={!isDisabled}
-          label={disabledTooltip}
-          position="right"
-        >
-          <NavLink
-            active={location.pathname === "/toolbox"}
-            component={Link}
-            disabled={isDisabled}
-            label={t("nav.toolbox")}
-            leftSection={<IconTools size={16} stroke={1.5} />}
-            onClick={onClick}
-            to="/toolbox"
-          />
-        </Tooltip>
+        <DisableableNavLink
+          active={location.pathname === "/flashcard"}
+          disabledTooltip={disabledTooltip}
+          icon={IconPlayCardStar}
+          isDisabled={isDisabled}
+          label={t("nav.flashcard")}
+          onClick={handleDisabledClick}
+          to="/flashcard"
+        />
+        <DisableableNavLink
+          active={location.pathname === "/spot-check"}
+          disabledTooltip={disabledTooltip}
+          icon={IconEyeSearch}
+          isDisabled={isDisabled}
+          label={t("nav.spotCheck")}
+          onClick={handleDisabledClick}
+          to="/spot-check"
+        />
+        <DisableableNavLink
+          active={location.pathname === "/acaan"}
+          disabledTooltip={disabledTooltip}
+          icon={IconNumber}
+          isDisabled={isDisabled}
+          label={t("nav.acaan")}
+          onClick={handleDisabledClick}
+          to="/acaan"
+        />
+        <DisableableNavLink
+          active={location.pathname === "/toolbox"}
+          disabledTooltip={disabledTooltip}
+          icon={IconTools}
+          isDisabled={isDisabled}
+          label={t("nav.toolbox")}
+          onClick={handleDisabledClick}
+          to="/toolbox"
+        />
       </NavLink>
 
       <NavLink

@@ -50,7 +50,7 @@ export const HomeWithStack = ({ stackName }: HomeWithStackProps) => {
       </Text>
 
       <div>
-        <Title order={4}>{t("home.quickStart")}</Title>
+        <Title order={3}>{t("home.quickStart")}</Title>
         <Space h="sm" />
         <SimpleGrid cols={{ base: 2, sm: 5 }}>
           <Button
@@ -101,7 +101,7 @@ export const HomeWithStack = ({ stackName }: HomeWithStackProps) => {
       </div>
 
       <div>
-        <Title order={4}>{t("home.statsTitle")}</Title>
+        <Title order={3}>{t("home.statsTitle")}</Title>
         <Space h="sm" />
         {hasStats ? (
           <SimpleGrid cols={{ base: 3, sm: 3 }}>

@@ -1,4 +1,4 @@
-import { ActionIcon, Anchor, Modal, Space, Text, Title } from "@mantine/core";
+import { ActionIcon, Anchor, Modal, Space, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconHelp } from "@tabler/icons-react";
 import { Trans, useTranslation } from "react-i18next";
@@ -20,10 +20,9 @@ export const Help = () => {
         onClose={close}
         opened={opened}
         size="auto"
-        withCloseButton={false}
+        title={t("help.title")}
+        withCloseButton={true}
       >
-        <Title order={1}>{t("help.title")}</Title>
-        <Space h="lg" />
         <Text>{t("help.description")}</Text>
         <Space h="lg" />
         <Text>

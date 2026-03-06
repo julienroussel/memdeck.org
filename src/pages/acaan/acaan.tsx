@@ -1,6 +1,5 @@
 import {
   Button,
-  Center,
   Grid,
   Group,
   Image,
@@ -145,52 +144,49 @@ export const Acaan = () => {
               timerDuration={timerDuration}
             />
           )}
-          <Center>
-            <Group align="center" gap="xl">
-              <Image
-                alt={formatCardName(scenario.card)}
-                className="cardShadow"
-                h={CARD_HEIGHT}
-                src={scenario.card.image}
-                w={CARD_WIDTH}
-              />
-              <Text aria-hidden="true" fw={700} size="xl">
-                →
-              </Text>
-              <NumberCard
-                fontSize={60}
-                number={scenario.targetPosition}
-                width={CARD_WIDTH}
-              />
-            </Group>
-          </Center>
+          <Group align="center" gap="xl" justify="center">
+            <Image
+              alt={formatCardName(scenario.card)}
+              className="cardShadow"
+              h={CARD_HEIGHT}
+              src={scenario.card.image}
+              w={CARD_WIDTH}
+            />
+            <Text aria-hidden="true" fw={700} size="xl">
+              →
+            </Text>
+            <NumberCard
+              fontSize={60}
+              number={scenario.targetPosition}
+              width={CARD_WIDTH}
+            />
+          </Group>
           <Space h="xl" />
-          <Center>
-            <Group gap="md">
-              <NumberInput
-                allowDecimal={false}
-                allowNegative={false}
-                aria-label={t("acaan.cutDepthAriaLabel")}
-                inputMode="numeric"
-                max={MAX_CUT_DEPTH}
-                min={0}
-                onChange={handleCutDepthChange}
-                onKeyDown={handleKeyDown}
-                placeholder={t("acaan.cutDepthPlaceholder")}
-                size="md"
-                value={cutDepth}
-                w={140}
-              />
-              <Button
-                disabled={cutDepth === ""}
-                onClick={handleCheckAnswer}
-                size="md"
-              >
-                {t("common.check")}
-              </Button>
-            </Group>
-          </Center>
+          <Group gap="md" justify="center">
+            <NumberInput
+              allowDecimal={false}
+              allowNegative={false}
+              aria-label={t("acaan.cutDepthAriaLabel")}
+              inputMode="numeric"
+              max={MAX_CUT_DEPTH}
+              min={0}
+              onChange={handleCutDepthChange}
+              onKeyDown={handleKeyDown}
+              placeholder={t("acaan.cutDepthPlaceholder")}
+              size="md"
+              value={cutDepth}
+              w={140}
+            />
+            <Button
+              disabled={cutDepth === ""}
+              onClick={handleCheckAnswer}
+              size="md"
+            >
+              {t("common.check")}
+            </Button>
+          </Group>
         </Grid.Col>
+        <Grid.Col span={12} style={{ height: "100%" }} />
       </Grid>
       {status.phase === "summary" && (
         <SessionSummaryModal

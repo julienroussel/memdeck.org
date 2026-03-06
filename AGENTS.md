@@ -112,6 +112,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Hooks at the top level only**, never conditionally.
 - **Correct dependency arrays** in `useEffect`, `useMemo`, `useCallback`.
 - **Use semantic HTML and ARIA attributes** for accessibility. Prefer `<button>`, `<nav>`, etc. over divs with roles.
+- **Use position-based keys in `CardSpread`** (`spread_${index}`). Data-based keys (e.g., `card_${suit}_${rank}`) cause all DOM nodes to be destroyed and recreated when switching between card and number items, producing visible flicker.
 
 ## Testing Standards
 

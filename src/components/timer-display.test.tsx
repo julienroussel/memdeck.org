@@ -129,6 +129,48 @@ describe("TimerDisplay", () => {
     });
   });
 
+  describe("assertive live region announcements", () => {
+    it("announces time remaining when 5 seconds remain", () => {
+      const { container } = render(
+        <TimerDisplay timeRemaining={5} timerDuration={30} />
+      );
+
+      const liveRegion = container.querySelector('[aria-live="assertive"]');
+      expect(liveRegion).toBeInTheDocument();
+      expect(liveRegion?.textContent).toBe("Time remaining: 5s");
+    });
+
+    it("announces time remaining when 1 second remains", () => {
+      const { container } = render(
+        <TimerDisplay timeRemaining={1} timerDuration={30} />
+      );
+
+      const liveRegion = container.querySelector('[aria-live="assertive"]');
+      expect(liveRegion).toBeInTheDocument();
+      expect(liveRegion?.textContent).toBe("Time remaining: 1s");
+    });
+
+    it("does not announce when time remaining is not at an urgent threshold", () => {
+      const { container } = render(
+        <TimerDisplay timeRemaining={10} timerDuration={30} />
+      );
+
+      const liveRegion = container.querySelector('[aria-live="assertive"]');
+      expect(liveRegion).toBeInTheDocument();
+      expect(liveRegion?.textContent).toBe("");
+    });
+
+    it("does not announce when time remaining is 0", () => {
+      const { container } = render(
+        <TimerDisplay timeRemaining={0} timerDuration={30} />
+      );
+
+      const liveRegion = container.querySelector('[aria-live="assertive"]');
+      expect(liveRegion).toBeInTheDocument();
+      expect(liveRegion?.textContent).toBe("");
+    });
+  });
+
   describe("edge cases", () => {
     it("renders correctly with very large time values", () => {
       render(<TimerDisplay timeRemaining={9999} timerDuration={9999} />);

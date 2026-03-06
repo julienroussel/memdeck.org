@@ -23,6 +23,8 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
     degree = 15,
     hasCursor = false,
   } = props;
+  const onCardClick = isCardsProps(props) ? props.onItemClick : undefined;
+  const onNumberClick = isCardsProps(props) ? undefined : props.onItemClick;
   const [offset, setOffset] = useState(0);
   const touchLastPositionRef = useRef(0);
   const rafRef = useRef<number | null>(null);
@@ -116,65 +118,79 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
     [canMove, items.data.length]
   );
 
-  const renderItems = () => {
-    if (isCardsProps(props)) {
-      return props.items.data.map((item, index) => (
-        <button
-          aria-label={formatCardName(item)}
-          aria-selected={false}
-          className="cardSpreadCard"
-          key={`card_${item.suit}_${item.rank}`}
-          onClick={() => props.onItemClick?.(item, index)}
-          role="option"
-          style={{
-            cursor: hasCursor ? "pointer" : "default",
-            ...cssVarCounterStyle(index, props.items.data.length / 2, offset),
-          }}
-          type="button"
-        >
-          <Image
-            alt={formatCardName(item)}
-            h={SPREAD_CARD_HEIGHT}
-            src={item.image}
-            w={SPREAD_CARD_WIDTH}
-          />
-        </button>
-      ));
-    }
-    return props.items.data.map((item, index) => (
-      <button
-        aria-label={`Select position ${item}`}
-        aria-selected={false}
-        className="cardSpreadCard"
-        key={`number_${item}`}
-        onClick={() => props.onItemClick?.(item, index)}
-        role="option"
-        style={{
-          cursor: hasCursor ? "pointer" : "default",
-          ...cssVarCounterStyle(index, props.items.data.length / 2, offset),
-        }}
-        type="button"
-      >
-        <NumberCard number={item} />
-      </button>
-    ));
-  };
+  const handleCardItemClick = useCallback(
+    (item: CardSpreadCardsProps["items"]["data"][number], index: number) => {
+      onCardClick?.(item, index);
+    },
+    [onCardClick]
+  );
+
+  const handleNumberItemClick = useCallback(
+    (item: number, index: number) => {
+      onNumberClick?.(item, index);
+    },
+    [onNumberClick]
+  );
+
+  // Keys are position-based (not data-based) so that DOM buttons are reused
+  // when switching between card and number items, preventing flicker.
+  const renderedItems =
+    items.type === "cards"
+      ? items.data.map((item, index) => (
+          <button
+            aria-label={formatCardName(item)}
+            className="cardSpreadCard"
+            // biome-ignore lint/suspicious/noArrayIndexKey: Position-based keys prevent DOM flicker when switching card/number items
+            key={`spread_${index}`}
+            onClick={() => handleCardItemClick(item, index)}
+            style={{
+              cursor: hasCursor ? "pointer" : "default",
+              ...cssVarCounterStyle(index, items.data.length / 2, offset),
+            }}
+            type="button"
+          >
+            <Image
+              alt={formatCardName(item)}
+              h={SPREAD_CARD_HEIGHT}
+              src={item.image}
+              w={SPREAD_CARD_WIDTH}
+            />
+          </button>
+        ))
+      : items.data.map((item, index) => (
+          <button
+            aria-label={`Select position ${item}`}
+            className="cardSpreadCard"
+            // biome-ignore lint/suspicious/noArrayIndexKey: Position-based keys prevent DOM flicker when switching card/number items
+            key={`spread_${index}`}
+            onClick={() => handleNumberItemClick(item, index)}
+            style={{
+              cursor: hasCursor ? "pointer" : "default",
+              ...cssVarCounterStyle(index, items.data.length / 2, offset),
+            }}
+            type="button"
+          >
+            <NumberCard number={item} />
+          </button>
+        ));
 
   return (
     <Flex
       align="start"
-      aria-label="Card spread - use arrow keys to navigate"
+      aria-label={
+        canMove ? "Card spread - use arrow keys to navigate" : "Card spread"
+      }
       className="cardSpreadContainer"
       justify="center"
       mih={height}
       onKeyDown={handleKeyDown}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
-      role="listbox"
+      role="group"
       style={{ "--degree": `${degree}deg` }}
       tabIndex={canMove ? 0 : undefined}
     >
-      {renderItems()}
+      {renderedItems}
     </Flex>
   );
 });
