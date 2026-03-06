@@ -13,6 +13,7 @@ import { Notifications } from "@mantine/notifications";
 import { ErrorBoundary } from "react-error-boundary";
 import { BrowserRouter } from "react-router";
 import { App } from "./app";
+import { FocusOnNavigate } from "./components/focus-on-navigate";
 import { LanguageLoadNotifier } from "./components/language-load-notifier";
 import { PwaUpdateNotifier } from "./components/pwa-update-notifier";
 import { analytics } from "./services/analytics";
@@ -67,9 +68,11 @@ const RootErrorFallback = ({ error }: { error: unknown }) => (
       <Text c="dimmed" maw={400} ta="center">
         A critical error occurred. Please refresh the page to continue.
       </Text>
-      <Text c="red" ff="monospace" size="sm">
-        {error instanceof Error ? error.message : String(error)}
-      </Text>
+      {import.meta.env.DEV && (
+        <Text c="red" ff="monospace" size="sm">
+          {error instanceof Error ? error.message : String(error)}
+        </Text>
+      )}
       <Button onClick={() => window.location.reload()} variant="light">
         Refresh Page
       </Button>
@@ -98,6 +101,7 @@ export const Provider = () => {
         <LanguageLoadNotifier />
         <PwaUpdateNotifier />
         <BrowserRouter>
+          <FocusOnNavigate />
           <App />
         </BrowserRouter>
       </MantineProvider>

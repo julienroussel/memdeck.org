@@ -92,47 +92,48 @@ describe("CardSpread", () => {
   });
 
   describe("Accessibility and structure", () => {
-    it("renders a listbox with option roles", () => {
+    it("renders a group container with an accessible label including keyboard hint when movable", () => {
       const cards = [AceOfHearts, TwoOfHearts];
       render(<CardSpread items={cardItems(cards)} />);
 
-      const listbox = screen.getByRole("listbox");
-      expect(listbox).toBeInTheDocument();
-      expect(listbox).toHaveAttribute(
+      const group = screen.getByRole("group");
+      expect(group).toBeInTheDocument();
+      expect(group).toHaveAttribute(
         "aria-label",
         "Card spread - use arrow keys to navigate"
       );
-
-      const options = screen.getAllByRole("option");
-      expect(options).toHaveLength(2);
-
-      for (const option of options) {
-        expect(option).toHaveAttribute("aria-selected", "false");
-      }
     });
 
-    it("when canMove=false, the listbox is not focusable", () => {
+    it("renders a group container with a plain accessible label when canMove is false", () => {
       const cards = [AceOfHearts, TwoOfHearts];
       render(<CardSpread canMove={false} items={cardItems(cards)} />);
 
-      const listbox = screen.getByRole("listbox");
-      expect(listbox).not.toHaveAttribute("tabIndex");
+      const group = screen.getByRole("group");
+      expect(group).toHaveAttribute("aria-label", "Card spread");
     });
 
-    it("when canMove=true, the listbox is focusable", () => {
+    it("when canMove=false, the container is not focusable", () => {
+      const cards = [AceOfHearts, TwoOfHearts];
+      render(<CardSpread canMove={false} items={cardItems(cards)} />);
+
+      const group = screen.getByRole("group");
+      expect(group).not.toHaveAttribute("tabIndex");
+    });
+
+    it("when canMove=true, the container is focusable", () => {
       const cards = [AceOfHearts, TwoOfHearts];
       render(<CardSpread canMove={true} items={cardItems(cards)} />);
 
-      const listbox = screen.getByRole("listbox");
-      expect(listbox).toHaveAttribute("tabIndex", "0");
+      const group = screen.getByRole("group");
+      expect(group).toHaveAttribute("tabIndex", "0");
     });
 
-    it("when canMove is not specified, the listbox is focusable by default", () => {
+    it("when canMove is not specified, the container is focusable by default", () => {
       const cards = [AceOfHearts, TwoOfHearts];
       render(<CardSpread items={cardItems(cards)} />);
 
-      const listbox = screen.getByRole("listbox");
-      expect(listbox).toHaveAttribute("tabIndex", "0");
+      const group = screen.getByRole("group");
+      expect(group).toHaveAttribute("tabIndex", "0");
     });
   });
 
@@ -155,11 +156,11 @@ describe("CardSpread", () => {
       SixOfHearts,
     ];
 
-    const getFirstOption = () => {
-      const options = screen.getAllByRole("option");
-      const first = options[0];
+    const getFirstButton = () => {
+      const buttons = screen.getAllByRole("button");
+      const first = buttons[0];
       if (!first) {
-        throw new Error("Expected at least one option element");
+        throw new Error("Expected at least one button element");
       }
       return first;
     };
@@ -170,12 +171,12 @@ describe("CardSpread", () => {
     it("ArrowRight increases the offset, shifting card CSS positions forward", () => {
       render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
-      const listbox = screen.getByRole("listbox");
-      const firstCard = getFirstOption();
+      const group = screen.getByRole("group");
+      const firstCard = getFirstButton();
 
       expect(getCssVar(firstCard, "--i")).toBe("-2");
 
-      fireEvent.keyDown(listbox, { key: "ArrowRight" });
+      fireEvent.keyDown(group, { key: "ArrowRight" });
 
       expect(getCssVar(firstCard, "--i")).toBe("1");
     });
@@ -183,12 +184,12 @@ describe("CardSpread", () => {
     it("ArrowLeft decreases the offset, shifting card CSS positions backward", () => {
       render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
-      const listbox = screen.getByRole("listbox");
-      const firstCard = getFirstOption();
+      const group = screen.getByRole("group");
+      const firstCard = getFirstButton();
 
       expect(getCssVar(firstCard, "--i")).toBe("-2");
 
-      fireEvent.keyDown(listbox, { key: "ArrowLeft" });
+      fireEvent.keyDown(group, { key: "ArrowLeft" });
 
       expect(getCssVar(firstCard, "--i")).toBe("-5");
     });
@@ -196,42 +197,42 @@ describe("CardSpread", () => {
     it("ArrowRight clamps at the maximum offset and stops changing", () => {
       render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
-      const listbox = screen.getByRole("listbox");
-      const firstCard = getFirstOption();
+      const group = screen.getByRole("group");
+      const firstCard = getFirstButton();
 
       // One press reaches maxOffset (3 === KEYBOARD_STEP for 6 cards).
-      fireEvent.keyDown(listbox, { key: "ArrowRight" });
+      fireEvent.keyDown(group, { key: "ArrowRight" });
       expect(getCssVar(firstCard, "--i")).toBe("1");
 
       // Additional presses should not change the value beyond the boundary.
-      fireEvent.keyDown(listbox, { key: "ArrowRight" });
+      fireEvent.keyDown(group, { key: "ArrowRight" });
       expect(getCssVar(firstCard, "--i")).toBe("1");
     });
 
     it("ArrowLeft clamps at the minimum offset and stops changing", () => {
       render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
-      const listbox = screen.getByRole("listbox");
-      const firstCard = getFirstOption();
+      const group = screen.getByRole("group");
+      const firstCard = getFirstButton();
 
       // One press reaches -maxOffset (-3 === -KEYBOARD_STEP for 6 cards).
-      fireEvent.keyDown(listbox, { key: "ArrowLeft" });
+      fireEvent.keyDown(group, { key: "ArrowLeft" });
       expect(getCssVar(firstCard, "--i")).toBe("-5");
 
       // Additional presses should not change the value beyond the boundary.
-      fireEvent.keyDown(listbox, { key: "ArrowLeft" });
+      fireEvent.keyDown(group, { key: "ArrowLeft" });
       expect(getCssVar(firstCard, "--i")).toBe("-5");
     });
 
     it("ArrowRight then ArrowLeft returns cards to their original positions", () => {
       render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
-      const listbox = screen.getByRole("listbox");
-      const firstCard = getFirstOption();
+      const group = screen.getByRole("group");
+      const firstCard = getFirstButton();
       const initialValue = getCssVar(firstCard, "--i");
 
-      fireEvent.keyDown(listbox, { key: "ArrowRight" });
-      fireEvent.keyDown(listbox, { key: "ArrowLeft" });
+      fireEvent.keyDown(group, { key: "ArrowRight" });
+      fireEvent.keyDown(group, { key: "ArrowLeft" });
 
       expect(getCssVar(firstCard, "--i")).toBe(initialValue);
     });
@@ -239,11 +240,11 @@ describe("CardSpread", () => {
     it("when canMove=false, ArrowRight does not change card positions", () => {
       render(<CardSpread canMove={false} items={cardItems(sixUniqueCards)} />);
 
-      const listbox = screen.getByRole("listbox");
-      const firstCard = getFirstOption();
+      const group = screen.getByRole("group");
+      const firstCard = getFirstButton();
       const initialValue = getCssVar(firstCard, "--i");
 
-      fireEvent.keyDown(listbox, { key: "ArrowRight" });
+      fireEvent.keyDown(group, { key: "ArrowRight" });
 
       expect(getCssVar(firstCard, "--i")).toBe(initialValue);
     });
@@ -251,11 +252,11 @@ describe("CardSpread", () => {
     it("when canMove=false, ArrowLeft does not change card positions", () => {
       render(<CardSpread canMove={false} items={cardItems(sixUniqueCards)} />);
 
-      const listbox = screen.getByRole("listbox");
-      const firstCard = getFirstOption();
+      const group = screen.getByRole("group");
+      const firstCard = getFirstButton();
       const initialValue = getCssVar(firstCard, "--i");
 
-      fireEvent.keyDown(listbox, { key: "ArrowLeft" });
+      fireEvent.keyDown(group, { key: "ArrowLeft" });
 
       expect(getCssVar(firstCard, "--i")).toBe(initialValue);
     });
@@ -263,13 +264,13 @@ describe("CardSpread", () => {
     it("unhandled keys such as Enter, Escape, and Tab do not change card positions", () => {
       render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
-      const listbox = screen.getByRole("listbox");
-      const firstCard = getFirstOption();
+      const group = screen.getByRole("group");
+      const firstCard = getFirstButton();
       const initialValue = getCssVar(firstCard, "--i");
 
-      fireEvent.keyDown(listbox, { key: "Enter" });
-      fireEvent.keyDown(listbox, { key: "Escape" });
-      fireEvent.keyDown(listbox, { key: "Tab" });
+      fireEvent.keyDown(group, { key: "Enter" });
+      fireEvent.keyDown(group, { key: "Escape" });
+      fireEvent.keyDown(group, { key: "Tab" });
 
       expect(getCssVar(firstCard, "--i")).toBe(initialValue);
     });
@@ -279,21 +280,21 @@ describe("CardSpread", () => {
     it("renders empty card array without crashing", () => {
       render(<CardSpread items={cardItems([])} />);
 
-      const listbox = screen.getByRole("listbox");
-      expect(listbox).toBeInTheDocument();
+      const group = screen.getByRole("group");
+      expect(group).toBeInTheDocument();
 
-      const options = screen.queryAllByRole("option");
-      expect(options).toHaveLength(0);
+      const buttons = screen.queryAllByRole("button");
+      expect(buttons).toHaveLength(0);
     });
 
     it("renders empty number array without crashing", () => {
       render(<CardSpread items={numberItems([])} />);
 
-      const listbox = screen.getByRole("listbox");
-      expect(listbox).toBeInTheDocument();
+      const group = screen.getByRole("group");
+      expect(group).toBeInTheDocument();
 
-      const options = screen.queryAllByRole("option");
-      expect(options).toHaveLength(0);
+      const buttons = screen.queryAllByRole("button");
+      expect(buttons).toHaveLength(0);
     });
 
     it("renders single card", () => {
@@ -301,8 +302,8 @@ describe("CardSpread", () => {
       render(<CardSpread items={cardItems(cards)} />);
 
       expect(screen.getByLabelText("Ace of Hearts")).toBeInTheDocument();
-      const options = screen.getAllByRole("option");
-      expect(options).toHaveLength(1);
+      const buttons = screen.getAllByRole("button");
+      expect(buttons).toHaveLength(1);
     });
 
     it("renders single number", () => {
@@ -310,8 +311,8 @@ describe("CardSpread", () => {
       render(<CardSpread items={numberItems(numbers)} />);
 
       expect(screen.getByLabelText("Select position 42")).toBeInTheDocument();
-      const options = screen.getAllByRole("option");
-      expect(options).toHaveLength(1);
+      const buttons = screen.getAllByRole("button");
+      expect(buttons).toHaveLength(1);
     });
 
     it("clicking a card without onItemClick is a no-op", () => {

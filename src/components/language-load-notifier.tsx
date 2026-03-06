@@ -10,6 +10,8 @@ import { languageReady } from "../i18n";
  */
 export const LanguageLoadNotifier = () => {
   const { t } = useTranslation();
+  const tRef = useRef(t);
+  tRef.current = t;
   const notifiedRef = useRef(false);
 
   useEffect(() => {
@@ -18,11 +20,11 @@ export const LanguageLoadNotifier = () => {
         notifiedRef.current = true;
         notifications.show({
           color: "orange",
-          message: t("errors.languageLoadFailed"),
+          message: tRef.current("errors.languageLoadFailed"),
         });
       }
     });
-  }, [t]);
+  }, []);
 
   return null;
 };

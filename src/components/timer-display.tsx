@@ -22,6 +22,7 @@ export const TimerDisplay = memo(function TimerDisplay({
   const timerProgress = calculateTimerProgress(timeRemaining, timerDuration);
   const timerColor = getTimerColor(timeRemaining);
   const { t } = useTranslation();
+  const isUrgent = timeRemaining === 5 || timeRemaining === 1;
 
   return (
     <>
@@ -49,6 +50,9 @@ export const TimerDisplay = memo(function TimerDisplay({
               withAria={false}
             />
           </Progress.Root>
+          <span aria-live="assertive" className="sr-only">
+            {isUrgent ? `${t("timer.timeRemaining")}: ${timeRemaining}s` : ""}
+          </span>
         </div>
       </Center>
       <Space h="lg" />

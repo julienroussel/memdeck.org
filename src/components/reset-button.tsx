@@ -5,7 +5,11 @@ import { useTranslation } from "react-i18next";
 import { analytics } from "../services/analytics";
 
 export const resetApp = async () => {
-  localStorage.clear();
+  try {
+    localStorage.clear();
+  } catch {
+    // localStorage may throw SecurityError in private browsing
+  }
 
   try {
     const registrations = await navigator.serviceWorker.getRegistrations();
