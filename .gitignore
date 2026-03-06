@@ -39,3 +39,6 @@ TODO.txt
 
 # Task/PRD files
 tasks/
+
+# claude code generated artifacts
+.claude/audit-*

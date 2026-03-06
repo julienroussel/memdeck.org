@@ -88,6 +88,22 @@ describe("buildSessionRecord", () => {
     const record = buildSessionRecord(session);
     expect(record.accuracy).toBe(0);
   });
+
+  it("returns a spotcheck record with the selected spot check mode", () => {
+    const session = makeSession({
+      mode: "spotcheck",
+      spotCheckMode: "missing",
+    });
+    const record = buildSessionRecord(session);
+
+    expect(record.mode).toBe("spotcheck");
+    if (record.mode !== "spotcheck") {
+      throw new Error("Expected spotcheck mode");
+    }
+    expect(record.spotCheckMode).toBe("missing");
+    expect(record.stackKey).toBe("mnemonica");
+    expect(typeof record.accuracy).toBe("number");
+  });
 });
 
 describe("saveSessionRecord", () => {
@@ -381,6 +397,29 @@ describe("finalizeSession", () => {
       key: "session.encouragement.greatStart",
     });
     expect(summary.previousAverageAccuracy).toBeNull();
+  });
+
+  it("finalizes a spotcheck session with the correct mode and spotCheckMode", () => {
+    const session = makeSession({
+      mode: "spotcheck",
+      spotCheckMode: "swapped",
+    });
+    const summary = finalizeSession(session);
+
+    expect(summary.record.mode).toBe("spotcheck");
+    if (summary.record.mode !== "spotcheck") {
+      throw new Error("Expected spotcheck mode");
+    }
+    expect(summary.record.spotCheckMode).toBe("swapped");
+
+    const stored = JSON.parse(storage.get(SESSION_HISTORY_LSK) ?? "[]");
+    expect(stored[0].mode).toBe("spotcheck");
+    expect(stored[0].spotCheckMode).toBe("swapped");
+
+    const stats: AllTimeStats = JSON.parse(
+      storage.get(ALL_TIME_STATS_LSK) ?? "{}"
+    );
+    expect(stats["spotcheck:mnemonica"]).toBeDefined();
   });
 
   it("does not fail when localStorage setItem throws", () => {

@@ -14,7 +14,7 @@ describe("isSpotCheckMode", () => {
     expect(isSpotCheckMode("moved")).toBe(true);
   });
 
-  it("returns false for invalid strings", () => {
+  it("returns false for strings that are not valid mode values", () => {
     expect(isSpotCheckMode("invalid")).toBe(false);
     expect(isSpotCheckMode("other")).toBe(false);
   });
@@ -29,7 +29,7 @@ describe("isSpotCheckMode", () => {
     expect(isSpotCheckMode("Moved")).toBe(false);
   });
 
-  it("returns false for numbers", () => {
+  it("returns false for non-string types like numbers", () => {
     expect(isSpotCheckMode(42)).toBe(false);
   });
 

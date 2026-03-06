@@ -23,7 +23,7 @@ describe("toAccuracyPercent", () => {
     expect(toAccuracyPercent(0.754)).toBe(75);
   });
 
-  it("handles very small decimals", () => {
+  it("rounds values below 0.005 down to 0 and 0.005 up to 1", () => {
     expect(toAccuracyPercent(0.001)).toBe(0);
     expect(toAccuracyPercent(0.005)).toBe(1);
   });
@@ -46,7 +46,7 @@ describe("formatDuration", () => {
     expect(formatDuration(150)).toBe("2m 30s");
   });
 
-  it("rounds fractional seconds", () => {
+  it("rounds fractional seconds up to the nearest integer", () => {
     expect(formatDuration(150.7)).toBe("2m 31s");
   });
 
@@ -68,7 +68,7 @@ describe("calculateAccuracy", () => {
     expect(calculateAccuracy(0, 10)).toBe(0);
   });
 
-  it("calculates correct ratio", () => {
+  it("returns the ratio of successes to total attempts", () => {
     expect(calculateAccuracy(3, 1)).toBe(0.75);
   });
 });
