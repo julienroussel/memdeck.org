@@ -50,10 +50,10 @@ const makeState = (overrides: Partial<GameState> = {}): GameState => ({
 });
 
 describe("generateNewCardAndChoices", () => {
-  it("returns an object with card and choices properties", () => {
+  it("returns a card and a non-empty choices array", () => {
     const result = generateNewCardAndChoices(stackOrder);
-    expect(result).toHaveProperty("card");
-    expect(result).toHaveProperty("choices");
+    expect(result.card.index).toBeGreaterThanOrEqual(1);
+    expect(result.choices.length).toBeGreaterThan(0);
   });
 
   it("returns a card with a valid index between 1 and 52", () => {
@@ -62,11 +62,11 @@ describe("generateNewCardAndChoices", () => {
     expect(card.index).toBeLessThanOrEqual(52);
   });
 
-  it("returns a card that has suit, rank, and image properties", () => {
+  it("returns a card with a defined suit, rank, and image", () => {
     const { card } = generateNewCardAndChoices(stackOrder);
-    expect(card.card).toHaveProperty("suit");
-    expect(card.card).toHaveProperty("rank");
-    expect(card.card).toHaveProperty("image");
+    expect(typeof card.card.suit).toBe("string");
+    expect(typeof card.card.rank).toBe("string");
+    expect(typeof card.card.image).toBe("string");
   });
 
   it("returns a choices array with the default count of items", () => {
@@ -83,11 +83,12 @@ describe("generateNewCardAndChoices", () => {
     }
   });
 
-  it("returns choices as an array of PlayingCardPosition objects", () => {
+  it("returns choices where each has a valid card and index", () => {
     const { choices } = generateNewCardAndChoices(stackOrder);
     for (const choice of choices) {
-      expect(choice).toHaveProperty("card");
-      expect(choice).toHaveProperty("index");
+      expect(typeof choice.card.suit).toBe("string");
+      expect(choice.index).toBeGreaterThanOrEqual(1);
+      expect(choice.index).toBeLessThanOrEqual(52);
     }
   });
 
@@ -116,13 +117,13 @@ describe("generateNewCardAndChoices", () => {
 });
 
 describe("generateNeighborCardAndChoices", () => {
-  it("returns question card, answer card, choices, and resolved direction", () => {
+  it("returns a question card, a different answer card, choices, and a resolved direction", () => {
     const result = generateNeighborCardAndChoices(stackOrder, "before");
 
-    expect(result).toHaveProperty("card");
-    expect(result).toHaveProperty("answerCard");
-    expect(result).toHaveProperty("choices");
-    expect(result).toHaveProperty("resolvedDirection");
+    expect(result.card.index).toBeGreaterThanOrEqual(1);
+    expect(result.answerCard.index).toBeGreaterThanOrEqual(1);
+    expect(result.choices.length).toBeGreaterThan(0);
+    expect(["before", "after"]).toContain(result.resolvedDirection);
   });
 
   it("sets answer card to the neighbor of the question card for 'before' direction", () => {
@@ -263,12 +264,11 @@ describe("createInitialState", () => {
     expect(state.display).toBe("card");
   });
 
-  it("includes a valid card with index and card properties", () => {
+  it("assigns a card with a valid deck position between 1 and 52", () => {
     const state = createInitialState({ stackOrder, timerDuration: 30 });
-    expect(state.card).toHaveProperty("index");
-    expect(state.card).toHaveProperty("card");
     expect(state.card.index).toBeGreaterThanOrEqual(1);
     expect(state.card.index).toBeLessThanOrEqual(52);
+    expect(typeof state.card.card.suit).toBe("string");
   });
 
   it("includes a choices array", () => {
@@ -771,16 +771,15 @@ describe("gameReducer", () => {
       expect(next.display).toBe("card");
     });
 
-    it("generates a new card from the provided stack", () => {
+    it("generates a new card with a valid deck position from the provided stack", () => {
       const state = makeState({ successes: 5 });
       const next = gameReducer(state, {
         type: "RESET_GAME",
         payload: { stackOrder, timerDuration: 30 },
       });
-      expect(next.card).toHaveProperty("index");
-      expect(next.card).toHaveProperty("card");
       expect(next.card.index).toBeGreaterThanOrEqual(1);
       expect(next.card.index).toBeLessThanOrEqual(52);
+      expect(typeof next.card.card.suit).toBe("string");
     });
 
     it("generates a choices array from the provided stack", () => {

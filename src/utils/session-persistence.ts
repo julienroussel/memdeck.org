@@ -46,6 +46,14 @@ export const buildSessionRecord = (session: ActiveSession): SessionRecord => {
     };
   }
 
+  if (session.mode === "spotcheck") {
+    return {
+      ...baseRecord,
+      mode: "spotcheck" as const,
+      spotCheckMode: session.spotCheckMode,
+    };
+  }
+
   return { ...baseRecord, mode: "acaan" as const };
 };
 

@@ -12,7 +12,7 @@ describe("statsKey", () => {
     expect(statsKey("flashcard", "mnemonica")).toBe("flashcard:mnemonica");
   });
 
-  it("handles different modes and stacks", () => {
+  it("builds a composite key for any mode and stack combination", () => {
     expect(statsKey("acaan", "aronson")).toBe("acaan:aronson");
   });
 });
@@ -30,7 +30,7 @@ describe("parseStatsKey", () => {
 });
 
 describe("createEmptyStatsEntry", () => {
-  it("returns zeroed-out entry", () => {
+  it("returns an entry with all numeric fields set to zero", () => {
     const entry = createEmptyStatsEntry();
     expect(entry).toEqual({
       totalSessions: 0,
@@ -59,7 +59,7 @@ describe("aggregateStatsEntries", () => {
     expect(result).toEqual(entry);
   });
 
-  it("sums multiple entries", () => {
+  it("sums totals across entries and takes the max globalBestStreak", () => {
     const entries: AllTimeStatsEntry[] = [
       {
         totalSessions: 5,
