@@ -116,6 +116,17 @@ describe("eventBus", () => {
       unsubscribe();
     });
 
+    it("does not deliver past events to a listener that subscribes after emit", () => {
+      eventBus.emit.STACK_SELECTED({ stackName: "Particle" });
+
+      const listener = vi.fn();
+      const unsubscribe = eventBus.subscribe.STACK_SELECTED(listener);
+
+      expect(listener).not.toHaveBeenCalled();
+
+      unsubscribe();
+    });
+
     it("supports subscribing the same listener multiple times without duplication", () => {
       const listener = vi.fn();
       // Set-based listeners means adding the same function reference twice is idempotent

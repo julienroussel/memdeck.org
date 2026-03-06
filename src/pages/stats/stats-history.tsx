@@ -55,6 +55,7 @@ export const StatsHistory = ({ history }: StatsHistoryProps) => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const visibleHistory = history.slice(0, visibleCount);
+  const handleShowMore = () => setVisibleCount((prev) => prev + PAGE_SIZE);
 
   if (history.length === 0) {
     return (
@@ -117,11 +118,7 @@ export const StatsHistory = ({ history }: StatsHistoryProps) => {
       </Table>
       {hasMore && (
         <Group justify="center" mt="sm">
-          <Button
-            onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
-            size="compact-sm"
-            variant="subtle"
-          >
+          <Button onClick={handleShowMore} size="compact-sm" variant="subtle">
             {t("common.showMore")}
           </Button>
         </Group>

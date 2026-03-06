@@ -33,33 +33,42 @@ type EventBus<TEvents extends Record<string, unknown>> = {
  * Channel types are derived from the map values — no manual wiring required.
  */
 function createEventBus<TEvents extends Record<string, unknown>>(
-  eventNames: ReadonlyArray<keyof TEvents>
+  eventNames: readonly [keyof TEvents, ...(keyof TEvents)[]]
 ): EventBus<TEvents> {
-  // Factory pattern: objects are incrementally built in the loop below.
-  // The `as` casts are safe because every key from eventNames is populated before the function returns.
-  const emit = {} as EventBus<TEvents>["emit"];
-  const subscribe = {} as EventBus<TEvents>["subscribe"];
+  const emit: Record<string, unknown> = Object.create(null);
+  const subscribe: Record<string, unknown> = Object.create(null);
 
   for (const name of eventNames) {
     const listeners = new Set<Listener<TEvents[typeof name]>>();
+    const key = String(name);
 
-    emit[name] = (payload: TEvents[typeof name]) => {
+    emit[key] = (payload: TEvents[typeof name]) => {
       for (const listener of listeners) {
         listener(payload);
       }
     };
 
-    subscribe[name] = (listener: Listener<TEvents[typeof name]>) => {
+    subscribe[key] = (listener: Listener<TEvents[typeof name]>) => {
       listeners.add(listener);
       return () => listeners.delete(listener);
     };
   }
 
-  return { emit, subscribe };
+  // `as` justified: emit/subscribe are built dynamically in the loop above, populating
+  // every key from eventNames. TypeScript cannot infer the mapped type from imperative
+  // construction, so the cast is unavoidable at this boundary.
+  return { emit, subscribe } as EventBus<TEvents>;
 }
 
 // Event bus with discriminated method access — full type safety through structure
-export const eventBus = createEventBus<AnalyticsEvents>([
+/** Enforces that a readonly tuple contains every key of T (order-independent) */
+function allEventNames<T extends Record<string, unknown>>() {
+  return <const U extends readonly (keyof T)[]>(
+    names: Exclude<keyof T, U[number]> extends never ? U : never
+  ) => names;
+}
+
+const analyticsEventNames = allEventNames<AnalyticsEvents>()([
   "STACK_SELECTED",
   "FLASHCARD_ANSWER",
   "FLASHCARD_MODE_CHANGED",
@@ -70,3 +79,5 @@ export const eventBus = createEventBus<AnalyticsEvents>([
   "SESSION_STARTED",
   "SESSION_COMPLETED",
 ]);
+
+export const eventBus = createEventBus<AnalyticsEvents>(analyticsEventNames);
