@@ -57,13 +57,7 @@
     "githubAriaLabel": "Github",
     "toggleNav": "Toggle navigation menu",
     "toggleColorScheme": "Toggle color scheme",
-    "helpAriaLabel": "Help",
     "languageAriaLabel": "Language"
-  },
-  "help": {
-    "title": "What is MemDeck?",
-    "description": "MemDeck is your go-to tool for mastering a memorized deck of cards. Whether you're a magician, a memory buff, or simply curious about memorization, MemDeck offers straightforward exercises to train and test your skills.",
-    "githubCta": "Swing by the project's <githubLink>GitHub page</githubLink> if you need help or have a feature request. Just a heads-up: this tool is all about simplicity, and it's a side project built in my spare time."
   },
   "home": {
     "pageTitle": "MemDeck — Mastering memorized deck",
@@ -243,7 +237,11 @@
   },
   "stackPicker": {
     "placeholder": "Please choose a stack",
-    "ariaLabel": "Select memorized deck"
+    "ariaLabel": "Select memorized deck",
+    "label": "Stack"
+  },
+  "languagePicker": {
+    "label": "Language"
   },
   "resetButton": {
     "label": "Reset app",
@@ -408,7 +406,7 @@
       "gearIcon": "In training modes, tap the gear icon to adjust mode and timer settings, or the target icon to start a session.",
       "switchStacks": "Switching stacks doesn't lose your data — progress is tracked per stack.",
       "pwa": "Install MemDeck as an app on your device for offline access.",
-      "language": "Change the display language using the language selector in the header.",
+      "language": "Change the display language using the language selector in the navigation menu.",
       "reset": "Use the reset button in the menu to clear all data and start fresh."
     }
   }

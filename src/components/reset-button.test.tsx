@@ -5,17 +5,19 @@ import { ALL_TIME_STATS_LSK, SESSION_HISTORY_LSK } from "../constants";
 import { render } from "../test-utils";
 import { ResetButton, resetApp, resetSettings } from "./reset-button";
 
+const getResetButton = () => screen.getByRole("button", { name: "Reset app" });
+
 describe("ResetButton", () => {
   it("renders the reset button", () => {
     render(<ResetButton />);
-    expect(screen.getByText("Reset app")).toBeInTheDocument();
+    expect(getResetButton()).toBeInTheDocument();
   });
 
   it("opens a modal with two reset options on click", async () => {
     const user = userEvent.setup();
     render(<ResetButton />);
 
-    await user.click(screen.getByText("Reset app"));
+    await user.click(getResetButton());
 
     expect(
       screen.getByText("Reset app", { selector: ".mantine-Modal-title" })
@@ -56,7 +58,7 @@ describe("ResetButton", () => {
     it("calls resetApp when 'Reset everything' is clicked", async () => {
       const user = userEvent.setup();
       render(<ResetButton />);
-      await user.click(screen.getByText("Reset app"));
+      await user.click(getResetButton());
       await user.click(screen.getByText("Reset everything"));
       await waitFor(() => {
         expect(clearMock).toHaveBeenCalled();
@@ -67,7 +69,7 @@ describe("ResetButton", () => {
     it("calls resetSettings when 'Reset settings' is clicked", async () => {
       const user = userEvent.setup();
       render(<ResetButton />);
-      await user.click(screen.getByText("Reset app"));
+      await user.click(getResetButton());
       await user.click(screen.getByText("Reset settings"));
       await waitFor(() => {
         expect(reloadMock).toHaveBeenCalled();
@@ -77,7 +79,7 @@ describe("ResetButton", () => {
     it("closes the modal when 'Reset everything' is clicked", async () => {
       const user = userEvent.setup();
       render(<ResetButton />);
-      await user.click(screen.getByText("Reset app"));
+      await user.click(getResetButton());
       expect(
         screen.getByText("Choose what to reset. This cannot be undone.")
       ).toBeInTheDocument();
@@ -94,7 +96,7 @@ describe("ResetButton", () => {
     const user = userEvent.setup();
     render(<ResetButton />);
 
-    await user.click(screen.getByText("Reset app"));
+    await user.click(getResetButton());
     expect(
       screen.getByText("Choose what to reset. This cannot be undone.")
     ).toBeInTheDocument();

@@ -2,15 +2,14 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "./styles.css";
 
-import { AppShell, ScrollArea, Text } from "@mantine/core";
+import { AppShell, ScrollArea } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { useCallback, useEffect, useRef } from "react";
 import { useLocation } from "react-router";
 import { ErrorBoundary } from "./components/error-boundary";
 import { Header } from "./components/header";
+import { NavFooter } from "./components/nav-footer";
 import { NavLinks } from "./components/nav-links";
-import { ResetButton } from "./components/reset-button";
-import { StackPicker } from "./components/stack-picker";
 import { useSplashRemoval } from "./hooks/use-splash-removal";
 import { Routes } from "./routes";
 import { analytics } from "./services/analytics";
@@ -78,11 +77,7 @@ export const App = () => {
           <NavLinks onClick={closeMobile} />
         </AppShell.Section>
         <AppShell.Section>
-          <StackPicker />
-          <ResetButton />
-          <Text aria-label="Build version" c="dimmed" size="xs" ta="center">
-            {__COMMIT_HASH__}
-          </Text>
+          <NavFooter />
         </AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main>

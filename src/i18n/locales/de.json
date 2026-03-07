@@ -57,13 +57,7 @@
     "githubAriaLabel": "Github",
     "toggleNav": "Navigationsmenü umschalten",
     "toggleColorScheme": "Farbschema wechseln",
-    "helpAriaLabel": "Hilfe",
     "languageAriaLabel": "Sprache"
-  },
-  "help": {
-    "title": "Was ist MemDeck?",
-    "description": "MemDeck ist dein Werkzeug zum Meistern eines memorierten Kartendecks. Ob Zauberkünstler, Gedächtnisfan oder einfach neugierig — MemDeck bietet unkomplizierte Übungen zum Trainieren und Testen deiner Fähigkeiten.",
-    "githubCta": "Besuche die <githubLink>GitHub-Seite</githubLink> des Projekts, wenn du Hilfe brauchst oder einen Funktionswunsch hast. Kleiner Hinweis: Dieses Tool setzt auf Einfachheit und ist ein Nebenprojekt, das in meiner Freizeit entstanden ist."
   },
   "home": {
     "pageTitle": "MemDeck — Memoriertes Kartendeck meistern",
@@ -243,7 +237,11 @@
   },
   "stackPicker": {
     "placeholder": "Bitte wähle einen Stack",
-    "ariaLabel": "Memoriertes Kartendeck auswählen"
+    "ariaLabel": "Memoriertes Kartendeck auswählen",
+    "label": "Stack"
+  },
+  "languagePicker": {
+    "label": "Sprache"
   },
   "resetButton": {
     "label": "App zurücksetzen",
@@ -408,7 +406,7 @@
       "gearIcon": "Verwende in den Trainingsmodi das Zahnrad-Symbol für Modus- und Timer-Einstellungen oder das Zielscheiben-Symbol zum Starten einer Sitzung.",
       "switchStacks": "Beim Wechseln von Stacks gehen keine Daten verloren — der Fortschritt wird pro Stack verfolgt.",
       "pwa": "Installiere MemDeck als App auf deinem Gerät für Offline-Zugriff.",
-      "language": "Ändere die Anzeigesprache über die Sprachauswahl in der Kopfzeile.",
+      "language": "Ändere die Anzeigesprache über die Sprachauswahl im Navigationsmenü.",
       "reset": "Verwende die Zurücksetzen-Schaltfläche im Menü, um alle Daten zu löschen und neu zu beginnen."
     }
   }

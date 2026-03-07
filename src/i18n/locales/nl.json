@@ -57,13 +57,7 @@
     "githubAriaLabel": "Github",
     "toggleNav": "Navigatiemenu in-/uitklappen",
     "toggleColorScheme": "Kleurthema wisselen",
-    "helpAriaLabel": "Help",
     "languageAriaLabel": "Taal"
-  },
-  "help": {
-    "title": "Wat is MemDeck?",
-    "description": "MemDeck is dé tool om een gememoriseerd kaartspel onder de knie te krijgen. Of je nu goochelaar bent, geheugenliefhebber of gewoon nieuwsgierig — MemDeck biedt eenvoudige oefeningen om je vaardigheden te trainen en te testen.",
-    "githubCta": "Bezoek de <githubLink>GitHub-pagina</githubLink> van het project als je hulp nodig hebt of een functie wilt voorstellen. Ter info: deze tool draait om eenvoud en is een hobbyproject dat in mijn vrije tijd is gebouwd."
   },
   "home": {
     "pageTitle": "MemDeck — Beheers je gememoriseerde kaartspel",
@@ -243,7 +237,11 @@
   },
   "stackPicker": {
     "placeholder": "Kies een stack",
-    "ariaLabel": "Selecteer gememoriseerd kaartspel"
+    "ariaLabel": "Selecteer gememoriseerd kaartspel",
+    "label": "Stack"
+  },
+  "languagePicker": {
+    "label": "Taal"
   },
   "resetButton": {
     "label": "App resetten",
@@ -325,7 +323,7 @@
       "applesauce": "Breidt de Redford-stack uit met nieuwe effecten, ideeën en toepassingen voor stackwerk.",
       "sleightlyOutOfOrder": "Geavanceerde technieken en effecten met een gememoriseerde stack en handvaardigheidstechnieken.",
       "particleSystem": "Nieuw gememoriseerd kaartspel waarmee je naar elke genoemde kaart kunt couperen zonder te kijken, met ingebouwde voordelen en krachtige routines.",
-      "conjuringArchive": "Doorzoekbare inhoud van goochelboeken — de sectie 'Stacked Deck Stuff' catalogiseert referenties over het werken met gememoriseerde kaartspellen."
+      "conjuringArchive": "Doorzoekbare inhoud van goochelboeken — de sectie 'Stacked Deck Stuff' catalogeert referenties naar het werken met gememoriseerde kaartspellen."
     }
   },
   "about": {
@@ -393,7 +391,7 @@
     },
     "stats": {
       "title": "Statistieken",
-      "description": "Volg je voortgang in de tijd. De statistiekenpagina bevat overzichtskaarten, een nauwkeurigheidstrendgrafiek (filterbaar per modus en flashcard-submodus), een uitsplitsing per stack en gepagineerde sessiegeschiedenis. Alle gegevens worden lokaal in je browser opgeslagen.",
+      "description": "Volg je voortgang in de tijd. De statistiekenpagina bevat overzichtstegels, een nauwkeurigheidstrendgrafiek (filterbaar per modus en flashcard-submodus), een uitsplitsing per stack en gepagineerde sessiegeschiedenis. Alle gegevens worden lokaal in je browser opgeslagen.",
       "link": "Bekijk statistieken"
     },
     "resources": {
@@ -408,7 +406,7 @@
       "gearIcon": "Gebruik in trainingsmodi het tandwielpictogram voor modus- en timer-instellingen, of het doelwitpictogram om een sessie te starten.",
       "switchStacks": "Als je van stack wisselt, raak je geen gegevens kwijt — voortgang wordt per stack bijgehouden.",
       "pwa": "Installeer MemDeck als app op je apparaat voor offline toegang.",
-      "language": "Wijzig de weergavetaal via de taalkiezer in de header.",
+      "language": "Wijzig de weergavetaal via de taalkiezer in het navigatiemenu.",
       "reset": "Gebruik de resetknop in het menu om alle gegevens te wissen en opnieuw te beginnen."
     }
   }

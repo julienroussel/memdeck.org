@@ -1,4 +1,4 @@
-import { Button, Modal, Stack, Text } from "@mantine/core";
+import { ActionIcon, Button, Modal, Stack, Text, Tooltip } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconRestore } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
@@ -115,17 +115,16 @@ export const ResetButton = () => {
         </Stack>
       </Modal>
 
-      <Button
-        color="red"
-        fullWidth
-        leftSection={<IconRestore aria-hidden="true" size={16} />}
-        mt="xs"
-        onClick={open}
-        size="compact-sm"
-        variant="subtle"
-      >
-        {t("resetButton.label")}
-      </Button>
+      <Tooltip label={t("resetButton.label")}>
+        <ActionIcon
+          aria-label={t("resetButton.label")}
+          color="red"
+          onClick={open}
+          variant="subtle"
+        >
+          <IconRestore aria-hidden="true" size={16} />
+        </ActionIcon>
+      </Tooltip>
     </>
   );
 };

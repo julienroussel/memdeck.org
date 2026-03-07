@@ -1,4 +1,4 @@
-import { Center, NativeSelect } from "@mantine/core";
+import { NativeSelect } from "@mantine/core";
 import { memo, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelectedStack } from "../hooks/use-selected-stack";
@@ -42,14 +42,12 @@ export const StackPicker = memo(function StackPicker() {
   );
 
   return (
-    <Center>
-      <NativeSelect
-        aria-label={t("stackPicker.ariaLabel")}
-        data={stackSelection}
-        data-testid="stack-picker"
-        onChange={handleChange}
-        value={stackKey}
-      />
-    </Center>
+    <NativeSelect
+      aria-label={t("stackPicker.ariaLabel")}
+      data={stackSelection}
+      data-testid="stack-picker"
+      onChange={handleChange}
+      value={stackKey}
+    />
   );
 });
