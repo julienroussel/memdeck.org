@@ -1,28 +1,29 @@
 import { useRegisterSW } from "virtual:pwa-register/react";
-import { Button } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  COMMIT_HASH_LSK,
+  PWA_UPDATE_COOLDOWN_MS,
+  PWA_UPDATE_TOAST_TIMEOUT,
+  UPDATE_NOTIFIED_AT_LSK,
+} from "../constants";
 import { analytics } from "../services/analytics";
 
 const UPDATE_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
 /**
- * Detects when a new service worker is ready and shows a Mantine notification
- * with a "Reload" button so the user can activate the update.
- * Renders nothing.
+ * Silently auto-updates the service worker and shows a brief "Updated" toast
+ * on the user's next visit when a new version has been applied.
+ * At most one toast per 24 hours. Renders nothing.
  */
 export const PwaUpdateNotifier = () => {
   const { t } = useTranslation();
-  const notifiedRef = useRef(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(
     undefined
   );
 
-  const {
-    needRefresh: [needRefresh],
-    updateServiceWorker,
-  } = useRegisterSW({
+  useRegisterSW({
     immediate: true,
     onRegisteredSW(_swUrl, registration) {
       if (registration) {
@@ -46,31 +47,38 @@ export const PwaUpdateNotifier = () => {
   }, []);
 
   useEffect(() => {
-    if (needRefresh && !notifiedRef.current) {
-      notifiedRef.current = true;
-      analytics.trackFeatureUsed("PWA Update Available");
+    const storedHash = localStorage.getItem(COMMIT_HASH_LSK);
 
-      const handleReload = () => {
-        analytics.trackFeatureUsed("PWA Update Accepted");
-        updateServiceWorker(true);
-      };
-
-      notifications.show({
-        autoClose: false,
-        color: "blue",
-        title: t("pwaUpdate.title"),
-        message: (
-          <>
-            {t("pwaUpdate.message")}{" "}
-            <Button onClick={handleReload} size="compact-sm" variant="subtle">
-              {t("pwaUpdate.reload")}
-            </Button>
-          </>
-        ),
-        withCloseButton: true,
-      });
+    if (!storedHash) {
+      localStorage.setItem(COMMIT_HASH_LSK, __COMMIT_HASH__);
+      return;
     }
-  }, [needRefresh, t, updateServiceWorker]);
+
+    if (storedHash === __COMMIT_HASH__) {
+      return;
+    }
+
+    localStorage.setItem(COMMIT_HASH_LSK, __COMMIT_HASH__);
+
+    const lastNotified = localStorage.getItem(UPDATE_NOTIFIED_AT_LSK);
+    if (lastNotified) {
+      const elapsed = Date.now() - Number(lastNotified);
+      if (elapsed < PWA_UPDATE_COOLDOWN_MS) {
+        return;
+      }
+    }
+
+    localStorage.setItem(UPDATE_NOTIFIED_AT_LSK, String(Date.now()));
+    analytics.trackFeatureUsed("PWA Update Applied");
+
+    notifications.show({
+      color: "teal",
+      autoClose: PWA_UPDATE_TOAST_TIMEOUT,
+      title: t("pwaUpdate.title"),
+      message: t("pwaUpdate.message"),
+      withCloseButton: true,
+    });
+  }, [t]);
 
   return null;
 };

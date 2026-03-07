@@ -256,9 +256,8 @@
     "cancel": "Cancelar"
   },
   "pwaUpdate": {
-    "title": "Atualização disponível",
-    "message": "Uma nova versão do MemDeck está disponível.",
-    "reload": "Recarregar para atualizar"
+    "title": "Atualizado",
+    "message": "MemDeck foi atualizado."
   },
   "errors": {
     "somethingWentWrong": "Algo correu mal",

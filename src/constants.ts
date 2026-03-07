@@ -42,5 +42,10 @@ export const TOOLBOX_SECTIONS_LSK = "memdeck-app-toolbox-sections";
 /** sessionStorage key prefix for tracking chunk reload attempts */
 export const CHUNK_RELOAD_SSK = "memdeck-chunk-reload:";
 
+export const COMMIT_HASH_LSK = "memdeck-app-commit-hash";
+export const UPDATE_NOTIFIED_AT_LSK = "memdeck-app-update-notified-at";
+export const PWA_UPDATE_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+export const PWA_UPDATE_TOAST_TIMEOUT = 5000;
+
 export const SITE_NAME = "MemDeck";
 export const SITE_URL = "https://memdeck.org";
