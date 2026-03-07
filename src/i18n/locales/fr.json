@@ -253,6 +253,17 @@
     "fullResetDescription": "Efface toutes les données, y compris l'historique d'entraînement, les statistiques et les préférences.",
     "cancel": "Annuler"
   },
+  "pwaInstall": {
+    "bannerMessage": "Installez MemDeck pour vous entraîner hors ligne",
+    "install": "Installer",
+    "modalTitle": "Installer MemDeck",
+    "iosStep1": "Appuyez sur le bouton Partager en bas de l'écran",
+    "iosStep2": "Faites défiler et appuyez sur « Sur l'écran d'accueil »",
+    "iosStep3": "Appuyez sur « Ajouter » pour confirmer",
+    "androidStep1": "Appuyez sur le menu (trois points) en haut à droite",
+    "androidStep2": "Appuyez sur « Ajouter à l'écran d'accueil » ou « Installer l'application »",
+    "androidStep3": "Appuyez sur « Installer » pour confirmer"
+  },
   "pwaUpdate": {
     "title": "Mis à jour",
     "message": "MemDeck a été mis à jour."

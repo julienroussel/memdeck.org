@@ -253,6 +253,17 @@
     "fullResetDescription": "Clears all data including training history, statistics, and preferences.",
     "cancel": "Cancel"
   },
+  "pwaInstall": {
+    "bannerMessage": "Install MemDeck for offline practice",
+    "install": "Install",
+    "modalTitle": "Install MemDeck",
+    "iosStep1": "Tap the Share button at the bottom of the screen",
+    "iosStep2": "Scroll down and tap \"Add to Home Screen\"",
+    "iosStep3": "Tap \"Add\" to confirm",
+    "androidStep1": "Tap the menu (three dots) in the top right",
+    "androidStep2": "Tap \"Add to Home Screen\" or \"Install App\"",
+    "androidStep3": "Tap \"Install\" to confirm"
+  },
   "pwaUpdate": {
     "title": "Updated",
     "message": "MemDeck has been updated."

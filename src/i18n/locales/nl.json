@@ -253,6 +253,17 @@
     "fullResetDescription": "Wist alle gegevens inclusief trainingsgeschiedenis, statistieken en voorkeuren.",
     "cancel": "Annuleren"
   },
+  "pwaInstall": {
+    "bannerMessage": "Installeer MemDeck voor offline oefenen",
+    "install": "Installeren",
+    "modalTitle": "MemDeck installeren",
+    "iosStep1": "Tik op de Deel-knop onderaan het scherm",
+    "iosStep2": "Scroll naar beneden en tik op \"Zet op beginscherm\"",
+    "iosStep3": "Tik op \"Voeg toe\" om te bevestigen",
+    "androidStep1": "Tik op het menu (drie puntjes) rechtsboven",
+    "androidStep2": "Tik op \"Toevoegen aan startscherm\" of \"App installeren\"",
+    "androidStep3": "Tik op \"Installeren\" om te bevestigen"
+  },
   "pwaUpdate": {
     "title": "Bijgewerkt",
     "message": "MemDeck is bijgewerkt."

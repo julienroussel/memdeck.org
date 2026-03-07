@@ -2,6 +2,7 @@ import { Anchor, Divider, Group, Text } from "@mantine/core";
 import { IconBrandGithub } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import { GITHUB_URL } from "../constants";
+import { useSelectedStack } from "../hooks/use-selected-stack";
 import { LanguagePicker } from "./language-picker";
 import { ResetButton } from "./reset-button";
 import { StackPicker } from "./stack-picker";
@@ -10,11 +11,21 @@ const commitHashStyle: React.CSSProperties = { fontFamily: "monospace" };
 
 export const NavFooter = () => {
   const { t } = useTranslation();
+  const { stackKey } = useSelectedStack();
+  const hasStack = stackKey !== "";
 
   return (
     <>
-      <Divider label={t("stackPicker.label")} labelPosition="center" mb="xs" />
-      <StackPicker />
+      {hasStack && (
+        <>
+          <Divider
+            label={t("stackPicker.label")}
+            labelPosition="center"
+            mb="xs"
+          />
+          <StackPicker />
+        </>
+      )}
       <Divider
         label={t("languagePicker.label")}
         labelPosition="center"
