@@ -1,0 +1,44 @@
+# MemDeck
+
+> MemDeck is a free, open-source memorized deck trainer for magicians and memory enthusiasts. It helps users master famous memorized deck systems through flashcard exercises, spot checks, ACAAN practice, and deck utilities. Available as a PWA that works offline, in 7 languages, with no account required.
+
+MemDeck is designed for card magicians who use memorized stacks (also known as memorized decks or mem-decks). A memorized stack is a specific, pre-arranged order of all 52 cards that a magician commits to memory, enabling powerful card effects. MemDeck provides interactive training tools to help memorize and maintain recall of these systems.
+
+All training data stays on the user's device via localStorage. No server, no sign-up. Uses Google Analytics for anonymous usage metrics.
+
+## Features
+
+- [Flashcard Training](https://memdeck.org/flashcard): Practice recalling cards by position, position by card, or both. Includes neighbor mode for learning adjacent cards in the stack.
+- [Spot Check](https://memdeck.org/spot-check): Test your knowledge by identifying missing, swapped, or moved cards in the deck.
+- [ACAAN Calculator](https://memdeck.org/acaan): Practice Any Card At Any Number calculations with your memorized stack.
+- [Toolbox](https://memdeck.org/toolbox): Stack lookup, faro shuffle simulator, card spelling tool, and stay stack sequence finder.
+- [Stats](https://memdeck.org/stats): Track session history, accuracy, and progress over time.
+- [Guide](https://memdeck.org/guide): Getting started instructions and training tips.
+- [Resources](https://memdeck.org/resources): Curated books, PDFs, and links for memorized deck study.
+
+## Supported Stacks
+
+- Tamariz (Mnemonica) by Juan Tamariz
+- Aronson by Simon Aronson
+- Memorandum by Woody Aragon
+- Redford Stack by Patrick Redford
+- Particle System by Joshua Jay
+- Elephant by Pierre Boc & Yves Meret
+
+## Technical Details
+
+- Progressive Web App (PWA) with full offline support
+- No backend or account required - runs entirely in the browser
+- Data persisted in localStorage on the user's device
+- Built with React, TypeScript, Mantine UI, and Vite
+- Open source: https://github.com/julienroussel/memdeck.org
+
+## Languages
+
+English, French (Francais), Spanish (Espanol), German (Deutsch), Italian (Italiano), Dutch (Nederlands), Portuguese (Portugues)
+
+## Optional
+
+- [GitHub Repository](https://github.com/julienroussel/memdeck.org)
+- [Resources & Recommended Reading](https://memdeck.org/resources)
+- [llms-full.txt](https://memdeck.org/llms-full.txt): Expanded version of this file with full details
