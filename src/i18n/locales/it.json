@@ -57,13 +57,7 @@
     "githubAriaLabel": "Github",
     "toggleNav": "Apri/chiudi il menu di navigazione",
     "toggleColorScheme": "Cambia il tema colore",
-    "helpAriaLabel": "Aiuto",
     "languageAriaLabel": "Lingua"
-  },
-  "help": {
-    "title": "Cos'è MemDeck?",
-    "description": "MemDeck è lo strumento ideale per padroneggiare un mazzo di carte memorizzato. Che tu sia un mago, un appassionato di memoria o semplicemente curioso, MemDeck offre esercizi semplici per allenarti e testare le tue abilità.",
-    "githubCta": "Fai un salto sulla <githubLink>pagina GitHub</githubLink> del progetto se hai bisogno di aiuto o vuoi proporre una funzionalità. Tieni presente che questo strumento punta alla semplicità ed è un progetto personale sviluppato nel tempo libero."
   },
   "home": {
     "pageTitle": "MemDeck — Padroneggia il mazzo memorizzato",
@@ -80,7 +74,7 @@
     "stackPickerHint": "Non sai quale scegliere? Mnemonica e Aronson sono ottimi punti di partenza.",
     "featuresTitle": "Cosa puoi fare",
     "featureFlashcardTitle": "Flashcard",
-    "featureFlashcardDescription": "Allenati sulla memorizzazione carta-numero e numero-carta con sessioni a tempo.",
+    "featureFlashcardDescription": "Allenati sul richiamo carta-numero e numero-carta con sessioni a tempo.",
     "featureAcaanTitle": "ACAAN",
     "featureAcaanDescription": "Calcola la profondità di taglio per gli effetti Any Card At Any Number.",
     "featureToolboxTitle": "Strumenti",
@@ -243,7 +237,11 @@
   },
   "stackPicker": {
     "placeholder": "Scegli uno stack",
-    "ariaLabel": "Seleziona mazzo memorizzato"
+    "ariaLabel": "Seleziona mazzo memorizzato",
+    "label": "Stack"
+  },
+  "languagePicker": {
+    "label": "Lingua"
   },
   "resetButton": {
     "label": "Ripristina app",
@@ -267,7 +265,7 @@
     "pageTitle": "Statistiche",
     "pageDescription": "Monitora i tuoi progressi con grafici di precisione e cronologia delle sessioni.",
     "title": "Statistiche",
-    "noData": "Ancora nessun dato. Completa una sessione flashcard, ACAAN o spot check per vedere le tue statistiche qui.",
+    "noData": "Ancora nessun dato. Completa una sessione Flashcard, ACAAN o Spot Check per vedere le tue statistiche qui.",
     "totalSessions": "Sessioni totali",
     "totalQuestions": "Domande totali",
     "overallAccuracy": "Precisione complessiva",
@@ -283,7 +281,7 @@
     "score": "Punteggio",
     "noSessions": "Nessuna sessione registrata.",
     "accuracyTrend": "Andamento della precisione",
-    "filterAll": "Tutti",
+    "filterAll": "Tutte",
     "filterFlashcard": "Flashcard",
     "filterAcaan": "ACAAN",
     "noFilterMatch": "Nessuna sessione corrisponde a questo filtro.",
@@ -408,7 +406,7 @@
       "gearIcon": "Nelle modalità di allenamento, tocca l'icona dell'ingranaggio per le impostazioni di modalità e timer, o l'icona del bersaglio per iniziare una sessione.",
       "switchStacks": "Cambiare stack non fa perdere i tuoi dati — i progressi sono monitorati per stack.",
       "pwa": "Installa MemDeck come app sul tuo dispositivo per l'accesso offline.",
-      "language": "Cambia la lingua di visualizzazione usando il selettore di lingua nella barra in alto.",
+      "language": "Cambia la lingua di visualizzazione usando il selettore di lingua nel menu di navigazione.",
       "reset": "Usa il pulsante di ripristino nel menu per cancellare tutti i dati e ricominciare da zero."
     }
   }

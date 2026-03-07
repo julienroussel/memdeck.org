@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   Burger,
   Group,
   Image,
@@ -7,7 +6,7 @@ import {
   Text,
   useMantineColorScheme,
 } from "@mantine/core";
-import { IconBrandGithub, IconMoonStars, IconSun } from "@tabler/icons-react";
+import { IconMoonStars, IconSun } from "@tabler/icons-react";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -15,10 +14,7 @@ import { Link } from "react-router";
 import memdeckDarkLogo from "/memdeck-black.webp";
 // eslint-disable-next-line import/no-unresolved
 import memdeckLightLogo from "/memdeck-white.webp";
-import { GITHUB_URL } from "../constants";
 import { analytics } from "../services/analytics";
-import { Help } from "./help";
-import { LanguagePicker } from "./language-picker";
 
 const homeLinkStyle: React.CSSProperties = {
   textDecoration: "none",
@@ -83,20 +79,6 @@ export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
         </Group>
       </Group>
       <Group>
-        <Help />
-        <LanguagePicker />
-        <ActionIcon
-          aria-label={t("header.githubAriaLabel")}
-          color="gray"
-          component="a"
-          href={GITHUB_URL}
-          rel="noopener"
-          target="_blank"
-          variant="subtle"
-          visibleFrom="sm"
-        >
-          <IconBrandGithub />
-        </ActionIcon>
         <Switch
           aria-label={t("header.toggleColorScheme")}
           checked={colorScheme === "light"}

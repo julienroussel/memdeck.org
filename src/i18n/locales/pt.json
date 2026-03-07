@@ -14,7 +14,7 @@
     "questions": "Perguntas",
     "duration": "Duração",
     "revealAriaLabel": "Revelar resposta",
-    "moreColumnsOnWiderScreen": "Detalhes adicionais estão disponíveis em telas mais largas."
+    "moreColumnsOnWiderScreen": "Detalhes adicionais estão disponíveis em ecrãs mais largos."
   },
   "cards": {
     "ranks": {
@@ -57,13 +57,7 @@
     "githubAriaLabel": "Github",
     "toggleNav": "Alternar menu de navegação",
     "toggleColorScheme": "Alternar esquema de cores",
-    "helpAriaLabel": "Ajuda",
     "languageAriaLabel": "Idioma"
-  },
-  "help": {
-    "title": "O que é o MemDeck?",
-    "description": "MemDeck é a sua ferramenta ideal para dominar um baralho memorizado. Quer seja mágico, entusiasta de memória ou simplesmente curioso sobre memorização, o MemDeck oferece exercícios diretos para treinar e testar as suas capacidades.",
-    "githubCta": "Visite a <githubLink>página do GitHub</githubLink> do projeto se precisar de ajuda ou quiser sugerir uma funcionalidade. Nota: esta ferramenta aposta na simplicidade e é um projeto pessoal desenvolvido no meu tempo livre."
   },
   "home": {
     "pageTitle": "MemDeck — Domine o baralho memorizado",
@@ -101,7 +95,7 @@
     "pageTitle": "Treino Flashcard",
     "pageDescription": "Pratique o seu baralho memorizado com exercícios interativos de flashcard. Treine carta para número, número para carta, ou ambos.",
     "title": "Flashcard",
-    "settingsAriaLabel": "Configurações do Flashcard",
+    "settingsAriaLabel": "Definições do Flashcard",
     "modePosition": "Posição",
     "modeNeighbor": "Vizinho",
     "subModeCard": "Carta",
@@ -129,7 +123,7 @@
     "pageTitle": "Treino ACAAN",
     "pageDescription": "Pratique cálculos de ACAAN para o seu stack memorizado.",
     "title": "ACAAN",
-    "settingsAriaLabel": "Configurações do ACAAN",
+    "settingsAriaLabel": "Definições do ACAAN",
     "cutDepthAriaLabel": "Profundidade de corte",
     "cutDepthPlaceholder": "Profundidade de corte"
   },
@@ -137,7 +131,7 @@
     "pageTitle": "Treino Spot Check",
     "pageDescription": "Treine a sua capacidade de detetar anomalias no seu baralho memorizado — cartas em falta, cartas trocadas ou cartas movidas.",
     "title": "Spot Check",
-    "settingsAriaLabel": "Configurações do Spot Check",
+    "settingsAriaLabel": "Definições do Spot Check",
     "modeMissing": "Carta em falta",
     "modeMissingDescription": "Uma carta é removida do baralho. Toque junto ao espaço vazio para a identificar.",
     "modeSwapped": "Cartas trocadas",
@@ -151,9 +145,9 @@
     "correctAnswer": "Correto!",
     "wrongAnswer": "Errado — tente novamente",
     "timesUp": "Tempo esgotado!",
-    "movingToNext": "Passando para o próximo puzzle.",
+    "movingToNext": "A passar para o próximo desafio.",
     "revealTitle": "Resposta",
-    "revealMissing": "Faltando: posição {{position}}",
+    "revealMissing": "Em falta: posição {{position}}",
     "revealSwapped": "Trocadas: posições {{posA}} e {{posB}}",
     "revealMoved": "Movida para a posição {{position}}"
   },
@@ -243,7 +237,11 @@
   },
   "stackPicker": {
     "placeholder": "Escolha um stack",
-    "ariaLabel": "Selecionar baralho memorizado"
+    "ariaLabel": "Selecionar baralho memorizado",
+    "label": "Stack"
+  },
+  "languagePicker": {
+    "label": "Idioma"
   },
   "resetButton": {
     "label": "Repor aplicação",
@@ -257,7 +255,7 @@
   },
   "pwaUpdate": {
     "title": "Atualizado",
-    "message": "MemDeck foi atualizado."
+    "message": "O MemDeck foi atualizado."
   },
   "errors": {
     "somethingWentWrong": "Algo correu mal",
@@ -408,7 +406,7 @@
       "gearIcon": "Nos modos de treino, toque no ícone de engrenagem para ajustar as definições de modo e temporizador, ou no ícone de alvo para iniciar uma sessão.",
       "switchStacks": "Mudar de stack não apaga os seus dados — o progresso é acompanhado por stack.",
       "pwa": "Instale o MemDeck como app no seu dispositivo para acesso offline.",
-      "language": "Mude o idioma de exibição usando o seletor de idioma no cabeçalho.",
+      "language": "Mude o idioma de exibição usando o seletor de idioma no menu de navegação.",
       "reset": "Use o botão de repor no menu para apagar todos os dados e começar de novo."
     }
   }

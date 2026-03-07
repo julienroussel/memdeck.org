@@ -57,18 +57,12 @@
     "githubAriaLabel": "Github",
     "toggleNav": "Alternar menú de navegación",
     "toggleColorScheme": "Alternar esquema de colores",
-    "helpAriaLabel": "Ayuda",
     "languageAriaLabel": "Idioma"
-  },
-  "help": {
-    "title": "¿Qué es MemDeck?",
-    "description": "MemDeck es tu herramienta para dominar una baraja memorizada. Ya seas mago, entusiasta de la memoria o simplemente tengas curiosidad por la memorización, MemDeck ofrece ejercicios sencillos para entrenar y poner a prueba tus habilidades.",
-    "githubCta": "Pásate por la <githubLink>página de GitHub</githubLink> del proyecto si necesitas ayuda o quieres sugerir una funcionalidad. Aviso: esta herramienta apuesta por la simplicidad y es un proyecto personal desarrollado en mi tiempo libre."
   },
   "home": {
     "pageTitle": "MemDeck — Domina tu baraja memorizada",
     "pageDescription": "Herramienta online gratuita para dominar sistemas de barajas memorizadas como Mnemonica, Aronson, Memorandum, Redford, Particle y Elephant.",
-    "welcome": "Bienvenido a MemDeck",
+    "welcome": "Te damos la bienvenida a MemDeck",
     "intro": "Espero que estas herramientas te ayuden a mejorar tu aprendizaje del stack. Consulta la <guideLink>guía</guideLink> para un recorrido por todo lo que MemDeck ofrece. ¿Necesitas ayuda o echas algo en falta? ¡Escríbeme en <githubLink>Github</githubLink>!",
     "firstTimer": "¡Hola, bienvenido! Elige tu stack favorito abajo para desbloquear todas las funcionalidades. Puedes cambiarlo en cualquier momento usando el selector en la parte inferior del menú.",
     "guideCardTitle": "¿Nuevo aquí? Lee la Guía",
@@ -76,7 +70,7 @@
     "selectedStack": "Tu stack seleccionado es <bold>{{stackName}}</bold>",
     "whatIsMemdeck": "Una baraja memorizada es una baraja completa en un orden concreto que te aprendes de memoria — la clave para efectos de magia poderosos y proezas mentales sorprendentes.",
     "introNew": "MemDeck te ayuda a dominar tu baraja memorizada con ejercicios de flashcard, práctica de ACAAN y utilidades prácticas. Elige un stack abajo para empezar — es gratis y funciona completamente en tu navegador.",
-    "introReturning": "¿Listo para entrenar? Empieza una sesión o explora tus herramientas abajo.",
+    "introReturning": "¿Todo listo para entrenar? Empieza una sesión o explora tus herramientas abajo.",
     "stackPickerHint": "¿No sabes cuál elegir? Mnemonica y Aronson son los más populares para empezar.",
     "featuresTitle": "Qué puedes hacer",
     "featureFlashcardTitle": "Flashcard",
@@ -182,7 +176,7 @@
       "card": "Carta"
     },
     "spelling": {
-      "title": "Deletreo de carta",
+      "title": "Deletreo de cartas",
       "description": "Mira cuántas letras tiene el nombre de cada carta y dónde cae el deletreo en tu stack.",
       "position": "#",
       "card": "Carta",
@@ -242,8 +236,12 @@
     "ariaLabel": "Posición {{number}}"
   },
   "stackPicker": {
-    "placeholder": "Por favor elige un stack",
-    "ariaLabel": "Seleccionar baraja memorizada"
+    "placeholder": "Elige un stack",
+    "ariaLabel": "Seleccionar baraja memorizada",
+    "label": "Stack"
+  },
+  "languagePicker": {
+    "label": "Idioma"
   },
   "resetButton": {
     "label": "Restablecer app",
@@ -387,7 +385,7 @@
       "description": "Una colección de utilidades para el análisis de stack y la preparación de actuaciones. La caja de herramientas incluye:",
       "lookupItem": "<bold>Consulta de stack</bold> — busca en tu stack por nombre de carta o número de posición",
       "faroItem": "<bold>Mezcla Faro</bold> — observa el efecto de mezclas faro perfectas en el orden de tu stack",
-      "spellingItem": "<bold>Deletreo de carta</bold> — mira cuántas letras tiene el nombre de cada carta y dónde cae el deletreo en tu stack",
+      "spellingItem": "<bold>Deletreo de cartas</bold> — mira cuántas letras tiene el nombre de cada carta y dónde cae el deletreo en tu stack",
       "sequencesItem": "<bold>Secuencias Stay Stack</bold> — visualiza las secuencias cíclicas formadas al repartir cada N-ésima carta",
       "link": "Ir a la caja de herramientas"
     },
@@ -408,7 +406,7 @@
       "gearIcon": "En los modos de entrenamiento, pulsa el icono de engranaje para ajustar el modo y el temporizador, o el icono de diana para iniciar una sesión.",
       "switchStacks": "Cambiar de stack no pierde tus datos — el progreso se registra por stack.",
       "pwa": "Instala MemDeck como app en tu dispositivo para acceso sin conexión.",
-      "language": "Cambia el idioma usando el selector de idioma en la cabecera.",
+      "language": "Cambia el idioma usando el selector de idioma en el menú de navegación.",
       "reset": "Usa el botón de restablecer en el menú para borrar todos los datos y empezar de nuevo."
     }
   }

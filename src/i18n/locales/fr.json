@@ -57,13 +57,7 @@
     "githubAriaLabel": "Github",
     "toggleNav": "Afficher/masquer le menu de navigation",
     "toggleColorScheme": "Changer le thème de couleur",
-    "helpAriaLabel": "Aide",
     "languageAriaLabel": "Langue"
-  },
-  "help": {
-    "title": "Qu'est-ce que MemDeck ?",
-    "description": "MemDeck est votre outil de référence pour maîtriser un jeu de cartes mémorisé. Que vous soyez magicien, passionné de mémoire ou simplement curieux, MemDeck propose des exercices simples pour entraîner et tester vos connaissances.",
-    "githubCta": "Faites un tour sur la <githubLink>page GitHub</githubLink> du projet si vous avez besoin d'aide ou souhaitez proposer une fonctionnalité. Petit rappel : cet outil privilégie la simplicité, et c'est un projet personnel développé sur mon temps libre."
   },
   "home": {
     "pageTitle": "MemDeck — Maîtrisez votre jeu mémorisé",
@@ -162,7 +156,7 @@
     "pageDescription": "Utilitaires pour l'analyse de stack, la recherche de cartes et la préparation de performances.",
     "title": "Boîte à outils",
     "lookup": {
-      "title": "Recherche de stack",
+      "title": "Recherche dans le stack",
       "description": "Recherchez dans votre stack par nom de carte ou numéro de position.",
       "searchPlaceholder": "Rechercher par carte ou position...",
       "searchAriaLabel": "Rechercher des cartes par nom ou position",
@@ -182,7 +176,7 @@
       "card": "Carte"
     },
     "spelling": {
-      "title": "Épellation de carte",
+      "title": "Épellation des cartes",
       "description": "Voyez combien de lettres composent le nom de chaque carte et sur quelle carte l'épellation tombe dans votre stack.",
       "position": "#",
       "card": "Carte",
@@ -243,7 +237,11 @@
   },
   "stackPicker": {
     "placeholder": "Veuillez choisir un stack",
-    "ariaLabel": "Sélectionner un jeu mémorisé"
+    "ariaLabel": "Sélectionner un jeu mémorisé",
+    "label": "Stack"
+  },
+  "languagePicker": {
+    "label": "Langue"
   },
   "resetButton": {
     "label": "Réinitialiser l'appli",
@@ -267,7 +265,7 @@
     "pageTitle": "Statistiques",
     "pageDescription": "Suivez vos progrès d'entraînement avec des graphiques de précision et un historique des sessions.",
     "title": "Statistiques",
-    "noData": "Pas encore de données. Terminez une session flashcard, ACAAN ou spot check pour voir vos statistiques ici.",
+    "noData": "Pas encore de données. Terminez une session Flashcard, ACAAN ou Spot Check pour voir vos statistiques ici.",
     "totalSessions": "Sessions totales",
     "totalQuestions": "Questions totales",
     "overallAccuracy": "Précision globale",
@@ -385,9 +383,9 @@
     "toolbox": {
       "title": "Boîte à outils",
       "description": "Une collection d'utilitaires pour l'analyse de stack et le travail de performance. La boîte à outils comprend :",
-      "lookupItem": "<bold>Recherche de stack</bold> — recherchez dans votre stack par nom de carte ou numéro de position",
+      "lookupItem": "<bold>Recherche dans le stack</bold> — recherchez dans votre stack par nom de carte ou numéro de position",
       "faroItem": "<bold>Mélange Faro</bold> — visualisez l'effet des mélanges faro parfaits sur l'ordre de votre stack",
-      "spellingItem": "<bold>Épellation de carte</bold> — voyez combien de lettres composent le nom de chaque carte et où l'épellation tombe dans votre stack",
+      "spellingItem": "<bold>Épellation des cartes</bold> — voyez combien de lettres composent le nom de chaque carte et où l'épellation tombe dans votre stack",
       "sequencesItem": "<bold>Séquences Stay Stack</bold> — visualisez les séquences cycliques formées en distribuant chaque Nième carte",
       "link": "Aller à la boîte à outils"
     },
@@ -408,7 +406,7 @@
       "gearIcon": "Dans les modes d'entraînement, appuyez sur l'icône d'engrenage pour régler les paramètres de mode et de chronomètre, ou sur l'icône de cible pour démarrer une session.",
       "switchStacks": "Changer de stack ne fait pas perdre vos données — les progrès sont suivis par stack.",
       "pwa": "Installez MemDeck comme application sur votre appareil pour un accès hors ligne.",
-      "language": "Changez la langue d'affichage avec le sélecteur de langue dans l'en-tête.",
+      "language": "Changez la langue d'affichage avec le sélecteur de langue dans le menu de navigation.",
       "reset": "Utilisez le bouton de réinitialisation dans le menu pour effacer toutes les données et repartir de zéro."
     }
   }
