@@ -247,9 +247,12 @@
   },
   "resetButton": {
     "label": "Repor aplicação",
-    "modalTitle": "Repor todos os dados?",
-    "modalBody": "Isto irá apagar todo o histórico de treinos, estatísticas e preferências. Esta ação não pode ser desfeita.",
-    "confirm": "Repor tudo",
+    "modalTitle": "Repor aplicação",
+    "modalBody": "Escolha o que pretende repor. Esta ação não pode ser desfeita.",
+    "resetSettings": "Repor definições",
+    "resetSettingsDescription": "Limpa preferências e estado da interface. O histórico de treinos e as estatísticas são mantidos.",
+    "confirmFull": "Repor tudo",
+    "fullResetDescription": "Limpa todos os dados, incluindo histórico de treinos, estatísticas e preferências.",
     "cancel": "Cancelar"
   },
   "pwaUpdate": {
