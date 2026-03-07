@@ -36,7 +36,9 @@ test.describe("Language & i18n", () => {
     const picker = page.locator("[data-testid='language-picker']");
     await picker.selectOption("es");
 
-    await expect(page.locator("text=Bienvenido a MemDeck")).toBeVisible();
+    await expect(
+      page.locator("text=Te damos la bienvenida a MemDeck")
+    ).toBeVisible();
   });
 
   test("should switch to German via language picker", async ({ page }) => {
@@ -92,7 +94,9 @@ test.describe("Language & i18n", () => {
     await picker.selectOption("es");
 
     // Wait for the Spanish translation to confirm the language switch completed
-    await expect(page.locator("text=Bienvenido a MemDeck")).toBeVisible();
+    await expect(
+      page.locator("text=Te damos la bienvenida a MemDeck")
+    ).toBeVisible();
 
     expect(await page.getAttribute("html", "lang")).toBe("es");
 
@@ -163,7 +167,9 @@ test.describe("Language & i18n", () => {
     await picker.selectOption("es");
 
     // Wait for Spanish UI to confirm the language switch completed
-    await expect(page.locator("text=Bienvenido a MemDeck")).toBeVisible();
+    await expect(
+      page.locator("text=Te damos la bienvenida a MemDeck")
+    ).toBeVisible();
 
     // Navigate to resources
     await page.locator("a:has-text('Recursos')").first().click();
