@@ -1,0 +1,140 @@
+# MemDeck
+
+> MemDeck is a free, open-source memorized deck trainer for magicians and memory enthusiasts. It helps users master famous memorized deck systems through flashcard exercises, spot checks, ACAAN practice, and deck utilities. Available as a PWA that works offline, in 7 languages, with no account required.
+
+## What Is a Memorized Deck?
+
+A memorized deck (also called a memorized stack or mem-deck) is a specific, pre-arranged order of all 52 playing cards that a magician commits to memory. Once memorized, the performer can instantly name the card at any position, or tell you the position of any named card. This enables extraordinarily powerful card magic effects that appear impossible, since the deck can be shown and handled freely while the magician secretly knows the location of every card.
+
+Famous memorized deck systems include the Mnemonica stack by Juan Tamariz and the Aronson stack by Simon Aronson. Each system has a different card order, often designed with built-in features like mathematical properties, easy-to-remember patterns, or compatibility with specific magic effects.
+
+MemDeck provides interactive training tools to help magicians memorize and maintain recall of these systems. It is not a magic trick app - it is a practice and study tool for serious card magicians.
+
+## Who Is MemDeck For?
+
+- Card magicians learning their first memorized stack
+- Experienced mem-deck performers maintaining their recall speed
+- Memory enthusiasts interested in memorization techniques
+- Magic students studying the structure of famous stack systems
+
+## Features
+
+### Flashcard Training
+
+The core training feature with three modes:
+
+- **Card-to-Position**: You see a playing card and must recall its position number in the stack (1-52).
+- **Position-to-Card**: You see a position number and must recall which card is at that position.
+- **Both**: Randomly alternates between card-to-position and position-to-card questions.
+- **Neighbor Mode**: After answering, shows the cards immediately before and after the target card in the stack. This helps you learn sequences and transitions, which is essential for advanced stack work.
+
+Each question presents multiple-choice answers. Sessions track accuracy and can be timed. Results are saved to session history for progress tracking.
+
+### Spot Check
+
+Tests your knowledge of the full deck order by presenting a spread of cards with deliberate errors:
+
+- **Missing Card**: One card is removed from the spread. You must identify which card is missing.
+- **Swapped Cards**: Two cards have switched positions. You must identify which cards were swapped.
+- **Moved Card**: One card has been moved to a different position. You must identify which card moved.
+
+This trains the ability to quickly scan a deck and detect if anything is out of order, a critical skill for memorized deck performers.
+
+### ACAAN Calculator
+
+ACAAN (Any Card At Any Number) is one of the most celebrated effects in card magic. A spectator names any card and any number, and the named card is found at the named position. With a memorized deck, the performer must calculate how many cards to cut or shift to achieve this.
+
+The ACAAN trainer presents random card-and-number combinations and lets you practice the mental calculation required to determine the correct cut. It supports timed practice to build speed.
+
+### Toolbox
+
+A collection of memorized deck utilities:
+
+- **Stack Lookup**: Search for any card to see its position in the current stack, or search by position to see the card. Useful as a quick reference while learning.
+- **Faro Shuffle Simulator**: Shows the result of performing in-faro and out-faro shuffles on your memorized stack. Faro shuffles are a key tool for mem-deck workers, and this helps visualize how the stack transforms after multiple faros.
+- **Card Spelling**: Shows how to spell to any card in the deck using the classic spelling effect, where you deal one card per letter while spelling the card's name.
+- **Stay Stack Sequences**: Finds sequences in your memorized stack where cards "stay" in roughly the same position when the deck is cut. Useful for specific memorized deck effects.
+
+### Stats & Session History
+
+- View all past training sessions with date, mode, stack, accuracy, and timing
+- Filter by training mode and stack
+- Track accuracy trends over time
+- All-time aggregated statistics per mode and stack combination
+- Data stored locally - never leaves your device
+
+### Guide
+
+A getting-started guide that covers:
+- What a memorized deck is and why it matters
+- How to use MemDeck's training features effectively
+- Tips for memorization and practice strategies
+
+### Resources Page
+
+Curated collection of books and resources for memorized deck study:
+
+**Primary Resources:**
+- "Mnemonica" by Juan Tamariz - The definitive book on the Mnemonica stack, including the stack itself, dozens of effects, and the philosophy behind memorized deck work.
+- "The Aronson Approach" by Simon Aronson - Comprehensive guide to the Aronson stack with numerous effects and applications.
+- "Bound to Please" by Simon Aronson - Collection of Simon Aronson's card magic, including memorized deck material.
+- "Memories Are Made of This" by Simon Aronson - Free PDF essay on memorized deck theory and practice.
+
+**Other Resources:**
+- "The Magic Rainbow" by Juan Tamariz - Tamariz's theory of magic presentation and audience management.
+- "In Order To Amaze" by Pit Hartling - Professional memorized deck routines and thinking.
+- "Memorandum" by Woody Aragon - The Memorandum stack system with effects.
+- "Temporarily Out of Order" by Patrick Redford - The Redford Stack system and effects.
+- "Applesauce" by Patrick Redford - Additional Redford Stack material.
+- "Sleightly Out of Order" by Patrick Redford - More memorized deck work with the Redford Stack.
+- "Particle System" by Joshua Jay - The Particle stack system designed for ease of memorization.
+- Conjuring Archive by Denis Behr - Online database of magic literature, including memorized deck references.
+
+## Supported Stacks
+
+MemDeck supports six memorized deck systems:
+
+1. **Tamariz (Mnemonica)** by Juan Tamariz - The most widely used memorized stack in the world. Published in 1991, it has built-in properties like stay-stack sequences and is designed for a vast repertoire of effects.
+
+2. **Aronson** by Simon Aronson - One of the most popular stacks in the US. Known for its mathematical properties and the extensive body of published effects that use it.
+
+3. **Memorandum** by Woody Aragon - A modern stack designed with mnemonic aids to make memorization easier. Each card has a logical connection to its position.
+
+4. **Redford Stack** by Patrick Redford - A stack designed for practical performance with built-in features for specific types of effects.
+
+5. **Particle System** by Joshua Jay - A relatively recent stack designed with a strong emphasis on ease of memorization through patterns and groupings.
+
+6. **Elephant** by Pierre Boc & Yves Meret - An additional stack system available for training.
+
+## Technical Details
+
+- **Type**: Progressive Web App (PWA) with full offline support
+- **Architecture**: React Single Page Application (SPA) with client-side routing
+- **Framework**: React with TypeScript, Mantine UI component library, Vite build tool
+- **Data Storage**: All user data (selected stack, session history, stats, preferences) stored in browser localStorage. No server, no database.
+- **Privacy**: No account creation, no sign-up required. Uses Google Analytics for anonymous usage metrics. All user training data stays local on the device.
+- **Offline**: Once loaded, the app works without an internet connection via service worker caching. Updates are applied silently when connectivity is available.
+- **Installable**: Can be installed on mobile and desktop as a PWA for a native app-like experience.
+- **Open Source**: Full source code available at https://github.com/julienroussel/memdeck.org under open source license.
+- **Free**: Completely free to use with no premium tiers, ads, or in-app purchases.
+
+## Languages
+
+The interface is available in 7 languages:
+
+- English
+- French (Francais)
+- Spanish (Espanol)
+- German (Deutsch)
+- Italian (Italiano)
+- Dutch (Nederlands)
+- Portuguese (Portugues)
+
+The app auto-detects the user's browser language and defaults to English if the detected language is not supported. Users can manually switch languages at any time.
+
+## Links
+
+- Website: https://memdeck.org
+- GitHub: https://github.com/julienroussel/memdeck.org
+- Resources: https://memdeck.org/resources
+- Guide: https://memdeck.org/guide
