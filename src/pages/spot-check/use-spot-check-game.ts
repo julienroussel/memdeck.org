@@ -285,6 +285,12 @@ export const useSpotCheckGame = (
       const correct = isCorrectAnswer(card, index);
 
       if (correct) {
+        notifications.show({
+          color: "green",
+          title: t("spotCheck.correctAnswer"),
+          message: "",
+          autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+        });
         const payload = generateNextRound();
         dispatch({ type: "CORRECT_ANSWER", payload });
         onAnswerRef.current?.({ correct: true, questionAdvanced: true });
