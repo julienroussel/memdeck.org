@@ -253,6 +253,17 @@
     "fullResetDescription": "Cancella tutti i dati, incluso lo storico degli allenamenti, le statistiche e le preferenze.",
     "cancel": "Annulla"
   },
+  "pwaInstall": {
+    "bannerMessage": "Installa MemDeck per allenarti offline",
+    "install": "Installa",
+    "modalTitle": "Installa MemDeck",
+    "iosStep1": "Tocca il pulsante Condividi in basso sullo schermo",
+    "iosStep2": "Scorri verso il basso e tocca \"Aggiungi alla schermata Home\"",
+    "iosStep3": "Tocca \"Aggiungi\" per confermare",
+    "androidStep1": "Tocca il menu (tre puntini) in alto a destra",
+    "androidStep2": "Tocca \"Aggiungi alla schermata Home\" o \"Installa app\"",
+    "androidStep3": "Tocca \"Installa\" per confermare"
+  },
   "pwaUpdate": {
     "title": "Aggiornato",
     "message": "MemDeck è stato aggiornato."

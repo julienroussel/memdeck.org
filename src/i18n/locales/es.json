@@ -253,6 +253,17 @@
     "fullResetDescription": "Borra todos los datos, incluido el historial de entrenamiento, las estadísticas y las preferencias.",
     "cancel": "Cancelar"
   },
+  "pwaInstall": {
+    "bannerMessage": "Instala MemDeck para practicar sin conexión",
+    "install": "Instalar",
+    "modalTitle": "Instalar MemDeck",
+    "iosStep1": "Toca el botón Compartir en la parte inferior de la pantalla",
+    "iosStep2": "Desplázate hacia abajo y toca \"Añadir a la pantalla de inicio\"",
+    "iosStep3": "Toca \"Añadir\" para confirmar",
+    "androidStep1": "Toca el menú (tres puntos) en la esquina superior derecha",
+    "androidStep2": "Toca \"Añadir a la pantalla de inicio\" o \"Instalar aplicación\"",
+    "androidStep3": "Toca \"Instalar\" para confirmar"
+  },
   "pwaUpdate": {
     "title": "Actualizado",
     "message": "MemDeck se ha actualizado."

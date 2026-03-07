@@ -253,6 +253,17 @@
     "fullResetDescription": "Limpa todos os dados, incluindo histórico de treinos, estatísticas e preferências.",
     "cancel": "Cancelar"
   },
+  "pwaInstall": {
+    "bannerMessage": "Instale o MemDeck para treinar offline",
+    "install": "Instalar",
+    "modalTitle": "Instalar MemDeck",
+    "iosStep1": "Toque no botão Partilhar na parte inferior do ecrã",
+    "iosStep2": "Deslize para baixo e toque em \"Adicionar ao ecrã inicial\"",
+    "iosStep3": "Toque em \"Adicionar\" para confirmar",
+    "androidStep1": "Toque no menu (três pontos) no canto superior direito",
+    "androidStep2": "Toque em \"Adicionar ao ecrã inicial\" ou \"Instalar aplicação\"",
+    "androidStep3": "Toque em \"Instalar\" para confirmar"
+  },
   "pwaUpdate": {
     "title": "Atualizado",
     "message": "O MemDeck foi atualizado."

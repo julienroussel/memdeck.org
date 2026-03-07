@@ -53,6 +53,7 @@
   transform: rotate(calc(var(--i) * var(--degree)))
     translate(calc(var(--i) * 15px), 10px);
   transform-origin: 50% 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .cardSpreadCard:focus-visible {
