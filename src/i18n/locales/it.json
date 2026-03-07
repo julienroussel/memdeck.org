@@ -247,9 +247,12 @@
   },
   "resetButton": {
     "label": "Ripristina app",
-    "modalTitle": "Ripristinare tutti i dati?",
-    "modalBody": "Questo cancellerà tutto lo storico degli allenamenti, le statistiche e le preferenze. Questa azione non può essere annullata.",
-    "confirm": "Ripristina tutto",
+    "modalTitle": "Ripristina app",
+    "modalBody": "Scegli cosa ripristinare. Questa azione non può essere annullata.",
+    "resetSettings": "Ripristina impostazioni",
+    "resetSettingsDescription": "Cancella le preferenze e lo stato dell'interfaccia. Lo storico degli allenamenti e le statistiche vengono conservati.",
+    "confirmFull": "Ripristina tutto",
+    "fullResetDescription": "Cancella tutti i dati, incluso lo storico degli allenamenti, le statistiche e le preferenze.",
     "cancel": "Annulla"
   },
   "pwaUpdate": {

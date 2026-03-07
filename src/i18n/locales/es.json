@@ -247,9 +247,12 @@
   },
   "resetButton": {
     "label": "Restablecer app",
-    "modalTitle": "¿Restablecer todos los datos?",
-    "modalBody": "Esto borrará todo tu historial de entrenamiento, estadísticas y preferencias. Esta acción no se puede deshacer.",
-    "confirm": "Restablecer todo",
+    "modalTitle": "Restablecer app",
+    "modalBody": "Elige qué restablecer. Esta acción no se puede deshacer.",
+    "resetSettings": "Restablecer ajustes",
+    "resetSettingsDescription": "Borra las preferencias y el estado de la interfaz. El historial de entrenamiento y las estadísticas se conservan.",
+    "confirmFull": "Restablecer todo",
+    "fullResetDescription": "Borra todos los datos, incluido el historial de entrenamiento, las estadísticas y las preferencias.",
     "cancel": "Cancelar"
   },
   "pwaUpdate": {

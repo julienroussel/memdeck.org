@@ -247,9 +247,12 @@
   },
   "resetButton": {
     "label": "App resetten",
-    "modalTitle": "Alle gegevens wissen?",
-    "modalBody": "Dit verwijdert al je trainingsgeschiedenis, statistieken en voorkeuren. Dit kan niet ongedaan worden gemaakt.",
-    "confirm": "Alles resetten",
+    "modalTitle": "App resetten",
+    "modalBody": "Kies wat je wilt resetten. Dit kan niet ongedaan worden gemaakt.",
+    "resetSettings": "Instellingen resetten",
+    "resetSettingsDescription": "Wist voorkeuren en weergave-instellingen. Trainingsgeschiedenis en statistieken blijven behouden.",
+    "confirmFull": "Alles resetten",
+    "fullResetDescription": "Wist alle gegevens inclusief trainingsgeschiedenis, statistieken en voorkeuren.",
     "cancel": "Annuleren"
   },
   "pwaUpdate": {

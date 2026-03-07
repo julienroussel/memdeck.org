@@ -1,16 +1,13 @@
-import { Button, Group, Modal, Space, Text } from "@mantine/core";
+import { Button, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconRestore } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
+import { ALL_TIME_STATS_LSK, SESSION_HISTORY_LSK } from "../constants";
 import { analytics } from "../services/analytics";
 
-export const resetApp = async () => {
-  try {
-    localStorage.clear();
-  } catch {
-    // localStorage may throw SecurityError in private browsing
-  }
+const STATS_KEYS = [SESSION_HISTORY_LSK, ALL_TIME_STATS_LSK];
 
+const clearServiceWorkersAndCaches = async () => {
   try {
     const registrations = await navigator.serviceWorker.getRegistrations();
     for (const registration of registrations) {
@@ -28,7 +25,36 @@ export const resetApp = async () => {
   } catch {
     // Cache API may not be available
   }
+};
 
+export const resetSettings = async () => {
+  try {
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && !STATS_KEYS.includes(key)) {
+        keysToRemove.push(key);
+      }
+    }
+    for (const key of keysToRemove) {
+      localStorage.removeItem(key);
+    }
+  } catch {
+    // localStorage may throw SecurityError in private browsing
+  }
+
+  await clearServiceWorkersAndCaches();
+  window.location.reload();
+};
+
+export const resetApp = async () => {
+  try {
+    localStorage.clear();
+  } catch {
+    // localStorage may throw SecurityError in private browsing
+  }
+
+  await clearServiceWorkersAndCaches();
   window.location.reload();
 };
 
@@ -36,7 +62,13 @@ export const ResetButton = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const { t } = useTranslation();
 
-  const handleConfirm = async () => {
+  const handleResetSettings = async () => {
+    analytics.trackEvent("Settings", "Reset Settings");
+    close();
+    await resetSettings();
+  };
+
+  const handleResetAll = async () => {
     analytics.trackEvent("Settings", "Reset App");
     close();
     await resetApp();
@@ -49,20 +81,38 @@ export const ResetButton = () => {
         opened={opened}
         title={t("resetButton.modalTitle")}
       >
-        <Text id="reset-modal-body">{t("resetButton.modalBody")}</Text>
-        <Space h="lg" />
-        <Group justify="flex-end">
-          <Button onClick={close} variant="default">
+        <Text>{t("resetButton.modalBody")}</Text>
+        <Stack gap="sm" mt="lg">
+          <div>
+            <Button
+              aria-describedby="reset-settings-desc"
+              color="orange"
+              fullWidth
+              onClick={handleResetSettings}
+            >
+              {t("resetButton.resetSettings")}
+            </Button>
+            <Text c="dimmed" id="reset-settings-desc" mt={4} size="xs">
+              {t("resetButton.resetSettingsDescription")}
+            </Text>
+          </div>
+          <div>
+            <Button
+              aria-describedby="reset-all-desc"
+              color="red"
+              fullWidth
+              onClick={handleResetAll}
+            >
+              {t("resetButton.confirmFull")}
+            </Button>
+            <Text c="dimmed" id="reset-all-desc" mt={4} size="xs">
+              {t("resetButton.fullResetDescription")}
+            </Text>
+          </div>
+          <Button fullWidth onClick={close} variant="default">
             {t("resetButton.cancel")}
           </Button>
-          <Button
-            aria-describedby="reset-modal-body"
-            color="red"
-            onClick={handleConfirm}
-          >
-            {t("resetButton.confirm")}
-          </Button>
-        </Group>
+        </Stack>
       </Modal>
 
       <Button

@@ -1,8 +1,9 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ALL_TIME_STATS_LSK, SESSION_HISTORY_LSK } from "../constants";
 import { render } from "../test-utils";
-import { ResetButton, resetApp } from "./reset-button";
+import { ResetButton, resetApp, resetSettings } from "./reset-button";
 
 describe("ResetButton", () => {
   it("renders the reset button", () => {
@@ -10,32 +11,36 @@ describe("ResetButton", () => {
     expect(screen.getByText("Reset app")).toBeInTheDocument();
   });
 
-  it("opens a confirmation modal on click", async () => {
+  it("opens a modal with two reset options on click", async () => {
     const user = userEvent.setup();
     render(<ResetButton />);
 
     await user.click(screen.getByText("Reset app"));
 
-    expect(screen.getByText("Reset all data?")).toBeInTheDocument();
     expect(
-      screen.getByText(
-        "This will erase all your training history, statistics, and preferences. This cannot be undone."
-      )
+      screen.getByText("Reset app", { selector: ".mantine-Modal-title" })
     ).toBeInTheDocument();
+    expect(
+      screen.getByText("Choose what to reset. This cannot be undone.")
+    ).toBeInTheDocument();
+    expect(screen.getByText("Reset settings")).toBeInTheDocument();
+    expect(screen.getByText("Reset everything")).toBeInTheDocument();
   });
 
   describe("with mocked globals", () => {
-    const clearMock = vi.fn();
+    const removeItemMock = vi.fn();
     const reloadMock = vi.fn();
+    const clearMock = vi.fn();
+    const keyMock = vi.fn();
 
     beforeEach(() => {
       vi.stubGlobal("localStorage", {
         clear: clearMock,
         getItem: vi.fn(),
         setItem: vi.fn(),
-        removeItem: vi.fn(),
+        removeItem: removeItemMock,
         length: 0,
-        key: vi.fn(),
+        key: keyMock,
       });
       Object.defineProperty(window, "location", {
         value: { reload: reloadMock },
@@ -48,7 +53,7 @@ describe("ResetButton", () => {
       vi.unstubAllGlobals();
     });
 
-    it("calls resetApp when confirm button is clicked", async () => {
+    it("calls resetApp when 'Reset everything' is clicked", async () => {
       const user = userEvent.setup();
       render(<ResetButton />);
       await user.click(screen.getByText("Reset app"));
@@ -59,14 +64,28 @@ describe("ResetButton", () => {
       expect(reloadMock).toHaveBeenCalled();
     });
 
-    it("closes the modal when confirm is clicked", async () => {
+    it("calls resetSettings when 'Reset settings' is clicked", async () => {
       const user = userEvent.setup();
       render(<ResetButton />);
       await user.click(screen.getByText("Reset app"));
-      expect(screen.getByText("Reset all data?")).toBeInTheDocument();
+      await user.click(screen.getByText("Reset settings"));
+      await waitFor(() => {
+        expect(reloadMock).toHaveBeenCalled();
+      });
+    });
+
+    it("closes the modal when 'Reset everything' is clicked", async () => {
+      const user = userEvent.setup();
+      render(<ResetButton />);
+      await user.click(screen.getByText("Reset app"));
+      expect(
+        screen.getByText("Choose what to reset. This cannot be undone.")
+      ).toBeInTheDocument();
       await user.click(screen.getByText("Reset everything"));
       await waitFor(() => {
-        expect(screen.queryByText("Reset all data?")).not.toBeInTheDocument();
+        expect(
+          screen.queryByText("Choose what to reset. This cannot be undone.")
+        ).not.toBeInTheDocument();
       });
     });
   });
@@ -76,12 +95,66 @@ describe("ResetButton", () => {
     render(<ResetButton />);
 
     await user.click(screen.getByText("Reset app"));
-    expect(screen.getByText("Reset all data?")).toBeInTheDocument();
+    expect(
+      screen.getByText("Choose what to reset. This cannot be undone.")
+    ).toBeInTheDocument();
 
     await user.click(screen.getByText("Cancel"));
     await waitFor(() => {
-      expect(screen.queryByText("Reset all data?")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Choose what to reset. This cannot be undone.")
+      ).not.toBeInTheDocument();
     });
+  });
+});
+
+describe("resetSettings", () => {
+  const removeItemMock = vi.fn();
+  const reloadMock = vi.fn();
+  const keyMock = vi.fn();
+
+  beforeEach(() => {
+    keyMock
+      .mockReturnValueOnce("memdeck-app-stack")
+      .mockReturnValueOnce(SESSION_HISTORY_LSK)
+      .mockReturnValueOnce(ALL_TIME_STATS_LSK)
+      .mockReturnValueOnce("memdeck-app-flashcard-option")
+      .mockReturnValueOnce(null);
+
+    vi.stubGlobal("localStorage", {
+      clear: vi.fn(),
+      getItem: vi.fn(),
+      setItem: vi.fn(),
+      removeItem: removeItemMock,
+      length: 4,
+      key: keyMock,
+    });
+    Object.defineProperty(window, "location", {
+      value: { reload: reloadMock },
+      writable: true,
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  it("removes non-stats keys from localStorage", async () => {
+    await resetSettings();
+    expect(removeItemMock).toHaveBeenCalledWith("memdeck-app-stack");
+    expect(removeItemMock).toHaveBeenCalledWith("memdeck-app-flashcard-option");
+  });
+
+  it("preserves stats keys", async () => {
+    await resetSettings();
+    expect(removeItemMock).not.toHaveBeenCalledWith(SESSION_HISTORY_LSK);
+    expect(removeItemMock).not.toHaveBeenCalledWith(ALL_TIME_STATS_LSK);
+  });
+
+  it("reloads the page", async () => {
+    await resetSettings();
+    expect(reloadMock).toHaveBeenCalled();
   });
 });
 

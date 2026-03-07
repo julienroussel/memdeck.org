@@ -247,9 +247,12 @@
   },
   "resetButton": {
     "label": "App zurücksetzen",
-    "modalTitle": "Alle Daten zurücksetzen?",
-    "modalBody": "Dies löscht deinen gesamten Trainingsverlauf, Statistiken und Einstellungen. Das kann nicht rückgängig gemacht werden.",
-    "confirm": "Alles zurücksetzen",
+    "modalTitle": "App zurücksetzen",
+    "modalBody": "Wähle aus, was zurückgesetzt werden soll. Dies kann nicht rückgängig gemacht werden.",
+    "resetSettings": "Einstellungen zurücksetzen",
+    "resetSettingsDescription": "Setzt Einstellungen und Darstellung zurück. Trainingsverlauf und Statistiken bleiben erhalten.",
+    "confirmFull": "Alles zurücksetzen",
+    "fullResetDescription": "Löscht alle Daten einschließlich Trainingsverlauf, Statistiken und Einstellungen.",
     "cancel": "Abbrechen"
   },
   "pwaUpdate": {

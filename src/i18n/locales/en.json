@@ -247,9 +247,12 @@
   },
   "resetButton": {
     "label": "Reset app",
-    "modalTitle": "Reset all data?",
-    "modalBody": "This will erase all your training history, statistics, and preferences. This cannot be undone.",
-    "confirm": "Reset everything",
+    "modalTitle": "Reset app",
+    "modalBody": "Choose what to reset. This cannot be undone.",
+    "resetSettings": "Reset settings",
+    "resetSettingsDescription": "Clears preferences and UI state. Your training history and stats are kept.",
+    "confirmFull": "Reset everything",
+    "fullResetDescription": "Clears all data including training history, statistics, and preferences.",
     "cancel": "Cancel"
   },
   "pwaUpdate": {
