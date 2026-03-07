@@ -14,7 +14,7 @@ import { analytics } from "../services/analytics";
 const LANGUAGE_OPTIONS = SUPPORTED_LANGUAGES.map((lang) => ({
   label: LANGUAGE_CODES[lang],
   value: lang,
-}));
+})).sort((a, b) => a.label.localeCompare(b.label));
 
 export const LanguagePicker = memo(function LanguagePicker() {
   const { t, i18n } = useTranslation();
