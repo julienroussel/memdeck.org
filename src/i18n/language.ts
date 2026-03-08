@@ -1,6 +1,7 @@
 import i18n from "i18next";
-import { LANGUAGE_LSK } from "../constants";
+import { LANGUAGE_LSK, LOCALE_RELOAD_SSK } from "../constants";
 import { includes } from "../utils/includes";
+import { isStaleChunkError } from "../utils/stale-chunk";
 
 export const SUPPORTED_LANGUAGES = [
   "en",
@@ -66,6 +67,38 @@ export const languageLoaders: Record<
   pt: () => import("./locales/pt.json"),
 };
 
+/**
+ * If the locale chunk 404s due to a stale deployment, reload the page once
+ * to pick up the new service worker / asset manifest. A sessionStorage guard
+ * prevents infinite reload loops.
+ *
+ * @returns `true` if a reload was triggered (caller should bail out).
+ */
+function reloadOnStaleChunk(error: unknown): boolean {
+  if (!isStaleChunkError(error)) {
+    return false;
+  }
+  try {
+    if (sessionStorage.getItem(LOCALE_RELOAD_SSK)) {
+      return false;
+    }
+    sessionStorage.setItem(LOCALE_RELOAD_SSK, "1");
+    window.location.reload();
+    return true;
+  } catch {
+    // sessionStorage unavailable — cannot guard against loops, so skip reload
+    return false;
+  }
+}
+
+function clearReloadGuard(): void {
+  try {
+    sessionStorage.removeItem(LOCALE_RELOAD_SSK);
+  } catch {
+    // sessionStorage unavailable
+  }
+}
+
 let changeLanguageCallId = 0;
 
 export const changeLanguage = async (
@@ -76,13 +109,24 @@ export const changeLanguage = async (
   if (!i18n.hasResourceBundle(lang, "translation") && lang !== "en") {
     const loader = languageLoaders[lang];
     if (loader) {
-      const module = await loader();
-      if (callId !== changeLanguageCallId) {
-        return;
+      try {
+        const module = await loader();
+        if (callId !== changeLanguageCallId) {
+          return;
+        }
+        i18n.addResourceBundle(lang, "translation", module.default);
+      } catch (error: unknown) {
+        if (reloadOnStaleChunk(error)) {
+          return;
+        }
+        throw error;
       }
-      i18n.addResourceBundle(lang, "translation", module.default);
     }
   }
+
+  // Bundle loaded successfully — clear the reload guard so future
+  // deployments can retry if another stale chunk appears.
+  clearReloadGuard();
 
   await i18n.changeLanguage(lang);
   if (callId !== changeLanguageCallId) {

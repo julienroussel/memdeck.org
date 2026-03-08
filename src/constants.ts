@@ -42,6 +42,9 @@ export const TOOLBOX_SECTIONS_LSK = "memdeck-app-toolbox-sections";
 /** sessionStorage key prefix for tracking chunk reload attempts */
 export const CHUNK_RELOAD_SSK = "memdeck-chunk-reload:";
 
+/** sessionStorage key for tracking locale chunk reload attempts */
+export const LOCALE_RELOAD_SSK = "memdeck-locale-reload";
+
 export const COMMIT_HASH_LSK = "memdeck-app-commit-hash";
 export const UPDATE_NOTIFIED_AT_LSK = "memdeck-app-update-notified-at";
 export const PWA_UPDATE_COOLDOWN_MS = 24 * 60 * 60 * 1000;
