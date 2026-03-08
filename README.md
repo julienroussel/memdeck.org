@@ -22,6 +22,14 @@ Test your recall with three training modes:
 
 Each mode presents five choices and tracks your score in real time. An optional timer adds time pressure (5s–60s).
 
+### Spot Check
+
+Visual deck inspection training with three variants:
+
+- **Missing** — Identify which card is absent from the deck
+- **Swapped** — Identify which two cards were swapped
+- **Moved** — Identify which card was moved to a different position
+
 ### ACAAN Calculator
 
 Practice Any Card At Any Number calculations: a target card and position are shown, you calculate the required cut depth and get instant feedback.
@@ -30,9 +38,21 @@ Practice Any Card At Any Number calculations: a target card and position are sho
 
 Browse any stack with a draggable, touch-friendly spread. Supports mouse, touch gestures, and keyboard navigation.
 
+### Stats & Session Tracking
+
+Track your training history with accuracy stats, best streaks, and per-mode breakdowns.
+
+### Resources
+
+Curated reading list of memorized deck books and PDFs to deepen your knowledge.
+
 ### Install as App
 
-MemDeck is a Progressive Web App — install it on your phone or desktop for offline access.
+MemDeck is a Progressive Web App — install it on your phone or desktop for offline access. Silent auto-updates keep you on the latest version.
+
+### Share
+
+Share MemDeck with fellow magicians via native share (mobile) or clipboard link (desktop).
 
 ### Multi-language
 
