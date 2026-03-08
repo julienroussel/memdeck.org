@@ -53,7 +53,7 @@ A collection of memorized deck utilities:
 - **Stack Lookup**: Search for any card to see its position in the current stack, or search by position to see the card. Useful as a quick reference while learning.
 - **Faro Shuffle Simulator**: Shows the result of performing in-faro and out-faro shuffles on your memorized stack. Faro shuffles are a key tool for mem-deck workers, and this helps visualize how the stack transforms after multiple faros.
 - **Card Spelling**: Shows how to spell to any card in the deck using the classic spelling effect, where you deal one card per letter while spelling the card's name.
-- **Stay Stack Sequences**: Finds sequences in your memorized stack where cards "stay" in roughly the same position when the deck is cut. Useful for specific memorized deck effects.
+- **Stay Stack Sequences**: Views the cyclical sequences formed by dealing every Nth card from your memorized stack. Useful for understanding the mathematical structure of your deck and for specific memorized deck effects.
 
 ### Stats & Session History
 
@@ -104,7 +104,7 @@ MemDeck supports six memorized deck systems:
 
 5. **Particle System** by Joshua Jay - A relatively recent stack designed with a strong emphasis on ease of memorization through patterns and groupings.
 
-6. **Elephant** by Pierre Boc & Yves Meret - An additional stack system available for training.
+6. **Elephant** by Pierre Boc & Yves Meret - A stack built on image-based associations and wordplay, designed for fast memorization and easy recall. Prioritizes accessibility and retention over built-in mathematical properties, making it ideal for magicians who want reliable recall without deep sequential drilling.
 
 ## Technical Details
 

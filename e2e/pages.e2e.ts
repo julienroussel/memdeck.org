@@ -78,7 +78,7 @@ test.describe("Pages & Features", () => {
   test("should have working github link in header", async ({ page }) => {
     // Find github link
     const githubLink = page
-      .locator('a[aria-label="Github"], a[href*="github"]')
+      .locator('a[aria-label="GitHub"], a[href*="github"]')
       .first();
     await expect(githubLink).toBeVisible();
 

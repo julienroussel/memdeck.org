@@ -54,7 +54,7 @@
     "about": "Over"
   },
   "header": {
-    "githubAriaLabel": "Github",
+    "githubAriaLabel": "GitHub",
     "toggleNav": "Navigatiemenu in-/uitklappen",
     "toggleColorScheme": "Kleurthema wisselen",
     "languageAriaLabel": "Taal"
@@ -63,7 +63,7 @@
     "pageTitle": "MemDeck — Beheers je gememoriseerde kaartspel",
     "pageDescription": "Gratis online tool voor het beheersen van gememoriseerde kaartsystemen zoals Mnemonica, Aronson, Memorandum, Redford, Particle en Elephant.",
     "welcome": "Welkom bij MemDeck",
-    "intro": "Hopelijk helpen deze tools je om je stack beter te leren. Bekijk de <guideLink>gids</guideLink> voor een overzicht van alles wat MemDeck biedt. Hulp nodig of mist er iets? Neem contact op via <githubLink>Github</githubLink>!",
+    "intro": "Hopelijk helpen deze tools je om je stack beter te leren. Bekijk de <guideLink>gids</guideLink> voor een overzicht van alles wat MemDeck biedt. Hulp nodig of mist er iets? Neem contact op via <githubLink>GitHub</githubLink>!",
     "firstTimer": "Welkom, nieuwkomer! Kies hieronder je favoriete stack om alle functies te ontgrendelen. Je kunt op elk moment wisselen via de selector onderaan het menu.",
     "guideCardTitle": "Nieuw hier? Lees de Gids",
     "guideCardDescription": "Ontdek alle trainingsmodi en hoe je het meeste uit MemDeck haalt.",
@@ -119,11 +119,11 @@
     "positionSubModeAriaLabel": "Positiemodus-variant",
     "neighborDirectionAriaLabel": "Buurrichting",
     "modeCardOnly": "Alleen kaart",
-    "modeCardOnlyDescription": "In deze modus zie je een kaart en moet je de positie in de stack raden uit 5 opties.",
+    "modeCardOnlyDescription": "In deze modus zie je een kaart en moet je de positie in de stack herinneren uit 5 opties.",
     "modeBothModes": "Beide modi",
-    "modeBothModesDescription": "In deze modus krijg je willekeurig een kaart of een nummer te zien. Raad het juiste antwoord uit 5 opties.",
+    "modeBothModesDescription": "In deze modus krijg je willekeurig een kaart of een nummer te zien. Herinner je het juiste antwoord uit 5 opties.",
     "modeNumberOnly": "Alleen nummer",
-    "modeNumberOnlyDescription": "In deze modus zie je een nummer en moet je de bijbehorende kaart kiezen uit 5 opties.",
+    "modeNumberOnlyDescription": "In deze modus zie je een nummer en moet je de bijbehorende kaart herinneren uit 5 opties.",
     "modeNeighborDescription": "In deze modus zie je een kaart met een richtingspijl en moet je de naburige kaart in de stack kiezen.",
     "neighborBefore": "Ervoor",
     "neighborAfter": "Erna",
@@ -334,7 +334,7 @@
     "pageTitle": "Bronnen",
     "pageDescription": "Geselecteerde boeken en bronnen voor goochelen met gememoriseerd kaartspel, waaronder Mnemonica van Tamariz en The Aronson Approach.",
     "title": "Bronnen voor gememoriseerde kaartspellen",
-    "intro": "Ontdek een verzameling bronnen om de kunst van gememoriseerde kaartspellen te beheersen. Mis je een bron? Neem contact op of dien een pull request in op <githubLink>Github</githubLink>.",
+    "intro": "Ontdek een verzameling bronnen om de kunst van gememoriseerde kaartspellen te beheersen. Mis je een bron? Neem contact op of dien een pull request in op <githubLink>GitHub</githubLink>.",
     "otherResources": "Overige bronnen",
     "descriptions": {
       "mnemonica": "Het definitieve werk over de Mnemonica-stack met trucs, principes en diepgaande theorieën.",
@@ -347,7 +347,7 @@
       "temporarilyOutOfOrder": "Een diepe duik in de Redford-stack met veelzijdige routines en stack-onafhankelijke principes.",
       "applesauce": "Breidt de Redford-stack uit met nieuwe effecten, ideeën en toepassingen voor stackwerk.",
       "sleightlyOutOfOrder": "Geavanceerde technieken en effecten met een gememoriseerde stack en handvaardigheidstechnieken.",
-      "particleSystem": "Nieuw gememoriseerd kaartspel waarmee je naar elke genoemde kaart kunt couperen zonder te kijken, met ingebouwde voordelen en krachtige routines.",
+      "particleSystem": "Een modern gememoriseerd kaartspel ontworpen voor eenvoudige memorisatie door patronen en groeperingen, met krachtige routines.",
       "conjuringArchive": "Doorzoekbare inhoud van goochelboeken — de sectie 'Stacked Deck Stuff' catalogeert referenties naar het werken met gememoriseerde kaartspellen."
     }
   },

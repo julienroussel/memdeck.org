@@ -54,16 +54,16 @@
     "about": "Über"
   },
   "header": {
-    "githubAriaLabel": "Github",
+    "githubAriaLabel": "GitHub",
     "toggleNav": "Navigationsmenü umschalten",
     "toggleColorScheme": "Farbschema wechseln",
     "languageAriaLabel": "Sprache"
   },
   "home": {
-    "pageTitle": "MemDeck — Memoriertes Kartendeck meistern",
+    "pageTitle": "MemDeck — Meistere dein memoriertes Kartendeck",
     "pageDescription": "Kostenloses Online-Tool zum Meistern von memorierten Kartensystemen wie Mnemonica, Aronson, Memorandum, Redford, Particle und Elephant.",
     "welcome": "Willkommen bei MemDeck",
-    "intro": "Ich hoffe, diese Tools helfen dir beim Erlernen deines Stacks. Wirf einen Blick in die <guideLink>Anleitung</guideLink> für einen Überblick über alles, was MemDeck bietet. Brauchst du Hilfe oder fehlt etwas? Kontaktiere mich auf <githubLink>Github</githubLink>!",
+    "intro": "Ich hoffe, diese Tools helfen dir beim Erlernen deines Stacks. Wirf einen Blick in die <guideLink>Anleitung</guideLink> für einen Überblick über alles, was MemDeck bietet. Brauchst du Hilfe oder fehlt etwas? Kontaktiere mich auf <githubLink>GitHub</githubLink>!",
     "firstTimer": "Hallo, Neuling! Wähle unten deinen Lieblings-Stack, um alle Funktionen freizuschalten. Du kannst jederzeit über die Auswahl am unteren Rand des Menüs wechseln.",
     "guideCardTitle": "Neu hier? Lies die Anleitung",
     "guideCardDescription": "Erfahre alles über die Trainingsmodi und wie du das Beste aus MemDeck herausholst.",
@@ -119,11 +119,11 @@
     "positionSubModeAriaLabel": "Positionsmodus-Variante",
     "neighborDirectionAriaLabel": "Nachbarrichtung",
     "modeCardOnly": "Nur Karte",
-    "modeCardOnlyDescription": "In diesem Modus siehst du eine Karte und musst ihre Position im Stack aus 5 Optionen erraten.",
+    "modeCardOnlyDescription": "In diesem Modus siehst du eine Karte und musst ihre Position im Stack aus 5 Optionen abrufen.",
     "modeBothModes": "Beide Modi",
-    "modeBothModesDescription": "In diesem Modus wird zufällig entweder eine Karte oder eine Nummer gezeigt, errate die Zuordnung aus 5 Optionen.",
+    "modeBothModesDescription": "In diesem Modus wird zufällig entweder eine Karte oder eine Nummer gezeigt. Rufe die Zuordnung aus 5 Optionen ab.",
     "modeNumberOnly": "Nur Nummer",
-    "modeNumberOnlyDescription": "In diesem Modus siehst du eine Nummer und musst die entsprechende Karte aus 5 Optionen auswählen.",
+    "modeNumberOnlyDescription": "In diesem Modus siehst du eine Nummer und musst die entsprechende Karte aus 5 Optionen abrufen.",
     "modeNeighborDescription": "In diesem Modus siehst du eine Karte mit einem Richtungspfeil und musst die benachbarte Karte im Stack auswählen.",
     "neighborBefore": "Davor",
     "neighborAfter": "Danach",
@@ -334,7 +334,7 @@
     "pageTitle": "Ressourcen",
     "pageDescription": "Ausgewählte Bücher und Ressourcen für Magie mit memoriertem Kartendeck, darunter Mnemonica von Tamariz und The Aronson Approach.",
     "title": "Ressourcen für memorierte Kartendecks",
-    "intro": "Entdecke eine Sammlung von Ressourcen, die dir helfen, die Kunst der memorierten Kartendecks zu meistern. Fehlt eine Ressource? Kontaktiere mich oder erstelle einen Pull Request auf <githubLink>Github</githubLink>.",
+    "intro": "Entdecke eine Sammlung von Ressourcen, die dir helfen, die Kunst der memorierten Kartendecks zu meistern. Fehlt eine Ressource? Kontaktiere mich oder erstelle einen Pull Request auf <githubLink>GitHub</githubLink>.",
     "otherResources": "Weitere Ressourcen",
     "descriptions": {
       "mnemonica": "Das Standardwerk zum Mnemonica-Stack mit Tricks, Prinzipien und tiefgehenden Theorien.",
@@ -347,7 +347,7 @@
       "temporarilyOutOfOrder": "Ein tiefer Einblick in den Redford-Stack mit vielseitigen Routinen und stack-unabhängigen Prinzipien.",
       "applesauce": "Erweitert den Redford-Stack mit neuen Effekten, Ideen und Anwendungen für die Stack-Arbeit.",
       "sleightlyOutOfOrder": "Fortgeschrittene Techniken und Effekte mit einem memorierten Stack, kombiniert mit Sleight-of-Hand.",
-      "particleSystem": "Neues memoriertes Kartendeck, mit dem der Magier zu jeder genannten Karte abheben kann, ohne hinzusehen — mit integrierten Vorteilen und wirkungsvollen Routinen.",
+      "particleSystem": "Ein modernes memoriertes Kartendeck, das durch Muster und Gruppierungen leicht zu merken ist — mit einer Vielzahl wirkungsvoller Routinen.",
       "conjuringArchive": "Durchsuchbare Inhalte von Zauberbüchern — der Bereich 'Stacked Deck Stuff' katalogisiert Referenzen zur Arbeit mit memorierten Kartendecks."
     }
   },

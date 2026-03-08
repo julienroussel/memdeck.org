@@ -54,7 +54,7 @@
     "about": "Info"
   },
   "header": {
-    "githubAriaLabel": "Github",
+    "githubAriaLabel": "GitHub",
     "toggleNav": "Apri/chiudi il menu di navigazione",
     "toggleColorScheme": "Cambia il tema colore",
     "languageAriaLabel": "Lingua"
@@ -63,7 +63,7 @@
     "pageTitle": "MemDeck — Padroneggia il mazzo memorizzato",
     "pageDescription": "Strumento online gratuito per padroneggiare sistemi di mazzi memorizzati come Mnemonica, Aronson, Memorandum, Redford, Particle ed Elephant.",
     "welcome": "Benvenuto su MemDeck",
-    "intro": "Spero che questi strumenti ti aiutino a migliorare nell'apprendimento del tuo stack. Consulta la <guideLink>guida</guideLink> per una panoramica di tutto ciò che MemDeck offre. Hai bisogno di aiuto o pensi che manchi qualcosa? Contattami su <githubLink>Github</githubLink>!",
+    "intro": "Spero che questi strumenti ti aiutino a migliorare nell'apprendimento del tuo stack. Consulta la <guideLink>guida</guideLink> per una panoramica di tutto ciò che MemDeck offre. Hai bisogno di aiuto o pensi che manchi qualcosa? Contattami su <githubLink>GitHub</githubLink>!",
     "firstTimer": "Benvenuto! Scegli il tuo stack preferito qui sotto per sbloccare tutte le funzionalità. Puoi cambiarlo in qualsiasi momento usando il selettore in fondo al menu.",
     "guideCardTitle": "Nuovo qui? Leggi la Guida",
     "guideCardDescription": "Scopri tutti i modi di allenamento e come sfruttare al meglio MemDeck.",
@@ -119,11 +119,11 @@
     "positionSubModeAriaLabel": "Variante modalità posizione",
     "neighborDirectionAriaLabel": "Direzione del vicino",
     "modeCardOnly": "Solo carta",
-    "modeCardOnlyDescription": "In questa modalità vedrai una carta e dovrai indovinare la sua posizione nello stack tra 5 opzioni.",
+    "modeCardOnlyDescription": "In questa modalità vedrai una carta e dovrai ricordare la sua posizione nello stack tra 5 opzioni.",
     "modeBothModes": "Entrambe le modalità",
-    "modeBothModesDescription": "In questa modalità vedrai casualmente una carta o un numero: indovina la corrispondenza tra 5 opzioni.",
+    "modeBothModesDescription": "In questa modalità vedrai casualmente una carta o un numero. Ricorda la corrispondenza tra 5 opzioni.",
     "modeNumberOnly": "Solo numero",
-    "modeNumberOnlyDescription": "In questa modalità vedrai un numero e dovrai scegliere la carta corrispondente tra 5 opzioni.",
+    "modeNumberOnlyDescription": "In questa modalità vedrai un numero e dovrai ricordare la carta corrispondente tra 5 opzioni.",
     "modeNeighborDescription": "In questa modalità vedrai una carta con una freccia di direzione e dovrai scegliere la carta adiacente nello stack.",
     "neighborBefore": "Prima",
     "neighborAfter": "Dopo",
@@ -334,7 +334,7 @@
     "pageTitle": "Risorse",
     "pageDescription": "Libri e risorse selezionate per la magia con mazzo memorizzato, tra cui Mnemonica di Tamariz e The Aronson Approach.",
     "title": "Risorse per mazzi memorizzati",
-    "intro": "Esplora una raccolta di risorse per aiutarti a padroneggiare l'arte dei mazzi memorizzati. Manca una risorsa? Contattami o invia una pull request su <githubLink>Github</githubLink>.",
+    "intro": "Esplora una raccolta di risorse per aiutarti a padroneggiare l'arte dei mazzi memorizzati. Manca una risorsa? Contattami o invia una pull request su <githubLink>GitHub</githubLink>.",
     "otherResources": "Altre risorse",
     "descriptions": {
       "mnemonica": "L'opera definitiva sullo stack Mnemonica con effetti, principi e teorie approfondite.",
@@ -347,7 +347,7 @@
       "temporarilyOutOfOrder": "Un approfondimento sullo stack Redford con routine versatili e principi indipendenti dallo stack.",
       "applesauce": "Espande lo stack Redford con nuovi effetti, idee e applicazioni per il lavoro con gli stack.",
       "sleightlyOutOfOrder": "Tecniche avanzate ed effetti con stack memorizzato e integrazione di manipolazione.",
-      "particleSystem": "Nuovo mazzo memorizzato che permette ai maghi di tagliare a qualsiasi carta nominata senza guardare, con vantaggi integrati e una varietà di routine potenti.",
+      "particleSystem": "Un mazzo memorizzato moderno progettato per facilitare la memorizzazione tramite schemi e raggruppamenti, con una varietà di routine potenti.",
       "conjuringArchive": "Contenuti ricercabili di libri di magia — la sezione «Stacked Deck Stuff» cataloga riferimenti sul lavoro con mazzi memorizzati."
     }
   },

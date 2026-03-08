@@ -54,7 +54,7 @@
     "about": "Sobre"
   },
   "header": {
-    "githubAriaLabel": "Github",
+    "githubAriaLabel": "GitHub",
     "toggleNav": "Alternar menu de navegação",
     "toggleColorScheme": "Alternar esquema de cores",
     "languageAriaLabel": "Idioma"
@@ -63,7 +63,7 @@
     "pageTitle": "MemDeck — Domine o baralho memorizado",
     "pageDescription": "Ferramenta online gratuita para dominar sistemas de baralho memorizado como Mnemonica, Aronson, Memorandum, Redford, Particle e Elephant.",
     "welcome": "Bem-vindo ao MemDeck",
-    "intro": "Espero que estas ferramentas o ajudem a melhorar a aprendizagem do seu stack. Consulte o <guideLink>guia</guideLink> para uma visão geral de tudo o que o MemDeck oferece. Precisa de ajuda ou acha que falta algo? Contacte-me no <githubLink>Github</githubLink>!",
+    "intro": "Espero que estas ferramentas o ajudem a melhorar a aprendizagem do seu stack. Consulte o <guideLink>guia</guideLink> para uma visão geral de tudo o que o MemDeck oferece. Precisa de ajuda ou acha que falta algo? Contacte-me no <githubLink>GitHub</githubLink>!",
     "firstTimer": "Olá, primeira vez aqui! Escolha o seu stack favorito abaixo para desbloquear todas as funcionalidades. Pode mudar a qualquer momento usando o seletor na parte inferior do menu.",
     "guideCardTitle": "Novo aqui? Leia o Guia",
     "guideCardDescription": "Conheça todos os modos de treino e como tirar o máximo partido do MemDeck.",
@@ -119,11 +119,11 @@
     "positionSubModeAriaLabel": "Variante do modo posição",
     "neighborDirectionAriaLabel": "Direção do vizinho",
     "modeCardOnly": "Apenas carta",
-    "modeCardOnlyDescription": "Neste modo, verá uma carta e terá de adivinhar a sua posição no stack entre 5 opções.",
+    "modeCardOnlyDescription": "Neste modo, verá uma carta e terá de recordar a sua posição no stack entre 5 opções.",
     "modeBothModes": "Ambos os modos",
-    "modeBothModesDescription": "Neste modo, verá aleatoriamente uma carta ou um número — adivinhe a correspondência entre 5 opções.",
+    "modeBothModesDescription": "Neste modo, verá aleatoriamente uma carta ou um número. Recorde a correspondência entre 5 opções.",
     "modeNumberOnly": "Apenas número",
-    "modeNumberOnlyDescription": "Neste modo, verá um número e terá de escolher a carta correspondente entre 5 opções.",
+    "modeNumberOnlyDescription": "Neste modo, verá um número e terá de recordar a carta correspondente entre 5 opções.",
     "modeNeighborDescription": "Neste modo, verá uma carta com uma seta de direção e terá de escolher a carta vizinha no stack.",
     "neighborBefore": "Antes",
     "neighborAfter": "Depois",
@@ -334,7 +334,7 @@
     "pageTitle": "Recursos",
     "pageDescription": "Livros e recursos selecionados para magia com baralho memorizado, incluindo Mnemonica de Tamariz e The Aronson Approach.",
     "title": "Recursos de Baralho Memorizado",
-    "intro": "Explore uma seleção de recursos para o ajudar a dominar a arte dos baralhos memorizados. Falta algum recurso? Contacte-me ou envie um pull request no <githubLink>Github</githubLink>.",
+    "intro": "Explore uma seleção de recursos para o ajudar a dominar a arte dos baralhos memorizados. Falta algum recurso? Contacte-me ou envie um pull request no <githubLink>GitHub</githubLink>.",
     "otherResources": "Outros recursos",
     "descriptions": {
       "mnemonica": "A obra definitiva sobre o stack Mnemonica com truques, princípios e teorias aprofundadas.",
@@ -347,7 +347,7 @@
       "temporarilyOutOfOrder": "Uma imersão no stack Redford com rotinas versáteis e princípios independentes do stack.",
       "applesauce": "Expande o stack Redford com novos efeitos, ideias e aplicações para trabalho com stacks.",
       "sleightlyOutOfOrder": "Técnicas avançadas e efeitos com stack memorizado e integração de manipulação.",
-      "particleSystem": "Novo baralho memorizado que permite cortar para qualquer carta nomeada sem olhar, com benefícios integrados e uma variedade de rotinas poderosas.",
+      "particleSystem": "Um baralho memorizado moderno concebido para facilitar a memorização através de padrões e agrupamentos, com uma variedade de rotinas poderosas.",
       "conjuringArchive": "Conteúdos pesquisáveis de livros de magia — a secção «Stacked Deck Stuff» cataloga referências sobre o trabalho com baralhos memorizados."
     }
   },

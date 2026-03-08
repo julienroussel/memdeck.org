@@ -54,7 +54,7 @@
     "about": "À propos"
   },
   "header": {
-    "githubAriaLabel": "Github",
+    "githubAriaLabel": "GitHub",
     "toggleNav": "Afficher/masquer le menu de navigation",
     "toggleColorScheme": "Changer le thème de couleur",
     "languageAriaLabel": "Langue"
@@ -63,7 +63,7 @@
     "pageTitle": "MemDeck — Maîtrisez votre jeu mémorisé",
     "pageDescription": "Outil en ligne gratuit pour maîtriser les systèmes de jeu mémorisé comme Mnemonica, Aronson, Memorandum, Redford, Particle et Elephant.",
     "welcome": "Bienvenue sur MemDeck",
-    "intro": "J'espère que ces outils vous aideront à progresser dans l'apprentissage de votre stack. Consultez le <guideLink>guide</guideLink> pour un aperçu de tout ce que MemDeck offre. Besoin d'aide ou il manque quelque chose ? Contactez-moi sur <githubLink>Github</githubLink> !",
+    "intro": "J'espère que ces outils vous aideront à progresser dans l'apprentissage de votre stack. Consultez le <guideLink>guide</guideLink> pour un aperçu de tout ce que MemDeck offre. Besoin d'aide ou il manque quelque chose ? Contactez-moi sur <githubLink>GitHub</githubLink> !",
     "firstTimer": "Bienvenue ! Choisissez votre stack préféré ci-dessous pour débloquer toutes les fonctionnalités. Vous pouvez changer à tout moment via le sélecteur en bas du menu.",
     "guideCardTitle": "Nouveau ici ? Lisez le Guide",
     "guideCardDescription": "Découvrez tous les modes d'entraînement et comment tirer le meilleur parti de MemDeck.",
@@ -119,11 +119,11 @@
     "positionSubModeAriaLabel": "Variante du mode position",
     "neighborDirectionAriaLabel": "Direction du voisin",
     "modeCardOnly": "Carte uniquement",
-    "modeCardOnlyDescription": "Dans ce mode, vous verrez une carte et devrez deviner sa position dans le stack parmi 5 options.",
+    "modeCardOnlyDescription": "Dans ce mode, vous verrez une carte et devrez retrouver sa position dans le stack parmi 5 options.",
     "modeBothModes": "Les deux modes",
-    "modeBothModesDescription": "Dans ce mode, vous verrez aléatoirement soit une carte soit un numéro, et devrez deviner la correspondance parmi 5 options.",
+    "modeBothModesDescription": "Dans ce mode, vous verrez aléatoirement soit une carte soit un numéro. Retrouvez la correspondance parmi 5 options.",
     "modeNumberOnly": "Numéro uniquement",
-    "modeNumberOnlyDescription": "Dans ce mode, vous verrez un numéro et devrez choisir la carte correspondante parmi 5 options.",
+    "modeNumberOnlyDescription": "Dans ce mode, vous verrez un numéro et devrez retrouver la carte correspondante parmi 5 options.",
     "modeNeighborDescription": "Dans ce mode, vous verrez une carte avec une flèche de direction et devrez choisir la carte voisine dans le stack.",
     "neighborBefore": "Avant",
     "neighborAfter": "Après",
@@ -334,7 +334,7 @@
     "pageTitle": "Ressources",
     "pageDescription": "Livres et ressources sélectionnés pour la magie avec jeu mémorisé, dont Mnemonica de Tamariz et The Aronson Approach.",
     "title": "Ressources sur les jeux mémorisés",
-    "intro": "Explorez une sélection de ressources pour vous aider à maîtriser l'art des jeux mémorisés. Il manque une ressource ? Faites-moi signe ou proposez une pull request sur <githubLink>Github</githubLink>.",
+    "intro": "Explorez une sélection de ressources pour vous aider à maîtriser l'art des jeux mémorisés. Il manque une ressource ? Faites-moi signe ou proposez une pull request sur <githubLink>GitHub</githubLink>.",
     "otherResources": "Autres ressources",
     "descriptions": {
       "mnemonica": "L'œuvre de référence sur le stack Mnemonica avec des tours, des principes et des théories approfondies.",
@@ -347,7 +347,7 @@
       "temporarilyOutOfOrder": "Une plongée approfondie dans le stack Redford avec des routines polyvalentes et des principes indépendants du stack.",
       "applesauce": "Élargit le stack Redford avec de nouveaux effets, idées et applications.",
       "sleightlyOutOfOrder": "Techniques avancées et effets utilisant un stack mémorisé avec intégration de manipulation.",
-      "particleSystem": "Nouveau jeu mémorisé permettant de couper à n'importe quelle carte nommée sans regarder, avec des avantages intégrés et des routines puissantes.",
+      "particleSystem": "Un jeu mémorisé moderne conçu pour faciliter la mémorisation grâce à des schémas et des groupements, avec une variété de routines puissantes.",
       "conjuringArchive": "Contenus consultables de livres de magie — la section « Stacked Deck Stuff » répertorie les références sur le travail avec les jeux mémorisés."
     }
   },

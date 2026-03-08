@@ -54,17 +54,17 @@
     "about": "About"
   },
   "header": {
-    "githubAriaLabel": "Github",
+    "githubAriaLabel": "GitHub",
     "toggleNav": "Toggle navigation menu",
     "toggleColorScheme": "Toggle color scheme",
     "languageAriaLabel": "Language"
   },
   "home": {
-    "pageTitle": "MemDeck — Mastering memorized deck",
+    "pageTitle": "MemDeck — Master your memorized deck",
     "pageDescription": "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, Particle, and Elephant.",
     "welcome": "Welcome to MemDeck",
-    "intro": "Hope these tools help you level up your memorized deck stack learning. Check out the <guideLink>guide</guideLink> for a walkthrough of everything MemDeck offers. Need a hand or think something's missing? Hit me up on <githubLink>Github</githubLink>!",
-    "firstTimer": "Hey there, first-timer! Pick your favorite memorized deck stack below to unlock all the cool features. You can switch it up anytime using the selector at the bottom of the menu.",
+    "intro": "Hope these tools help you level up your memorized deck learning. Check out the <guideLink>guide</guideLink> for a walkthrough of everything MemDeck offers. Need a hand or think something's missing? Hit me up on <githubLink>GitHub</githubLink>!",
+    "firstTimer": "Hey there, first-timer! Pick your favorite stack below to unlock all the cool features. You can switch it up anytime using the selector at the bottom of the menu.",
     "guideCardTitle": "New here? Read the Guide",
     "guideCardDescription": "Learn about all the training modes and how to get the most out of MemDeck.",
     "selectedStack": "Your selected stack is <bold>{{stackName}}</bold>",
@@ -82,7 +82,7 @@
     "featureStatsTitle": "Stats",
     "featureStatsDescription": "Track your accuracy, streaks, and session history over time.",
     "featureSpotCheckTitle": "Spot Check",
-    "featureSpotCheckDescription": "Train spotting anomalies — missing, swapped, or moved cards in your deck.",
+    "featureSpotCheckDescription": "Train to spot anomalies — missing, swapped, or moved cards in your deck.",
     "quickStart": "Quick Start",
     "statsTitle": "Your Progress",
     "statSessions": "Sessions",
@@ -119,11 +119,11 @@
     "positionSubModeAriaLabel": "Position mode variant",
     "neighborDirectionAriaLabel": "Neighbor direction",
     "modeCardOnly": "Card only",
-    "modeCardOnlyDescription": "In this mode, you'll see a card and need to guess its position in the stack from 5 options.",
+    "modeCardOnlyDescription": "In this mode, you'll see a card and need to recall its position in the stack from 5 options.",
     "modeBothModes": "Both modes",
-    "modeBothModesDescription": "In this mode, you'll be randomly shown either a card or a number, guess its match from 5 options.",
+    "modeBothModesDescription": "In this mode, you'll be randomly shown either a card or a number. Recall the match from 5 options.",
     "modeNumberOnly": "Number only",
-    "modeNumberOnlyDescription": "In this mode, you'll see a number and need to pick the corresponding card from 5 options.",
+    "modeNumberOnlyDescription": "In this mode, you'll see a number and need to recall the corresponding card from 5 options.",
     "modeNeighborDescription": "In this mode, you'll see a card with a direction arrow and need to pick the neighboring card in the stack.",
     "neighborBefore": "Before",
     "neighborAfter": "After",
@@ -135,7 +135,7 @@
   },
   "acaan": {
     "pageTitle": "ACAAN Training",
-    "pageDescription": "Practice Any Card At Any Number calculations for your memorized deck stack.",
+    "pageDescription": "Practice Any Card At Any Number calculations for your memorized deck.",
     "title": "ACAAN",
     "settingsAriaLabel": "ACAAN settings",
     "cutDepthAriaLabel": "Cut depth",
@@ -191,7 +191,7 @@
     },
     "spelling": {
       "title": "Card Spelling",
-      "description": "See how many letters each card's name has and where spelling lands in your stack.",
+      "description": "See how many letters each card's name has and where the spelling lands in your stack.",
       "position": "#",
       "card": "Card",
       "letters": "Letters",
@@ -334,7 +334,7 @@
     "pageTitle": "Resources",
     "pageDescription": "Curated books and resources for memorized deck magic, including Mnemonica by Tamariz and The Aronson Approach.",
     "title": "Memorized Deck Resources",
-    "intro": "Explore a curated collection of resources to help you master the art of memorized decks. Missing a resource? Give me a shout or drop a pull request on <githubLink>Github</githubLink>.",
+    "intro": "Explore a curated collection of resources to help you master the art of memorized decks. Missing a resource? Give me a shout or drop a pull request on <githubLink>GitHub</githubLink>.",
     "otherResources": "Other Resources",
     "descriptions": {
       "mnemonica": "The definitive work on the Mnemonica stack with tricks, principles, and deep theories.",
@@ -342,12 +342,12 @@
       "boundToPlease": "Compilation of Aronson's early works, essential for stack work.",
       "memoriesAreMade": "A shorter work that provides practical applications for the memorized deck.",
       "magicRainbow": "Not just about memorized decks, but essential for deepening magical thinking.",
-      "inOrderToAmaze": "Brilliant routines and effects with memorized deck techniques",
+      "inOrderToAmaze": "Brilliant routines and effects with memorized deck techniques.",
       "memorandum": "Unique memorized deck with powerful effects and deep insights.",
       "temporarilyOutOfOrder": "A deep dive into the Redford stack with versatile routines and stack-independent principles.",
       "applesauce": "Expands on the Redford stack with new effects, ideas, and applications for stack work.",
       "sleightlyOutOfOrder": "Advanced techniques and effects using a memorized stack with sleight-of-hand integrations.",
-      "particleSystem": "New memorized deck that allows magicians to cut to any named card without looking, featuring built-in benefits and a variety of powerful routines.",
+      "particleSystem": "A modern memorized deck designed for ease of memorization through patterns and groupings, with a variety of powerful routines.",
       "conjuringArchive": "Searchable magic book contents — the Stacked Deck Stuff section catalogues references to memorized deck work."
     }
   },
@@ -394,7 +394,7 @@
       "numberOnlyItem": "<bold>Number Only</bold> — shown a position number, recall the card",
       "bothItem": "<bold>Both</bold> — randomly alternates between the two",
       "neighborItem": "<bold>Neighbor</bold> — shown a card with a direction arrow, pick the adjacent card in the stack",
-      "settings": "Tap the gear icon to switch between Position and Neighbor modes and adjust timer settings. Use the target icon to start a structured session with 10, 20, 30, or 52 card presets, or practice free-form without a session.",
+      "settings": "Tap the gear icon to switch between Position and Neighbor modes and adjust timer settings. Use the target icon to start a structured session with 10, 20, 30, or 52-card presets, or practice free-form without a session.",
       "link": "Go to Flashcard Training"
     },
     "acaanTraining": {
