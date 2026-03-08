@@ -16,7 +16,6 @@ import {
   calculateAccuracy,
   toAccuracyPercent,
 } from "../../utils/session-formatting";
-import { WhyNotAi } from "./why-not-ai";
 
 type HomeWithStackProps = {
   stackName: string;
@@ -35,22 +34,20 @@ export const HomeWithStack = ({ stackName }: HomeWithStackProps) => {
   return (
     <Stack gap="lg">
       <div>
-        <Title order={2}>{t("home.welcome")}</Title>
+        <Title order={2}>{t("home.welcomeReturning")}</Title>
         <Space h="xs" />
-        <Text c="dimmed">{t("home.introReturning")}</Text>
-      </div>
-
-      <Text>
-        <Trans
-          components={{ bold: <Text fw={700} span /> }}
-          i18nKey="home.selectedStack"
-          values={{ stackName }}
-        />
-        {" — "}
-        <Text c="dimmed" size="sm" span>
-          {t("home.switchStackHint")}
+        <Text c="dimmed">
+          <Trans
+            components={{ bold: <Text fw={700} span /> }}
+            i18nKey="home.selectedStack"
+            values={{ stackName }}
+          />
+          {" — "}
+          <Text c="dimmed" size="sm" span>
+            {t("home.switchStackHint")}
+          </Text>
         </Text>
-      </Text>
+      </div>
 
       <div>
         <Title order={3}>{t("home.quickStart")}</Title>
@@ -130,8 +127,6 @@ export const HomeWithStack = ({ stackName }: HomeWithStackProps) => {
           </Text>
         )}
       </div>
-
-      <WhyNotAi />
 
       <ShareNudge />
     </Stack>

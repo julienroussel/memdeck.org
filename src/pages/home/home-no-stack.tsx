@@ -22,7 +22,7 @@ export const HomeNoStack = () => {
   return (
     <Stack gap="lg">
       <div>
-        <Title order={2}>{t("home.welcome")}</Title>
+        <Title order={2}>{t("home.welcomeNew")}</Title>
         <Space h="xs" />
         <Text c="dimmed" size="sm">
           {t("home.whatIsMemdeck")}
@@ -76,8 +76,6 @@ export const HomeNoStack = () => {
         </SimpleGrid>
       </div>
 
-      <WhyNotAi />
-
       <Card
         component={Link}
         padding="lg"
@@ -105,6 +103,8 @@ export const HomeNoStack = () => {
           </Stack>
         </Group>
       </Card>
+
+      <WhyNotAi />
 
       <ShareNudge />
     </Stack>
