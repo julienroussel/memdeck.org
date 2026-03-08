@@ -166,6 +166,21 @@ This project uses **Ultracite** (a Biome preset) for formatting and linting.
 
 Application constants are defined in `src/constants.ts`, including localStorage keys (suffixed `_LSK`), card dimensions, and site metadata.
 
+## Copy & Tone Guidelines
+
+All user-facing English text must follow these principles:
+
+- **Audience**: Card magicians and memory enthusiasts — people who know what a memorized deck is or are actively learning one. Write for practitioners, not tourists.
+- **Tone**: Casual, direct, and encouraging — like a fellow magician sharing a useful tool. Avoid corporate speak, marketing fluff, and overly formal language.
+- **Voice**: Second person ("you", "your"). First person ("I", "me") only when Julien is speaking directly (e.g., about page, intro message).
+- **Terminology**: Use "memorized deck" or "stack" — never both together ("memorized deck stack" is redundant). Use "stack" when context is already clear (e.g., inside the app after a stack is selected). Use "memorized deck" for first mentions or when speaking to newcomers.
+- **Action words**: Prefer "recall" over "guess" in training contexts — users are building recall, not guessing. Use "pick" or "tap" for UI instructions.
+- **Capitalization**: "GitHub" (not "Github"). Product names and proper nouns use their official casing.
+- **Punctuation**: End all descriptions and sentences with periods. Use em dashes (—) for asides, not hyphens. Use the Oxford comma.
+- **Compound adjectives**: Hyphenate before nouns ("52-card preset", "tap-based UI").
+- **Keep it tight**: Prefer short, punchy sentences. Cut filler words. If a description can be one sentence, don't make it two.
+- **Consistency**: When multiple items share a parallel structure (e.g., mode descriptions), keep the sentence pattern and verb tense consistent across all of them.
+
 ## Adding a New Memorized Deck
 
 1. Create `src/types/stacks/newdeck.ts` with the 52-card order
