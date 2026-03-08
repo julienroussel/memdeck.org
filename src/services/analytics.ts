@@ -6,7 +6,7 @@ import type { SpotCheckMode } from "../types/spot-check";
 import type { ShareResult } from "../utils/share";
 import { eventBus } from "./event-bus";
 
-export type ShareSource = "nav" | "nudge" | "about";
+type ShareSource = "nav" | "nudge" | "about";
 
 const TRACKING_ID = "G-36CZ6GEMKQ";
 const PRODUCTION_HOSTNAME = "memdeck.org";
