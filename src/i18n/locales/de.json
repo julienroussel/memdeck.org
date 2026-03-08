@@ -89,7 +89,21 @@
     "statAccuracy": "Genauigkeit",
     "statBestStreak": "Beste Serie",
     "noStatsYet": "Schließe eine Sitzung ab, um deinen Fortschritt zu verfolgen.",
-    "switchStackHint": "du kannst den Stack über die Auswahl am unteren Rand des Menüs wechseln."
+    "switchStackHint": "du kannst den Stack über die Auswahl am unteren Rand des Menüs wechseln.",
+    "whyNotAiTitle": "Warum eine eigene App statt KI?",
+    "whyNotAiIntro": "ChatGPT und Claude können Kartenpositionen halluzinieren — und mit falschen Antworten zu trainieren ist schlimmer als gar nicht zu trainieren.",
+    "whyNotAiAccuracy": "Verifizierte Daten",
+    "whyNotAiAccuracyDesc": "Stack-Daten sind fest einprogrammiert und verifiziert. KI-Modelle können Kartenpositionen falsch angeben.",
+    "whyNotAiSpeed": "Sofort-Übungen",
+    "whyNotAiSpeedDesc": "Tap-basierte Oberfläche statt Prompts eintippen und auf Antworten warten.",
+    "whyNotAiOffline": "Funktioniert offline",
+    "whyNotAiOfflineDesc": "Trainiere hinter der Bühne, in der U-Bahn oder im Flugzeug — kein Internet nötig.",
+    "whyNotAiVisual": "Visuelles Gedächtnis",
+    "whyNotAiVisualDesc": "Echte Kartenbilder zu sehen aktiviert das visuelle Gedächtnis anders als Text zu lesen.",
+    "whyNotAiProgress": "Fortschrittsverfolgung",
+    "whyNotAiProgressDesc": "Genauigkeitsdiagramme, Sitzungsverlauf und Streaks — KI-Chats haben kein Gedächtnis.",
+    "whyNotAiFree": "Für immer kostenlos",
+    "whyNotAiFreeDesc": "Kein Abo für 20 $/Monat erforderlich."
   },
   "flashcard": {
     "pageTitle": "Flashcard-Training",
@@ -336,6 +350,13 @@
       "particleSystem": "Neues memoriertes Kartendeck, mit dem der Magier zu jeder genannten Karte abheben kann, ohne hinzusehen — mit integrierten Vorteilen und wirkungsvollen Routinen.",
       "conjuringArchive": "Durchsuchbare Inhalte von Zauberbüchern — der Bereich 'Stacked Deck Stuff' katalogisiert Referenzen zur Arbeit mit memorierten Kartendecks."
     }
+  },
+  "share": {
+    "label": "MemDeck teilen",
+    "message": "Ich trainiere mein memoriertes Kartendeck mit MemDeck — ein kostenloses Tool für Zauberkünstler. Probier es aus: https://memdeck.org",
+    "copied": "Link kopiert!",
+    "nudgeMessage": "Gefällt dir MemDeck? Teile es mit einem Zauberkollegen.",
+    "nudgeDismiss": "Schließen"
   },
   "about": {
     "pageTitle": "Über",

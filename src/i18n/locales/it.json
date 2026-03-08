@@ -89,7 +89,21 @@
     "statAccuracy": "Precisione",
     "statBestStreak": "Miglior serie",
     "noStatsYet": "Completa una sessione per iniziare a monitorare i tuoi progressi.",
-    "switchStackHint": "puoi cambiare stack usando il selettore in fondo al menu."
+    "switchStackHint": "puoi cambiare stack usando il selettore in fondo al menu.",
+    "whyNotAiTitle": "Perché un'app dedicata invece dell'IA?",
+    "whyNotAiIntro": "ChatGPT e Claude possono inventare posizioni delle carte sbagliate — e allenarsi con risposte sbagliate è peggio che non allenarsi affatto.",
+    "whyNotAiAccuracy": "Dati verificati",
+    "whyNotAiAccuracyDesc": "I dati dello stack sono codificati e verificati. I modelli di IA possono sbagliare le posizioni delle carte.",
+    "whyNotAiSpeed": "Esercizi istantanei",
+    "whyNotAiSpeedDesc": "Interfaccia a tocco invece di digitare prompt e attendere risposte.",
+    "whyNotAiOffline": "Funziona offline",
+    "whyNotAiOfflineDesc": "Allenati nel backstage, in metropolitana o in aereo — non serve internet.",
+    "whyNotAiVisual": "Memoria visiva",
+    "whyNotAiVisualDesc": "Vedere le facce delle carte stimola la memoria visiva in modo diverso rispetto alla lettura di testo.",
+    "whyNotAiProgress": "Monitoraggio dei progressi",
+    "whyNotAiProgressDesc": "Grafici di precisione, cronologia delle sessioni e serie consecutive — le chat IA non hanno memoria.",
+    "whyNotAiFree": "Gratuito per sempre",
+    "whyNotAiFreeDesc": "Nessun abbonamento da 20 $ al mese richiesto."
   },
   "flashcard": {
     "pageTitle": "Allenamento Flashcard",
@@ -336,6 +350,13 @@
       "particleSystem": "Nuovo mazzo memorizzato che permette ai maghi di tagliare a qualsiasi carta nominata senza guardare, con vantaggi integrati e una varietà di routine potenti.",
       "conjuringArchive": "Contenuti ricercabili di libri di magia — la sezione «Stacked Deck Stuff» cataloga riferimenti sul lavoro con mazzi memorizzati."
     }
+  },
+  "share": {
+    "label": "Condividi MemDeck",
+    "message": "Mi alleno con il mio mazzo memorizzato usando MemDeck — uno strumento gratuito per maghi. Provalo: https://memdeck.org",
+    "copied": "Link copiato!",
+    "nudgeMessage": "Ti piace MemDeck? Condividilo con un amico mago.",
+    "nudgeDismiss": "Chiudi"
   },
   "about": {
     "pageTitle": "Info",

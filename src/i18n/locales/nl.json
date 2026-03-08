@@ -89,7 +89,21 @@
     "statAccuracy": "Nauwkeurigheid",
     "statBestStreak": "Beste reeks",
     "noStatsYet": "Voltooi een sessie om je voortgang bij te houden.",
-    "switchStackHint": "je kunt van stack wisselen via de selector onderaan het menu."
+    "switchStackHint": "je kunt van stack wisselen via de selector onderaan het menu.",
+    "whyNotAiTitle": "Waarom een aparte app in plaats van AI?",
+    "whyNotAiIntro": "ChatGPT en Claude kunnen kaartposities hallucineren — en trainen met foute antwoorden is erger dan helemaal niet trainen.",
+    "whyNotAiAccuracy": "Geverifieerde data",
+    "whyNotAiAccuracyDesc": "Stack-gegevens zijn vastgelegd en geverifieerd. AI-modellen kunnen kaartposities fout hebben.",
+    "whyNotAiSpeed": "Directe oefeningen",
+    "whyNotAiSpeedDesc": "Tik-gebaseerde interface in plaats van prompts typen en wachten op antwoorden.",
+    "whyNotAiOffline": "Werkt offline",
+    "whyNotAiOfflineDesc": "Train backstage, in de metro of in het vliegtuig — geen internet nodig.",
+    "whyNotAiVisual": "Visueel geheugen",
+    "whyNotAiVisualDesc": "Het zien van echte kaartafbeeldingen activeert het visueel geheugen anders dan tekst lezen.",
+    "whyNotAiProgress": "Voortgang bijhouden",
+    "whyNotAiProgressDesc": "Nauwkeurigheidsgrafieken, sessiegeschiedenis en streaks — AI-chats hebben geen geheugen.",
+    "whyNotAiFree": "Voor altijd gratis",
+    "whyNotAiFreeDesc": "Geen abonnement van $20/maand nodig."
   },
   "flashcard": {
     "pageTitle": "Flashcard Training",
@@ -336,6 +350,13 @@
       "particleSystem": "Nieuw gememoriseerd kaartspel waarmee je naar elke genoemde kaart kunt couperen zonder te kijken, met ingebouwde voordelen en krachtige routines.",
       "conjuringArchive": "Doorzoekbare inhoud van goochelboeken — de sectie 'Stacked Deck Stuff' catalogeert referenties naar het werken met gememoriseerde kaartspellen."
     }
+  },
+  "share": {
+    "label": "Deel MemDeck",
+    "message": "Ik train mijn gememoriseerde kaartspel met MemDeck — een gratis tool voor goochelaars. Probeer het: https://memdeck.org",
+    "copied": "Link gekopieerd!",
+    "nudgeMessage": "Bevalt MemDeck? Deel het met een mede-goochelaar.",
+    "nudgeDismiss": "Sluiten"
   },
   "about": {
     "pageTitle": "Over",

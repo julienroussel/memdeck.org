@@ -6,10 +6,17 @@ import {
   Title,
   VisuallyHidden,
 } from "@mantine/core";
-import { IconBrandGithub, IconExternalLink } from "@tabler/icons-react";
+import {
+  IconBrandGithub,
+  IconExternalLink,
+  IconShare,
+} from "@tabler/icons-react";
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { GITHUB_URL, LINKTREE_URL } from "../constants";
 import { useDocumentMeta } from "../hooks/use-document-meta";
+import { analytics } from "../services/analytics";
+import { shareMemDeck } from "../utils/share";
 
 export const About = () => {
   const { t } = useTranslation();
@@ -17,6 +24,11 @@ export const About = () => {
     title: t("about.pageTitle"),
     description: t("about.pageDescription"),
   });
+
+  const handleShare = useCallback(async () => {
+    const result = await shareMemDeck(t("share.message"));
+    analytics.trackShareClicked("about", result);
+  }, [t]);
 
   return (
     <>
@@ -43,6 +55,15 @@ export const About = () => {
           </Anchor>
           <Text c="dimmed" size="sm">
             — {t("about.linktreeDescription")}
+          </Text>
+        </Group>
+        <Group gap="xs">
+          <IconShare aria-hidden="true" size={20} stroke={1.5} />
+          <Anchor component="button" onClick={handleShare} type="button">
+            {t("share.label")}
+          </Anchor>
+          <Text c="dimmed" size="sm">
+            — {t("share.nudgeMessage")}
           </Text>
         </Group>
       </Stack>

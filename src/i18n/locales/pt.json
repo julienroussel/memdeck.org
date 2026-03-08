@@ -89,7 +89,21 @@
     "statAccuracy": "Precisão",
     "statBestStreak": "Melhor sequência",
     "noStatsYet": "Conclua uma sessão para começar a acompanhar o seu progresso.",
-    "switchStackHint": "pode mudar de stack usando o seletor na parte inferior do menu."
+    "switchStackHint": "pode mudar de stack usando o seletor na parte inferior do menu.",
+    "whyNotAiTitle": "Por que uma app dedicada em vez de IA?",
+    "whyNotAiIntro": "O ChatGPT e o Claude podem inventar posições de cartas — e treinar com respostas erradas é pior do que não treinar de todo.",
+    "whyNotAiAccuracy": "Dados verificados",
+    "whyNotAiAccuracyDesc": "Os dados do stack são fixos e verificados. Os modelos de IA podem errar nas posições das cartas.",
+    "whyNotAiSpeed": "Exercícios instantâneos",
+    "whyNotAiSpeedDesc": "Interface de toque em vez de escrever prompts e esperar por respostas.",
+    "whyNotAiOffline": "Funciona offline",
+    "whyNotAiOfflineDesc": "Treine nos bastidores, no metro ou no avião — sem necessidade de internet.",
+    "whyNotAiVisual": "Memória visual",
+    "whyNotAiVisualDesc": "Ver as faces das cartas estimula a memória visual de forma diferente de ler texto.",
+    "whyNotAiProgress": "Acompanhamento do progresso",
+    "whyNotAiProgressDesc": "Gráficos de precisão, histórico de sessões e sequências — os chats de IA não têm memória.",
+    "whyNotAiFree": "Gratuito para sempre",
+    "whyNotAiFreeDesc": "Sem subscrição de $20/mês."
   },
   "flashcard": {
     "pageTitle": "Treino Flashcard",
@@ -336,6 +350,13 @@
       "particleSystem": "Novo baralho memorizado que permite cortar para qualquer carta nomeada sem olhar, com benefícios integrados e uma variedade de rotinas poderosas.",
       "conjuringArchive": "Conteúdos pesquisáveis de livros de magia — a secção «Stacked Deck Stuff» cataloga referências sobre o trabalho com baralhos memorizados."
     }
+  },
+  "share": {
+    "label": "Partilhar MemDeck",
+    "message": "Estou a treinar o meu baralho memorizado com o MemDeck — uma ferramenta gratuita para mágicos. Experimente: https://memdeck.org",
+    "copied": "Link copiado!",
+    "nudgeMessage": "Gosta do MemDeck? Partilhe-o com outro mágico.",
+    "nudgeDismiss": "Fechar"
   },
   "about": {
     "pageTitle": "Sobre",

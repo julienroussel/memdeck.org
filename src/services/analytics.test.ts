@@ -698,6 +698,49 @@ describe("analytics", () => {
     });
   });
 
+  describe("trackShareClicked", () => {
+    it("sends share clicked event with source and result", () => {
+      analytics.trackShareClicked("nav", "shared");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Share",
+        action: "Clicked",
+        label: "nav:shared",
+      });
+    });
+
+    it("includes source and result in label", () => {
+      analytics.trackShareClicked("about", "copied");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Share",
+        action: "Clicked",
+        label: "about:copied",
+      });
+    });
+
+    it("tracks nudge source", () => {
+      analytics.trackShareClicked("nudge", "failed");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Share",
+        action: "Clicked",
+        label: "nudge:failed",
+      });
+    });
+  });
+
+  describe("trackShareNudgeDismissed", () => {
+    it("sends nudge dismissed event", () => {
+      analytics.trackShareNudgeDismissed();
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Share",
+        action: "Nudge Dismissed",
+      });
+    });
+  });
+
   describe("trackError", () => {
     it("sends error event with error name and message", () => {
       const error = new TypeError("Cannot read property 'foo' of undefined");
@@ -833,6 +876,18 @@ describe("analytics", () => {
 
     it("does not track spot check mode changes", () => {
       analytics.trackSpotCheckModeChanged("missing");
+
+      expect(mockEvent).not.toHaveBeenCalled();
+    });
+
+    it("does not track share clicks", () => {
+      analytics.trackShareClicked("nav", "shared");
+
+      expect(mockEvent).not.toHaveBeenCalled();
+    });
+
+    it("does not track share nudge dismissed", () => {
+      analytics.trackShareNudgeDismissed();
 
       expect(mockEvent).not.toHaveBeenCalled();
     });
