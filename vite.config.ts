@@ -23,6 +23,7 @@ export default defineConfig({
         // used by iOS — exclude both from precaching.
         globIgnores: ["assets/locale-*.js", "splash/*.png"],
         navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/\.(?:txt|xml|json|webmanifest)$/],
         runtimeCaching: [
           {
             // Cache locale chunks on first use. Vite's hashed filenames make
