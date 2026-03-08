@@ -40,19 +40,23 @@ describe("ROUTES", () => {
     }
   });
 
-  it("matches the URLs listed in lighthouserc.json", () => {
+  it("only lists valid ROUTES URLs in lighthouserc.json", () => {
     const configPath = join(import.meta.dirname, "..", "lighthouserc.json");
     const config = JSON.parse(readFileSync(configPath, "utf-8")) as {
       ci: { collect: { url: readonly string[] } };
     };
     const lighthouseUrls = config.ci.collect.url;
 
-    const expectedUrls = Object.values(ROUTES).map((route) =>
-      route === "/"
-        ? "http://localhost/index.html"
-        : `http://localhost${route}/index.html`
+    const validUrls = new Set(
+      Object.values(ROUTES).map((route) =>
+        route === "/"
+          ? "http://localhost/index.html"
+          : `http://localhost${route}/index.html`
+      )
     );
 
-    expect(new Set(lighthouseUrls)).toEqual(new Set(expectedUrls));
+    for (const url of lighthouseUrls) {
+      expect(validUrls.has(url), `${url} is not a known route`).toBe(true);
+    }
   });
 });

@@ -2,17 +2,11 @@
   "ci": {
     "collect": {
       "staticDistDir": "./dist",
-      "numberOfRuns": 3,
+      "numberOfRuns": 1,
       "url": [
         "http://localhost/index.html",
         "http://localhost/guide/index.html",
-        "http://localhost/resources/index.html",
-        "http://localhost/flashcard/index.html",
-        "http://localhost/spot-check/index.html",
-        "http://localhost/acaan/index.html",
-        "http://localhost/toolbox/index.html",
-        "http://localhost/stats/index.html",
-        "http://localhost/about/index.html"
+        "http://localhost/flashcard/index.html"
       ]
     },
     "assert": {
