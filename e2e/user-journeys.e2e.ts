@@ -10,7 +10,7 @@ test.describe("User Journeys", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(page.locator("text=Master your memorized deck")).toBeVisible();
     // New users see the intro text and stack picker
     await expect(
       page.getByText("Pick a stack below to get started", { exact: false })
@@ -228,7 +228,7 @@ test.describe("User Journeys", () => {
     await page.waitForLoadState("networkidle");
 
     // Title should still be visible
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(page.locator("text=Master your memorized deck")).toBeVisible();
 
     // On mobile, stack picker may be in the nav - open burger menu first
     const burgerButton = page.locator(".mantine-Burger-root");

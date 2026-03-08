@@ -17,7 +17,7 @@ test.describe("Navigation", () => {
   });
 
   test("should display home page on initial load", async ({ page }) => {
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(page.locator("text=Master your memorized deck")).toBeVisible();
   });
 
   test("should display navbar with all main navigation links", async ({
@@ -40,7 +40,7 @@ test.describe("Navigation", () => {
 
     // Verify we're on home page
     await expect(page).toHaveURL(HOME_URL_PATTERN);
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(page.locator("text=Master your memorized deck")).toBeVisible();
   });
 
   test("should navigate to resources page", async ({ page }) => {

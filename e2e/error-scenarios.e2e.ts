@@ -21,7 +21,7 @@ test.describe("Error Scenarios - RequireStack Guard", () => {
 
     // Should be redirected to home page
     await expect(page).toHaveURL(HOME_URL_PATTERN);
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(page.locator("text=Master your memorized deck")).toBeVisible();
   });
 
   test("should redirect to home when navigating to ACAAN without selected stack", async ({
@@ -33,7 +33,7 @@ test.describe("Error Scenarios - RequireStack Guard", () => {
 
     // Should be redirected to home page
     await expect(page).toHaveURL(HOME_URL_PATTERN);
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(page.locator("text=Master your memorized deck")).toBeVisible();
   });
 
   test("should redirect to home when navigating to toolbox without selected stack", async ({
@@ -45,7 +45,7 @@ test.describe("Error Scenarios - RequireStack Guard", () => {
 
     // Should be redirected to home page
     await expect(page).toHaveURL(HOME_URL_PATTERN);
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(page.locator("text=Master your memorized deck")).toBeVisible();
   });
 
   test("should redirect to home when stack is cleared after navigation", async ({
@@ -300,7 +300,7 @@ test.describe("Error Scenarios - Invalid Stack Key", () => {
     await page.waitForLoadState("networkidle");
 
     // App should still load, treating it as no selection
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(page.locator("text=Master your memorized deck")).toBeVisible();
     await expect(
       page.getByText("Pick a stack below to get started", { exact: false })
     ).toBeVisible();
@@ -333,7 +333,7 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
 
     // Home page should load without requiring stack
     await expect(page).toHaveURL(HOME_URL_PATTERN);
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(page.locator("text=Master your memorized deck")).toBeVisible();
   });
 
   test("should allow direct navigation to resources page", async ({ page }) => {
@@ -384,7 +384,7 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
 
     // Should still be on a valid page (home)
     await expect(page).toHaveURL(HOME_URL_PATTERN);
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(page.locator("text=Master your memorized deck")).toBeVisible();
   });
 
   test("should handle forward navigation after going back from protected route", async ({

@@ -10,7 +10,7 @@ test.describe("Language & i18n", () => {
   });
 
   test("should default to English on first visit", async ({ page }) => {
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(page.locator("text=Master your memorized deck")).toBeVisible();
 
     const htmlLang = await page.getAttribute("html", "lang");
     expect(htmlLang).toBe("en");

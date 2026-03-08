@@ -54,7 +54,7 @@ test.describe("Toolbox Page", () => {
     await expect(page).toHaveURL(HOME_URL_PATTERN);
 
     // Should show home page content
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(page.locator("text=Master your memorized deck")).toBeVisible();
   });
 
   test("should render toolbox page for all available stack options", async ({
