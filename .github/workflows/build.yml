@@ -29,6 +29,8 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Install Playwright browsers (for pre-rendering)
+        run: pnpm exec playwright install --with-deps chromium
       - name: Check unused dependencies and exports
         if: inputs.run-checks
         run: pnpm run knip
