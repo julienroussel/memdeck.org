@@ -73,21 +73,33 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 
 ### Application Structure
 
-- **Routing**: Route definitions in `src/routes.tsx`, `BrowserRouter` in `src/provider.tsx`. GitHub Pages SPA support via `public/404.html` redirect
+- **Routing**: Route definitions in `src/routes.tsx`, route paths centralized in `src/constants.ts` (`ROUTES` object), `BrowserRouter` in `src/provider.tsx`. GitHub Pages SPA support via `public/404.html` redirect. Pages are lazy-loaded with `lazyWithReload` (a custom wrapper around `React.lazy` with chunk-error retry) and `Suspense`
 - **UI Framework**: Mantine with custom color scheme management stored in localStorage
-- **Pages**: Self-contained in `src/pages/` — each training mode is its own page
-- **Components**: Reusable UI in `src/components/` (e.g., `CardSpread`, `StackPicker`, `NumberCard`)
-- **Hooks**: Custom hooks in `src/hooks/` (e.g., `useSelectedStack`)
-- **Utils**: Pure utility functions in `src/utils/` (e.g., `card-selection`, `card-formatting`, `localstorage`)
+- **Pages**: Self-contained in `src/pages/` — each training mode is its own page. Stack-dependent pages are wrapped in `RequireStack`
+- **Components**: Reusable UI in `src/components/` (e.g., `CardSpread`, `StackPicker`, `NumberCard`, `ShareButton`, `ShareNudge`, `NavFooter`)
+- **Hooks**: Custom hooks in `src/hooks/` (e.g., `useSelectedStack`, `usePwaInstall`, `useDocumentMeta`)
+- **Utils**: Pure utility functions in `src/utils/` (e.g., `card-selection`, `card-formatting`, `localstorage`, `share`, `is-pwa`)
+- **Services**: `src/services/analytics.ts` — Google Analytics 4 integration with event tracking (only active on `memdeck.org`). Tracks flashcard/spot-check/ACAAN answers, session completions, share actions, web vitals, and errors
+- **i18n**: `src/i18n/` — 7 languages (en, fr, es, de, it, nl, pt) using `react-i18next`. Locale files are lazy-loaded as separate chunks. Type-safe keys derived from the English locale
 - **State**: Primarily local component state with localStorage persistence
 
 ### Key Features
 
-- **Flashcard Mode** (`src/pages/flashcard/`): Main training feature with three modes (card-only, index-only, both)
-- **ACAAN** (`src/pages/acaan/`): Any Card At Any Number calculator
+- **Flashcard Mode** (`src/pages/flashcard/`): Main training feature with three modes (card-only, index-only, both). Presents 5 choices with optional timer (5s–60s)
+- **Spot Check** (`src/pages/spot-check/`): Visual deck inspection training with three variants — missing card, swapped cards, or moved card. Uses an interactive card spread
+- **ACAAN** (`src/pages/acaan/`): Any Card At Any Number calculator with instant feedback
 - **Toolbox** (`src/pages/toolbox/`): Collection of memorized deck utilities
-- **Stats** (`src/pages/stats/`): Session history and accuracy statistics
+- **Stats** (`src/pages/stats/`): Session history, accuracy statistics, and best streak tracking
 - **Guide** (`src/pages/guide/`): Getting started and training instructions
+- **Resources** (`src/pages/resources.tsx`): Curated reading list of memorized deck books and PDFs
+- **About** (`src/pages/about.tsx`): Project info and links
+
+### PWA & SEO
+
+- **Progressive Web App**: Full offline support via service worker (Vite PWA plugin). Silent auto-updates with subtle toast notification. Mobile install prompt with iOS/Android-specific instructions
+- **Pre-rendering**: Static HTML generated for all routes at build time for SEO
+- **AI Discoverability**: `public/llms.txt` and `public/llms-full.txt` for LLM indexing
+- **Share**: Native Web Share API on mobile, clipboard fallback on desktop. Share nudge appears after 5+ completed sessions
 
 ## TypeScript Standards
 
