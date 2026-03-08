@@ -16,7 +16,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -29,6 +29,8 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Install Playwright browsers (for pre-rendering)
+        run: pnpm exec playwright install --with-deps chromium
       - name: Check unused dependencies and exports
         if: inputs.run-checks
         run: pnpm run knip

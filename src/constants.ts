@@ -55,3 +55,16 @@ export const PWA_INSTALL_COOLDOWN_MS = 30 * 24 * 60 * 60 * 1000;
 
 export const SITE_NAME = "MemDeck";
 export const SITE_URL = "https://memdeck.org";
+
+/** All route paths used by the app — shared between routes.tsx and the pre-render script */
+export const ROUTES = {
+  home: "/",
+  guide: "/guide",
+  resources: "/resources",
+  flashcard: "/flashcard",
+  spotCheck: "/spot-check",
+  acaan: "/acaan",
+  toolbox: "/toolbox",
+  stats: "/stats",
+  about: "/about",
+} as const;

@@ -47,17 +47,17 @@ const META_ENTRIES: readonly MetaEntry[] = [
   },
   {
     kind: "meta",
-    selector: 'meta[property="twitter:url"]',
+    selector: 'meta[name="twitter:url"]',
     resolve: (v) => v.canonicalUrl,
   },
   {
     kind: "meta",
-    selector: 'meta[property="twitter:title"]',
+    selector: 'meta[name="twitter:title"]',
     resolve: (v) => v.fullTitle,
   },
   {
     kind: "meta",
-    selector: 'meta[property="twitter:description"]',
+    selector: 'meta[name="twitter:description"]',
     resolve: (v) => v.description,
   },
   {

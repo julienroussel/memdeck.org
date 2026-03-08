@@ -6,6 +6,7 @@ import {
   Routes as RouterRoutes,
 } from "react-router";
 import { RequireStack } from "./components/require-stack";
+import { ROUTES } from "./constants";
 import { lazyWithReload } from "./utils/lazy-with-reload";
 
 const Home = lazyWithReload(() =>
@@ -55,7 +56,7 @@ export const Routes = () => (
           <Home />
         </LazyRoute>
       }
-      path="/"
+      path={ROUTES.home}
     />
     <RouterRoute
       element={
@@ -63,7 +64,7 @@ export const Routes = () => (
           <Guide />
         </LazyRoute>
       }
-      path="/guide"
+      path={ROUTES.guide}
     />
     <RouterRoute
       element={
@@ -71,7 +72,7 @@ export const Routes = () => (
           <Resources />
         </LazyRoute>
       }
-      path="/resources"
+      path={ROUTES.resources}
     />
     <RouterRoute
       element={
@@ -81,7 +82,7 @@ export const Routes = () => (
           </RequireStack>
         </LazyRoute>
       }
-      path="/flashcard"
+      path={ROUTES.flashcard}
     />
     <RouterRoute
       element={
@@ -91,7 +92,7 @@ export const Routes = () => (
           </RequireStack>
         </LazyRoute>
       }
-      path="/spot-check"
+      path={ROUTES.spotCheck}
     />
     <RouterRoute
       element={
@@ -101,7 +102,7 @@ export const Routes = () => (
           </RequireStack>
         </LazyRoute>
       }
-      path="/acaan"
+      path={ROUTES.acaan}
     />
     <RouterRoute
       element={
@@ -111,7 +112,7 @@ export const Routes = () => (
           </RequireStack>
         </LazyRoute>
       }
-      path="/toolbox"
+      path={ROUTES.toolbox}
     />
     <RouterRoute
       element={
@@ -119,7 +120,7 @@ export const Routes = () => (
           <Stats />
         </LazyRoute>
       }
-      path="/stats"
+      path={ROUTES.stats}
     />
     <RouterRoute
       element={
@@ -127,8 +128,8 @@ export const Routes = () => (
           <About />
         </LazyRoute>
       }
-      path="/about"
+      path={ROUTES.about}
     />
-    <RouterRoute element={<Navigate replace to="/" />} path="*" />
+    <RouterRoute element={<Navigate replace to={ROUTES.home} />} path="*" />
   </RouterRoutes>
 );

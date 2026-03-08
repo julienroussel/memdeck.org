@@ -3,36 +3,90 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MemDeck</title>
-    <script>
-    "use strict";
-    // GitHub Pages SPA redirect hack
-    // Encodes the path into a query string and redirects to index.html
-    // A script in index.html restores the clean URL via history.replaceState
-    const pathSegmentsToKeep = 0;
-    const l = window.location;
-    // Only redirect same-origin paths (must start with "/")
-    if (l.pathname.startsWith("/")) {
-      l.replace(
-        `${l.protocol}//${l.hostname}${l.port ? `:${l.port}` : ""}${l.pathname
-          .split("/")
-          .slice(0, 1 + pathSegmentsToKeep)
-          .join("/")}/?/${l.pathname
-          .slice(1)
-          .split("/")
-          .slice(pathSegmentsToKeep)
-          .join("/")
-          .replace(
-            /&/g,
-            "~and~"
-          )}${l.search ? `&${l.search.slice(1).replace(/&/g, "~and~")}` : ""}${l.hash}`
-      );
+    <title>Page not found | MemDeck</title>
+    <meta name="robots" content="noindex">
+    <link
+      rel="icon"
+      type="image/webp"
+      href="/memdeck-black.webp"
+      media="(prefers-color-scheme: light)"
+    >
+    <link
+      rel="icon"
+      type="image/webp"
+      href="/memdeck-white.webp"
+      media="(prefers-color-scheme: dark)"
+    >
+    <style>
+    * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
     }
-    </script>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+        sans-serif;
+      color: #333;
+      background: #fff;
+    }
+    .container {
+      padding: 2rem;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 0.5rem;
+      font-size: 4rem;
+      font-weight: 700;
+      color: #228be6;
+    }
+    p {
+      margin-bottom: 1.5rem;
+      font-size: 1.125rem;
+      color: #666;
+    }
+    a {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      color: #fff;
+      text-decoration: none;
+      background: #228be6;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    a:hover {
+      background: #1c7ed6;
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        color: #ddd;
+        background: #111;
+      }
+      p {
+        color: #999;
+      }
+      h1 {
+        color: #4dabf7;
+      }
+      a {
+        background: #1864ab;
+      }
+      a:hover {
+        background: #1c7ed6;
+      }
+    }
+    </style>
   </head>
   <body>
-    <noscript>
-      <p>Page not found. <a href="https://memdeck.org">Go to MemDeck</a>.</p>
-    </noscript>
+    <div class="container">
+      <h1>404</h1>
+      <p>This page doesn't exist.</p>
+      <a href="/">Back to MemDeck</a>
+    </div>
   </body>
 </html>
