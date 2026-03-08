@@ -3,7 +3,10 @@ import { type Metric, onCLS, onINP, onLCP } from "web-vitals";
 import type { FlashcardMode, NeighborDirection } from "../types/flashcard";
 import type { SessionConfig, TrainingMode } from "../types/session";
 import type { SpotCheckMode } from "../types/spot-check";
+import type { ShareResult } from "../utils/share";
 import { eventBus } from "./event-bus";
+
+export type ShareSource = "nav" | "nudge" | "about";
 
 const TRACKING_ID = "G-36CZ6GEMKQ";
 const PRODUCTION_HOSTNAME = "memdeck.org";
@@ -200,6 +203,27 @@ export const analytics = {
       category: "Feature",
       action: "Used",
       label: feature,
+    });
+  },
+
+  trackShareClicked: (source: ShareSource, result: ShareResult) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "Share",
+      action: "Clicked",
+      label: `${source}:${result}`,
+    });
+  },
+
+  trackShareNudgeDismissed: () => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "Share",
+      action: "Nudge Dismissed",
     });
   },
 

@@ -89,7 +89,21 @@
     "statAccuracy": "Accuracy",
     "statBestStreak": "Best Streak",
     "noStatsYet": "Complete a session to start tracking your progress.",
-    "switchStackHint": "you can switch stacks using the selector at the bottom of the menu."
+    "switchStackHint": "you can switch stacks using the selector at the bottom of the menu.",
+    "whyNotAiTitle": "Why a dedicated app instead of AI?",
+    "whyNotAiIntro": "ChatGPT and Claude can hallucinate card positions — and training with wrong answers is worse than not training at all.",
+    "whyNotAiAccuracy": "Verified data",
+    "whyNotAiAccuracyDesc": "Stack data is hardcoded and verified. AI models can get card positions wrong.",
+    "whyNotAiSpeed": "Instant drills",
+    "whyNotAiSpeedDesc": "Tap-based UI instead of typing prompts and waiting for responses.",
+    "whyNotAiOffline": "Works offline",
+    "whyNotAiOfflineDesc": "Train backstage, on the subway, or on a plane — no internet needed.",
+    "whyNotAiVisual": "Visual memory",
+    "whyNotAiVisualDesc": "Seeing actual card faces engages visual memory differently than reading text.",
+    "whyNotAiProgress": "Progress tracking",
+    "whyNotAiProgressDesc": "Accuracy charts, session history, and streaks — AI chats have no memory.",
+    "whyNotAiFree": "Free forever",
+    "whyNotAiFreeDesc": "No $20/mo subscription required."
   },
   "flashcard": {
     "pageTitle": "Flashcard Training",
@@ -336,6 +350,13 @@
       "particleSystem": "New memorized deck that allows magicians to cut to any named card without looking, featuring built-in benefits and a variety of powerful routines.",
       "conjuringArchive": "Searchable magic book contents — the Stacked Deck Stuff section catalogues references to memorized deck work."
     }
+  },
+  "share": {
+    "label": "Share MemDeck",
+    "message": "I'm training my memorized deck with MemDeck — a free tool for magicians. Try it: https://memdeck.org",
+    "copied": "Link copied!",
+    "nudgeMessage": "Enjoying MemDeck? Share it with a fellow magician.",
+    "nudgeDismiss": "Dismiss"
   },
   "about": {
     "pageTitle": "About",

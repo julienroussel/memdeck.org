@@ -6,14 +6,17 @@ import {
   IconTarget,
   IconTools,
 } from "@tabler/icons-react";
+import { useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { ShareNudge } from "../../components/share-nudge";
 import { StatDisplay } from "../../components/stat-display";
 import { useAllTimeStats } from "../../hooks/use-all-time-stats";
 import {
   calculateAccuracy,
   toAccuracyPercent,
 } from "../../utils/session-formatting";
+import { WhyNotAi } from "./why-not-ai";
 
 type HomeWithStackProps = {
   stackName: string;
@@ -22,7 +25,7 @@ type HomeWithStackProps = {
 export const HomeWithStack = ({ stackName }: HomeWithStackProps) => {
   const { t } = useTranslation();
   const { getGlobalStats } = useAllTimeStats();
-  const globalStats = getGlobalStats();
+  const globalStats = useMemo(() => getGlobalStats(), [getGlobalStats]);
   const hasStats = globalStats.totalSessions > 0;
   const accuracy = calculateAccuracy(
     globalStats.totalSuccesses,
@@ -127,6 +130,10 @@ export const HomeWithStack = ({ stackName }: HomeWithStackProps) => {
           </Text>
         )}
       </div>
+
+      <WhyNotAi />
+
+      <ShareNudge />
     </Stack>
   );
 };

@@ -11,8 +11,10 @@ import {
 import { IconBook2 } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { ShareNudge } from "../../components/share-nudge";
 import { StackPicker } from "../../components/stack-picker";
 import { FEATURE_CARDS } from "./feature-cards";
+import { WhyNotAi } from "./why-not-ai";
 
 export const HomeNoStack = () => {
   const { t } = useTranslation();
@@ -74,6 +76,8 @@ export const HomeNoStack = () => {
         </SimpleGrid>
       </div>
 
+      <WhyNotAi />
+
       <Card
         component={Link}
         padding="lg"
@@ -101,6 +105,8 @@ export const HomeNoStack = () => {
           </Stack>
         </Group>
       </Card>
+
+      <ShareNudge />
     </Stack>
   );
 };

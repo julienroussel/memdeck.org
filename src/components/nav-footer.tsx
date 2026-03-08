@@ -5,6 +5,7 @@ import { GITHUB_URL } from "../constants";
 import { useSelectedStack } from "../hooks/use-selected-stack";
 import { LanguagePicker } from "./language-picker";
 import { ResetButton } from "./reset-button";
+import { ShareButton } from "./share-button";
 import { StackPicker } from "./stack-picker";
 
 const commitHashStyle: React.CSSProperties = { fontFamily: "monospace" };
@@ -45,6 +46,7 @@ export const NavFooter = () => {
         >
           <IconBrandGithub aria-hidden="true" size={16} />
         </Anchor>
+        <ShareButton />
         <Text aria-label="Build version" c="dimmed" size="xs">
           v. <span style={commitHashStyle}>{__COMMIT_HASH__}</span>
         </Text>

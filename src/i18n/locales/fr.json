@@ -89,7 +89,21 @@
     "statAccuracy": "Précision",
     "statBestStreak": "Meilleure série",
     "noStatsYet": "Terminez une session pour commencer à suivre vos progrès.",
-    "switchStackHint": "vous pouvez changer de stack via le sélecteur en bas du menu."
+    "switchStackHint": "vous pouvez changer de stack via le sélecteur en bas du menu.",
+    "whyNotAiTitle": "Pourquoi une appli dédiée plutôt que l'IA ?",
+    "whyNotAiIntro": "ChatGPT et Claude peuvent halluciner les positions des cartes — et s'entraîner avec de mauvaises réponses est pire que de ne pas s'entraîner du tout.",
+    "whyNotAiAccuracy": "Données vérifiées",
+    "whyNotAiAccuracyDesc": "Les données de stack sont codées en dur et vérifiées. Les modèles d'IA peuvent se tromper sur les positions des cartes.",
+    "whyNotAiSpeed": "Exercices instantanés",
+    "whyNotAiSpeedDesc": "Interface tactile au lieu de taper des prompts et d'attendre des réponses.",
+    "whyNotAiOffline": "Fonctionne hors ligne",
+    "whyNotAiOfflineDesc": "Entraînez-vous en coulisses, dans le métro ou dans l'avion — pas besoin d'internet.",
+    "whyNotAiVisual": "Mémoire visuelle",
+    "whyNotAiVisualDesc": "Voir les faces des cartes sollicite la mémoire visuelle autrement qu'en lisant du texte.",
+    "whyNotAiProgress": "Suivi des progrès",
+    "whyNotAiProgressDesc": "Graphiques de précision, historique des sessions et séries — les chats IA n'ont pas de mémoire.",
+    "whyNotAiFree": "Gratuit pour toujours",
+    "whyNotAiFreeDesc": "Pas d'abonnement à 20 $/mois requis."
   },
   "flashcard": {
     "pageTitle": "Entraînement Flashcard",
@@ -336,6 +350,13 @@
       "particleSystem": "Nouveau jeu mémorisé permettant de couper à n'importe quelle carte nommée sans regarder, avec des avantages intégrés et des routines puissantes.",
       "conjuringArchive": "Contenus consultables de livres de magie — la section « Stacked Deck Stuff » répertorie les références sur le travail avec les jeux mémorisés."
     }
+  },
+  "share": {
+    "label": "Partager MemDeck",
+    "message": "Je m'entraîne avec MemDeck — un outil gratuit pour travailler son jeu mémorisé. Essaie-le : https://memdeck.org",
+    "copied": "Lien copié !",
+    "nudgeMessage": "Vous aimez MemDeck ? Partagez-le avec un autre magicien.",
+    "nudgeDismiss": "Fermer"
   },
   "about": {
     "pageTitle": "À propos",

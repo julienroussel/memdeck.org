@@ -56,6 +56,12 @@ export const PWA_INSTALL_COOLDOWN_MS = 30 * 24 * 60 * 60 * 1000;
 export const SITE_NAME = "MemDeck";
 export const SITE_URL = "https://memdeck.org";
 
+/** localStorage key for tracking whether the "spread the word" nudge was dismissed */
+export const SHARE_NUDGE_DISMISSED_LSK = "memdeck-app-share-nudge-dismissed";
+
+/** Minimum number of completed sessions before showing the share nudge */
+export const SHARE_NUDGE_MIN_SESSIONS = 5;
+
 /** All route paths used by the app — shared between routes.tsx and the pre-render script */
 export const ROUTES = {
   home: "/",

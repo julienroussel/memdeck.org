@@ -89,7 +89,21 @@
     "statAccuracy": "Precisión",
     "statBestStreak": "Mejor racha",
     "noStatsYet": "Completa una sesión para empezar a registrar tu progreso.",
-    "switchStackHint": "puedes cambiar de stack usando el selector en la parte inferior del menú."
+    "switchStackHint": "puedes cambiar de stack usando el selector en la parte inferior del menú.",
+    "whyNotAiTitle": "¿Por qué una app dedicada en lugar de IA?",
+    "whyNotAiIntro": "ChatGPT y Claude pueden inventarse posiciones de cartas — y entrenar con respuestas erróneas es peor que no entrenar.",
+    "whyNotAiAccuracy": "Datos verificados",
+    "whyNotAiAccuracyDesc": "Los datos del stack están codificados y verificados. Los modelos de IA pueden equivocarse en las posiciones de las cartas.",
+    "whyNotAiSpeed": "Ejercicios instantáneos",
+    "whyNotAiSpeedDesc": "Interfaz táctil en lugar de escribir prompts y esperar respuestas.",
+    "whyNotAiOffline": "Funciona sin conexión",
+    "whyNotAiOfflineDesc": "Entrena entre bastidores, en el metro o en un avión — sin necesidad de internet.",
+    "whyNotAiVisual": "Memoria visual",
+    "whyNotAiVisualDesc": "Ver las caras de las cartas estimula la memoria visual de forma diferente a leer texto.",
+    "whyNotAiProgress": "Seguimiento del progreso",
+    "whyNotAiProgressDesc": "Gráficos de precisión, historial de sesiones y rachas — los chats de IA no tienen memoria.",
+    "whyNotAiFree": "Gratis para siempre",
+    "whyNotAiFreeDesc": "No se necesita suscripción de 20 $/mes."
   },
   "flashcard": {
     "pageTitle": "Entrenamiento Flashcard",
@@ -336,6 +350,13 @@
       "particleSystem": "Nueva baraja memorizada que permite al mago cortar a cualquier carta nombrada sin mirar, con ventajas integradas y una variedad de rutinas poderosas.",
       "conjuringArchive": "Contenidos consultables de libros de magia — la sección «Stacked Deck Stuff» cataloga referencias sobre el trabajo con barajas memorizadas."
     }
+  },
+  "share": {
+    "label": "Compartir MemDeck",
+    "message": "Estoy entrenando mi baraja memorizada con MemDeck — una herramienta gratuita para magos. Pruébalo: https://memdeck.org",
+    "copied": "¡Enlace copiado!",
+    "nudgeMessage": "¿Te gusta MemDeck? Compártelo con otro mago.",
+    "nudgeDismiss": "Cerrar"
   },
   "about": {
     "pageTitle": "Acerca de",
