@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { ROUTES } from "./constants";
 
@@ -36,5 +38,21 @@ describe("ROUTES", () => {
     for (const path of Object.values(ROUTES)) {
       expect(path).toMatch(STARTS_WITH_SLASH);
     }
+  });
+
+  it("matches the URLs listed in lighthouserc.json", () => {
+    const configPath = join(import.meta.dirname, "..", "lighthouserc.json");
+    const config = JSON.parse(readFileSync(configPath, "utf-8")) as {
+      ci: { collect: { url: readonly string[] } };
+    };
+    const lighthouseUrls = config.ci.collect.url;
+
+    const expectedUrls = Object.values(ROUTES).map((route) =>
+      route === "/"
+        ? "http://localhost/index.html"
+        : `http://localhost${route}/index.html`
+    );
+
+    expect(new Set(lighthouseUrls)).toEqual(new Set(expectedUrls));
   });
 });
