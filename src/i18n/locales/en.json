@@ -368,7 +368,7 @@
   },
   "guide": {
     "pageTitle": "Guide",
-    "pageDescription": "Learn how to use MemDeck's training modes: Flashcard drills, ACAAN, session tracking, and tips for mastering your stack.",
+    "pageDescription": "Learn how to use MemDeck's training modes: Flashcard drills, Spot Check, ACAAN, session tracking, and tips for mastering your stack.",
     "title": "Guide",
     "subtitle": "Everything you need to know about MemDeck and its features.",
     "gettingStarted": {
@@ -423,7 +423,7 @@
     },
     "stats": {
       "title": "Stats",
-      "description": "Track your progress over time. The Stats page includes overview cards, an accuracy trend chart (filterable by mode and flashcard sub-mode), a per-stack breakdown table, and paginated session history. All data is stored locally in your browser.",
+      "description": "Track your progress over time. The Stats page includes overview cards, an accuracy trend chart (filterable by mode and sub-mode), a per-stack breakdown table, and paginated session history. All data is stored locally in your browser.",
       "link": "Go to Stats"
     },
     "resources": {
@@ -439,7 +439,8 @@
       "switchStacks": "Switching stacks doesn't lose your data — progress is tracked per stack.",
       "pwa": "Install MemDeck as an app on your device for offline access.",
       "language": "Change the display language using the language selector in the navigation menu.",
-      "reset": "Use the reset button in the menu to clear all data and start fresh."
+      "share": "Use the share button in the navigation menu to spread the word about MemDeck with fellow magicians.",
+      "reset": "Use the reset button in the menu to clear your data. You can reset settings only (keeping training history) or reset everything."
     }
   }
 }

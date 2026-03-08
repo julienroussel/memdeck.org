@@ -368,7 +368,7 @@
   },
   "guide": {
     "pageTitle": "Guida",
-    "pageDescription": "Scopri come usare i modi di allenamento di MemDeck: esercizi Flashcard, ACAAN, monitoraggio sessioni e consigli per padroneggiare il tuo stack.",
+    "pageDescription": "Scopri come usare i modi di allenamento di MemDeck: esercizi Flashcard, Spot Check, ACAAN, monitoraggio sessioni e consigli per padroneggiare il tuo stack.",
     "title": "Guida",
     "subtitle": "Tutto quello che devi sapere su MemDeck e le sue funzionalità.",
     "gettingStarted": {
@@ -423,7 +423,7 @@
     },
     "stats": {
       "title": "Statistiche",
-      "description": "Monitora i tuoi progressi nel tempo. La pagina Statistiche include schede di riepilogo, un grafico dell'andamento della precisione (filtrabile per modalità e sotto-modalità flashcard), una tabella di dettaglio per stack e una cronologia delle sessioni paginata. Tutti i dati sono archiviati localmente nel tuo browser.",
+      "description": "Monitora i tuoi progressi nel tempo. La pagina Statistiche include schede di riepilogo, un grafico dell'andamento della precisione (filtrabile per modalità e sotto-modalità), una tabella di dettaglio per stack e una cronologia delle sessioni paginata. Tutti i dati sono archiviati localmente nel tuo browser.",
       "link": "Vai alle statistiche"
     },
     "resources": {
@@ -439,7 +439,8 @@
       "switchStacks": "Cambiare stack non fa perdere i tuoi dati — i progressi sono monitorati per stack.",
       "pwa": "Installa MemDeck come app sul tuo dispositivo per l'accesso offline.",
       "language": "Cambia la lingua di visualizzazione usando il selettore di lingua nel menu di navigazione.",
-      "reset": "Usa il pulsante di ripristino nel menu per cancellare tutti i dati e ricominciare da zero."
+      "share": "Usa il pulsante di condivisione nel menu di navigazione per far conoscere MemDeck ad altri maghi.",
+      "reset": "Usa il pulsante di ripristino nel menu per cancellare i tuoi dati. Puoi ripristinare solo le impostazioni (mantenendo la cronologia di allenamento) o ripristinare tutto."
     }
   }
 }

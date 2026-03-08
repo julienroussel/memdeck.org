@@ -368,7 +368,7 @@
   },
   "guide": {
     "pageTitle": "Guia",
-    "pageDescription": "Aprenda a usar os modos de treino do MemDeck: exercícios Flashcard, ACAAN, acompanhamento de sessões e dicas para dominar o seu stack.",
+    "pageDescription": "Aprenda a usar os modos de treino do MemDeck: exercícios Flashcard, Spot Check, ACAAN, acompanhamento de sessões e dicas para dominar o seu stack.",
     "title": "Guia",
     "subtitle": "Tudo o que precisa saber sobre o MemDeck e as suas funcionalidades.",
     "gettingStarted": {
@@ -423,7 +423,7 @@
     },
     "stats": {
       "title": "Estatísticas",
-      "description": "Acompanhe o seu progresso ao longo do tempo. A página de Estatísticas inclui painéis de resumo, um gráfico de tendência de precisão (filtrável por modo e sub-modo de flashcard), uma tabela de detalhe por stack e um histórico de sessões paginado. Todos os dados são armazenados localmente no seu navegador.",
+      "description": "Acompanhe o seu progresso ao longo do tempo. A página de Estatísticas inclui painéis de resumo, um gráfico de tendência de precisão (filtrável por modo e sub-modo), uma tabela de detalhe por stack e um histórico de sessões paginado. Todos os dados são armazenados localmente no seu navegador.",
       "link": "Ir para Estatísticas"
     },
     "resources": {
@@ -439,7 +439,8 @@
       "switchStacks": "Mudar de stack não apaga os seus dados — o progresso é acompanhado por stack.",
       "pwa": "Instale o MemDeck como app no seu dispositivo para acesso offline.",
       "language": "Mude o idioma de exibição usando o seletor de idioma no menu de navegação.",
-      "reset": "Use o botão de repor no menu para apagar todos os dados e começar de novo."
+      "share": "Use o botão de partilha no menu de navegação para divulgar o MemDeck junto de outros magos.",
+      "reset": "Use o botão de repor no menu para apagar os seus dados. Pode repor apenas as definições (mantendo o histórico de treino) ou repor tudo."
     }
   }
 }
