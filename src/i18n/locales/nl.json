@@ -368,7 +368,7 @@
   },
   "guide": {
     "pageTitle": "Gids",
-    "pageDescription": "Leer hoe je de trainingsmodi van MemDeck gebruikt: Flashcard-oefeningen, ACAAN, sessiebijhouding en tips om je stack te beheersen.",
+    "pageDescription": "Leer hoe je de trainingsmodi van MemDeck gebruikt: Flashcard-oefeningen, Spot Check, ACAAN, sessiebijhouding en tips om je stack te beheersen.",
     "title": "Gids",
     "subtitle": "Alles wat je moet weten over MemDeck en zijn functies.",
     "gettingStarted": {
@@ -423,7 +423,7 @@
     },
     "stats": {
       "title": "Statistieken",
-      "description": "Volg je voortgang in de tijd. De statistiekenpagina bevat overzichtstegels, een nauwkeurigheidstrendgrafiek (filterbaar per modus en flashcard-submodus), een uitsplitsing per stack en gepagineerde sessiegeschiedenis. Alle gegevens worden lokaal in je browser opgeslagen.",
+      "description": "Volg je voortgang in de tijd. De statistiekenpagina bevat overzichtskaarten, een trendgrafiek voor nauwkeurigheid (filterbaar per modus en submodus), een uitsplitsingstabel per stack en gepagineerde sessiegeschiedenis. Alle gegevens worden lokaal in je browser opgeslagen.",
       "link": "Bekijk statistieken"
     },
     "resources": {
@@ -439,7 +439,8 @@
       "switchStacks": "Als je van stack wisselt, raak je geen gegevens kwijt — voortgang wordt per stack bijgehouden.",
       "pwa": "Installeer MemDeck als app op je apparaat voor offline toegang.",
       "language": "Wijzig de weergavetaal via de taalkiezer in het navigatiemenu.",
-      "reset": "Gebruik de resetknop in het menu om alle gegevens te wissen en opnieuw te beginnen."
+      "share": "Gebruik de deelknop in het navigatiemenu om MemDeck te delen met je collega-goochelaars.",
+      "reset": "Gebruik de resetknop in het menu om je gegevens te wissen. Je kunt alleen de instellingen resetten (trainingsgeschiedenis blijft bewaard) of alles resetten."
     }
   }
 }

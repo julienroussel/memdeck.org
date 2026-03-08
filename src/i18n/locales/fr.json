@@ -368,7 +368,7 @@
   },
   "guide": {
     "pageTitle": "Guide",
-    "pageDescription": "Apprenez à utiliser les modes d'entraînement de MemDeck : exercices Flashcard, ACAAN, suivi de sessions et astuces pour maîtriser votre stack.",
+    "pageDescription": "Apprenez à utiliser les modes d'entraînement de MemDeck : exercices Flashcard, Spot Check, ACAAN, suivi de sessions et astuces pour maîtriser votre stack.",
     "title": "Guide",
     "subtitle": "Tout ce que vous devez savoir sur MemDeck et ses fonctionnalités.",
     "gettingStarted": {
@@ -423,7 +423,7 @@
     },
     "stats": {
       "title": "Statistiques",
-      "description": "Suivez vos progrès au fil du temps. La page Statistiques comprend des indicateurs de synthèse, un graphique de tendance de précision (filtrable par mode et sous-mode flashcard), un tableau de répartition par stack et un historique de sessions paginé. Toutes les données sont stockées localement dans votre navigateur.",
+      "description": "Suivez vos progrès au fil du temps. La page Statistiques comprend des indicateurs de synthèse, un graphique de tendance de précision (filtrable par mode et sous-mode), un tableau de répartition par stack et un historique de sessions paginé. Toutes les données sont stockées localement dans votre navigateur.",
       "link": "Voir les statistiques"
     },
     "resources": {
@@ -439,7 +439,8 @@
       "switchStacks": "Changer de stack ne fait pas perdre vos données — les progrès sont suivis par stack.",
       "pwa": "Installez MemDeck comme application sur votre appareil pour un accès hors ligne.",
       "language": "Changez la langue d'affichage avec le sélecteur de langue dans le menu de navigation.",
-      "reset": "Utilisez le bouton de réinitialisation dans le menu pour effacer toutes les données et repartir de zéro."
+      "share": "Utilisez le bouton de partage dans le menu de navigation pour faire connaître MemDeck à d'autres magiciens.",
+      "reset": "Utilisez le bouton de réinitialisation dans le menu pour effacer vos données. Vous pouvez réinitialiser les paramètres uniquement (en conservant l'historique d'entraînement) ou tout réinitialiser."
     }
   }
 }

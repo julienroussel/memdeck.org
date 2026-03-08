@@ -368,7 +368,7 @@
   },
   "guide": {
     "pageTitle": "Anleitung",
-    "pageDescription": "Lerne die Trainingsmodi von MemDeck kennen: Flashcard-Übungen, ACAAN, Sitzungsverfolgung und Tipps zum Meistern deines Stacks.",
+    "pageDescription": "Lerne die Trainingsmodi von MemDeck kennen: Flashcard-Übungen, Spot Check, ACAAN, Sitzungsverfolgung und Tipps zum Meistern deines Stacks.",
     "title": "Anleitung",
     "subtitle": "Alles, was du über MemDeck und seine Funktionen wissen musst.",
     "gettingStarted": {
@@ -423,7 +423,7 @@
     },
     "stats": {
       "title": "Statistiken",
-      "description": "Verfolge deinen Fortschritt über die Zeit. Die Statistik-Seite umfasst Übersichtskarten, ein Genauigkeitstrend-Diagramm (filterbar nach Modus und Flashcard-Untermodus), eine Aufschlüsselung nach Stack und einen paginierten Sitzungsverlauf. Alle Daten werden lokal in deinem Browser gespeichert.",
+      "description": "Verfolge deinen Fortschritt im Zeitverlauf. Die Statistik-Seite umfasst Übersichtskacheln, ein Trenddiagramm zur Genauigkeit (filterbar nach Modus und Untermodus), eine Aufschlüsselung nach Stack und einen blätterbaren Sitzungsverlauf. Alle Daten werden lokal in deinem Browser gespeichert.",
       "link": "Zu den Statistiken"
     },
     "resources": {
@@ -439,7 +439,8 @@
       "switchStacks": "Beim Wechseln von Stacks gehen keine Daten verloren — der Fortschritt wird pro Stack verfolgt.",
       "pwa": "Installiere MemDeck als App auf deinem Gerät für Offline-Zugriff.",
       "language": "Ändere die Anzeigesprache über die Sprachauswahl im Navigationsmenü.",
-      "reset": "Verwende die Zurücksetzen-Schaltfläche im Menü, um alle Daten zu löschen und neu zu beginnen."
+      "share": "Verwende die Teilen-Schaltfläche im Navigationsmenü, um MemDeck bei deinen Zaubererkollegen bekannt zu machen.",
+      "reset": "Verwende die Zurücksetzen-Schaltfläche im Menü, um deine Daten zu löschen. Du kannst nur die Einstellungen zurücksetzen (Trainingshistorie bleibt erhalten) oder alles zurücksetzen."
     }
   }
 }
