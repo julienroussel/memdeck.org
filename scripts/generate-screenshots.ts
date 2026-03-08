@@ -18,13 +18,15 @@ const optimizePng = (filePath: string) => {
   execFileSync("optipng", ["-o7", "-quiet", filePath]);
 };
 
-const OUTPUT_DIR = join(import.meta.dirname, "..", "public", "screenshots");
+const ROOT_DIR = join(import.meta.dirname, "..");
+const DEFAULT_OUTPUT_DIR = join(ROOT_DIR, "public", "screenshots");
 const BASE_URL = "http://localhost:5173";
 
 interface Screenshot {
   deviceScaleFactor: number;
   height: number;
   name: string;
+  outputDir?: string;
   url: string;
   width: number;
 }
@@ -51,11 +53,26 @@ const SCREENSHOTS: Screenshot[] = [
     height: 800,
     deviceScaleFactor: 2,
   },
+  {
+    name: "screenshot",
+    url: "/flashcard",
+    width: 1280,
+    height: 800,
+    deviceScaleFactor: 2,
+    outputDir: join(ROOT_DIR, "docs"),
+  },
 ];
 
 const browser = await chromium.launch();
 
-for (const { name, url, width, height, deviceScaleFactor } of SCREENSHOTS) {
+for (const {
+  name,
+  url,
+  width,
+  height,
+  deviceScaleFactor,
+  outputDir,
+} of SCREENSHOTS) {
   const context = await browser.newContext({
     viewport: { width, height },
     deviceScaleFactor,
@@ -77,7 +94,7 @@ for (const { name, url, width, height, deviceScaleFactor } of SCREENSHOTS) {
   });
   await page.waitForTimeout(500);
 
-  const outputPath = join(OUTPUT_DIR, `${name}.png`);
+  const outputPath = join(outputDir ?? DEFAULT_OUTPUT_DIR, `${name}.png`);
   await page.screenshot({ path: outputPath });
   optimizePng(outputPath);
   console.log(`Captured ${outputPath}`);
