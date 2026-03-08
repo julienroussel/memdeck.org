@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { LANGUAGE_LSK } from "../constants";
+import { LANGUAGE_LSK, LOCALE_RELOAD_SSK } from "../constants";
 import { createMockLocalStorage } from "../test-utils/mock-local-storage";
 import {
   changeLanguage,
@@ -18,18 +18,27 @@ vi.mock("i18next", () => ({
 }));
 
 const { storage, mockLocalStorage } = createMockLocalStorage();
+const { storage: sessionStore, mockLocalStorage: mockSessionStorage } =
+  createMockLocalStorage();
 
 Object.defineProperty(globalThis, "localStorage", {
   value: mockLocalStorage,
   writable: true,
 });
 
+Object.defineProperty(globalThis, "sessionStorage", {
+  value: mockSessionStorage,
+  writable: true,
+});
+
 beforeEach(() => {
   storage.clear();
+  sessionStore.clear();
 });
 
 afterEach(() => {
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
 
 describe("SUPPORTED_LANGUAGES", () => {
@@ -156,6 +165,7 @@ describe("changeLanguage", () => {
 
   beforeEach(async () => {
     const i18nModule = await import("i18next");
+    // System boundary: vi.mock replaces the real module with mock fns at runtime
     mockI18n = i18nModule.default as unknown as typeof mockI18n;
     mockI18n.hasResourceBundle.mockClear();
     mockI18n.addResourceBundle.mockClear();
@@ -385,5 +395,138 @@ describe("changeLanguage", () => {
     // Only "es" should have persisted — call A was stale
     expect(storage.get(LANGUAGE_LSK)).toBe("es");
     expect(document.documentElement.lang).toBe("es");
+  });
+
+  it("clears the locale reload guard after a successful load", async () => {
+    mockI18n.hasResourceBundle.mockReturnValue(false);
+    sessionStore.set(LOCALE_RELOAD_SSK, "1");
+
+    await changeLanguage("fr");
+
+    expect(sessionStore.get(LOCALE_RELOAD_SSK)).toBeUndefined();
+  });
+
+  it("triggers a page reload on stale chunk error when no prior reload attempt", async () => {
+    mockI18n.hasResourceBundle.mockReturnValue(false);
+    const reloadMock = vi.fn();
+    vi.stubGlobal("location", { ...window.location, reload: reloadMock });
+
+    const { languageLoaders } = await import("./language");
+    vi.spyOn(languageLoaders, "fr").mockRejectedValue(
+      new TypeError("Failed to fetch dynamically imported module")
+    );
+
+    await changeLanguage("fr");
+
+    expect(reloadMock).toHaveBeenCalledOnce();
+    expect(sessionStore.get(LOCALE_RELOAD_SSK)).toBe("1");
+    expect(mockI18n.changeLanguage).not.toHaveBeenCalled();
+  });
+
+  it("does not reload when stale chunk error occurs after a prior reload attempt", async () => {
+    mockI18n.hasResourceBundle.mockReturnValue(false);
+    sessionStore.set(LOCALE_RELOAD_SSK, "1");
+    const reloadMock = vi.fn();
+    vi.stubGlobal("location", { ...window.location, reload: reloadMock });
+
+    const { languageLoaders } = await import("./language");
+    vi.spyOn(languageLoaders, "fr").mockRejectedValue(
+      new TypeError("Failed to fetch dynamically imported module")
+    );
+
+    await expect(changeLanguage("fr")).rejects.toThrow(
+      "Failed to fetch dynamically imported module"
+    );
+
+    expect(reloadMock).not.toHaveBeenCalled();
+  });
+
+  it("triggers a page reload on Safari stale chunk error", async () => {
+    mockI18n.hasResourceBundle.mockReturnValue(false);
+    const reloadMock = vi.fn();
+    vi.stubGlobal("location", { ...window.location, reload: reloadMock });
+
+    const { languageLoaders } = await import("./language");
+    vi.spyOn(languageLoaders, "fr").mockRejectedValue(
+      new TypeError("Importing a module script failed")
+    );
+
+    await changeLanguage("fr");
+
+    expect(reloadMock).toHaveBeenCalledOnce();
+  });
+
+  it("triggers a page reload on Firefox stale chunk error", async () => {
+    mockI18n.hasResourceBundle.mockReturnValue(false);
+    const reloadMock = vi.fn();
+    vi.stubGlobal("location", { ...window.location, reload: reloadMock });
+
+    const { languageLoaders } = await import("./language");
+    vi.spyOn(languageLoaders, "fr").mockRejectedValue(
+      new TypeError("error loading dynamically imported module")
+    );
+
+    await changeLanguage("fr");
+
+    expect(reloadMock).toHaveBeenCalledOnce();
+  });
+
+  it("does not reload for non-chunk errors", async () => {
+    mockI18n.hasResourceBundle.mockReturnValue(false);
+    const reloadMock = vi.fn();
+    vi.stubGlobal("location", { ...window.location, reload: reloadMock });
+
+    const { languageLoaders } = await import("./language");
+    vi.spyOn(languageLoaders, "fr").mockRejectedValue(
+      new Error("Network error")
+    );
+
+    await expect(changeLanguage("fr")).rejects.toThrow("Network error");
+
+    expect(reloadMock).not.toHaveBeenCalled();
+  });
+
+  it("does not reload for non-TypeError with matching chunk message", async () => {
+    mockI18n.hasResourceBundle.mockReturnValue(false);
+    const reloadMock = vi.fn();
+    vi.stubGlobal("location", { ...window.location, reload: reloadMock });
+
+    const { languageLoaders } = await import("./language");
+    vi.spyOn(languageLoaders, "fr").mockRejectedValue(
+      new Error("Failed to fetch dynamically imported module")
+    );
+
+    await expect(changeLanguage("fr")).rejects.toThrow(
+      "Failed to fetch dynamically imported module"
+    );
+
+    expect(reloadMock).not.toHaveBeenCalled();
+  });
+
+  it("re-throws stale chunk error when sessionStorage is unavailable", async () => {
+    mockI18n.hasResourceBundle.mockReturnValue(false);
+    const reloadMock = vi.fn();
+    vi.stubGlobal("location", { ...window.location, reload: reloadMock });
+    vi.stubGlobal("sessionStorage", {
+      getItem: () => {
+        throw new Error("SecurityError");
+      },
+      setItem: () => {
+        throw new Error("SecurityError");
+      },
+      removeItem: () => {
+        throw new Error("SecurityError");
+      },
+    });
+
+    const { languageLoaders } = await import("./language");
+    vi.spyOn(languageLoaders, "fr").mockRejectedValue(
+      new TypeError("Failed to fetch dynamically imported module")
+    );
+
+    await expect(changeLanguage("fr")).rejects.toThrow(
+      "Failed to fetch dynamically imported module"
+    );
+    expect(reloadMock).not.toHaveBeenCalled();
   });
 });

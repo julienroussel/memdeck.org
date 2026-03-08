@@ -56,6 +56,39 @@ test.describe("Language & i18n", () => {
     ).toBeVisible();
   });
 
+  test("should switch to Italian via language picker", async ({ page }) => {
+    const picker = page.locator("[data-testid='language-picker']");
+    await picker.selectOption("it");
+
+    await expect(
+      page.getByRole("heading", {
+        name: "Padroneggia il tuo mazzo memorizzato",
+      })
+    ).toBeVisible();
+  });
+
+  test("should switch to Dutch via language picker", async ({ page }) => {
+    const picker = page.locator("[data-testid='language-picker']");
+    await picker.selectOption("nl");
+
+    await expect(
+      page.getByRole("heading", {
+        name: "Beheers je gememoriseerde kaartspel",
+      })
+    ).toBeVisible();
+  });
+
+  test("should switch to Portuguese via language picker", async ({ page }) => {
+    const picker = page.locator("[data-testid='language-picker']");
+    await picker.selectOption("pt");
+
+    await expect(
+      page.getByRole("heading", {
+        name: "Domine o seu baralho memorizado",
+      })
+    ).toBeVisible();
+  });
+
   test("should persist language selection across page reloads", async ({
     page,
   }) => {

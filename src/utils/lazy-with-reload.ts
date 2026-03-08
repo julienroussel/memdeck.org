@@ -1,20 +1,8 @@
 import { type ComponentType, type LazyExoticComponent, lazy } from "react";
 import { CHUNK_RELOAD_SSK } from "../constants";
+import { isStaleChunkError } from "./stale-chunk";
 
 const CHUNK_RELOADED_PARAM = "chunk-reloaded";
-
-const staleChunkPatterns = [
-  "Failed to fetch dynamically imported module",
-  "error loading dynamically imported module",
-  "Importing a module script failed",
-];
-
-function isStaleChunkError(error: unknown): boolean {
-  return (
-    error instanceof TypeError &&
-    staleChunkPatterns.some((pattern) => error.message.includes(pattern))
-  );
-}
 
 export function lazyWithReload<T extends ComponentType<unknown>>(
   factory: () => Promise<{ default: T }>
