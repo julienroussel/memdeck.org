@@ -1,9 +1,20 @@
 import {
   IconCards,
   IconChartBar,
+  IconEyeSearch,
   IconTarget,
   IconTools,
 } from "@tabler/icons-react";
+import type { ParseKeys } from "i18next";
+
+type FeatureCard = {
+  titleKey: ParseKeys;
+  descKey: ParseKeys;
+  icon: typeof IconCards;
+  color: string;
+  to: string;
+  fallbackTo: string;
+};
 
 export const FEATURE_CARDS = [
   {
@@ -12,6 +23,14 @@ export const FEATURE_CARDS = [
     icon: IconCards,
     color: "blue",
     to: "/flashcard",
+    fallbackTo: "/guide",
+  },
+  {
+    titleKey: "home.featureSpotCheckTitle",
+    descKey: "home.featureSpotCheckDescription",
+    icon: IconEyeSearch,
+    color: "cyan",
+    to: "/spot-check",
     fallbackTo: "/guide",
   },
   {
@@ -38,4 +57,4 @@ export const FEATURE_CARDS = [
     to: "/stats",
     fallbackTo: "/stats",
   },
-] as const;
+] as const satisfies readonly FeatureCard[];

@@ -179,13 +179,17 @@ test.describe("Theme & Color Scheme", () => {
     }
 
     // Check main text is visible
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Master your memorized deck" })
+    ).toBeVisible();
 
     // Toggle to dark theme
     await themeSwitchTrack.click();
     await expect(themeSwitch).not.toBeChecked();
 
     // Text should still be visible
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Master your memorized deck" })
+    ).toBeVisible();
   });
 });

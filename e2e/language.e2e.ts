@@ -10,7 +10,9 @@ test.describe("Language & i18n", () => {
   });
 
   test("should default to English on first visit", async ({ page }) => {
-    await expect(page.locator("text=Welcome to MemDeck")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Master your memorized deck" })
+    ).toBeVisible();
 
     const htmlLang = await page.getAttribute("html", "lang");
     expect(htmlLang).toBe("en");
@@ -26,7 +28,9 @@ test.describe("Language & i18n", () => {
     const picker = page.locator("[data-testid='language-picker']");
     await picker.selectOption("fr");
 
-    await expect(page.locator("text=Bienvenue sur MemDeck")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Maîtrisez votre jeu mémorisé" })
+    ).toBeVisible();
 
     const htmlLang = await page.getAttribute("html", "lang");
     expect(htmlLang).toBe("fr");
@@ -37,7 +41,7 @@ test.describe("Language & i18n", () => {
     await picker.selectOption("es");
 
     await expect(
-      page.locator("text=Te damos la bienvenida a MemDeck")
+      page.getByRole("heading", { name: "Domina tu baraja memorizada" })
     ).toBeVisible();
   });
 
@@ -45,7 +49,11 @@ test.describe("Language & i18n", () => {
     const picker = page.locator("[data-testid='language-picker']");
     await picker.selectOption("de");
 
-    await expect(page.locator("text=Willkommen bei MemDeck")).toBeVisible();
+    await expect(
+      page.getByRole("heading", {
+        name: "Meistere dein memoriertes Kartendeck",
+      })
+    ).toBeVisible();
   });
 
   test("should persist language selection across page reloads", async ({
@@ -55,14 +63,18 @@ test.describe("Language & i18n", () => {
     await picker.selectOption("fr");
 
     // Verify French is active
-    await expect(page.locator("text=Bienvenue sur MemDeck")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Maîtrisez votre jeu mémorisé" })
+    ).toBeVisible();
 
     // Reload
     await page.reload();
     await page.waitForLoadState("networkidle");
 
     // Should still be French
-    await expect(page.locator("text=Bienvenue sur MemDeck")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Maîtrisez votre jeu mémorisé" })
+    ).toBeVisible();
 
     const reloadedPicker = page.locator("[data-testid='language-picker']");
     await expect(reloadedPicker).toHaveValue("fr");
@@ -76,7 +88,11 @@ test.describe("Language & i18n", () => {
     await picker.selectOption("de");
 
     // Wait for the German translation to appear, confirming the language switch completed
-    await expect(page.locator("text=Willkommen bei MemDeck")).toBeVisible();
+    await expect(
+      page.getByRole("heading", {
+        name: "Meistere dein memoriertes Kartendeck",
+      })
+    ).toBeVisible();
 
     const storedLang = await page.evaluate(() => {
       return localStorage.getItem("memdeck-app-language");
@@ -95,7 +111,7 @@ test.describe("Language & i18n", () => {
 
     // Wait for the Spanish translation to confirm the language switch completed
     await expect(
-      page.locator("text=Te damos la bienvenida a MemDeck")
+      page.getByRole("heading", { name: "Domina tu baraja memorizada" })
     ).toBeVisible();
 
     expect(await page.getAttribute("html", "lang")).toBe("es");
@@ -103,7 +119,11 @@ test.describe("Language & i18n", () => {
     await picker.selectOption("de");
 
     // Wait for the German translation to confirm the language switch completed
-    await expect(page.locator("text=Willkommen bei MemDeck")).toBeVisible();
+    await expect(
+      page.getByRole("heading", {
+        name: "Meistere dein memoriertes Kartendeck",
+      })
+    ).toBeVisible();
 
     expect(await page.getAttribute("html", "lang")).toBe("de");
   });
@@ -122,8 +142,8 @@ test.describe("Language & i18n", () => {
     const picker = page.locator("[data-testid='language-picker']");
     await picker.selectOption("fr");
 
-    // Wait for French UI to confirm the language switch completed
-    await expect(page.locator("text=Bienvenue sur MemDeck")).toBeVisible();
+    // Wait for French UI to confirm the language switch completed (returning-user heading after stack selection)
+    await expect(page.locator("text=Prêt à vous entraîner ?")).toBeVisible();
 
     // Navigate to flashcard page
     await page.locator("a:has-text('Flashcard')").first().click();
@@ -168,7 +188,7 @@ test.describe("Language & i18n", () => {
 
     // Wait for Spanish UI to confirm the language switch completed
     await expect(
-      page.locator("text=Te damos la bienvenida a MemDeck")
+      page.getByRole("heading", { name: "Domina tu baraja memorizada" })
     ).toBeVisible();
 
     // Navigate to resources

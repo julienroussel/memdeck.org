@@ -10,6 +10,7 @@ import { SpotCheckTraining } from "./spot-check-training";
 import { StatsSection } from "./stats-section";
 import { TipsSection } from "./tips-section";
 import { ToolboxSection } from "./toolbox-section";
+import { WhyDedicatedTool } from "./why-dedicated-tool";
 
 export const Guide = () => {
   const { t } = useTranslation();
@@ -43,6 +44,8 @@ export const Guide = () => {
       <ToolboxSection />
       <Space h="xl" />
       <TipsSection />
+      <Space h="xl" />
+      <WhyDedicatedTool />
     </article>
   );
 };
