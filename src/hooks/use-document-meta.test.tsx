@@ -80,17 +80,17 @@ describe("useDocumentMeta", () => {
     document.head.appendChild(ogUrlEl);
 
     twitterUrlEl = document.createElement("meta");
-    twitterUrlEl.setAttribute("property", "twitter:url");
+    twitterUrlEl.setAttribute("name", "twitter:url");
     twitterUrlEl.content = "https://memdeck.org/";
     document.head.appendChild(twitterUrlEl);
 
     twitterTitleEl = document.createElement("meta");
-    twitterTitleEl.setAttribute("property", "twitter:title");
+    twitterTitleEl.setAttribute("name", "twitter:title");
     twitterTitleEl.content = "Default Twitter Title";
     document.head.appendChild(twitterTitleEl);
 
     twitterDescEl = document.createElement("meta");
-    twitterDescEl.setAttribute("property", "twitter:description");
+    twitterDescEl.setAttribute("name", "twitter:description");
     twitterDescEl.content = "Default Twitter Description";
     document.head.appendChild(twitterDescEl);
 
