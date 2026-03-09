@@ -10,6 +10,7 @@ import type {
   SessionSummary,
 } from "../types/session";
 import type { SpotCheckMode } from "../types/spot-check";
+import type { StackLimits } from "../types/stack-limits";
 import type { StackKey } from "../types/stacks";
 import { finalizeSession } from "../utils/session-persistence";
 import {
@@ -26,6 +27,7 @@ export type { SessionPhase } from "../types/session";
 type UseSessionOptionsBase = {
   stackKey: StackKey;
   autoStart?: boolean;
+  stackLimits?: StackLimits;
 };
 
 type UseSessionOptions =
@@ -52,6 +54,9 @@ type UseSessionResult = {
 
 export const useSession = (options: UseSessionOptions): UseSessionResult => {
   const { mode, stackKey, autoStart = false } = options;
+  const stackLimits = options.stackLimits;
+  const stackLimitsRef = useRef(stackLimits);
+  stackLimitsRef.current = stackLimits;
   const flashcardMode =
     options.mode === "flashcard" ? options.flashcardMode : undefined;
   const spotCheckMode =
@@ -114,6 +119,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
         questionsCompleted: 0,
         currentStreak: 0,
         bestStreak: 0,
+        stackLimits: stackLimitsRef.current,
       };
 
       let session: ActiveSession;
@@ -135,7 +141,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
       setStatus({ phase: "active", session });
       eventBus.emit.SESSION_STARTED({ mode, config });
     },
-    [mode, stackKey, flashcardMode, spotCheckMode, tryFinalizeSession]
+    [mode, stackKey, flashcardMode, spotCheckMode, tryFinalizeSession] // stackLimits removed, accessed via ref
   );
 
   const { recordCorrect, recordIncorrect, recordQuestionAdvanced } =

@@ -17,6 +17,10 @@ MemDeck provides interactive training tools to help magicians memorize and maint
 - Memory enthusiasts interested in memorization techniques
 - Magic students studying the structure of famous stack systems
 
+## Stack Range
+
+A global per-stack setting accessible via the navigation bar next to the stack picker. It lets users focus training on a specific range of positions (e.g., 1–20) instead of the full 52-card deck. This supports progressive learning — start with a small range and expand as you memorize more cards. Each stack stores its own range independently. The range defaults to the full deck (1–52) and can be adjusted at any time via preset buttons (13, 26, 39, 52) or a slider. Modes that respect the stack range: Flashcard Training, Spot Check, Stack Lookup, Card Spelling. Modes that always use the full deck: ACAAN (cut depth math requires all 52 cards), Faro Shuffle, Stay Stack.
+
 ## Features
 
 ### Flashcard Training
@@ -28,7 +32,7 @@ The core training feature with three modes:
 - **Both**: Randomly alternates between card-to-position and position-to-card questions.
 - **Neighbor Mode**: After answering, shows the cards immediately before and after the target card in the stack. This helps you learn sequences and transitions, which is essential for advanced stack work.
 
-Each question presents multiple-choice answers. Sessions track accuracy and can be timed. Results are saved to session history for progress tracking.
+Each question presents multiple-choice answers. Sessions track accuracy and can be timed. Results are saved to session history for progress tracking. Respects the stack range setting.
 
 ### Spot Check
 
@@ -38,7 +42,7 @@ Tests your knowledge of the full deck order by presenting a spread of cards with
 - **Swapped Cards**: Two cards have switched positions. You must identify which cards were swapped.
 - **Moved Card**: One card has been moved to a different position. You must identify which card moved.
 
-This trains the ability to quickly scan a deck and detect if anything is out of order, a critical skill for memorized deck performers.
+This trains the ability to quickly scan a deck and detect if anything is out of order, a critical skill for memorized deck performers. Respects the stack range setting.
 
 ### ACAAN Calculator
 

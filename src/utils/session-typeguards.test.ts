@@ -68,6 +68,16 @@ describe("isSessionRecord", () => {
     expect(isSessionRecord(record)).toBe(true);
   });
 
+  it("returns false when startedAt is not a valid date string", () => {
+    const record = { ...makeRecord(), startedAt: "not-a-date" };
+    expect(isSessionRecord(record)).toBe(false);
+  });
+
+  it("returns false when endedAt is not a valid date string", () => {
+    const record = { ...makeRecord(), endedAt: "also-not-a-date" };
+    expect(isSessionRecord(record)).toBe(false);
+  });
+
   it("returns false for a record with invalid flashcardMode", () => {
     const badRecord = { ...makeRecord(), flashcardMode: "invalid" };
     expect(isSessionRecord(badRecord)).toBe(false);
@@ -80,6 +90,51 @@ describe("isSessionRecord", () => {
       flashcardMode: "neighbor",
     };
     expect(isSessionRecord(badRecord)).toBe(false);
+  });
+
+  it("returns true when stackLimits is a valid object", () => {
+    const record = { ...makeRecord(), stackLimits: { start: 1, end: 20 } };
+    expect(isSessionRecord(record)).toBe(true);
+  });
+
+  it("returns false when stackLimits has a non-number start", () => {
+    const record = { ...makeRecord(), stackLimits: { start: "bad", end: 20 } };
+    expect(isSessionRecord(record)).toBe(false);
+  });
+
+  it("returns false when stackLimits is not an object", () => {
+    const record = { ...makeRecord(), stackLimits: "not-an-object" };
+    expect(isSessionRecord(record)).toBe(false);
+  });
+
+  it("returns false when stackLimits.start is less than 1", () => {
+    const record = { ...makeRecord(), stackLimits: { start: 0, end: 20 } };
+    expect(isSessionRecord(record)).toBe(false);
+  });
+
+  it("returns false when stackLimits.start is greater than stackLimits.end", () => {
+    const record = { ...makeRecord(), stackLimits: { start: 30, end: 10 } };
+    expect(isSessionRecord(record)).toBe(false);
+  });
+
+  it("returns false when stackLimits.end exceeds deck size", () => {
+    const record = { ...makeRecord(), stackLimits: { start: 1, end: 53 } };
+    expect(isSessionRecord(record)).toBe(false);
+  });
+
+  it("returns false when stackLimits is null", () => {
+    const record = { ...makeRecord(), stackLimits: null };
+    expect(isSessionRecord(record)).toBe(false);
+  });
+
+  it("returns false when stackLimits has non-integer end", () => {
+    const record = { ...makeRecord(), stackLimits: { start: 1, end: 20.5 } };
+    expect(isSessionRecord(record)).toBe(false);
+  });
+
+  it("returns false when stackLimits is an array", () => {
+    const record = { ...makeRecord(), stackLimits: [1, 20] };
+    expect(isSessionRecord(record)).toBe(false);
   });
 
   it("returns true for a valid spotcheck record", () => {

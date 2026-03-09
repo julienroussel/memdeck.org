@@ -1,7 +1,8 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AnswerOutcome } from "../../types/session";
-import { stacks } from "../../types/stacks";
+import { DEFAULT_STACK_LIMITS } from "../../types/stack-limits";
+import { createDeckPosition, stacks } from "../../types/stacks";
 import type { TimerSettings } from "../../types/timer";
 import { formatCardName } from "../../utils/card-formatting";
 import { useFlashcardGame } from "./use-flashcard-game";
@@ -44,10 +45,6 @@ vi.mock("../../hooks/use-game-timer", () => {
   };
 });
 
-vi.mock("../../hooks/use-reset-game-on-stack-change", () => ({
-  useResetGameOnStackChange: vi.fn(),
-}));
-
 vi.mock("../../services/event-bus", () => ({
   eventBus: {
     emit: { FLASHCARD_ANSWER: vi.fn() },
@@ -76,7 +73,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "bothmodes",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -106,7 +104,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "bothmodes",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -136,7 +135,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "bothmodes",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -156,7 +156,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "bothmodes",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -188,6 +189,7 @@ describe("useFlashcardGame hook", () => {
           "bothmodes",
           "random",
           defaultTimerSettings,
+          DEFAULT_STACK_LIMITS,
           { onAnswer }
         )
       );
@@ -209,7 +211,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "bothmodes",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -230,7 +233,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "bothmodes",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -254,7 +258,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "bothmodes",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -278,7 +283,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "bothmodes",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -308,7 +314,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "numberonly",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -329,7 +336,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "cardonly",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -360,7 +368,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "bothmodes",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -390,7 +399,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "cardonly",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -404,7 +414,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "numberonly",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -419,7 +430,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "bothmodes",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -436,7 +448,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "bothmodes",
           "random",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -451,6 +464,137 @@ describe("useFlashcardGame hook", () => {
     });
   });
 
+  describe("partial range", () => {
+    it("returns a card within the specified range", () => {
+      const limits = {
+        start: createDeckPosition(1),
+        end: createDeckPosition(10),
+      };
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "cardonly",
+          "random",
+          defaultTimerSettings,
+          limits
+        )
+      );
+
+      expect(result.current.card.index).toBeGreaterThanOrEqual(1);
+      expect(result.current.card.index).toBeLessThanOrEqual(10);
+
+      for (const choice of result.current.choices) {
+        expect(choice.index).toBeGreaterThanOrEqual(1);
+        expect(choice.index).toBeLessThanOrEqual(10);
+      }
+    });
+
+    it("respects range after submitting an answer", () => {
+      const limits = {
+        start: createDeckPosition(1),
+        end: createDeckPosition(10),
+      };
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "cardonly",
+          "random",
+          defaultTimerSettings,
+          limits
+        )
+      );
+
+      // Submit a correct answer to advance to the next round
+      const correctChoice = result.current.choices.find(
+        (c) => c.index === result.current.card.index
+      );
+      act(() => {
+        result.current.submitAnswer(
+          correctChoice?.card ?? result.current.card.card
+        );
+      });
+
+      // Next round should still respect the range
+      expect(result.current.card.index).toBeGreaterThanOrEqual(1);
+      expect(result.current.card.index).toBeLessThanOrEqual(10);
+
+      for (const choice of result.current.choices) {
+        expect(choice.index).toBeGreaterThanOrEqual(1);
+        expect(choice.index).toBeLessThanOrEqual(10);
+      }
+    });
+  });
+
+  describe("when limits change", () => {
+    it("resets score to zero when limits change", () => {
+      const initialLimits = {
+        start: createDeckPosition(1),
+        end: createDeckPosition(52),
+      };
+      const newLimits = {
+        start: createDeckPosition(1),
+        end: createDeckPosition(20),
+      };
+
+      const { result, rerender } = renderHook(
+        ({ limits }: { limits: typeof initialLimits }) =>
+          useFlashcardGame(
+            testStack,
+            "Mnemonica",
+            "cardonly",
+            "random",
+            defaultTimerSettings,
+            limits
+          ),
+        { initialProps: { limits: initialLimits } }
+      );
+
+      // Submit a correct answer to increment successes
+      const correctCard = result.current.card.card;
+      act(() => {
+        result.current.submitAnswer(correctCard);
+      });
+      expect(result.current.score.successes).toBe(1);
+
+      // Change limits to trigger reset
+      rerender({ limits: newLimits });
+
+      expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+    });
+
+    it("serves cards within the new range after limits change", () => {
+      const initialLimits = {
+        start: createDeckPosition(1),
+        end: createDeckPosition(52),
+      };
+      const newLimits = {
+        start: createDeckPosition(1),
+        end: createDeckPosition(20),
+      };
+
+      const { result, rerender } = renderHook(
+        ({ limits }: { limits: typeof initialLimits }) =>
+          useFlashcardGame(
+            testStack,
+            "Mnemonica",
+            "cardonly",
+            "random",
+            defaultTimerSettings,
+            limits
+          ),
+        { initialProps: { limits: initialLimits } }
+      );
+
+      // Change limits
+      rerender({ limits: newLimits });
+
+      expect(result.current.card.index).toBeGreaterThanOrEqual(1);
+      expect(result.current.card.index).toBeLessThanOrEqual(20);
+    });
+  });
+
   describe("neighbor mode", () => {
     it("sets isNeighborMode to true when mode is 'neighbor'", () => {
       const { result } = renderHook(() =>
@@ -459,7 +603,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "neighbor",
           "before",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -473,7 +618,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "cardonly",
           "before",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -487,7 +633,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "neighbor",
           "before",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -502,7 +649,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "neighbor",
           "after",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -516,7 +664,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "neighbor",
           "before",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -559,7 +708,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "neighbor",
           "before",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 
@@ -595,6 +745,26 @@ describe("useFlashcardGame hook", () => {
       expect(result.current.choices).toEqual(choicesBefore);
     });
 
+    it("works with minimum range size in neighbor mode", () => {
+      const limits = {
+        start: createDeckPosition(1),
+        end: createDeckPosition(6),
+      };
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "neighbor",
+          "random",
+          defaultTimerSettings,
+          limits
+        )
+      );
+
+      expect(result.current.card.index).toBeGreaterThanOrEqual(1);
+      expect(result.current.card.index).toBeLessThanOrEqual(6);
+    });
+
     it("shows a notification with the card name when revealing answer in neighbor mode", async () => {
       const { notifications } = vi.mocked(
         await import("@mantine/notifications")
@@ -606,7 +776,8 @@ describe("useFlashcardGame hook", () => {
           "Mnemonica",
           "neighbor",
           "before",
-          defaultTimerSettings
+          defaultTimerSettings,
+          DEFAULT_STACK_LIMITS
         )
       );
 

@@ -91,6 +91,7 @@
     "statBestStreak": "Melhor sequência",
     "noStatsYet": "Inicie a sua primeira sessão para acompanhar precisão e sequências.",
     "switchStackHint": "pode mudar de stack usando o seletor na parte inferior do menu.",
+    "rangeHint": "Novo neste stack? Use o controlo de intervalo no menu para começar com menos cartas e progredir ao seu ritmo.",
     "whyNotAiTitle": "Por que uma app dedicada em vez de IA?",
     "whyNotAiIntro": "O ChatGPT e o Claude podem inventar posições de cartas — e treinar com respostas erradas é pior do que não treinar de todo.",
     "whyNotAiAccuracy": "Dados verificados",
@@ -132,7 +133,10 @@
     "neighborArrowBefore": "Carta anterior",
     "neighborArrowAfter": "Carta seguinte",
     "activeModePosition": "Modo posição",
-    "activeModeNeighbor": "Modo vizinho"
+    "activeModeNeighbor": "Modo vizinho",
+    "timesUp": "Tempo esgotado!",
+    "movingToNext": "A avançar para a próxima carta.",
+    "revealTitle": "Resposta"
   },
   "acaan": {
     "pageTitle": "Treino ACAAN",
@@ -450,7 +454,23 @@
       "pwa": "Instale o MemDeck como app no seu dispositivo para acesso offline.",
       "language": "Mude o idioma de exibição usando o seletor de idioma no menu de navegação.",
       "share": "Use o botão de partilha no menu de navegação para divulgar o MemDeck junto de outros magos.",
-      "reset": "Use o botão de repor no menu para apagar os seus dados. Pode repor apenas as definições (mantendo o histórico de treino) ou repor tudo."
+      "reset": "Use o botão de repor no menu para apagar os seus dados. Pode repor apenas as definições (mantendo o histórico de treino) ou repor tudo.",
+      "stackRange": "Use o intervalo do stack junto ao seletor de stack no menu para treinar um subconjunto de posições. Comece com poucas e amplie à medida que memorizar mais cartas."
     }
+  },
+  "stackLimits": {
+    "label": "Intervalo do stack",
+    "description": "Posições {{start}}–{{end}} ({{count}} cartas)",
+    "fullDeck": "Baralho completo (52 cartas)",
+    "ariaLabel": "Ajustar o intervalo de treino do stack",
+    "spotCheckHint": "Spot Check funciona melhor com {{count}}+ cartas.",
+    "presetsGroupAriaLabel": "Predefinições de intervalo",
+    "presetAriaLabel": "Definir intervalo para as primeiras {{count}} cartas",
+    "badgeFull": "{{count}} cartas",
+    "badgePartial": "{{start}}–{{end}}",
+    "thumbStartLabel": "Posição inicial",
+    "thumbEndLabel": "Posição final",
+    "badgeFullAriaLabel": "Intervalo do stack: {{count}} cartas. Toque para ajustar.",
+    "badgePartialAriaLabel": "Intervalo do stack: posições {{start}} a {{end}}. Toque para ajustar."
   }
 }

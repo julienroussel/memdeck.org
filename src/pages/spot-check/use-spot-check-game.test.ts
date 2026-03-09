@@ -1,6 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { DECK_SIZE } from "../../constants";
+import { DEFAULT_STACK_LIMITS } from "../../types/stack-limits";
 import { stacks } from "../../types/stacks";
 import { useSpotCheckGame } from "./use-spot-check-game";
 
@@ -41,14 +42,26 @@ describe("useSpotCheckGame", () => {
   describe("initial state", () => {
     it("starts with zero score", () => {
       const { result } = renderHook(() =>
-        useSpotCheckGame(testStack, testStackName, "missing", timerOff)
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "missing",
+          timerOff,
+          DEFAULT_STACK_LIMITS
+        )
       );
       expect(result.current.score).toEqual({ successes: 0, fails: 0 });
     });
 
     it("generates a missing puzzle with 51 cards", () => {
       const { result } = renderHook(() =>
-        useSpotCheckGame(testStack, testStackName, "missing", timerOff)
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "missing",
+          timerOff,
+          DEFAULT_STACK_LIMITS
+        )
       );
       expect(result.current.puzzleCards).toHaveLength(DECK_SIZE - 1);
       expect(result.current.puzzleState.mode).toBe("missing");
@@ -56,7 +69,13 @@ describe("useSpotCheckGame", () => {
 
     it("generates a swapped puzzle with 52 cards", () => {
       const { result } = renderHook(() =>
-        useSpotCheckGame(testStack, testStackName, "swapped", timerOff)
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "swapped",
+          timerOff,
+          DEFAULT_STACK_LIMITS
+        )
       );
       expect(result.current.puzzleCards).toHaveLength(DECK_SIZE);
       expect(result.current.puzzleState.mode).toBe("swapped");
@@ -64,7 +83,13 @@ describe("useSpotCheckGame", () => {
 
     it("generates a moved puzzle with 52 cards", () => {
       const { result } = renderHook(() =>
-        useSpotCheckGame(testStack, testStackName, "moved", timerOff)
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "moved",
+          timerOff,
+          DEFAULT_STACK_LIMITS
+        )
       );
       expect(result.current.puzzleCards).toHaveLength(DECK_SIZE);
       expect(result.current.puzzleState.mode).toBe("moved");
@@ -75,9 +100,16 @@ describe("useSpotCheckGame", () => {
     it("increments successes on correct answer for missing mode", () => {
       const onAnswer = vi.fn();
       const { result } = renderHook(() =>
-        useSpotCheckGame(testStack, testStackName, "missing", timerOff, {
-          onAnswer,
-        })
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "missing",
+          timerOff,
+          DEFAULT_STACK_LIMITS,
+          {
+            onAnswer,
+          }
+        )
       );
 
       const ps = result.current.puzzleState;
@@ -109,9 +141,16 @@ describe("useSpotCheckGame", () => {
     it("increments successes when tapping the card after the gap in missing mode", () => {
       const onAnswer = vi.fn();
       const { result } = renderHook(() =>
-        useSpotCheckGame(testStack, testStackName, "missing", timerOff, {
-          onAnswer,
-        })
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "missing",
+          timerOff,
+          DEFAULT_STACK_LIMITS,
+          {
+            onAnswer,
+          }
+        )
       );
 
       const ps = result.current.puzzleState;
@@ -143,9 +182,16 @@ describe("useSpotCheckGame", () => {
     it("increments fails on wrong answer", () => {
       const onAnswer = vi.fn();
       const { result } = renderHook(() =>
-        useSpotCheckGame(testStack, testStackName, "missing", timerOff, {
-          onAnswer,
-        })
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "missing",
+          timerOff,
+          DEFAULT_STACK_LIMITS,
+          {
+            onAnswer,
+          }
+        )
       );
 
       const ps = result.current.puzzleState;
@@ -183,9 +229,16 @@ describe("useSpotCheckGame", () => {
   it("increments successes on correct answer for swapped mode", () => {
     const onAnswer = vi.fn();
     const { result } = renderHook(() =>
-      useSpotCheckGame(testStack, testStackName, "swapped", timerOff, {
-        onAnswer,
-      })
+      useSpotCheckGame(
+        testStack,
+        testStackName,
+        "swapped",
+        timerOff,
+        DEFAULT_STACK_LIMITS,
+        {
+          onAnswer,
+        }
+      )
     );
 
     const ps = result.current.puzzleState;
@@ -216,9 +269,16 @@ describe("useSpotCheckGame", () => {
   it("increments fails when tapping a non-swapped card in swapped mode", () => {
     const onAnswer = vi.fn();
     const { result } = renderHook(() =>
-      useSpotCheckGame(testStack, testStackName, "swapped", timerOff, {
-        onAnswer,
-      })
+      useSpotCheckGame(
+        testStack,
+        testStackName,
+        "swapped",
+        timerOff,
+        DEFAULT_STACK_LIMITS,
+        {
+          onAnswer,
+        }
+      )
     );
 
     const ps = result.current.puzzleState;
@@ -255,9 +315,16 @@ describe("useSpotCheckGame", () => {
   it("increments successes on correct answer for moved mode", () => {
     const onAnswer = vi.fn();
     const { result } = renderHook(() =>
-      useSpotCheckGame(testStack, testStackName, "moved", timerOff, {
-        onAnswer,
-      })
+      useSpotCheckGame(
+        testStack,
+        testStackName,
+        "moved",
+        timerOff,
+        DEFAULT_STACK_LIMITS,
+        {
+          onAnswer,
+        }
+      )
     );
 
     const ps = result.current.puzzleState;
@@ -282,9 +349,16 @@ describe("useSpotCheckGame", () => {
   it("increments fails when tapping a non-moved card in moved mode", () => {
     const onAnswer = vi.fn();
     const { result } = renderHook(() =>
-      useSpotCheckGame(testStack, testStackName, "moved", timerOff, {
-        onAnswer,
-      })
+      useSpotCheckGame(
+        testStack,
+        testStackName,
+        "moved",
+        timerOff,
+        DEFAULT_STACK_LIMITS,
+        {
+          onAnswer,
+        }
+      )
     );
 
     const ps = result.current.puzzleState;
@@ -321,9 +395,16 @@ describe("useSpotCheckGame", () => {
     it("increments fails and advances to new puzzle", () => {
       const onAnswer = vi.fn();
       const { result } = renderHook(() =>
-        useSpotCheckGame(testStack, testStackName, "missing", timerOff, {
-          onAnswer,
-        })
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "missing",
+          timerOff,
+          DEFAULT_STACK_LIMITS,
+          {
+            onAnswer,
+          }
+        )
       );
 
       const initialPuzzle = result.current.puzzleState;
@@ -345,7 +426,13 @@ describe("useSpotCheckGame", () => {
     it("resets game when mode changes", () => {
       const { result, rerender } = renderHook(
         ({ mode }: { mode: "missing" | "swapped" | "moved" }) =>
-          useSpotCheckGame(testStack, testStackName, mode, timerOff),
+          useSpotCheckGame(
+            testStack,
+            testStackName,
+            mode,
+            timerOff,
+            DEFAULT_STACK_LIMITS
+          ),
         { initialProps: { mode: "missing" } }
       );
 
@@ -363,13 +450,157 @@ describe("useSpotCheckGame", () => {
     });
   });
 
+  describe("partial range", () => {
+    it("generates a puzzle using only cards within the specified range", async () => {
+      const { createDeckPosition } = await import("../../types/stacks");
+      const limits = {
+        start: createDeckPosition(1),
+        end: createDeckPosition(10),
+      };
+      const { result } = renderHook(() =>
+        useSpotCheckGame(testStack, testStackName, "missing", timerOff, limits)
+      );
+
+      const rangeCards = testStack.slice(0, 10);
+      for (const card of result.current.puzzleCards) {
+        expect(rangeCards).toContain(card);
+      }
+    });
+
+    it("uses all 52 cards when range covers the full deck", async () => {
+      const { createDeckPosition } = await import("../../types/stacks");
+      const limits = {
+        start: createDeckPosition(1),
+        end: createDeckPosition(52),
+      };
+      const { result } = renderHook(() =>
+        useSpotCheckGame(testStack, testStackName, "missing", timerOff, limits)
+      );
+
+      // Missing mode removes one card, so puzzle should have 51 cards
+      expect(result.current.puzzleCards).toHaveLength(DECK_SIZE - 1);
+    });
+
+    it("constrains all puzzle cards to positions 5-10 of the stack", async () => {
+      const { createDeckPosition } = await import("../../types/stacks");
+      const limits = {
+        start: createDeckPosition(5),
+        end: createDeckPosition(10),
+      };
+      const { result } = renderHook(() =>
+        useSpotCheckGame(testStack, testStackName, "missing", timerOff, limits)
+      );
+
+      const rangeCards = testStack.slice(4, 10);
+      for (const card of result.current.puzzleCards) {
+        expect(rangeCards).toContain(card);
+      }
+    });
+
+    it("produces puzzle card count matching range size minus one for missing mode", async () => {
+      const { createDeckPosition } = await import("../../types/stacks");
+      const limits = {
+        start: createDeckPosition(5),
+        end: createDeckPosition(10),
+      };
+      const rangeSize = 10 - 5 + 1; // 6 cards in range
+
+      const { result } = renderHook(() =>
+        useSpotCheckGame(testStack, testStackName, "missing", timerOff, limits)
+      );
+
+      // Missing mode removes one card from the range
+      expect(result.current.puzzleCards).toHaveLength(rangeSize - 1);
+    });
+
+    it("resets game when limits change", async () => {
+      const { createDeckPosition } = await import("../../types/stacks");
+      const initialLimits = {
+        start: createDeckPosition(1),
+        end: createDeckPosition(10),
+      };
+      const newLimits = {
+        start: createDeckPosition(20),
+        end: createDeckPosition(30),
+      };
+
+      const { result, rerender } = renderHook(
+        ({ limits }: { limits: typeof initialLimits }) =>
+          useSpotCheckGame(
+            testStack,
+            testStackName,
+            "missing",
+            timerOff,
+            limits
+          ),
+        { initialProps: { limits: initialLimits } }
+      );
+
+      // Score something first
+      act(() => {
+        result.current.revealAnswer();
+      });
+      expect(result.current.score.fails).toBe(1);
+
+      // Change limits
+      rerender({ limits: newLimits });
+
+      expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+    });
+
+    it("generates a fresh puzzle with cards in the new range after limits change", async () => {
+      const { createDeckPosition } = await import("../../types/stacks");
+      const initialLimits = {
+        start: createDeckPosition(1),
+        end: createDeckPosition(52),
+      };
+      const newLimits = {
+        start: createDeckPosition(1),
+        end: createDeckPosition(10),
+      };
+
+      const { result, rerender } = renderHook(
+        ({ limits }: { limits: typeof initialLimits }) =>
+          useSpotCheckGame(
+            testStack,
+            testStackName,
+            "missing",
+            timerOff,
+            limits
+          ),
+        { initialProps: { limits: initialLimits } }
+      );
+
+      const initialPuzzle = result.current.puzzleState;
+
+      // Change to a smaller range
+      rerender({ limits: newLimits });
+
+      // Puzzle state should be regenerated
+      expect(result.current.puzzleState).not.toBe(initialPuzzle);
+
+      // All puzzle cards must be within the new range (positions 1-10)
+      const rangeCards = testStack.slice(0, 10);
+      for (const card of result.current.puzzleCards) {
+        expect(rangeCards).toContain(card);
+      }
+    });
+  });
+
   describe("timer integration", () => {
     it("increments fails and advances puzzle on timeout", () => {
       const onAnswer = vi.fn();
       const { result } = renderHook(() =>
-        useSpotCheckGame(testStack, testStackName, "missing", timerOff, {
-          onAnswer,
-        })
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "missing",
+          timerOff,
+          DEFAULT_STACK_LIMITS,
+          {
+            onAnswer,
+          }
+        )
       );
 
       const initialPuzzle = result.current.puzzleState;

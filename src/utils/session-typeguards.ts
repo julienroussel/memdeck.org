@@ -1,3 +1,4 @@
+import { DECK_SIZE } from "../constants";
 import { isFlashcardMode } from "../types/flashcard";
 import {
   type AllTimeStats,
@@ -11,7 +12,43 @@ import { stacks } from "../types/stacks";
 import { includes } from "./includes";
 
 const VALID_STACK_KEYS: ReadonlySet<string> = new Set(Object.keys(stacks));
+
+const isNonNegativeInteger = (v: unknown): v is number =>
+  typeof v === "number" && Number.isInteger(v) && v >= 0;
+
+const isFiniteNumber = (v: unknown): v is number =>
+  typeof v === "number" && Number.isFinite(v);
+
+const isFraction = (v: unknown): v is number =>
+  isFiniteNumber(v) && v >= 0 && v <= 1;
+
+const isISODateString = (v: unknown): v is string =>
+  typeof v === "string" && !Number.isNaN(Date.parse(v));
 const VALID_TRAINING_MODES: ReadonlySet<string> = new Set(TRAINING_MODES);
+
+/** Validates that `value.stackLimits` is either absent/undefined or a valid {start, end} object.
+ * Returns boolean (not a type guard) because the outer `isSessionRecord` handles full narrowing. */
+const isOptionalStackLimits = (value: object): boolean => {
+  if (!("stackLimits" in value) || value.stackLimits === undefined) {
+    return true;
+  }
+  const sl = value.stackLimits;
+  return (
+    typeof sl === "object" &&
+    sl !== null &&
+    "start" in sl &&
+    "end" in sl &&
+    typeof sl.start === "number" &&
+    typeof sl.end === "number" &&
+    Number.isInteger(sl.start) &&
+    Number.isInteger(sl.end) &&
+    sl.start >= 1 &&
+    sl.start <= DECK_SIZE &&
+    sl.end >= 1 &&
+    sl.end <= DECK_SIZE &&
+    sl.start <= sl.end
+  );
+};
 
 const isSessionConfig = (value: unknown): value is SessionConfig => {
   if (typeof value !== "object" || value === null) {
@@ -28,7 +65,8 @@ const isSessionConfig = (value: unknown): value is SessionConfig => {
   return (
     value.type === "structured" &&
     "totalQuestions" in value &&
-    typeof value.totalQuestions === "number"
+    isNonNegativeInteger(value.totalQuestions) &&
+    value.totalQuestions >= 1
   );
 };
 
@@ -60,17 +98,21 @@ export const isSessionRecord = (value: unknown): value is SessionRecord => {
       typeof value.mode === "string" &&
       includes(TRAINING_MODES, value.mode) &&
       typeof value.stackKey === "string" &&
+      VALID_STACK_KEYS.has(value.stackKey) &&
       isSessionConfig(value.config) &&
-      typeof value.startedAt === "string" &&
-      typeof value.endedAt === "string" &&
-      typeof value.durationSeconds === "number" &&
-      typeof value.successes === "number" &&
-      typeof value.fails === "number" &&
-      typeof value.questionsCompleted === "number" &&
-      typeof value.accuracy === "number" &&
-      typeof value.bestStreak === "number"
+      isISODateString(value.startedAt) &&
+      isISODateString(value.endedAt) &&
+      isFiniteNumber(value.durationSeconds) &&
+      isNonNegativeInteger(value.successes) &&
+      isNonNegativeInteger(value.fails) &&
+      isNonNegativeInteger(value.questionsCompleted) &&
+      isFraction(value.accuracy) &&
+      isNonNegativeInteger(value.bestStreak)
     )
   ) {
+    return false;
+  }
+  if (!isOptionalStackLimits(value)) {
     return false;
   }
   // For flashcard mode, validate flashcardMode if present
@@ -147,11 +189,11 @@ export const isAllTimeStats = (value: unknown): value is AllTimeStats => {
       return false;
     }
     return (
-      typeof entry.totalSessions === "number" &&
-      typeof entry.totalQuestions === "number" &&
-      typeof entry.totalSuccesses === "number" &&
-      typeof entry.totalFails === "number" &&
-      typeof entry.globalBestStreak === "number"
+      isNonNegativeInteger(entry.totalSessions) &&
+      isNonNegativeInteger(entry.totalQuestions) &&
+      isNonNegativeInteger(entry.totalSuccesses) &&
+      isNonNegativeInteger(entry.totalFails) &&
+      isNonNegativeInteger(entry.globalBestStreak)
     );
   });
 };

@@ -46,8 +46,21 @@ export const useLocalDb = <T>(
   key: string,
   defaultValue: T,
   validate: (value: unknown) => value is T
-): [T, (value: T | ((prevState: T) => T)) => void, () => void] =>
-  useLocalStorage({
+): [T, (value: T | ((prevState: T) => T)) => void, () => void] => {
+  const storedDefault = getStoredValue(key, defaultValue, validate);
+  return useLocalStorage({
     key,
-    defaultValue: getStoredValue(key, defaultValue, validate),
+    defaultValue: storedDefault,
+    deserialize: (raw: string | undefined) => {
+      if (raw === undefined || raw === null) {
+        return storedDefault;
+      }
+      try {
+        const parsed: unknown = JSON.parse(raw);
+        return validate(parsed) ? parsed : storedDefault;
+      } catch {
+        return storedDefault;
+      }
+    },
   });
+};

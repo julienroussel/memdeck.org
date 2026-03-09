@@ -1,13 +1,14 @@
 import { notifications } from "@mantine/notifications";
 import { useCallback, useReducer, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
 import { useGameTimer } from "../../hooks/use-game-timer";
-import { useResetGameOnStackChange } from "../../hooks/use-reset-game-on-stack-change";
 import { eventBus } from "../../services/event-bus";
 import type { FlashcardMode, NeighborDirection } from "../../types/flashcard";
 import type { GameScore } from "../../types/game";
 import type { PlayingCard } from "../../types/playingcard";
 import type { AnswerOutcome } from "../../types/session";
+import type { StackLimits } from "../../types/stack-limits";
 import type {
   PlayingCardPosition,
   Stack,
@@ -51,8 +52,11 @@ export const useFlashcardGame = (
   mode: FlashcardMode,
   neighborDirection: NeighborDirection,
   timerSettings: TimerSettings,
+  limits: StackLimits,
   options?: UseFlashcardGameOptions
 ): UseFlashcardGameResult => {
+  const { t } = useTranslation();
+
   const onAnswerRef = useRef(options?.onAnswer);
   onAnswerRef.current = options?.onAnswer;
 
@@ -66,6 +70,9 @@ export const useFlashcardGame = (
   const neighborDirectionRef = useRef(neighborDirection);
   neighborDirectionRef.current = neighborDirection;
 
+  const limitsRef = useRef(limits);
+  limitsRef.current = limits;
+
   const [state, dispatch] = useReducer(
     gameReducer,
     {
@@ -73,40 +80,54 @@ export const useFlashcardGame = (
       timerDuration: timerSettings.duration,
       mode,
       neighborDirection,
+      limits,
     },
-    ({ stackOrder, timerDuration, mode: m, neighborDirection: nd }) =>
+    ({
+      stackOrder,
+      timerDuration,
+      mode: m,
+      neighborDirection: nd,
+      limits: l,
+    }) =>
       m === "neighbor"
         ? createInitialState({
             stackOrder,
             timerDuration,
             flashcardMode: m,
             neighborDirection: nd,
+            limits: l,
           })
         : createInitialState({
             stackOrder,
             timerDuration,
             flashcardMode: m,
+            limits: l,
           })
   );
 
-  useResetGameOnStackChange(stackOrder, timerSettings.duration, dispatch, {
-    flashcardMode: mode,
-    neighborDirection,
-  });
-
-  // Reset game synchronously when mode or direction changes.
+  // Reset game synchronously when stack, mode, direction, or limits change.
   // This uses React's "store previous props" pattern to avoid the flicker
   // caused by useEffect (which fires after render, committing an intermediate
   // state with stale choices to the DOM).
+  const prevStackOrderRef = useRef(stackOrder);
   const prevModeRef = useRef(mode);
   const prevDirectionRef = useRef(neighborDirection);
+  const prevLimitsRef = useRef(limits);
 
-  if (
-    prevModeRef.current !== mode ||
-    prevDirectionRef.current !== neighborDirection
-  ) {
+  const stackChanged = prevStackOrderRef.current !== stackOrder;
+  const modeChanged = prevModeRef.current !== mode;
+  const directionChanged = prevDirectionRef.current !== neighborDirection;
+  const limitsChanged =
+    prevLimitsRef.current.start !== limits.start ||
+    prevLimitsRef.current.end !== limits.end;
+
+  // Note: timerSettings.duration is intentionally excluded from change detection.
+  // Duration changes are handled by useGameTimer via the RESET_TIMER action.
+  if (stackChanged || modeChanged || directionChanged || limitsChanged) {
+    prevStackOrderRef.current = stackOrder;
     prevModeRef.current = mode;
     prevDirectionRef.current = neighborDirection;
+    prevLimitsRef.current = limits;
     dispatch(
       mode === "neighbor"
         ? {
@@ -116,6 +137,7 @@ export const useFlashcardGame = (
               timerDuration: timerSettings.duration,
               flashcardMode: mode,
               neighborDirection,
+              limits,
             },
           }
         : {
@@ -124,6 +146,7 @@ export const useFlashcardGame = (
               stackOrder,
               timerDuration: timerSettings.duration,
               flashcardMode: mode,
+              limits,
             },
           }
     );
@@ -139,7 +162,8 @@ export const useFlashcardGame = (
     if (modeRef.current === "neighbor") {
       const result = generateNeighborCardAndChoices(
         stackOrderRef.current,
-        neighborDirectionRef.current
+        neighborDirectionRef.current,
+        limitsRef.current
       );
       return {
         newCard: result.card,
@@ -150,7 +174,8 @@ export const useFlashcardGame = (
       };
     }
     const { card: newCard, choices: newChoices } = generateNewCardAndChoices(
-      stackOrderRef.current
+      stackOrderRef.current,
+      limitsRef.current
     );
     const newDisplay =
       modeRef.current === "bothmodes"
@@ -173,13 +198,13 @@ export const useFlashcardGame = (
   const handleTimeout = useCallback(() => {
     notifications.show({
       color: "red",
-      title: "Time's up!",
-      message: "Moving to the next card.",
+      title: t("flashcard.timesUp"),
+      message: t("flashcard.movingToNext"),
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
     });
     eventBus.emit.FLASHCARD_ANSWER({ correct: false, stackName });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
-  }, [stackName]);
+  }, [stackName, t]);
 
   useGameTimer({
     timerSettings,
@@ -228,7 +253,7 @@ export const useFlashcardGame = (
 
     notifications.show({
       color: "yellow",
-      title: "Answer",
+      title: t("flashcard.revealTitle"),
       message: revealMessage,
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
     });
@@ -237,7 +262,7 @@ export const useFlashcardGame = (
     dispatch({ type: "REVEAL_ANSWER", payload });
     eventBus.emit.FLASHCARD_ANSWER({ correct: false, stackName });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
-  }, [stackName, generateNextRound]);
+  }, [stackName, generateNextRound, t]);
 
   return {
     score: { successes: state.successes, fails: state.fails },

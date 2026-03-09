@@ -91,6 +91,7 @@
     "statBestStreak": "Beste Serie",
     "noStatsYet": "Starte deine erste Sitzung, um Genauigkeit und Serien zu verfolgen.",
     "switchStackHint": "du kannst den Stack über die Auswahl am unteren Rand des Menüs wechseln.",
+    "rangeHint": "Neu bei diesem Stack? Stell den Bereich im Menü ein, um mit weniger Karten zu starten und dich in deinem Tempo zu steigern.",
     "whyNotAiTitle": "Warum eine eigene App statt KI?",
     "whyNotAiIntro": "ChatGPT und Claude können Kartenpositionen halluzinieren — und mit falschen Antworten zu trainieren ist schlimmer als gar nicht zu trainieren.",
     "whyNotAiAccuracy": "Verifizierte Daten",
@@ -132,7 +133,10 @@
     "neighborArrowBefore": "Karte davor",
     "neighborArrowAfter": "Karte danach",
     "activeModePosition": "Positionsmodus",
-    "activeModeNeighbor": "Nachbarmodus"
+    "activeModeNeighbor": "Nachbarmodus",
+    "timesUp": "Zeit abgelaufen!",
+    "movingToNext": "Weiter zur nächsten Karte.",
+    "revealTitle": "Antwort"
   },
   "acaan": {
     "pageTitle": "ACAAN-Training",
@@ -450,7 +454,23 @@
       "pwa": "Installiere MemDeck als App auf deinem Gerät für Offline-Zugriff.",
       "language": "Ändere die Anzeigesprache über die Sprachauswahl im Navigationsmenü.",
       "share": "Verwende die Teilen-Schaltfläche im Navigationsmenü, um MemDeck bei deinen Zaubererkollegen bekannt zu machen.",
-      "reset": "Verwende die Zurücksetzen-Schaltfläche im Menü, um deine Daten zu löschen. Du kannst nur die Einstellungen zurücksetzen (Trainingshistorie bleibt erhalten) oder alles zurücksetzen."
+      "reset": "Verwende die Zurücksetzen-Schaltfläche im Menü, um deine Daten zu löschen. Du kannst nur die Einstellungen zurücksetzen (Trainingshistorie bleibt erhalten) oder alles zurücksetzen.",
+      "stackRange": "Verwende den Stack-Bereich neben der Stack-Auswahl im Menü, um nur einen Teil der Positionen zu trainieren. Fang mit wenigen an und erweitere den Bereich, wenn du mehr Karten memoriert hast."
     }
+  },
+  "stackLimits": {
+    "label": "Stack-Bereich",
+    "description": "Positionen {{start}}–{{end}} ({{count}} Karten)",
+    "fullDeck": "Ganzes Deck (52 Karten)",
+    "ariaLabel": "Stack-Trainingsbereich anpassen",
+    "spotCheckHint": "Spot Check funktioniert am besten mit {{count}}+ Karten.",
+    "presetsGroupAriaLabel": "Bereichsvoreinstellungen",
+    "presetAriaLabel": "Bereich auf die ersten {{count}} Karten setzen",
+    "badgeFull": "{{count}} Karten",
+    "badgePartial": "{{start}}–{{end}}",
+    "thumbStartLabel": "Startposition",
+    "thumbEndLabel": "Endposition",
+    "badgeFullAriaLabel": "Stack-Bereich: {{count}} Karten. Tippen zum Anpassen.",
+    "badgePartialAriaLabel": "Stack-Bereich: Positionen {{start}} bis {{end}}. Tippen zum Anpassen."
   }
 }

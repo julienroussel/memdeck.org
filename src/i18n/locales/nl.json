@@ -91,6 +91,7 @@
     "statBestStreak": "Beste reeks",
     "noStatsYet": "Start je eerste sessie om nauwkeurigheid en reeksen bij te houden.",
     "switchStackHint": "je kunt van stack wisselen via de selector onderaan het menu.",
+    "rangeHint": "Nieuw met deze stack? Gebruik het stack-bereik in het menu om met minder kaarten te beginnen en in je eigen tempo uit te breiden.",
     "whyNotAiTitle": "Waarom een aparte app in plaats van AI?",
     "whyNotAiIntro": "ChatGPT en Claude kunnen kaartposities hallucineren — en trainen met foute antwoorden is erger dan helemaal niet trainen.",
     "whyNotAiAccuracy": "Geverifieerde data",
@@ -132,7 +133,10 @@
     "neighborArrowBefore": "Kaart ervoor",
     "neighborArrowAfter": "Kaart erna",
     "activeModePosition": "Positiemodus",
-    "activeModeNeighbor": "Buurmodus"
+    "activeModeNeighbor": "Buurmodus",
+    "timesUp": "Tijd om!",
+    "movingToNext": "Door naar de volgende kaart.",
+    "revealTitle": "Antwoord"
   },
   "acaan": {
     "pageTitle": "ACAAN Training",
@@ -450,7 +454,23 @@
       "pwa": "Installeer MemDeck als app op je apparaat voor offline toegang.",
       "language": "Wijzig de weergavetaal via de taalkiezer in het navigatiemenu.",
       "share": "Gebruik de deelknop in het navigatiemenu om MemDeck te delen met je collega-goochelaars.",
-      "reset": "Gebruik de resetknop in het menu om je gegevens te wissen. Je kunt alleen de instellingen resetten (trainingsgeschiedenis blijft bewaard) of alles resetten."
+      "reset": "Gebruik de resetknop in het menu om je gegevens te wissen. Je kunt alleen de instellingen resetten (trainingsgeschiedenis blijft bewaard) of alles resetten.",
+      "stackRange": "Gebruik het stack-bereik naast de stack-kiezer in het menu om op een deel van de posities te trainen. Begin klein en breid uit naarmate je meer kaarten memoriseert."
     }
+  },
+  "stackLimits": {
+    "label": "Stack-bereik",
+    "description": "Posities {{start}}–{{end}} ({{count}} kaarten)",
+    "fullDeck": "Volledig deck (52 kaarten)",
+    "ariaLabel": "Pas het trainingsbereik van de stack aan",
+    "spotCheckHint": "Spot Check werkt het best met {{count}}+ kaarten.",
+    "presetsGroupAriaLabel": "Bereikvoorinstellingen",
+    "presetAriaLabel": "Bereik instellen op de eerste {{count}} kaarten",
+    "badgeFull": "{{count}} kaarten",
+    "badgePartial": "{{start}}–{{end}}",
+    "thumbStartLabel": "Startpositie",
+    "thumbEndLabel": "Eindpositie",
+    "badgeFullAriaLabel": "Stack-bereik: {{count}} kaarten. Tik om aan te passen.",
+    "badgePartialAriaLabel": "Stack-bereik: posities {{start}} tot {{end}}. Tik om aan te passen."
   }
 }

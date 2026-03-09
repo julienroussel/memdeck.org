@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { DEFAULT_STACK_LIMITS } from "../../types/stack-limits";
 import type { PlayingCardPosition } from "../../types/stacks";
 import { createDeckPosition } from "../../types/stacks";
 import { mnemonica } from "../../types/stacks/mnemonica";
@@ -51,32 +52,44 @@ const makeState = (overrides: Partial<GameState> = {}): GameState => ({
 
 describe("generateNewCardAndChoices", () => {
   it("returns a card and a non-empty choices array", () => {
-    const result = generateNewCardAndChoices(stackOrder);
+    const result = generateNewCardAndChoices(stackOrder, DEFAULT_STACK_LIMITS);
     expect(result.card.index).toBeGreaterThanOrEqual(1);
     expect(result.choices.length).toBeGreaterThan(0);
   });
 
   it("returns a card with a valid index between 1 and 52", () => {
-    const { card } = generateNewCardAndChoices(stackOrder);
+    const { card } = generateNewCardAndChoices(
+      stackOrder,
+      DEFAULT_STACK_LIMITS
+    );
     expect(card.index).toBeGreaterThanOrEqual(1);
     expect(card.index).toBeLessThanOrEqual(52);
   });
 
   it("returns a card with a defined suit, rank, and image", () => {
-    const { card } = generateNewCardAndChoices(stackOrder);
+    const { card } = generateNewCardAndChoices(
+      stackOrder,
+      DEFAULT_STACK_LIMITS
+    );
     expect(typeof card.card.suit).toBe("string");
     expect(typeof card.card.rank).toBe("string");
     expect(typeof card.card.image).toBe("string");
   });
 
   it("returns a choices array with the default count of items", () => {
-    const { choices } = generateNewCardAndChoices(stackOrder);
+    const { choices } = generateNewCardAndChoices(
+      stackOrder,
+      DEFAULT_STACK_LIMITS
+    );
     // DEFAULT_CHOICES_COUNT is 5
     expect(choices).toHaveLength(5);
   });
 
   it("returns all choices with valid indices between 1 and 52", () => {
-    const { choices } = generateNewCardAndChoices(stackOrder);
+    const { choices } = generateNewCardAndChoices(
+      stackOrder,
+      DEFAULT_STACK_LIMITS
+    );
     for (const choice of choices) {
       expect(choice.index).toBeGreaterThanOrEqual(1);
       expect(choice.index).toBeLessThanOrEqual(52);
@@ -84,7 +97,10 @@ describe("generateNewCardAndChoices", () => {
   });
 
   it("returns choices where each has a valid card and index", () => {
-    const { choices } = generateNewCardAndChoices(stackOrder);
+    const { choices } = generateNewCardAndChoices(
+      stackOrder,
+      DEFAULT_STACK_LIMITS
+    );
     for (const choice of choices) {
       expect(typeof choice.card.suit).toBe("string");
       expect(choice.index).toBeGreaterThanOrEqual(1);
@@ -93,13 +109,19 @@ describe("generateNewCardAndChoices", () => {
   });
 
   it("includes the selected card among the choices", () => {
-    const { card, choices } = generateNewCardAndChoices(stackOrder);
+    const { card, choices } = generateNewCardAndChoices(
+      stackOrder,
+      DEFAULT_STACK_LIMITS
+    );
     const found = choices.some((c) => c.index === card.index);
     expect(found).toBe(true);
   });
 
   it("returns choices with unique indices (no duplicate positions)", () => {
-    const { choices } = generateNewCardAndChoices(stackOrder);
+    const { choices } = generateNewCardAndChoices(
+      stackOrder,
+      DEFAULT_STACK_LIMITS
+    );
     const indices = choices.map((c) => c.index);
     const unique = new Set(indices);
     expect(unique.size).toBe(indices.length);
@@ -109,16 +131,39 @@ describe("generateNewCardAndChoices", () => {
   // probability of all 20 being identical is (1/52)^19 ≈ 1.6e-33 — effectively zero.
   it("produces varying cards across multiple consecutive calls", () => {
     const results = Array.from({ length: 20 }, () =>
-      generateNewCardAndChoices(stackOrder)
+      generateNewCardAndChoices(stackOrder, DEFAULT_STACK_LIMITS)
     );
     const uniqueIndices = new Set(results.map((r) => r.card.index));
     expect(uniqueIndices.size).toBeGreaterThan(1);
+  });
+
+  it("constrains card and choices to the specified partial range", () => {
+    const partialRange = {
+      start: createDeckPosition(5),
+      end: createDeckPosition(15),
+    };
+    for (let i = 0; i < 20; i++) {
+      const { card, choices } = generateNewCardAndChoices(
+        stackOrder,
+        partialRange
+      );
+      expect(card.index).toBeGreaterThanOrEqual(5);
+      expect(card.index).toBeLessThanOrEqual(15);
+      for (const choice of choices) {
+        expect(choice.index).toBeGreaterThanOrEqual(5);
+        expect(choice.index).toBeLessThanOrEqual(15);
+      }
+    }
   });
 });
 
 describe("generateNeighborCardAndChoices", () => {
   it("returns a question card, a different answer card, choices, and a resolved direction", () => {
-    const result = generateNeighborCardAndChoices(stackOrder, "before");
+    const result = generateNeighborCardAndChoices(
+      stackOrder,
+      "before",
+      DEFAULT_STACK_LIMITS
+    );
 
     expect(result.card.index).toBeGreaterThanOrEqual(1);
     expect(result.answerCard.index).toBeGreaterThanOrEqual(1);
@@ -127,7 +172,11 @@ describe("generateNeighborCardAndChoices", () => {
   });
 
   it("sets answer card to the neighbor of the question card for 'before' direction", () => {
-    const result = generateNeighborCardAndChoices(stackOrder, "before");
+    const result = generateNeighborCardAndChoices(
+      stackOrder,
+      "before",
+      DEFAULT_STACK_LIMITS
+    );
 
     // The answer should be the card before the question in the stack
     expect(result.resolvedDirection).toBe("before");
@@ -137,7 +186,11 @@ describe("generateNeighborCardAndChoices", () => {
   });
 
   it("sets answer card to the neighbor of the question card for 'after' direction", () => {
-    const result = generateNeighborCardAndChoices(stackOrder, "after");
+    const result = generateNeighborCardAndChoices(
+      stackOrder,
+      "after",
+      DEFAULT_STACK_LIMITS
+    );
 
     expect(result.resolvedDirection).toBe("after");
     const expectedIndex = result.card.index === 52 ? 1 : result.card.index + 1;
@@ -147,7 +200,11 @@ describe("generateNeighborCardAndChoices", () => {
   it("resolves 'random' direction to 'before' or 'after'", () => {
     const directions = new Set<string>();
     for (let i = 0; i < 50; i++) {
-      const result = generateNeighborCardAndChoices(stackOrder, "random");
+      const result = generateNeighborCardAndChoices(
+        stackOrder,
+        "random",
+        DEFAULT_STACK_LIMITS
+      );
       directions.add(result.resolvedDirection);
     }
     expect(directions.has("before")).toBe(true);
@@ -159,7 +216,11 @@ describe("generateNeighborCardAndChoices", () => {
 
   it("includes the answer card in choices but not the question card", () => {
     for (let i = 0; i < 10; i++) {
-      const result = generateNeighborCardAndChoices(stackOrder, "before");
+      const result = generateNeighborCardAndChoices(
+        stackOrder,
+        "before",
+        DEFAULT_STACK_LIMITS
+      );
 
       const hasAnswer = result.choices.some(
         (c) =>
@@ -180,7 +241,11 @@ describe("generateNeighborCardAndChoices", () => {
   it("shuffles choices so the answer is not always first", () => {
     const answerPositions = new Set<number>();
     for (let i = 0; i < 50; i++) {
-      const result = generateNeighborCardAndChoices(stackOrder, "before");
+      const result = generateNeighborCardAndChoices(
+        stackOrder,
+        "before",
+        DEFAULT_STACK_LIMITS
+      );
       const answerIndex = result.choices.findIndex(
         (c) =>
           c.card.suit === result.answerCard.card.suit &&
@@ -190,6 +255,24 @@ describe("generateNeighborCardAndChoices", () => {
     }
     // The answer should appear at multiple positions, not always at 0
     expect(answerPositions.size).toBeGreaterThan(1);
+  });
+
+  it("constrains question and answer cards to the specified partial range", () => {
+    const partialRange = {
+      start: createDeckPosition(5),
+      end: createDeckPosition(15),
+    };
+    for (let i = 0; i < 20; i++) {
+      const result = generateNeighborCardAndChoices(
+        stackOrder,
+        "after",
+        partialRange
+      );
+      expect(result.card.index).toBeGreaterThanOrEqual(5);
+      expect(result.card.index).toBeLessThanOrEqual(15);
+      expect(result.answerCard.index).toBeGreaterThanOrEqual(5);
+      expect(result.answerCard.index).toBeLessThanOrEqual(15);
+    }
   });
 });
 
@@ -334,6 +417,26 @@ describe("createInitialState", () => {
     const state = createInitialState({ stackOrder, timerDuration: 30 });
     expect(state.resolvedDirection).toBeNull();
     expect(state.answerCard).toBe(state.card);
+  });
+
+  it("constrains initial state to partial range limits", () => {
+    const partialRange = {
+      start: createDeckPosition(5),
+      end: createDeckPosition(15),
+    };
+    for (let i = 0; i < 20; i++) {
+      const state = createInitialState({
+        stackOrder,
+        timerDuration: 30,
+        limits: partialRange,
+      });
+      expect(state.card.index).toBeGreaterThanOrEqual(5);
+      expect(state.card.index).toBeLessThanOrEqual(15);
+      for (const choice of state.choices) {
+        expect(choice.index).toBeGreaterThanOrEqual(5);
+        expect(choice.index).toBeLessThanOrEqual(15);
+      }
+    }
   });
 });
 
@@ -853,6 +956,26 @@ describe("gameReducer", () => {
 
       expect(["before", "after"]).toContain(next.resolvedDirection);
       expect(next.answerCard.index).not.toBe(next.card.index);
+    });
+
+    it("constrains card and choices to partial range limits", () => {
+      const partialRange = {
+        start: createDeckPosition(5),
+        end: createDeckPosition(15),
+      };
+      const state = makeState({ successes: 10, fails: 5 });
+      for (let i = 0; i < 20; i++) {
+        const next = gameReducer(state, {
+          type: "RESET_GAME",
+          payload: { stackOrder, timerDuration: 30, limits: partialRange },
+        });
+        expect(next.card.index).toBeGreaterThanOrEqual(5);
+        expect(next.card.index).toBeLessThanOrEqual(15);
+        for (const choice of next.choices) {
+          expect(choice.index).toBeGreaterThanOrEqual(5);
+          expect(choice.index).toBeLessThanOrEqual(15);
+        }
+      }
     });
   });
 });

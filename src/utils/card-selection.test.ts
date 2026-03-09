@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { DEFAULT_STACK_LIMITS } from "../types/stack-limits";
 import {
   createDeckPosition,
   type PlayingCardPosition,
@@ -10,16 +11,17 @@ import {
 } from "./card-selection";
 
 const testStack = stacks.mnemonica.order;
+const fullDeck = DEFAULT_STACK_LIMITS;
 
 describe("generateUniqueCardChoices", () => {
   it("returns default 5 choices when no totalChoices specified", () => {
-    const choices = generateUniqueCardChoices(testStack);
+    const choices = generateUniqueCardChoices(testStack, fullDeck);
 
     expect(choices).toHaveLength(5);
   });
 
   it("returns the specified number of choices", () => {
-    const choices = generateUniqueCardChoices(testStack, [], 10);
+    const choices = generateUniqueCardChoices(testStack, fullDeck, [], 10);
 
     expect(choices).toHaveLength(10);
   });
@@ -30,7 +32,12 @@ describe("generateUniqueCardChoices", () => {
       { index: createDeckPosition(2), card: testStack[1] },
     ];
 
-    const choices = generateUniqueCardChoices(testStack, initialChoices, 5);
+    const choices = generateUniqueCardChoices(
+      testStack,
+      fullDeck,
+      initialChoices,
+      5
+    );
 
     expect(choices).toHaveLength(5);
     expect(choices).toContain(initialChoices[0]);
@@ -38,7 +45,7 @@ describe("generateUniqueCardChoices", () => {
   });
 
   it("returns all unique choices with no duplicates", () => {
-    const choices = generateUniqueCardChoices(testStack, [], 20);
+    const choices = generateUniqueCardChoices(testStack, fullDeck, [], 20);
 
     const indices = choices.map((c) => c.index);
     const uniqueIndices = new Set(indices);
@@ -47,7 +54,7 @@ describe("generateUniqueCardChoices", () => {
   });
 
   it("works with empty initial choices", () => {
-    const choices = generateUniqueCardChoices(testStack, [], 3);
+    const choices = generateUniqueCardChoices(testStack, fullDeck, [], 3);
 
     expect(choices).toHaveLength(3);
 
@@ -63,7 +70,12 @@ describe("generateUniqueCardChoices", () => {
       { index: createDeckPosition(3), card: testStack[2] },
     ];
 
-    const choices = generateUniqueCardChoices(testStack, initialChoices, 3);
+    const choices = generateUniqueCardChoices(
+      testStack,
+      fullDeck,
+      initialChoices,
+      3
+    );
 
     expect(choices).toHaveLength(3);
     expect(choices).toEqual(initialChoices);
@@ -78,14 +90,19 @@ describe("generateUniqueCardChoices", () => {
       { index: createDeckPosition(5), card: testStack[4] },
     ];
 
-    const choices = generateUniqueCardChoices(testStack, initialChoices, 3);
+    const choices = generateUniqueCardChoices(
+      testStack,
+      fullDeck,
+      initialChoices,
+      3
+    );
 
     expect(choices).toHaveLength(5);
     expect(choices).toEqual(initialChoices);
   });
 
   it("generates valid card positions with 1-based indices", () => {
-    const choices = generateUniqueCardChoices(testStack, [], 10);
+    const choices = generateUniqueCardChoices(testStack, fullDeck, [], 10);
 
     for (const choice of choices) {
       expect(choice.index).toBeGreaterThanOrEqual(1);
@@ -97,7 +114,7 @@ describe("generateUniqueCardChoices", () => {
   });
 
   it("can generate up to 52 unique choices", () => {
-    const choices = generateUniqueCardChoices(testStack, [], 52);
+    const choices = generateUniqueCardChoices(testStack, fullDeck, [], 52);
 
     expect(choices).toHaveLength(52);
 
@@ -109,11 +126,13 @@ describe("generateUniqueCardChoices", () => {
   it("works with different stacks", () => {
     const aronsonChoices = generateUniqueCardChoices(
       stacks.aronson.order,
+      fullDeck,
       [],
       5
     );
     const redfordChoices = generateUniqueCardChoices(
       stacks.redford.order,
+      fullDeck,
       [],
       5
     );
@@ -128,10 +147,39 @@ describe("generateUniqueCardChoices", () => {
       { index: createDeckPosition(20), card: testStack[19] },
     ];
 
-    const choices = generateUniqueCardChoices(testStack, initialChoices, 5);
+    const choices = generateUniqueCardChoices(
+      testStack,
+      fullDeck,
+      initialChoices,
+      5
+    );
 
     expect(choices[0]).toEqual(initialChoices[0]);
     expect(choices[1]).toEqual(initialChoices[1]);
+  });
+
+  it("throws when totalChoices exceeds the range size", () => {
+    const narrowLimits = {
+      start: createDeckPosition(1),
+      end: createDeckPosition(3),
+    };
+    expect(() =>
+      generateUniqueCardChoices(testStack, narrowLimits, [], 5)
+    ).toThrow("totalChoices (5) exceeds range size (3)");
+  });
+
+  it("only produces cards within a partial range", () => {
+    const partialLimits = {
+      start: createDeckPosition(1),
+      end: createDeckPosition(10),
+    };
+    const choices = generateUniqueCardChoices(testStack, partialLimits, [], 5);
+
+    expect(choices).toHaveLength(5);
+    for (const choice of choices) {
+      expect(choice.index).toBeGreaterThanOrEqual(1);
+      expect(choice.index).toBeLessThanOrEqual(10);
+    }
   });
 });
 
@@ -150,7 +198,8 @@ describe("generateNeighborChoices", () => {
     const choices = generateNeighborChoices(
       testStack,
       answerCard,
-      questionCard
+      questionCard,
+      fullDeck
     );
 
     expect(choices).toHaveLength(5);
@@ -161,6 +210,7 @@ describe("generateNeighborChoices", () => {
       testStack,
       answerCard,
       questionCard,
+      fullDeck,
       8
     );
 
@@ -171,7 +221,8 @@ describe("generateNeighborChoices", () => {
     const choices = generateNeighborChoices(
       testStack,
       answerCard,
-      questionCard
+      questionCard,
+      fullDeck
     );
 
     const hasAnswer = choices.some(
@@ -188,7 +239,8 @@ describe("generateNeighborChoices", () => {
       const choices = generateNeighborChoices(
         testStack,
         answerCard,
-        questionCard
+        questionCard,
+        fullDeck
       );
 
       const hasQuestion = choices.some(
@@ -204,11 +256,67 @@ describe("generateNeighborChoices", () => {
     const choices = generateNeighborChoices(
       testStack,
       answerCard,
-      questionCard
+      questionCard,
+      fullDeck
     );
 
     const indices = choices.map((c) => c.index);
     const uniqueIndices = new Set(indices);
     expect(uniqueIndices.size).toBe(indices.length);
+  });
+
+  it("only produces choices within a partial range", () => {
+    const partialLimits = {
+      start: createDeckPosition(1),
+      end: createDeckPosition(10),
+    };
+    const partialAnswer: PlayingCardPosition = {
+      index: createDeckPosition(2),
+      card: testStack[1],
+    };
+    const partialQuestion: PlayingCardPosition = {
+      index: createDeckPosition(1),
+      card: testStack[0],
+    };
+
+    const choices = generateNeighborChoices(
+      testStack,
+      partialAnswer,
+      partialQuestion,
+      partialLimits
+    );
+
+    expect(choices).toHaveLength(5);
+    for (const choice of choices) {
+      expect(choice.index).toBeGreaterThanOrEqual(1);
+      expect(choice.index).toBeLessThanOrEqual(10);
+    }
+    expect(choices.every((c) => c.index !== partialQuestion.index)).toBe(true);
+  });
+
+  it("throws when totalChoices exceeds available pool (range size minus question card)", () => {
+    const narrowLimits = {
+      start: createDeckPosition(1),
+      end: createDeckPosition(3),
+    };
+    const narrowAnswer: PlayingCardPosition = {
+      index: createDeckPosition(2),
+      card: testStack[1],
+    };
+    const narrowQuestion: PlayingCardPosition = {
+      index: createDeckPosition(1),
+      card: testStack[0],
+    };
+
+    // Range size is 3, effective pool is 2 (question card excluded), requesting 5
+    expect(() =>
+      generateNeighborChoices(
+        testStack,
+        narrowAnswer,
+        narrowQuestion,
+        narrowLimits,
+        5
+      )
+    ).toThrow("totalChoices (5) exceeds available pool (2) in range 1-3");
   });
 });

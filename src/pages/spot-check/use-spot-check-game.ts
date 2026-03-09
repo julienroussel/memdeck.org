@@ -8,23 +8,18 @@ import type { GameScore } from "../../types/game";
 import type { PlayingCard } from "../../types/playingcard";
 import type { AnswerOutcome } from "../../types/session";
 import type { SpotCheckMode } from "../../types/spot-check";
+import { isFullDeck, type StackLimits } from "../../types/stack-limits";
 import type { Stack, StackValue } from "../../types/stacks";
 import type { TimerSettings } from "../../types/timer";
 import {
-  type MissingCardPuzzle,
-  type MovedCardPuzzle,
+  isSpotCheckAnswerCorrect,
   moveCard,
+  type PuzzleState,
   removeSingleCard,
-  type SwappedCardsPuzzle,
   swapTwoCards,
 } from "./utils";
 
 // --- State ---
-
-type PuzzleState =
-  | { mode: "missing"; puzzle: MissingCardPuzzle }
-  | { mode: "swapped"; puzzle: SwappedCardsPuzzle }
-  | { mode: "moved"; puzzle: MovedCardPuzzle };
 
 type GameState = {
   successes: number;
@@ -50,7 +45,7 @@ type GameAction =
   | {
       type: "RESET_GAME";
       payload: {
-        stackOrder: Stack;
+        cards: readonly PlayingCard[];
         timerDuration: number;
         spotCheckMode: SpotCheckMode;
       };
@@ -99,7 +94,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
       };
     case "RESET_GAME":
       return createInitialState(
-        action.payload.stackOrder,
+        action.payload.cards,
         action.payload.timerDuration,
         action.payload.spotCheckMode
       );
@@ -112,17 +107,27 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
 
 // --- Helpers ---
 
-const generatePuzzle = (
+const getCardsForPuzzle = (
   stackOrder: Stack,
+  limits: StackLimits
+): readonly PlayingCard[] => {
+  if (isFullDeck(limits)) {
+    return stackOrder;
+  }
+  return stackOrder.slice(limits.start - 1, limits.end);
+};
+
+const generatePuzzle = (
+  cards: readonly PlayingCard[],
   mode: SpotCheckMode
 ): PuzzleState => {
   switch (mode) {
     case "missing":
-      return { mode: "missing", puzzle: removeSingleCard(stackOrder) };
+      return { mode: "missing", puzzle: removeSingleCard(cards) };
     case "swapped":
-      return { mode: "swapped", puzzle: swapTwoCards(stackOrder) };
+      return { mode: "swapped", puzzle: swapTwoCards(cards) };
     case "moved":
-      return { mode: "moved", puzzle: moveCard(stackOrder) };
+      return { mode: "moved", puzzle: moveCard(cards) };
     default: {
       const _exhaustive: never = mode;
       throw new Error(`Unknown spot check mode: ${_exhaustive}`);
@@ -131,13 +136,13 @@ const generatePuzzle = (
 };
 
 const createInitialState = (
-  stackOrder: Stack,
+  cards: readonly PlayingCard[],
   timerDuration: number,
   mode: SpotCheckMode
 ): GameState => ({
   successes: 0,
   fails: 0,
-  puzzleState: generatePuzzle(stackOrder, mode),
+  puzzleState: generatePuzzle(cards, mode),
   timeRemaining: timerDuration,
   timerDuration,
 });
@@ -163,6 +168,7 @@ export const useSpotCheckGame = (
   stackName: StackValue["name"],
   spotCheckMode: SpotCheckMode,
   timerSettings: TimerSettings,
+  limits: StackLimits,
   options?: UseSpotCheckGameOptions
 ): UseSpotCheckGameResult => {
   const { t } = useTranslation();
@@ -176,35 +182,45 @@ export const useSpotCheckGame = (
   const spotCheckModeRef = useRef(spotCheckMode);
   spotCheckModeRef.current = spotCheckMode;
 
+  const limitsRef = useRef(limits);
+  limitsRef.current = limits;
+
+  const cardsRef = useRef(getCardsForPuzzle(stackOrder, limits));
+
   const [state, dispatch] = useReducer(
     gameReducer,
-    { stackOrder, timerDuration: timerSettings.duration, mode: spotCheckMode },
-    ({ stackOrder: s, timerDuration: d, mode: m }) =>
-      createInitialState(s, d, m)
+    {
+      stackOrder,
+      timerDuration: timerSettings.duration,
+      mode: spotCheckMode,
+      limits,
+    },
+    ({ stackOrder: s, timerDuration: d, mode: m, limits: l }) =>
+      createInitialState(getCardsForPuzzle(s, l), d, m)
   );
 
-  // Reset game when stack changes
+  // Reset game when stack, mode, or limits change
   const prevStackOrderRef = useRef(stackOrder);
-  if (prevStackOrderRef.current !== stackOrder) {
-    prevStackOrderRef.current = stackOrder;
-    dispatch({
-      type: "RESET_GAME",
-      payload: {
-        stackOrder,
-        timerDuration: timerSettings.duration,
-        spotCheckMode: spotCheckModeRef.current,
-      },
-    });
-  }
-
-  // Reset game when mode changes
   const prevModeRef = useRef(spotCheckMode);
-  if (prevModeRef.current !== spotCheckMode) {
+  const prevLimitsRef = useRef(limits);
+
+  const stackChanged = prevStackOrderRef.current !== stackOrder;
+  const modeChanged = prevModeRef.current !== spotCheckMode;
+  const limitsChanged =
+    prevLimitsRef.current.start !== limits.start ||
+    prevLimitsRef.current.end !== limits.end;
+
+  // Note: timerSettings.duration is intentionally excluded from change detection.
+  // Duration changes are handled by useGameTimer via the RESET_TIMER action.
+  if (stackChanged || modeChanged || limitsChanged) {
+    prevStackOrderRef.current = stackOrder;
     prevModeRef.current = spotCheckMode;
+    prevLimitsRef.current = limits;
+    cardsRef.current = getCardsForPuzzle(stackOrder, limits);
     dispatch({
       type: "RESET_GAME",
       payload: {
-        stackOrder,
+        cards: cardsRef.current,
         timerDuration: timerSettings.duration,
         spotCheckMode,
       },
@@ -216,10 +232,7 @@ export const useSpotCheckGame = (
 
   const generateNextRound = useCallback(
     (): AdvancePayload => ({
-      newPuzzle: generatePuzzle(
-        stackOrderRef.current,
-        spotCheckModeRef.current
-      ),
+      newPuzzle: generatePuzzle(cardsRef.current, spotCheckModeRef.current),
     }),
     []
   );
@@ -248,41 +261,14 @@ export const useSpotCheckGame = (
     onTimeout: handleTimeout,
   });
 
-  const isCorrectAnswer = useCallback(
-    (card: PlayingCard, index: number): boolean => {
-      const ps = puzzleStateRef.current;
-      switch (ps.mode) {
-        case "missing": {
-          // In the 51-card array, the gap is at missingIndex.
-          // Tapping the card just before or just after the gap is correct.
-          // The deck wraps: if the gap is at position 0, the last card
-          // (index 50) is "before" it; if at position 51, index 0 is "after".
-          const gap = ps.puzzle.missingIndex;
-          const len = ps.puzzle.cards.length;
-          const before = (gap - 1 + len) % len;
-          const after = gap % len;
-          return index === before || index === after;
-        }
-        case "swapped":
-          // Either swapped card is correct
-          return (
-            card === stackOrderRef.current[ps.puzzle.indexA] ||
-            card === stackOrderRef.current[ps.puzzle.indexB]
-          );
-        case "moved":
-          return card === ps.puzzle.movedCard;
-        default: {
-          const _exhaustive: never = ps;
-          throw new Error(`Unknown puzzle mode: ${_exhaustive}`);
-        }
-      }
-    },
-    []
-  );
-
   const submitAnswer = useCallback(
     (card: PlayingCard, index: number) => {
-      const correct = isCorrectAnswer(card, index);
+      const correct = isSpotCheckAnswerCorrect(
+        card,
+        index,
+        puzzleStateRef.current,
+        cardsRef.current
+      );
 
       if (correct) {
         notifications.show({
@@ -307,7 +293,7 @@ export const useSpotCheckGame = (
 
       eventBus.emit.SPOT_CHECK_ANSWER({ correct, stackName });
     },
-    [stackName, isCorrectAnswer, generateNextRound, t]
+    [stackName, generateNextRound, t]
   );
 
   const revealAnswer = useCallback(() => {

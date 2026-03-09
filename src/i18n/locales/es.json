@@ -91,6 +91,7 @@
     "statBestStreak": "Mejor racha",
     "noStatsYet": "Empieza tu primera sesión para comenzar a registrar tu precisión y rachas.",
     "switchStackHint": "puedes cambiar de stack usando el selector en la parte inferior del menú.",
+    "rangeHint": "¿Nuevo con este stack? Usa el control de rango en el menú para empezar con menos cartas y avanzar a tu ritmo.",
     "whyNotAiTitle": "¿Por qué una app dedicada en lugar de IA?",
     "whyNotAiIntro": "ChatGPT y Claude pueden inventarse posiciones de cartas — y entrenar con respuestas erróneas es peor que no entrenar.",
     "whyNotAiAccuracy": "Datos verificados",
@@ -132,7 +133,10 @@
     "neighborArrowBefore": "Carta anterior",
     "neighborArrowAfter": "Carta siguiente",
     "activeModePosition": "Modo posición",
-    "activeModeNeighbor": "Modo vecino"
+    "activeModeNeighbor": "Modo vecino",
+    "timesUp": "¡Se acabó el tiempo!",
+    "movingToNext": "Pasando a la siguiente carta.",
+    "revealTitle": "Respuesta"
   },
   "acaan": {
     "pageTitle": "Entrenamiento ACAAN",
@@ -450,7 +454,23 @@
       "pwa": "Instala MemDeck como app en tu dispositivo para acceso sin conexión.",
       "language": "Cambia el idioma usando el selector de idioma en el menú de navegación.",
       "share": "Usa el botón de compartir en el menú de navegación para dar a conocer MemDeck entre tus compañeros magos.",
-      "reset": "Usa el botón de restablecer en el menú para borrar tus datos. Puedes restablecer solo los ajustes (conservando el historial de entrenamiento) o restablecer todo."
+      "reset": "Usa el botón de restablecer en el menú para borrar tus datos. Puedes restablecer solo los ajustes (conservando el historial de entrenamiento) o restablecer todo.",
+      "stackRange": "Usa el rango del stack junto al selector de stack en el menú para entrenar con una parte de las posiciones. Empieza con pocas y amplía a medida que memorices más cartas."
     }
+  },
+  "stackLimits": {
+    "label": "Rango del stack",
+    "description": "Posiciones {{start}}–{{end}} ({{count}} cartas)",
+    "fullDeck": "Baraja completa (52 cartas)",
+    "ariaLabel": "Ajustar el rango de entrenamiento del stack",
+    "spotCheckHint": "Spot Check funciona mejor con {{count}}+ cartas.",
+    "presetsGroupAriaLabel": "Preajustes de rango",
+    "presetAriaLabel": "Establecer rango a las primeras {{count}} cartas",
+    "badgeFull": "{{count}} cartas",
+    "badgePartial": "{{start}}–{{end}}",
+    "thumbStartLabel": "Posición inicial",
+    "thumbEndLabel": "Posición final",
+    "badgeFullAriaLabel": "Rango del stack: {{count}} cartas. Toca para ajustar.",
+    "badgePartialAriaLabel": "Rango del stack: posiciones {{start}} a {{end}}. Toca para ajustar."
   }
 }

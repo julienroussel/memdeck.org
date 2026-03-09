@@ -67,6 +67,14 @@ const subscribeToEvents = () => {
   eventBus.subscribe.SESSION_COMPLETED(({ mode, accuracy }) => {
     analytics.trackSessionCompleted(mode, accuracy);
   });
+
+  eventBus.subscribe.STACK_LIMITS_CHANGED(({ start, end, stackName }) => {
+    analytics.trackEvent(
+      "Settings",
+      "Stack Range Changed",
+      `${stackName} (${start}-${end})`
+    );
+  });
 };
 
 export const analytics = {

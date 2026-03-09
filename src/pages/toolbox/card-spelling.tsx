@@ -3,6 +3,7 @@ import { IconSearch } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
+import { useStackLimits } from "../../hooks/use-stack-limits";
 import { filterStack } from "./filter-stack";
 import { getSpellingData } from "./spell-card";
 import { SpellingRow } from "./spelling-row";
@@ -10,7 +11,8 @@ import { useFormatCardName } from "./use-format-card-name";
 
 export const CardSpelling = () => {
   const { t } = useTranslation();
-  const { stackOrder } = useRequiredStack();
+  const { stackKey, stackOrder } = useRequiredStack();
+  const { limits } = useStackLimits(stackKey);
   const [query, setQuery] = useState("");
   const [expandedPosition, setExpandedPosition] = useState<number | null>(null);
 
@@ -24,8 +26,13 @@ export const CardSpelling = () => {
   const visibleEntries = useMemo(() => {
     const filtered = filterStack(stackOrder, query, formatCardName);
     const filteredPositions = new Set(filtered.map((e) => e.position));
-    return spellingData.filter((e) => filteredPositions.has(e.position));
-  }, [stackOrder, query, formatCardName, spellingData]);
+    return spellingData.filter(
+      (e) =>
+        filteredPositions.has(e.position) &&
+        e.position >= limits.start &&
+        e.position <= limits.end
+    );
+  }, [stackOrder, query, formatCardName, spellingData, limits]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.currentTarget.value);

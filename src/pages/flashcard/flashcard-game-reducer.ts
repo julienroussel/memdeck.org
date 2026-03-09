@@ -1,8 +1,15 @@
 import { timerReducerCases } from "../../hooks/use-game-timer";
-import type { ResetGameAction } from "../../hooks/use-reset-game-on-stack-change";
-import type { FlashcardMode, NeighborDirection } from "../../types/flashcard";
+import type {
+  InitialStateConfig,
+  ResetGameAction,
+} from "../../hooks/use-reset-game-on-stack-change";
+import type { NeighborDirection } from "../../types/flashcard";
 import type { PlayingCard } from "../../types/playingcard";
 import { shuffle } from "../../types/shuffle";
+import {
+  DEFAULT_STACK_LIMITS,
+  type StackLimits,
+} from "../../types/stack-limits";
 import {
   getRandomPlayingCard,
   type PlayingCardPosition,
@@ -68,27 +75,36 @@ type GameAction =
 // --- Pure Functions ---
 
 export const generateNewCardAndChoices = (
-  stackOrder: Stack
+  stackOrder: Stack,
+  limits: StackLimits
 ): { card: PlayingCardPosition; choices: PlayingCardPosition[] } => {
-  const newCard = getRandomPlayingCard(stackOrder);
-  const newChoices = shuffle(generateUniqueCardChoices(stackOrder, [newCard]));
+  const newCard = getRandomPlayingCard(stackOrder, limits);
+  const newChoices = shuffle(
+    generateUniqueCardChoices(stackOrder, limits, [newCard])
+  );
   return { card: newCard, choices: newChoices };
 };
 
 export const generateNeighborCardAndChoices = (
   stackOrder: Stack,
-  direction: NeighborDirection
+  direction: NeighborDirection,
+  limits: StackLimits
 ): {
   card: PlayingCardPosition;
   answerCard: PlayingCardPosition;
   choices: PlayingCardPosition[];
   resolvedDirection: ResolvedDirection;
 } => {
-  const questionCard = getRandomPlayingCard(stackOrder);
+  const questionCard = getRandomPlayingCard(stackOrder, limits);
   const resolved = resolveDirection(direction);
-  const answerCard = getNeighborCard(stackOrder, questionCard, resolved);
+  const answerCard = getNeighborCard(
+    stackOrder,
+    questionCard,
+    resolved,
+    limits
+  );
   const choices = shuffle(
-    generateNeighborChoices(stackOrder, answerCard, questionCard)
+    generateNeighborChoices(stackOrder, answerCard, questionCard, limits)
   );
   return {
     card: questionCard,
@@ -106,19 +122,15 @@ export const isCorrectAnswer = (
     ? item.suit === card.card.suit && item.rank === card.card.rank
     : item === card.index;
 
-type InitialStateConfig = {
-  stackOrder: Stack;
-  timerDuration: number;
-} & (
-  | { flashcardMode: "neighbor"; neighborDirection: NeighborDirection }
-  | { flashcardMode?: Exclude<FlashcardMode, "neighbor"> }
-);
-
 export const createInitialState = (config: InitialStateConfig): GameState => {
-  const { stackOrder, timerDuration } = config;
+  const { stackOrder, timerDuration, limits = DEFAULT_STACK_LIMITS } = config;
   if (config.flashcardMode === "neighbor") {
     const { card, answerCard, choices, resolvedDirection } =
-      generateNeighborCardAndChoices(stackOrder, config.neighborDirection);
+      generateNeighborCardAndChoices(
+        stackOrder,
+        config.neighborDirection,
+        limits
+      );
     return {
       successes: 0,
       fails: 0,
@@ -131,7 +143,7 @@ export const createInitialState = (config: InitialStateConfig): GameState => {
       timerDuration,
     };
   }
-  const { card, choices } = generateNewCardAndChoices(stackOrder);
+  const { card, choices } = generateNewCardAndChoices(stackOrder, limits);
   return {
     successes: 0,
     fails: 0,

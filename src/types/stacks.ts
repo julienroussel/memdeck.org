@@ -1,5 +1,6 @@
 import { DECK_SIZE, MAX_RANDOM_ATTEMPTS } from "../constants";
 import type { PlayingCard } from "./playingcard";
+import type { StackLimits } from "./stack-limits";
 import { aronson } from "./stacks/aronson";
 import { elephant } from "./stacks/elephant";
 import { memorandum } from "./stacks/memorandum";
@@ -49,6 +50,8 @@ export const createDeckPosition = (n: number): DeckPosition => {
   if (!Number.isInteger(n) || n < 1 || n > DECK_SIZE) {
     throw new Error(`Invalid deck position: ${n}. Must be integer 1-52.`);
   }
+  // Branded type boundary: value is validated above; cast is the only way to
+  // construct a branded type from a plain number in TypeScript.
   return n as DeckPosition;
 };
 
@@ -81,30 +84,52 @@ export type PlayingCardPosition = {
   card: PlayingCard;
 };
 
-export const getRandomPlayingCard = (stack: Stack): PlayingCardPosition => {
-  const randomIndex = Math.floor(Math.random() * DECK_SIZE);
+/**
+ * Returns a random card from the stack within the given limits.
+ *
+ * @param stack - The 52-card stack to pick from
+ * @param limits - 1-based start/end range (inclusive)
+ * @returns A random card position within the range
+ */
+export const getRandomPlayingCard = (
+  stack: Stack,
+  limits: StackLimits
+): PlayingCardPosition => {
+  const rangeSize = limits.end - limits.start + 1;
+  const randomOffset = Math.floor(Math.random() * rangeSize);
+  const zeroBasedIndex = limits.start - 1 + randomOffset;
   return {
-    index: createDeckPosition(randomIndex + 1),
-    card: getCardAt(stack, randomIndex),
+    index: createDeckPosition(zeroBasedIndex + 1),
+    card: getCardAt(stack, zeroBasedIndex),
   };
 };
 
+/**
+ * Returns a unique random card from the stack within the given limits,
+ * avoiding any cards already in existingChoices.
+ *
+ * @param stack - The 52-card stack to pick from
+ * @param existingChoices - Cards to exclude from selection
+ * @param limits - 1-based start/end range (inclusive)
+ * @returns A unique card position within the range
+ * @throws {Error} If all cards in the range are already selected
+ */
 export const getUniqueRandomCard = (
   stack: Stack,
-  existingChoices: PlayingCardPosition[]
+  existingChoices: PlayingCardPosition[],
+  limits: StackLimits
 ): PlayingCardPosition => {
   const existingIndices = new Set(existingChoices.map((c) => c.index));
 
-  // Try random selection before falling back to linear search
   for (let attempt = 0; attempt < MAX_RANDOM_ATTEMPTS; attempt++) {
-    const randomCard = getRandomPlayingCard(stack);
+    const randomCard = getRandomPlayingCard(stack, limits);
     if (!existingIndices.has(randomCard.index)) {
       return randomCard;
     }
   }
 
-  // Fallback: linear search for guaranteed unique card
-  for (let i = 0; i < DECK_SIZE; i++) {
+  // Fallback: linear search within range
+  for (let i = limits.start - 1; i < limits.end; i++) {
     const index = createDeckPosition(i + 1);
     if (!existingIndices.has(index)) {
       return { index, card: getCardAt(stack, i) };
@@ -112,6 +137,6 @@ export const getUniqueRandomCard = (
   }
 
   throw new Error(
-    `Unable to find unique card - all ${DECK_SIZE} cards already selected`
+    `Unable to find unique card in range ${limits.start}-${limits.end} — all cards already selected`
   );
 };

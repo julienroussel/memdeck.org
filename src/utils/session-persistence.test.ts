@@ -11,6 +11,7 @@ import {
   makeSessionRecord as makeRecord,
 } from "../test-utils/session-factories";
 import type { AllTimeStats, SessionRecord } from "../types/session";
+import { createDeckPosition } from "../types/stacks";
 import {
   buildSessionRecord,
   computeSessionSummary,
@@ -58,6 +59,11 @@ const makeSession = (overrides: Parameters<typeof makeActiveSession>[0] = {}) =>
     ...overrides,
   });
 
+const testStackLimits = {
+  start: createDeckPosition(5),
+  end: createDeckPosition(20),
+};
+
 beforeEach(() => {
   storage.clear();
 });
@@ -87,6 +93,18 @@ describe("buildSessionRecord", () => {
     const session = makeSession({ successes: 0, fails: 0 });
     const record = buildSessionRecord(session);
     expect(record.accuracy).toBe(0);
+  });
+
+  it("propagates stackLimits when present on the active session", () => {
+    const session = makeSession({ stackLimits: testStackLimits });
+    const record = buildSessionRecord(session);
+    expect(record.stackLimits).toEqual({ start: 5, end: 20 });
+  });
+
+  it("leaves stackLimits undefined when not present on the active session", () => {
+    const session = makeSession();
+    const record = buildSessionRecord(session);
+    expect(record.stackLimits).toBeUndefined();
   });
 
   it("returns a spotcheck record with the selected spot check mode", () => {

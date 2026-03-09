@@ -36,6 +36,7 @@ export const buildSessionRecord = (session: ActiveSession): SessionRecord => {
     questionsCompleted: session.questionsCompleted,
     accuracy: calculateAccuracy(session.successes, session.fails),
     bestStreak: session.bestStreak,
+    stackLimits: session.stackLimits,
   };
 
   if (session.mode === "flashcard") {

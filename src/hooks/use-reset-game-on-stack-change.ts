@@ -1,19 +1,27 @@
 import { useEffect, useRef } from "react";
 import type { FlashcardMode, NeighborDirection } from "../types/flashcard";
+import type { StackLimits } from "../types/stack-limits";
 import type { Stack } from "../types/stacks";
+
+export type InitialStateConfig = {
+  stackOrder: Stack;
+  timerDuration: number;
+  limits?: StackLimits;
+} & (
+  | { flashcardMode: "neighbor"; neighborDirection: NeighborDirection }
+  | { flashcardMode?: Exclude<FlashcardMode, "neighbor"> }
+);
 
 export type ResetGameAction = {
   type: "RESET_GAME";
-  payload: {
-    stackOrder: Stack;
-    timerDuration: number;
-  } & (
-    | { flashcardMode: "neighbor"; neighborDirection: NeighborDirection }
-    | { flashcardMode?: Exclude<FlashcardMode, "neighbor"> }
-  );
+  payload: InitialStateConfig;
 };
 
 /**
+ * @deprecated Only used by ACAAN. Flashcard and Spot Check use inline change
+ * detection instead (the "store previous props" pattern) to avoid useEffect flicker
+ * and to support stack limits. Do not use for new game modes — prefer the inline pattern.
+ *
  * Resets the game when the selected stack changes.
  * Tracks the previous stack order via a ref and dispatches RESET_GAME
  * only when the stack actually changes, avoiding unnecessary resets
