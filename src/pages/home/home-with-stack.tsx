@@ -12,17 +12,21 @@ import { Link } from "react-router";
 import { ShareNudge } from "../../components/share-nudge";
 import { StatDisplay } from "../../components/stat-display";
 import { useAllTimeStats } from "../../hooks/use-all-time-stats";
+import { useStackLimits } from "../../hooks/use-stack-limits";
+import type { StackKey } from "../../types/stacks";
 import {
   calculateAccuracy,
   toAccuracyPercent,
 } from "../../utils/session-formatting";
 
 type HomeWithStackProps = {
+  stackKey: StackKey;
   stackName: string;
 };
 
-export const HomeWithStack = ({ stackName }: HomeWithStackProps) => {
+export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
   const { t } = useTranslation();
+  const { isFullDeck } = useStackLimits(stackKey);
   const { getGlobalStats } = useAllTimeStats();
   const globalStats = useMemo(() => getGlobalStats(), [getGlobalStats]);
   const hasStats = globalStats.totalSessions > 0;
@@ -47,6 +51,11 @@ export const HomeWithStack = ({ stackName }: HomeWithStackProps) => {
             {t("home.switchStackHint")}
           </Text>
         </Text>
+        {isFullDeck && (
+          <Text c="dimmed" mt="xs" size="sm">
+            {t("home.rangeHint")}
+          </Text>
+        )}
       </div>
 
       <div>

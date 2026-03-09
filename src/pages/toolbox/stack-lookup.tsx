@@ -7,10 +7,11 @@ import {
   VisuallyHidden,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CARD_ASPECT_RATIO } from "../../constants";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
+import { useStackLimits } from "../../hooks/use-stack-limits";
 import { filterStack } from "./filter-stack";
 import { useFormatCardName } from "./use-format-card-name";
 
@@ -19,12 +20,19 @@ const THUMBNAIL_HEIGHT = Math.round(THUMBNAIL_WIDTH * CARD_ASPECT_RATIO);
 
 export const StackLookup = () => {
   const { t } = useTranslation();
-  const { stackOrder } = useRequiredStack();
+  const { stackKey, stackOrder } = useRequiredStack();
+  const { limits } = useStackLimits(stackKey);
   const [query, setQuery] = useState("");
 
   const formatCardName = useFormatCardName();
 
-  const filtered = filterStack(stackOrder, query, formatCardName);
+  const filtered = useMemo(
+    () =>
+      filterStack(stackOrder, query, formatCardName).filter(
+        ({ position }) => position >= limits.start && position <= limits.end
+      ),
+    [stackOrder, query, formatCardName, limits.start, limits.end]
+  );
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.currentTarget.value);

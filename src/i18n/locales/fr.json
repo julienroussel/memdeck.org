@@ -91,6 +91,7 @@
     "statBestStreak": "Meilleure série",
     "noStatsYet": "Lancez votre première session pour commencer à suivre votre précision et vos séries.",
     "switchStackHint": "vous pouvez changer de stack via le sélecteur en bas du menu.",
+    "rangeHint": "Vous débutez avec ce stack ? Utilisez le réglage de plage dans le menu pour commencer avec moins de cartes et progresser à votre rythme.",
     "whyNotAiTitle": "Pourquoi une appli dédiée plutôt que l'IA ?",
     "whyNotAiIntro": "ChatGPT et Claude peuvent halluciner les positions des cartes — et s'entraîner avec de mauvaises réponses est pire que de ne pas s'entraîner du tout.",
     "whyNotAiAccuracy": "Données vérifiées",
@@ -132,7 +133,10 @@
     "neighborArrowBefore": "Carte précédente",
     "neighborArrowAfter": "Carte suivante",
     "activeModePosition": "Mode position",
-    "activeModeNeighbor": "Mode voisin"
+    "activeModeNeighbor": "Mode voisin",
+    "timesUp": "Temps écoulé !",
+    "movingToNext": "Passage à la carte suivante.",
+    "revealTitle": "Réponse"
   },
   "acaan": {
     "pageTitle": "Entraînement ACAAN",
@@ -450,7 +454,23 @@
       "pwa": "Installez MemDeck comme application sur votre appareil pour un accès hors ligne.",
       "language": "Changez la langue d'affichage avec le sélecteur de langue dans le menu de navigation.",
       "share": "Utilisez le bouton de partage dans le menu de navigation pour faire connaître MemDeck à d'autres magiciens.",
-      "reset": "Utilisez le bouton de réinitialisation dans le menu pour effacer vos données. Vous pouvez réinitialiser les paramètres uniquement (en conservant l'historique d'entraînement) ou tout réinitialiser."
+      "reset": "Utilisez le bouton de réinitialisation dans le menu pour effacer vos données. Vous pouvez réinitialiser les paramètres uniquement (en conservant l'historique d'entraînement) ou tout réinitialiser.",
+      "stackRange": "Utilisez la plage du stack à côté du sélecteur de stack dans le menu pour vous entraîner sur une partie des positions. Commencez avec quelques cartes et élargissez au fur et à mesure que vous mémorisez."
     }
+  },
+  "stackLimits": {
+    "label": "Plage du stack",
+    "description": "Positions {{start}}–{{end}} ({{count}} cartes)",
+    "fullDeck": "Jeu complet (52 cartes)",
+    "ariaLabel": "Ajuster la plage d'entraînement du stack",
+    "spotCheckHint": "Le Spot Check fonctionne mieux avec {{count}}+ cartes.",
+    "presetsGroupAriaLabel": "Préréglages de plage",
+    "presetAriaLabel": "Définir la plage aux {{count}} premières cartes",
+    "badgeFull": "{{count}} cartes",
+    "badgePartial": "{{start}}–{{end}}",
+    "thumbStartLabel": "Position de début",
+    "thumbEndLabel": "Position de fin",
+    "badgeFullAriaLabel": "Plage du stack : {{count}} cartes. Appuyez pour ajuster.",
+    "badgePartialAriaLabel": "Plage du stack : positions {{start}} à {{end}}. Appuyez pour ajuster."
   }
 }

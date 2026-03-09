@@ -91,6 +91,7 @@
     "statBestStreak": "Miglior serie",
     "noStatsYet": "Inizia la tua prima sessione per monitorare precisione e serie.",
     "switchStackHint": "puoi cambiare stack usando il selettore in fondo al menu.",
+    "rangeHint": "Nuovo con questo stack? Usa il controllo intervallo nel menu per iniziare con meno carte e avanzare al tuo ritmo.",
     "whyNotAiTitle": "Perché un'app dedicata invece dell'IA?",
     "whyNotAiIntro": "ChatGPT e Claude possono inventare posizioni delle carte sbagliate — e allenarsi con risposte sbagliate è peggio che non allenarsi affatto.",
     "whyNotAiAccuracy": "Dati verificati",
@@ -132,7 +133,10 @@
     "neighborArrowBefore": "Carta precedente",
     "neighborArrowAfter": "Carta successiva",
     "activeModePosition": "Modalità posizione",
-    "activeModeNeighbor": "Modalità vicino"
+    "activeModeNeighbor": "Modalità vicino",
+    "timesUp": "Tempo scaduto!",
+    "movingToNext": "Passaggio alla carta successiva.",
+    "revealTitle": "Risposta"
   },
   "acaan": {
     "pageTitle": "Allenamento ACAAN",
@@ -450,7 +454,23 @@
       "pwa": "Installa MemDeck come app sul tuo dispositivo per l'accesso offline.",
       "language": "Cambia la lingua di visualizzazione usando il selettore di lingua nel menu di navigazione.",
       "share": "Usa il pulsante di condivisione nel menu di navigazione per far conoscere MemDeck ad altri maghi.",
-      "reset": "Usa il pulsante di ripristino nel menu per cancellare i tuoi dati. Puoi ripristinare solo le impostazioni (mantenendo la cronologia di allenamento) o ripristinare tutto."
+      "reset": "Usa il pulsante di ripristino nel menu per cancellare i tuoi dati. Puoi ripristinare solo le impostazioni (mantenendo la cronologia di allenamento) o ripristinare tutto.",
+      "stackRange": "Usa l'intervallo dello stack accanto al selettore nel menu per allenarti su una parte delle posizioni. Parti da poche ed espandi man mano che memorizzi più carte."
     }
+  },
+  "stackLimits": {
+    "label": "Intervallo dello stack",
+    "description": "Posizioni {{start}}–{{end}} ({{count}} carte)",
+    "fullDeck": "Mazzo completo (52 carte)",
+    "ariaLabel": "Regola l'intervallo di allenamento dello stack",
+    "spotCheckHint": "Spot Check funziona meglio con {{count}}+ carte.",
+    "presetsGroupAriaLabel": "Preimpostazioni intervallo",
+    "presetAriaLabel": "Imposta l'intervallo alle prime {{count}} carte",
+    "badgeFull": "{{count}} carte",
+    "badgePartial": "{{start}}–{{end}}",
+    "thumbStartLabel": "Posizione iniziale",
+    "thumbEndLabel": "Posizione finale",
+    "badgeFullAriaLabel": "Intervallo dello stack: {{count}} carte. Tocca per regolare.",
+    "badgePartialAriaLabel": "Intervallo dello stack: posizioni {{start}} a {{end}}. Tocca per regolare."
   }
 }

@@ -11,6 +11,7 @@ import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useFlashcardTimer } from "../../hooks/use-flashcard-timer";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
+import { useStackLimits } from "../../hooks/use-stack-limits";
 import { analytics } from "../../services/analytics";
 import { eventBus } from "../../services/event-bus";
 import {
@@ -45,6 +46,8 @@ export const Flashcard = () => {
       isNeighborDirection
     );
 
+  const { limits, rangeSize } = useStackLimits(stackKey);
+
   const {
     status,
     startSession,
@@ -59,6 +62,7 @@ export const Flashcard = () => {
     stackKey,
     flashcardMode: mode,
     autoStart: true,
+    stackLimits: limits,
   });
 
   const handleModeChange = useCallback(
@@ -103,6 +107,7 @@ export const Flashcard = () => {
     mode,
     neighborDirection,
     timerSettings,
+    limits,
     { onAnswer: handleAnswer }
   );
 
@@ -148,6 +153,7 @@ export const Flashcard = () => {
             isStructuredSession={isStructuredSession}
             onStartSession={startSession}
             onStopSession={stopSession}
+            rangeSize={rangeSize}
             score={score}
             sessionTooltip={t("session.startSessionTooltip")}
             settingsContent={

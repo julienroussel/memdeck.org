@@ -1,6 +1,6 @@
-import { DECK_SIZE } from "../constants";
 import type { NeighborDirection } from "../types/flashcard";
 import type { PlayingCard } from "../types/playingcard";
+import type { StackLimits } from "../types/stack-limits";
 import {
   createDeckPosition,
   getCardAt,
@@ -21,19 +21,28 @@ export const resolveDirection = (
 };
 
 /**
- * Returns the neighboring card in the stack with wrap-around.
- * "before" returns the card at position - 1 (wrapping 1 → 52).
- * "after" returns the card at position + 1 (wrapping 52 → 1).
+ * Returns the neighboring card within a range with wrap-around at range boundaries.
+ * "before" returns the card at position - 1 (wrapping range start → range end).
+ * "after" returns the card at position + 1 (wrapping range end → range start).
  */
 export const getNeighborCard = (
   stack: Stack,
   questionCard: PlayingCardPosition,
-  resolvedDirection: ResolvedDirection
+  resolvedDirection: ResolvedDirection,
+  limits: StackLimits
 ): PlayingCardPosition => {
+  const rangeSize = limits.end - limits.start + 1;
   const currentIndex = questionCard.index;
+  if (currentIndex < limits.start || currentIndex > limits.end) {
+    throw new Error(
+      `questionCard index ${currentIndex} is outside limits ${limits.start}-${limits.end}`
+    );
+  }
   const offset = resolvedDirection === "before" ? -1 : 1;
-  // Convert 1-based index to 0-based, apply offset with wrap-around, convert back
-  const neighborZeroBased = (currentIndex - 1 + offset + DECK_SIZE) % DECK_SIZE;
+  // Convert to 0-based offset within range, apply wrap-around, convert back
+  const positionInRange = currentIndex - limits.start;
+  const neighborInRange = (positionInRange + offset + rangeSize) % rangeSize;
+  const neighborZeroBased = limits.start - 1 + neighborInRange;
   const neighborIndex = createDeckPosition(neighborZeroBased + 1);
   const neighborCard: PlayingCard = getCardAt(stack, neighborZeroBased);
   return { index: neighborIndex, card: neighborCard };

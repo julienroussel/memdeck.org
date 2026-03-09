@@ -11,6 +11,7 @@ import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import { useSpotCheckTimer } from "../../hooks/use-spot-check-timer";
+import { useStackLimits } from "../../hooks/use-stack-limits";
 import { analytics } from "../../services/analytics";
 import { eventBus } from "../../services/event-bus";
 import {
@@ -49,6 +50,8 @@ export const SpotCheck = () => {
     isSpotCheckMode
   );
 
+  const { limits, rangeSize } = useStackLimits(stackKey);
+
   const {
     status,
     startSession,
@@ -63,6 +66,7 @@ export const SpotCheck = () => {
     stackKey,
     spotCheckMode: mode,
     autoStart: true,
+    stackLimits: limits,
   });
 
   const handleModeChange = useCallback(
@@ -83,7 +87,7 @@ export const SpotCheck = () => {
     timerDuration,
     submitAnswer,
     revealAnswer,
-  } = useSpotCheckGame(stackOrder, stackName, mode, timerSettings, {
+  } = useSpotCheckGame(stackOrder, stackName, mode, timerSettings, limits, {
     onAnswer: handleAnswer,
   });
 
@@ -116,6 +120,7 @@ export const SpotCheck = () => {
           isStructuredSession={isStructuredSession}
           onStartSession={startSession}
           onStopSession={stopSession}
+          rangeSize={rangeSize}
           score={score}
           sessionTooltip={t("session.startSessionTooltip")}
           settingsContent={

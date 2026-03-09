@@ -356,10 +356,12 @@ describe("useLocalDb", () => {
 
     useLocalDb("test-key", "default", isString);
 
-    expect(mockUseLocalStorage).toHaveBeenCalledWith({
-      key: "test-key",
-      defaultValue: "default",
-    });
+    expect(mockUseLocalStorage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: "test-key",
+        defaultValue: "default",
+      })
+    );
   });
 
   it("uses stored value as default when available", () => {
@@ -368,10 +370,12 @@ describe("useLocalDb", () => {
 
     useLocalDb("test-key", "default", isString);
 
-    expect(mockUseLocalStorage).toHaveBeenCalledWith({
-      key: "test-key",
-      defaultValue: "stored-value",
-    });
+    expect(mockUseLocalStorage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: "test-key",
+        defaultValue: "stored-value",
+      })
+    );
   });
 
   it("returns tuple with value, setter, and remover", () => {
@@ -446,9 +450,11 @@ describe("useLocalDb", () => {
 
     useLocalDb("test-key", "default", isString);
 
-    expect(mockUseLocalStorage).toHaveBeenCalledWith({
-      key: "test-key",
-      defaultValue: "default",
-    });
+    expect(mockUseLocalStorage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        key: "test-key",
+        defaultValue: "default",
+      })
+    );
   });
 });

@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { DECK_SIZE } from "../constants";
 import { ALL_CARDS } from "./playingcard";
+import { DEFAULT_STACK_LIMITS } from "./stack-limits";
 import {
   createDeckPosition,
   getCardAt,
@@ -11,6 +12,7 @@ import {
 } from "./stacks";
 
 const testStack = stacks.mnemonica.order;
+const fullDeck = DEFAULT_STACK_LIMITS;
 
 describe("createDeckPosition", () => {
   it("returns a branded DeckPosition for valid integers 1-52", () => {
@@ -110,7 +112,7 @@ describe("getCardAt", () => {
 
 describe("getRandomPlayingCard", () => {
   it("returns a valid card position with 1-based index", () => {
-    const result = getRandomPlayingCard(testStack);
+    const result = getRandomPlayingCard(testStack, fullDeck);
 
     expect(result.index).toBeGreaterThanOrEqual(1);
     expect(result.index).toBeLessThanOrEqual(DECK_SIZE);
@@ -121,7 +123,7 @@ describe("getRandomPlayingCard", () => {
 
   it("returns the card at the correct position", () => {
     vi.spyOn(Math, "random").mockReturnValue(0);
-    const result = getRandomPlayingCard(testStack);
+    const result = getRandomPlayingCard(testStack, fullDeck);
 
     expect(result.index).toBe(1);
     expect(result.card).toBe(testStack[0]);
@@ -132,7 +134,7 @@ describe("getRandomPlayingCard", () => {
 
 describe("getUniqueRandomCard", () => {
   it("returns a valid card when existingChoices is empty", () => {
-    const result = getUniqueRandomCard(testStack, []);
+    const result = getUniqueRandomCard(testStack, [], fullDeck);
 
     expect(result.index).toBeGreaterThanOrEqual(1);
     expect(result.index).toBeLessThanOrEqual(DECK_SIZE);
@@ -146,7 +148,7 @@ describe("getUniqueRandomCard", () => {
       { index: createDeckPosition(3), card: testStack[2] },
     ];
 
-    const result = getUniqueRandomCard(testStack, existingChoices);
+    const result = getUniqueRandomCard(testStack, existingChoices, fullDeck);
 
     expect(result.index).not.toBe(1);
     expect(result.index).not.toBe(2);
@@ -160,7 +162,7 @@ describe("getUniqueRandomCard", () => {
       { index: createDeckPosition(1), card: testStack[0] },
     ];
 
-    const result = getUniqueRandomCard(testStack, existingChoices);
+    const result = getUniqueRandomCard(testStack, existingChoices, fullDeck);
 
     expect(result.index).toBe(2);
     expect(result.card).toBe(testStack[1]);
@@ -179,7 +181,7 @@ describe("getUniqueRandomCard", () => {
       });
     }
 
-    const result = getUniqueRandomCard(testStack, existingChoices);
+    const result = getUniqueRandomCard(testStack, existingChoices, fullDeck);
 
     expect(result.index).toBe(11);
     expect(result.card).toBe(testStack[10]);
@@ -196,8 +198,8 @@ describe("getUniqueRandomCard", () => {
       });
     }
 
-    expect(() => getUniqueRandomCard(testStack, allCards)).toThrow(
-      `Unable to find unique card - all ${DECK_SIZE} cards already selected`
+    expect(() => getUniqueRandomCard(testStack, allCards, fullDeck)).toThrow(
+      "Unable to find unique card in range 1-52"
     );
   });
 
@@ -212,7 +214,7 @@ describe("getUniqueRandomCard", () => {
       });
     }
 
-    const result = getUniqueRandomCard(testStack, existingChoices);
+    const result = getUniqueRandomCard(testStack, existingChoices, fullDeck);
 
     expect(result.index).toBe(DECK_SIZE);
     expect(result.card).toBe(testStack[DECK_SIZE - 1]);
@@ -224,7 +226,7 @@ describe("getUniqueRandomCard", () => {
     const results: PlayingCardPosition[] = [];
 
     for (let i = 0; i < 10; i++) {
-      const result = getUniqueRandomCard(testStack, results);
+      const result = getUniqueRandomCard(testStack, results, fullDeck);
       results.push(result);
     }
 
@@ -232,6 +234,72 @@ describe("getUniqueRandomCard", () => {
     const uniqueIndices = new Set(indices);
 
     expect(uniqueIndices.size).toBe(10);
+  });
+});
+
+describe("getRandomPlayingCard with partial range", () => {
+  const partialLimits = {
+    start: createDeckPosition(10),
+    end: createDeckPosition(20),
+  };
+
+  it("only returns cards within the specified range across many iterations", () => {
+    for (let i = 0; i < 100; i++) {
+      const result = getRandomPlayingCard(testStack, partialLimits);
+      expect(result.index).toBeGreaterThanOrEqual(10);
+      expect(result.index).toBeLessThanOrEqual(20);
+      expect(result.card).toBe(testStack[result.index - 1]);
+    }
+  });
+
+  it("returns the first card in range when Math.random returns 0", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    const result = getRandomPlayingCard(testStack, partialLimits);
+    expect(result.index).toBe(10);
+    expect(result.card).toBe(testStack[9]);
+    vi.restoreAllMocks();
+  });
+
+  it("returns the last card in range when Math.random returns just below 1", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.999);
+    const result = getRandomPlayingCard(testStack, partialLimits);
+    expect(result.index).toBe(20);
+    expect(result.card).toBe(testStack[19]);
+    vi.restoreAllMocks();
+  });
+});
+
+describe("getUniqueRandomCard with partial range", () => {
+  const partialLimits = {
+    start: createDeckPosition(5),
+    end: createDeckPosition(8),
+  };
+
+  it("throws when all cards in a partial range are already selected", () => {
+    const allInRange: PlayingCardPosition[] = [];
+    for (let i = partialLimits.start; i <= partialLimits.end; i++) {
+      allInRange.push({
+        index: createDeckPosition(i),
+        card: testStack[i - 1],
+      });
+    }
+
+    expect(() =>
+      getUniqueRandomCard(testStack, allInRange, partialLimits)
+    ).toThrow("Unable to find unique card in range 5-8");
+  });
+
+  it("returns a card within the partial range that is not already selected", () => {
+    const existing: PlayingCardPosition[] = [
+      { index: createDeckPosition(5), card: testStack[4] },
+      { index: createDeckPosition(6), card: testStack[5] },
+    ];
+
+    const result = getUniqueRandomCard(testStack, existing, partialLimits);
+    expect(result.index).toBeGreaterThanOrEqual(5);
+    expect(result.index).toBeLessThanOrEqual(8);
+    expect(result.index).not.toBe(5);
+    expect(result.index).not.toBe(6);
   });
 });
 

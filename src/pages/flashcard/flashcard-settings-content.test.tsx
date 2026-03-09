@@ -40,7 +40,7 @@ describe("FlashcardSettingsContent", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders a separator between mode selector and timer controls", () => {
+  it("renders a separator between settings sections", () => {
     render(<FlashcardSettingsContent {...defaultProps} />);
 
     expect(screen.getByRole("separator")).toBeInTheDocument();

@@ -65,6 +65,11 @@ export const SHARE_NUDGE_DISMISSED_LSK = "memdeck-app-share-nudge-dismissed";
 /** Minimum number of completed sessions before showing the share nudge */
 export const SHARE_NUDGE_MIN_SESSIONS = 5;
 
+export const STACK_LIMITS_LSK = "memdeck-app-stack-limits";
+export const MIN_FLASHCARD_RANGE = 6;
+export const MIN_SPOT_CHECK_RANGE = 10;
+export const RANGE_PRESETS = [13, 26, 39, 52] as const;
+
 /** All route paths used by the app — shared between routes.tsx and the pre-render script */
 export const ROUTES = {
   home: "/",

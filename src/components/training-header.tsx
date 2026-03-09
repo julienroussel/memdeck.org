@@ -18,6 +18,7 @@ type TrainingHeaderProps = {
   activeSession: ActiveSession | null;
   onStopSession: () => void;
   onStartSession: (config: SessionConfig) => void;
+  rangeSize?: number;
 };
 
 export const TrainingHeader = ({
@@ -30,6 +31,7 @@ export const TrainingHeader = ({
   activeSession,
   onStopSession,
   onStartSession,
+  rangeSize,
 }: TrainingHeaderProps) => {
   const [sessionOpened, { toggle: toggleSession, close: closeSession }] =
     useDisclosure(false);
@@ -81,6 +83,7 @@ export const TrainingHeader = ({
               <SessionStartControls
                 onAfterStart={closeSession}
                 onStart={onStartSession}
+                rangeSize={rangeSize}
               />
             </Popover.Dropdown>
           </Popover>

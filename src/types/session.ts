@@ -1,6 +1,7 @@
 import type en from "../i18n/locales/en.json";
 import type { FlashcardMode } from "./flashcard";
 import type { SpotCheckMode } from "./spot-check";
+import type { StackLimits } from "./stack-limits";
 import type { StackKey } from "./stacks";
 
 /** Training mode identifier (extensible for future modes) */
@@ -9,11 +10,10 @@ export type TrainingMode = (typeof TRAINING_MODES)[number];
 
 /** Session presets for structured sessions */
 export const SESSION_PRESETS = [10, 20, 30, 52] as const;
-export type SessionPreset = (typeof SESSION_PRESETS)[number];
 
 /** Discriminated union for session config */
 export type SessionConfig =
-  | { type: "structured"; totalQuestions: SessionPreset }
+  | { type: "structured"; totalQuestions: number }
   | { type: "open" };
 
 /** Shared fields for an active session */
@@ -27,6 +27,7 @@ export type ActiveSessionBase = {
   questionsCompleted: number;
   currentStreak: number;
   bestStreak: number;
+  stackLimits?: StackLimits;
 };
 
 /** Runtime state of an active session */
@@ -48,6 +49,9 @@ type SessionRecordBase = {
   questionsCompleted: number;
   accuracy: number;
   bestStreak: number;
+  // Intentional brand erasure: DeckPosition doesn't survive JSON.stringify/JSON.parse,
+  // so the persisted type uses plain numbers instead of the branded StackLimits type.
+  stackLimits?: { start: number; end: number };
 };
 
 /** Persisted session record (immutable snapshot) */

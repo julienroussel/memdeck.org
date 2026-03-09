@@ -91,6 +91,7 @@
     "statBestStreak": "Best Streak",
     "noStatsYet": "Start your first session to begin tracking accuracy and streaks.",
     "switchStackHint": "you can switch stacks using the selector at the bottom of the menu.",
+    "rangeHint": "New to this stack? Use the range control in the menu to start with fewer cards and build up at your pace.",
     "whyNotAiTitle": "Why a dedicated app instead of AI?",
     "whyNotAiIntro": "ChatGPT and Claude can hallucinate card positions — and training with wrong answers is worse than not training at all.",
     "whyNotAiAccuracy": "Verified data",
@@ -132,7 +133,10 @@
     "neighborArrowBefore": "Card before",
     "neighborArrowAfter": "Card after",
     "activeModePosition": "Position mode",
-    "activeModeNeighbor": "Neighbor mode"
+    "activeModeNeighbor": "Neighbor mode",
+    "timesUp": "Time's up!",
+    "movingToNext": "Moving to the next card.",
+    "revealTitle": "Answer"
   },
   "acaan": {
     "pageTitle": "ACAAN Training",
@@ -450,7 +454,23 @@
       "pwa": "Install MemDeck as an app on your device for offline access.",
       "language": "Change the display language using the language selector in the navigation menu.",
       "share": "Use the share button in the navigation menu to spread the word about MemDeck with fellow magicians.",
-      "reset": "Use the reset button in the menu to clear your data. You can reset settings only (keeping training history) or reset everything."
+      "reset": "Use the reset button in the menu to clear your data. You can reset settings only (keeping training history) or reset everything.",
+      "stackRange": "Use the stack range next to the stack picker in the menu to train on a subset of positions. Start small and expand as you memorize more cards."
     }
+  },
+  "stackLimits": {
+    "label": "Stack range",
+    "description": "Positions {{start}}–{{end}} ({{count}} cards)",
+    "fullDeck": "Full deck (52 cards)",
+    "ariaLabel": "Adjust stack training range",
+    "spotCheckHint": "Spot Check works best with {{count}}+ cards.",
+    "presetsGroupAriaLabel": "Range presets",
+    "presetAriaLabel": "Set range to first {{count}} cards",
+    "badgeFull": "{{count}} cards",
+    "badgePartial": "{{start}}–{{end}}",
+    "thumbStartLabel": "Start position",
+    "thumbEndLabel": "End position",
+    "badgeFullAriaLabel": "Stack range: {{count}} cards. Tap to adjust.",
+    "badgePartialAriaLabel": "Stack range: positions {{start}} to {{end}}. Tap to adjust."
   }
 }

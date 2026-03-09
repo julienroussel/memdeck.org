@@ -1,4 +1,4 @@
-import { Anchor, Divider, Group, Text } from "@mantine/core";
+import { Anchor, Divider, Group, Text, VisuallyHidden } from "@mantine/core";
 import { IconBrandGithub } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import { GITHUB_URL } from "../constants";
@@ -7,12 +7,13 @@ import { LanguagePicker } from "./language-picker";
 import { ResetButton } from "./reset-button";
 import { ShareButton } from "./share-button";
 import { StackPicker } from "./stack-picker";
+import { StackRangeBadge } from "./stack-range-badge";
 
 const commitHashStyle: React.CSSProperties = { fontFamily: "monospace" };
 
 export const NavFooter = () => {
   const { t } = useTranslation();
-  const { stackKey } = useSelectedStack();
+  const { stackKey, stackName } = useSelectedStack();
   const hasStack = stackKey !== "";
 
   return (
@@ -24,7 +25,12 @@ export const NavFooter = () => {
             labelPosition="center"
             mb="xs"
           />
-          <StackPicker />
+          <Group gap="xs" wrap="nowrap">
+            <div style={{ flex: 1 }}>
+              <StackPicker />
+            </div>
+            <StackRangeBadge stackKey={stackKey} stackName={stackName} />
+          </Group>
         </>
       )}
       <Divider
@@ -47,7 +53,8 @@ export const NavFooter = () => {
           <IconBrandGithub aria-hidden="true" size={16} />
         </Anchor>
         <ShareButton />
-        <Text aria-label="Build version" c="dimmed" size="xs">
+        <Text c="dimmed" size="xs">
+          <VisuallyHidden>Build version:</VisuallyHidden>
           v. <span style={commitHashStyle}>{__COMMIT_HASH__}</span>
         </Text>
         <ResetButton />

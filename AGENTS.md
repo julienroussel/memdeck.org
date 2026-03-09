@@ -85,9 +85,10 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 
 ### Key Features
 
-- **Flashcard Mode** (`src/pages/flashcard/`): Main training feature with three modes (card-only, index-only, both). Presents 5 choices with optional timer (5s–60s)
-- **Spot Check** (`src/pages/spot-check/`): Visual deck inspection training with three variants — missing card, swapped cards, or moved card. Uses an interactive card spread
-- **ACAAN** (`src/pages/acaan/`): Any Card At Any Number calculator with instant feedback
+- **Stack Range** (`src/components/stack-range-badge.tsx`, `src/components/stack-limits-control.tsx`): Global per-stack position range (e.g., 1–20) accessible via the navbar. Lets users train on a subset of the deck for progressive learning. Stored in localStorage per stack. Applies to Flashcard, Spot Check, Stack Lookup, and Card Spelling. ACAAN, Faro Shuffle, and Stay Stack always use the full deck
+- **Flashcard Mode** (`src/pages/flashcard/`): Main training feature with three modes (card-only, index-only, both). Presents 5 choices with optional timer (5s–60s). Respects stack range
+- **Spot Check** (`src/pages/spot-check/`): Visual deck inspection training with three variants — missing card, swapped cards, or moved card. Uses an interactive card spread. Respects stack range
+- **ACAAN** (`src/pages/acaan/`): Any Card At Any Number calculator with instant feedback. Always uses full deck
 - **Toolbox** (`src/pages/toolbox/`): Collection of memorized deck utilities
 - **Stats** (`src/pages/stats/`): Session history, accuracy statistics, and best streak tracking
 - **Guide** (`src/pages/guide/`): Getting started and training instructions

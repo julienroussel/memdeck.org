@@ -22,6 +22,7 @@ export const TipsSection = () => {
         <List.Item>{t("guide.tips.pwa")}</List.Item>
         <List.Item>{t("guide.tips.language")}</List.Item>
         <List.Item>{t("guide.tips.share")}</List.Item>
+        <List.Item>{t("guide.tips.stackRange")}</List.Item>
         <List.Item>{t("guide.tips.reset")}</List.Item>
       </List>
     </section>

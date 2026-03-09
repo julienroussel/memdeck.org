@@ -39,10 +39,10 @@ describe("SpotCheckSettingsContent", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders a separator between mode selector and timer controls", () => {
+  it("renders a separator between settings sections", () => {
     render(<SpotCheckSettingsContent {...defaultProps} />);
 
-    expect(screen.getByRole("separator")).toBeInTheDocument();
+    expect(screen.getAllByRole("separator")).toHaveLength(1);
   });
 
   it("renders all three spot check mode options", () => {

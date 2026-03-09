@@ -15,7 +15,7 @@ export const Home = () => {
   const { stackKey, stackName } = useSelectedStack();
 
   if (stackKey !== "") {
-    return <HomeWithStack stackName={stackName} />;
+    return <HomeWithStack stackKey={stackKey} stackName={stackName} />;
   }
 
   return <HomeNoStack />;

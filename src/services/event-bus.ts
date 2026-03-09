@@ -16,6 +16,12 @@ type AnalyticsEvents = {
     accuracy: number;
     questionsCompleted: number;
   };
+  STACK_LIMITS_CHANGED: {
+    start: number;
+    end: number;
+    rangeSize: number;
+    stackName: string;
+  };
 };
 
 type Listener<T> = (payload: T) => void;
@@ -78,6 +84,7 @@ const analyticsEventNames = allEventNames<AnalyticsEvents>()([
   "SPOT_CHECK_MODE_CHANGED",
   "SESSION_STARTED",
   "SESSION_COMPLETED",
+  "STACK_LIMITS_CHANGED",
 ]);
 
 export const eventBus = createEventBus<AnalyticsEvents>(analyticsEventNames);
