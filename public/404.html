@@ -79,12 +79,6 @@
     .logo-dark {
       display: none;
     }
-    html[data-mantine-color-scheme="dark"] .logo-light {
-      display: none;
-    }
-    html[data-mantine-color-scheme="dark"] .logo-dark {
-      display: inline;
-    }
     @media (prefers-color-scheme: dark) {
       .logo-light {
         display: none;
@@ -92,6 +86,12 @@
       .logo-dark {
         display: inline;
       }
+    }
+    html[data-mantine-color-scheme="dark"] .logo-light {
+      display: none;
+    }
+    html[data-mantine-color-scheme="dark"] .logo-dark {
+      display: inline;
     }
     h1 {
       margin-bottom: 0.5rem;
@@ -184,8 +184,8 @@
       s.src = "https://www.googletagmanager.com/gtag/js?id=G-36CZ6GEMKQ";
       document.head.appendChild(s);
       window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        window.dataLayer.push(arguments);
+      function gtag(...args) {
+        window.dataLayer.push(...args);
       }
       gtag("js", new Date());
       gtag("config", "G-36CZ6GEMKQ");
