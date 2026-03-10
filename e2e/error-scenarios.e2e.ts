@@ -361,8 +361,7 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
     // Navigate to invalid route
     await page.goto("/this-route-does-not-exist");
 
-    // Should either show 404 or redirect to home
-    // The app uses GitHub Pages SPA setup which redirects to index.html
+    // Should show 404 page (all routes are statically pre-rendered)
     await page.waitForLoadState("networkidle");
 
     // App should still be functional after invalid route

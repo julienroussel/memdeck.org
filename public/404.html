@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page not found | MemDeck</title>
     <meta name="robots" content="noindex">
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <link
       rel="icon"
       type="image/webp"
@@ -17,6 +19,36 @@
       href="/memdeck-white.webp"
       media="(prefers-color-scheme: dark)"
     >
+    <meta
+      name="theme-color"
+      content="#228be6"
+      media="(prefers-color-scheme: light)"
+    >
+    <meta
+      name="theme-color"
+      content="#1864ab"
+      media="(prefers-color-scheme: dark)"
+    >
+    <script>
+    "use strict";
+    (() => {
+      try {
+        const value = window.localStorage.getItem("memdeck-app-color-scheme");
+        let scheme = "light";
+        if (value === "light" || value === "dark") {
+          scheme = value;
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          scheme = "dark";
+        }
+        document.documentElement.setAttribute(
+          "data-mantine-color-scheme",
+          scheme
+        );
+      } catch (_e) {
+        // Silently ignore localStorage access errors
+      }
+    })();
+    </script>
     <style>
     * {
       box-sizing: border-box;
@@ -37,6 +69,29 @@
     .container {
       padding: 2rem;
       text-align: center;
+    }
+    .logo {
+      width: 60%;
+      max-width: 400px;
+      height: auto;
+      margin-bottom: 1.5rem;
+    }
+    .logo-dark {
+      display: none;
+    }
+    @media (prefers-color-scheme: dark) {
+      .logo-light {
+        display: none;
+      }
+      .logo-dark {
+        display: inline;
+      }
+    }
+    html[data-mantine-color-scheme="dark"] .logo-light {
+      display: none;
+    }
+    html[data-mantine-color-scheme="dark"] .logo-dark {
+      display: inline;
     }
     h1 {
       margin-bottom: 0.5rem;
@@ -62,6 +117,22 @@
     a:hover {
       background: #1c7ed6;
     }
+    html[data-mantine-color-scheme="dark"] body {
+      color: #ddd;
+      background: #111;
+    }
+    html[data-mantine-color-scheme="dark"] p {
+      color: #999;
+    }
+    html[data-mantine-color-scheme="dark"] h1 {
+      color: #4dabf7;
+    }
+    html[data-mantine-color-scheme="dark"] a {
+      background: #1864ab;
+    }
+    html[data-mantine-color-scheme="dark"] a:hover {
+      background: #1c7ed6;
+    }
     @media (prefers-color-scheme: dark) {
       body {
         color: #ddd;
@@ -84,9 +155,41 @@
   </head>
   <body>
     <div class="container">
+      <img
+        class="logo logo-light"
+        src="/memdeck-logo-white.webp"
+        alt="MemDeck"
+        width="1002"
+        height="648"
+      >
+      <img
+        class="logo logo-dark"
+        src="/memdeck-logo-black.webp"
+        alt="MemDeck"
+        width="990"
+        height="634"
+      >
       <h1>404</h1>
       <p>This page doesn't exist.</p>
       <a href="/">Back to MemDeck</a>
     </div>
+    <script>
+    "use strict";
+    (() => {
+      if (window.location.hostname !== "memdeck.org") {
+        return;
+      }
+      const s = document.createElement("script");
+      s.async = true;
+      s.src = "https://www.googletagmanager.com/gtag/js?id=G-36CZ6GEMKQ";
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag(...args) {
+        window.dataLayer.push(...args);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-36CZ6GEMKQ");
+    })();
+    </script>
   </body>
 </html>
