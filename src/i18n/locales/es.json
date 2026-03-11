@@ -369,7 +369,8 @@
     "title": "Acerca de",
     "intro": "MemDeck es un proyecto personal creado por Julien Roussel. No dudes en escribirme a través de los enlaces de abajo.",
     "githubDescription": "Código fuente, informes de errores y solicitudes de funcionalidades",
-    "linktreeDescription": "Más sobre mí y mis otros proyectos"
+    "linktreeDescription": "Más sobre mí y mis otros proyectos",
+    "magicLabDescription": "Un espacio digital para organizar tu repertorio, planificar rutinas y registrar tus entrenamientos."
   },
   "guide": {
     "pageTitle": "Guía",

@@ -13,7 +13,7 @@ import {
 } from "@tabler/icons-react";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { GITHUB_URL, LINKTREE_URL } from "../constants";
+import { GITHUB_URL, LINKTREE_URL, MAGIC_LAB_URL } from "../constants";
 import { useDocumentMeta } from "../hooks/use-document-meta";
 import { analytics } from "../services/analytics";
 import { shareMemDeck } from "../utils/share";
@@ -45,6 +45,16 @@ export const About = () => {
           </Anchor>
           <Text c="dimmed" size="sm">
             — {t("about.githubDescription")}
+          </Text>
+        </Group>
+        <Group gap="xs">
+          <IconExternalLink aria-hidden="true" size={20} stroke={1.5} />
+          <Anchor href={MAGIC_LAB_URL} rel="noopener" target="_blank">
+            The Magic Lab
+            <VisuallyHidden> (opens in new tab)</VisuallyHidden>
+          </Anchor>
+          <Text c="dimmed" size="sm">
+            — {t("about.magicLabDescription")}
           </Text>
         </Group>
         <Group gap="xs">
