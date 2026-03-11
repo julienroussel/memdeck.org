@@ -34,7 +34,8 @@
     "fta": "fta --config-path fta.json --json src",
     "lighthouse": "lhci autorun",
     "generate:splash": "node scripts/generate-splash-images.ts",
-    "generate:screenshots": "node scripts/generate-screenshots.ts"
+    "generate:screenshots": "node scripts/generate-screenshots.ts",
+    "prepare": "lefthook install"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.6",
