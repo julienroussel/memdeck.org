@@ -369,7 +369,8 @@
     "title": "Über",
     "intro": "MemDeck ist ein Nebenprojekt von Julien Roussel. Kontaktiere mich gerne über die folgenden Links.",
     "githubDescription": "Quellcode, Fehlermeldungen und Funktionswünsche",
-    "linktreeDescription": "Mehr über mich und meine anderen Projekte"
+    "linktreeDescription": "Mehr über mich und meine anderen Projekte",
+    "magicLabDescription": "Ein digitaler Arbeitsbereich zum Organisieren des Repertoires, Planen von Routinen und Verfolgen des Trainings."
   },
   "guide": {
     "pageTitle": "Anleitung",

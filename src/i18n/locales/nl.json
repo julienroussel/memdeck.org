@@ -369,7 +369,8 @@
     "title": "Over",
     "intro": "MemDeck is een hobbyproject van Julien Roussel. Neem gerust contact op via de links hieronder.",
     "githubDescription": "Broncode, bugrapporten en functieverzoeken",
-    "linktreeDescription": "Meer over mij en mijn andere projecten"
+    "linktreeDescription": "Meer over mij en mijn andere projecten",
+    "magicLabDescription": "Een digitale werkruimte om je repertoire te organiseren, routines te plannen en je oefensessies bij te houden."
   },
   "guide": {
     "pageTitle": "Gids",
