@@ -9,52 +9,54 @@ import { test } from "./fixtures/test-setup";
 // URL patterns
 const HOME_URL_PATTERN = /\/$/;
 const FLASHCARD_URL_PATTERN = /\/flashcard$/;
+const ACAAN_URL_PATTERN = /\/acaan$/;
+const TOOLBOX_URL_PATTERN = /\/toolbox$/;
 const RESOURCES_URL_PATTERN = /\/resources$/;
 
 test.describe("Error Scenarios - RequireStack Guard", () => {
-  test("should redirect to home when navigating to flashcard without selected stack", async ({
+  test("should show no-stack message when navigating to flashcard without selected stack", async ({
     page,
   }) => {
     // Navigate directly to flashcard without selecting a stack
     await page.goto("/flashcard");
     await page.waitForLoadState("networkidle");
 
-    // Should be redirected to home page
-    await expect(page).toHaveURL(HOME_URL_PATTERN);
+    // Should stay on flashcard URL and show prompt to pick a stack
+    await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
     await expect(
-      page.getByRole("heading", { name: "Master your memorized deck" })
+      page.getByText("Pick a stack from the navigation bar to get started.")
     ).toBeVisible();
   });
 
-  test("should redirect to home when navigating to ACAAN without selected stack", async ({
+  test("should show no-stack message when navigating to ACAAN without selected stack", async ({
     page,
   }) => {
     // Navigate directly to ACAAN without selecting a stack
     await page.goto("/acaan");
     await page.waitForLoadState("networkidle");
 
-    // Should be redirected to home page
-    await expect(page).toHaveURL(HOME_URL_PATTERN);
+    // Should stay on ACAAN URL and show prompt to pick a stack
+    await expect(page).toHaveURL(ACAAN_URL_PATTERN);
     await expect(
-      page.getByRole("heading", { name: "Master your memorized deck" })
+      page.getByText("Pick a stack from the navigation bar to get started.")
     ).toBeVisible();
   });
 
-  test("should redirect to home when navigating to toolbox without selected stack", async ({
+  test("should show no-stack message when navigating to toolbox without selected stack", async ({
     page,
   }) => {
     // Navigate directly to toolbox without selecting a stack
     await page.goto("/toolbox");
     await page.waitForLoadState("networkidle");
 
-    // Should be redirected to home page
-    await expect(page).toHaveURL(HOME_URL_PATTERN);
+    // Should stay on toolbox URL and show prompt to pick a stack
+    await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
     await expect(
-      page.getByRole("heading", { name: "Master your memorized deck" })
+      page.getByText("Pick a stack from the navigation bar to get started.")
     ).toBeVisible();
   });
 
-  test("should redirect to home when stack is cleared after navigation", async ({
+  test("should show no-stack message when stack is cleared after navigation", async ({
     page,
   }) => {
     // Start by selecting a stack and navigating to flashcard
@@ -78,11 +80,14 @@ test.describe("Error Scenarios - RequireStack Guard", () => {
       localStorage.removeItem("memdeck-app-stack");
     });
 
-    // Reload the page - should redirect to home
+    // Reload the page - should show no-stack message
     await page.reload();
     await page.waitForLoadState("networkidle");
 
-    await expect(page).toHaveURL(HOME_URL_PATTERN);
+    await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
+    await expect(
+      page.getByText("Pick a stack from the navigation bar to get started.")
+    ).toBeVisible();
   });
 });
 
@@ -261,7 +266,7 @@ test.describe("Error Scenarios - Invalid Stack Key", () => {
     ).toBeVisible();
   });
 
-  test("should redirect protected pages when stack key becomes invalid", async ({
+  test("should show no-stack message on protected pages when stack key becomes invalid", async ({
     page,
   }) => {
     // Start with valid stack selection
@@ -287,10 +292,13 @@ test.describe("Error Scenarios - Invalid Stack Key", () => {
       );
     });
 
-    // Reload - should redirect to home
+    // Reload - should show no-stack message
     await page.reload();
     await page.waitForLoadState("networkidle");
-    await expect(page).toHaveURL(HOME_URL_PATTERN);
+    await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
+    await expect(
+      page.getByText("Pick a stack from the navigation bar to get started.")
+    ).toBeVisible();
   });
 
   test("should handle malformed JSON for stack key", async ({ page }) => {
@@ -373,15 +381,18 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
     await expect(page).toHaveURL(HOME_URL_PATTERN);
   });
 
-  test("should handle browser back button after redirect from protected route", async ({
+  test("should handle browser back button from protected route without stack", async ({
     page,
   }) => {
     // Try to access protected route without stack
     await page.goto("/flashcard");
     await page.waitForLoadState("networkidle");
 
-    // Should redirect to home
-    await expect(page).toHaveURL(HOME_URL_PATTERN);
+    // Should stay on flashcard and show no-stack message
+    await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
+    await expect(
+      page.getByText("Pick a stack from the navigation bar to get started.")
+    ).toBeVisible();
 
     // Navigate to resources
     await page.locator("#main-nav a:has-text('Resources')").click();
@@ -391,14 +402,14 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
     await page.goBack();
     await page.waitForLoadState("networkidle");
 
-    // Should still be on a valid page (home)
-    await expect(page).toHaveURL(HOME_URL_PATTERN);
+    // Should be back on flashcard with no-stack message
+    await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
     await expect(
-      page.getByRole("heading", { name: "Master your memorized deck" })
+      page.getByText("Pick a stack from the navigation bar to get started.")
     ).toBeVisible();
   });
 
-  test("should handle forward navigation after going back from protected route", async ({
+  test("should show no-stack message on forward navigation after clearing stack", async ({
     page,
   }) => {
     // Start on home
@@ -428,12 +439,15 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
     await page.reload();
     await page.waitForLoadState("networkidle");
 
-    // Try to go forward - should either stay on home or redirect
+    // Try to go forward - should show no-stack message on flashcard
     await page.goForward();
     await page.waitForLoadState("networkidle");
 
-    // Should end up on home page due to RequireStack guard
-    await expect(page).toHaveURL(HOME_URL_PATTERN);
+    // Should be on flashcard with no-stack message
+    await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
+    await expect(
+      page.getByText("Pick a stack from the navigation bar to get started.")
+    ).toBeVisible();
   });
 });
 
