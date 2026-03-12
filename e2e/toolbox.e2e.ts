@@ -50,12 +50,10 @@ test.describe("Toolbox Page", () => {
     await page.goto("/toolbox");
     await page.waitForLoadState("networkidle");
 
-    // Should be redirected to home page
-    await expect(page).toHaveURL(HOME_URL_PATTERN);
-
-    // Should show home page content
+    // Should stay on toolbox URL and show no-stack message
+    await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
     await expect(
-      page.getByRole("heading", { name: "Master your memorized deck" })
+      page.getByText("Pick a stack from the navigation bar to get started.")
     ).toBeVisible();
   });
 

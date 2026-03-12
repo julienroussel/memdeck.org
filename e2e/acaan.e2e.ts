@@ -24,7 +24,7 @@ const SESSION_TOOLTIP_PATTERN = /start a session/i;
  * Derived from the source definition in src/types/stacks/mnemonica.ts.
  */
 const MNEMONICA_ORDER = mnemonica.order.map((card) =>
-  card.image.replace("cards/", "").replace(".svg", "")
+  card.image.replace("/cards/", "").replace(".svg", "")
 );
 
 /** Maps image filename fragment (e.g. "clubs_4") to 1-based Mnemonica position. */

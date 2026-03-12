@@ -103,8 +103,10 @@ const applyEntry = (entry: MetaEntry, value: string) => {
 export const formatTitle = (title: string): string =>
   title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
 
-export const buildCanonicalUrl = (pathname: string): string =>
-  `${SITE_URL}${pathname}`;
+export const buildCanonicalUrl = (pathname: string): string => {
+  const trailingSlash = pathname.endsWith("/") ? "" : "/";
+  return `${SITE_URL}${pathname}${trailingSlash}`;
+};
 
 export const useDocumentMeta = ({ title, description }: DocumentMeta) => {
   const { pathname } = useLocation();
