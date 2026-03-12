@@ -1,7 +1,9 @@
-import { Center, Stack, Text } from "@mantine/core";
+import { Button, Center, Stack, Text } from "@mantine/core";
 import type { ParseKeys } from "i18next";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
+import { ROUTES } from "../constants";
 import { useSelectedStack } from "../hooks/use-selected-stack";
 
 export const RequireStack = ({
@@ -24,6 +26,9 @@ export const RequireStack = ({
           <Text c="dimmed" maw={400} size="sm" ta="center">
             {t(descriptionKey)}
           </Text>
+          <Button component={Link} mt="sm" to={ROUTES.home} variant="light">
+            {t("common.goToHomepage")}
+          </Button>
         </Stack>
       </Center>
     );

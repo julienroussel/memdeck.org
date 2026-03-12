@@ -1,5 +1,4 @@
-import { NavLink, Tooltip } from "@mantine/core";
-import type { TablerIcon } from "@tabler/icons-react";
+import { NavLink } from "@mantine/core";
 import {
   IconBook2,
   IconChartBar,
@@ -11,77 +10,17 @@ import {
   IconPlayCardStar,
   IconTools,
 } from "@tabler/icons-react";
-import { type MouseEvent, memo, type ReactNode, useCallback } from "react";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
-import { useSelectedStack } from "../hooks/use-selected-stack";
-
-function DisableableNavLink({
-  isDisabled,
-  disabledTooltip,
-  active,
-  label,
-  icon: Icon,
-  to,
-  onClick,
-}: {
-  isDisabled: boolean;
-  disabledTooltip: string;
-  active: boolean;
-  label: ReactNode;
-  icon: TablerIcon;
-  to: string;
-  onClick: (e: MouseEvent) => void;
-}) {
-  const leftSection = <Icon size={16} stroke={1.5} />;
-
-  return (
-    <Tooltip disabled={!isDisabled} label={disabledTooltip} position="right">
-      {isDisabled ? (
-        <NavLink
-          active={active}
-          aria-disabled={true}
-          disabled={true}
-          label={label}
-          leftSection={leftSection}
-          tabIndex={-1}
-        />
-      ) : (
-        <NavLink
-          active={active}
-          component={Link}
-          label={label}
-          leftSection={leftSection}
-          onClick={onClick}
-          to={to}
-        />
-      )}
-    </Tooltip>
-  );
-}
 
 export const NavLinks = memo(function NavLinks({
   onClick,
 }: {
   onClick: () => void;
 }) {
-  const { stackKey } = useSelectedStack();
   const location = useLocation();
-  const isDisabled = stackKey === "";
   const { t } = useTranslation();
-
-  const disabledTooltip = t("nav.disabledTooltip");
-
-  const handleDisabledClick = useCallback(
-    (e: MouseEvent) => {
-      if (isDisabled) {
-        e.preventDefault();
-      } else {
-        onClick();
-      }
-    },
-    [isDisabled, onClick]
-  );
 
   return (
     <>
@@ -124,40 +63,36 @@ export const NavLinks = memo(function NavLinks({
         label={t("nav.tools")}
         leftSection={<IconTools size={16} stroke={1.5} />}
       >
-        <DisableableNavLink
+        <NavLink
           active={location.pathname === "/flashcard"}
-          disabledTooltip={disabledTooltip}
-          icon={IconPlayCardStar}
-          isDisabled={isDisabled}
+          component={Link}
           label={t("nav.flashcard")}
-          onClick={handleDisabledClick}
+          leftSection={<IconPlayCardStar size={16} stroke={1.5} />}
+          onClick={onClick}
           to="/flashcard"
         />
-        <DisableableNavLink
+        <NavLink
           active={location.pathname === "/spot-check"}
-          disabledTooltip={disabledTooltip}
-          icon={IconEyeSearch}
-          isDisabled={isDisabled}
+          component={Link}
           label={t("nav.spotCheck")}
-          onClick={handleDisabledClick}
+          leftSection={<IconEyeSearch size={16} stroke={1.5} />}
+          onClick={onClick}
           to="/spot-check"
         />
-        <DisableableNavLink
+        <NavLink
           active={location.pathname === "/acaan"}
-          disabledTooltip={disabledTooltip}
-          icon={IconNumber}
-          isDisabled={isDisabled}
+          component={Link}
           label={t("nav.acaan")}
-          onClick={handleDisabledClick}
+          leftSection={<IconNumber size={16} stroke={1.5} />}
+          onClick={onClick}
           to="/acaan"
         />
-        <DisableableNavLink
+        <NavLink
           active={location.pathname === "/toolbox"}
-          disabledTooltip={disabledTooltip}
-          icon={IconTools}
-          isDisabled={isDisabled}
+          component={Link}
           label={t("nav.toolbox")}
-          onClick={handleDisabledClick}
+          leftSection={<IconTools size={16} stroke={1.5} />}
+          onClick={onClick}
           to="/toolbox"
         />
       </NavLink>
