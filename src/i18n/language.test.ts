@@ -410,6 +410,10 @@ describe("changeLanguage", () => {
     mockI18n.hasResourceBundle.mockReturnValue(false);
     const reloadMock = vi.fn();
     vi.stubGlobal("location", { ...window.location, reload: reloadMock });
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      serviceWorker: { getRegistration: vi.fn().mockResolvedValue(undefined) },
+    });
 
     const { languageLoaders } = await import("./language");
     vi.spyOn(languageLoaders, "fr").mockRejectedValue(
@@ -445,6 +449,10 @@ describe("changeLanguage", () => {
     mockI18n.hasResourceBundle.mockReturnValue(false);
     const reloadMock = vi.fn();
     vi.stubGlobal("location", { ...window.location, reload: reloadMock });
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      serviceWorker: { getRegistration: vi.fn().mockResolvedValue(undefined) },
+    });
 
     const { languageLoaders } = await import("./language");
     vi.spyOn(languageLoaders, "fr").mockRejectedValue(
@@ -460,6 +468,10 @@ describe("changeLanguage", () => {
     mockI18n.hasResourceBundle.mockReturnValue(false);
     const reloadMock = vi.fn();
     vi.stubGlobal("location", { ...window.location, reload: reloadMock });
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      serviceWorker: { getRegistration: vi.fn().mockResolvedValue(undefined) },
+    });
 
     const { languageLoaders } = await import("./language");
     vi.spyOn(languageLoaders, "fr").mockRejectedValue(
@@ -468,6 +480,45 @@ describe("changeLanguage", () => {
 
     await changeLanguage("fr");
 
+    expect(reloadMock).toHaveBeenCalledOnce();
+  });
+
+  it("updates the service worker before reloading on stale chunk error", async () => {
+    mockI18n.hasResourceBundle.mockReturnValue(false);
+    const reloadMock = vi.fn();
+    vi.stubGlobal("location", { ...window.location, reload: reloadMock });
+
+    const updateMock = vi.fn().mockResolvedValue(undefined);
+    const waitingWorker = {
+      state: "installed",
+      postMessage: vi.fn(),
+      addEventListener: vi.fn((_event: string, cb: () => void) => {
+        // Simulate immediate activation
+        waitingWorker.state = "activated";
+        cb();
+      }),
+    };
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      serviceWorker: {
+        getRegistration: vi.fn().mockResolvedValue({
+          update: updateMock,
+          waiting: waitingWorker,
+        }),
+      },
+    });
+
+    const { languageLoaders } = await import("./language");
+    vi.spyOn(languageLoaders, "fr").mockRejectedValue(
+      new TypeError("Failed to fetch dynamically imported module")
+    );
+
+    await changeLanguage("fr");
+
+    expect(updateMock).toHaveBeenCalledOnce();
+    expect(waitingWorker.postMessage).toHaveBeenCalledWith({
+      type: "SKIP_WAITING",
+    });
     expect(reloadMock).toHaveBeenCalledOnce();
   });
 

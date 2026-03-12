@@ -68,13 +68,48 @@ export const languageLoaders: Record<
 };
 
 /**
- * If the locale chunk 404s due to a stale deployment, reload the page once
- * to pick up the new service worker / asset manifest. A sessionStorage guard
- * prevents infinite reload loops.
+ * Force-update the service worker so the next page load serves fresh assets.
+ * Waits for the new worker to activate before returning.
+ */
+async function updateServiceWorker(): Promise<void> {
+  const registration = await navigator.serviceWorker?.getRegistration();
+  if (!registration) {
+    return;
+  }
+
+  await registration.update();
+
+  const waiting = registration.waiting;
+  if (!waiting) {
+    return;
+  }
+
+  // Wait for the new worker to take over before reloading.
+  // Race against a timeout so a stuck worker cannot hang the recovery.
+  await Promise.race([
+    new Promise<void>((resolve) => {
+      waiting.addEventListener("statechange", () => {
+        if (waiting.state === "activated" || waiting.state === "redundant") {
+          resolve();
+        }
+      });
+      // Skip waiting if it supports the message (Workbox convention).
+      waiting.postMessage({ type: "SKIP_WAITING" });
+    }),
+    new Promise<void>((resolve) => {
+      setTimeout(resolve, 3000);
+    }),
+  ]);
+}
+
+/**
+ * If the locale chunk 404s due to a stale deployment, update the service
+ * worker and reload the page once to pick up the new assets. A sessionStorage
+ * guard prevents infinite reload loops.
  *
  * @returns `true` if a reload was triggered (caller should bail out).
  */
-function reloadOnStaleChunk(error: unknown): boolean {
+async function reloadOnStaleChunk(error: unknown): Promise<boolean> {
   if (!isStaleChunkError(error)) {
     return false;
   }
@@ -83,6 +118,11 @@ function reloadOnStaleChunk(error: unknown): boolean {
       return false;
     }
     sessionStorage.setItem(LOCALE_RELOAD_SSK, "1");
+    try {
+      await updateServiceWorker();
+    } catch {
+      // SW update failed — proceed with reload anyway
+    }
     window.location.reload();
     return true;
   } catch {
@@ -116,7 +156,7 @@ export const changeLanguage = async (
         }
         i18n.addResourceBundle(lang, "translation", module.default);
       } catch (error: unknown) {
-        if (reloadOnStaleChunk(error)) {
+        if (await reloadOnStaleChunk(error)) {
           return;
         }
         throw error;
