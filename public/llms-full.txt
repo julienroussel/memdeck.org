@@ -140,5 +140,5 @@ The app auto-detects the user's browser language and defaults to English if the 
 
 - Website: https://memdeck.org
 - GitHub: https://github.com/julienroussel/memdeck.org
-- Resources: https://memdeck.org/resources
-- Guide: https://memdeck.org/guide
+- Resources: https://memdeck.org/resources/
+- Guide: https://memdeck.org/guide/

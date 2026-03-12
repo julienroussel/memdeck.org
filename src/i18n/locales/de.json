@@ -14,7 +14,8 @@
     "questions": "Fragen",
     "duration": "Dauer",
     "revealAriaLabel": "Antwort anzeigen",
-    "moreColumnsOnWiderScreen": "Weitere Details sind auf breiteren Bildschirmen verfügbar."
+    "moreColumnsOnWiderScreen": "Weitere Details sind auf breiteren Bildschirmen verfügbar.",
+    "noStackSelected": "Wähle einen Stack in der Navigationsleiste aus, um loszulegen."
   },
   "cards": {
     "ranks": {

@@ -12,13 +12,13 @@ A global per-stack setting lets users focus training on a specific range of posi
 
 ## Features
 
-- [Flashcard Training](https://memdeck.org/flashcard): Practice recalling cards by position, position by card, or both. Includes neighbor mode for learning adjacent cards in the stack. Respects the stack range setting.
-- [Spot Check](https://memdeck.org/spot-check): Test your knowledge by identifying missing, swapped, or moved cards in the deck. Respects the stack range setting.
-- [ACAAN Calculator](https://memdeck.org/acaan): Practice Any Card At Any Number calculations with your memorized stack. Always uses the full deck.
-- [Toolbox](https://memdeck.org/toolbox): Stack lookup, faro shuffle simulator, card spelling tool, and stay stack sequence finder. Stack lookup and card spelling respect the stack range; faro shuffle and stay stack use the full deck.
-- [Stats](https://memdeck.org/stats): Track session history, accuracy, and progress over time.
-- [Guide](https://memdeck.org/guide): Getting started instructions and training tips.
-- [Resources](https://memdeck.org/resources): Curated books, PDFs, and links for memorized deck study.
+- [Flashcard Training](https://memdeck.org/flashcard/): Practice recalling cards by position, position by card, or both. Includes neighbor mode for learning adjacent cards in the stack. Respects the stack range setting.
+- [Spot Check](https://memdeck.org/spot-check/): Test your knowledge by identifying missing, swapped, or moved cards in the deck. Respects the stack range setting.
+- [ACAAN Calculator](https://memdeck.org/acaan/): Practice Any Card At Any Number calculations with your memorized stack. Always uses the full deck.
+- [Toolbox](https://memdeck.org/toolbox/): Stack lookup, faro shuffle simulator, card spelling tool, and stay stack sequence finder. Stack lookup and card spelling respect the stack range; faro shuffle and stay stack use the full deck.
+- [Stats](https://memdeck.org/stats/): Track session history, accuracy, and progress over time.
+- [Guide](https://memdeck.org/guide/): Getting started instructions and training tips.
+- [Resources](https://memdeck.org/resources/): Curated books, PDFs, and links for memorized deck study.
 
 ## Supported Stacks
 
@@ -44,5 +44,5 @@ English, French (Francais), Spanish (Espanol), German (Deutsch), Italian (Italia
 ## Optional
 
 - [GitHub Repository](https://github.com/julienroussel/memdeck.org)
-- [Resources & Recommended Reading](https://memdeck.org/resources)
+- [Resources & Recommended Reading](https://memdeck.org/resources/)
 - [llms-full.txt](https://memdeck.org/llms-full.txt): Expanded version of this file with full details

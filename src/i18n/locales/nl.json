@@ -14,7 +14,8 @@
     "questions": "Vragen",
     "duration": "Duur",
     "revealAriaLabel": "Antwoord onthullen",
-    "moreColumnsOnWiderScreen": "Extra details zijn zichtbaar op een breder scherm."
+    "moreColumnsOnWiderScreen": "Extra details zijn zichtbaar op een breder scherm.",
+    "noStackSelected": "Kies een stack in de navigatiebalk om te beginnen."
   },
   "cards": {
     "ranks": {

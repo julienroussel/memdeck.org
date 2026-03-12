@@ -77,7 +77,7 @@ export const Routes = () => (
     <RouterRoute
       element={
         <LazyRoute>
-          <RequireStack>
+          <RequireStack descriptionKey="flashcard.pageDescription">
             <Flashcard />
           </RequireStack>
         </LazyRoute>
@@ -87,7 +87,7 @@ export const Routes = () => (
     <RouterRoute
       element={
         <LazyRoute>
-          <RequireStack>
+          <RequireStack descriptionKey="spotCheck.pageDescription">
             <SpotCheck />
           </RequireStack>
         </LazyRoute>
@@ -97,7 +97,7 @@ export const Routes = () => (
     <RouterRoute
       element={
         <LazyRoute>
-          <RequireStack>
+          <RequireStack descriptionKey="acaan.pageDescription">
             <Acaan />
           </RequireStack>
         </LazyRoute>
@@ -107,7 +107,7 @@ export const Routes = () => (
     <RouterRoute
       element={
         <LazyRoute>
-          <RequireStack>
+          <RequireStack descriptionKey="toolbox.pageDescription">
             <Toolbox />
           </RequireStack>
         </LazyRoute>

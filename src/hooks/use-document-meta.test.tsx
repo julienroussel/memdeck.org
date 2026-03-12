@@ -36,8 +36,14 @@ describe("buildCanonicalUrl", () => {
     "/guide",
     "/acaan",
     "/stats",
-  ])("builds canonical URL for %s", (path) => {
-    expect(buildCanonicalUrl(path)).toBe(`https://memdeck.org${path}`);
+  ])("builds canonical URL for %s with trailing slash", (path) => {
+    expect(buildCanonicalUrl(path)).toBe(`https://memdeck.org${path}/`);
+  });
+
+  it("does not double trailing slash for paths that already end with /", () => {
+    expect(buildCanonicalUrl("/flashcard/")).toBe(
+      "https://memdeck.org/flashcard/"
+    );
   });
 });
 
@@ -152,11 +158,11 @@ describe("useDocumentMeta", () => {
     expect(titleEl.content).toBe("Stats | MemDeck");
     expect(ogTitleEl.content).toBe("Stats | MemDeck");
     expect(ogDescEl.content).toBe("Stats page description");
-    expect(ogUrlEl.content).toBe("https://memdeck.org/test");
-    expect(twitterUrlEl.content).toBe("https://memdeck.org/test");
+    expect(ogUrlEl.content).toBe("https://memdeck.org/test/");
+    expect(twitterUrlEl.content).toBe("https://memdeck.org/test/");
     expect(twitterTitleEl.content).toBe("Stats | MemDeck");
     expect(twitterDescEl.content).toBe("Stats page description");
-    expect(canonicalEl.href).toBe("https://memdeck.org/test");
+    expect(canonicalEl.href).toBe("https://memdeck.org/test/");
   });
 
   it("restores document.title on unmount", () => {
@@ -200,11 +206,11 @@ describe("useDocumentMeta", () => {
     expect(titleEl.content).toBe("Stats | MemDeck");
     expect(ogTitleEl.content).toBe("Stats | MemDeck");
     expect(ogDescEl.content).toBe("Stats page description");
-    expect(ogUrlEl.content).toBe("https://memdeck.org/test");
-    expect(twitterUrlEl.content).toBe("https://memdeck.org/test");
+    expect(ogUrlEl.content).toBe("https://memdeck.org/test/");
+    expect(twitterUrlEl.content).toBe("https://memdeck.org/test/");
     expect(twitterTitleEl.content).toBe("Stats | MemDeck");
     expect(twitterDescEl.content).toBe("Stats page description");
-    expect(canonicalEl.href).toBe("https://memdeck.org/test");
+    expect(canonicalEl.href).toBe("https://memdeck.org/test/");
 
     unmount();
 
