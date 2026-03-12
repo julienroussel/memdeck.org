@@ -53,7 +53,7 @@ test.describe("Toolbox Page", () => {
     // Should stay on toolbox URL and show no-stack message
     await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
     await expect(
-      page.getByText("Pick a stack from the navigation bar to get started.")
+      page.getByText("Pick a stack on the homepage to get started.")
     ).toBeVisible();
   });
 

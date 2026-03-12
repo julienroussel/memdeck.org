@@ -15,7 +15,8 @@
     "duration": "Duur",
     "revealAriaLabel": "Antwoord onthullen",
     "moreColumnsOnWiderScreen": "Extra details zijn zichtbaar op een breder scherm.",
-    "noStackSelected": "Kies een stack in de navigatiebalk om te beginnen."
+    "noStackSelected": "Kies een stack op de startpagina om te beginnen.",
+    "goToHomepage": "Ga naar de startpagina"
   },
   "cards": {
     "ranks": {
@@ -51,7 +52,6 @@
     "acaan": "ACAAN",
     "spotCheck": "Spot Check",
     "toolbox": "Gereedschap",
-    "disabledTooltip": "Selecteer eerst een stack",
     "about": "Over"
   },
   "header": {

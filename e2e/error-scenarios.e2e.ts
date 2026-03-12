@@ -24,7 +24,7 @@ test.describe("Error Scenarios - RequireStack Guard", () => {
     // Should stay on flashcard URL and show prompt to pick a stack
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
     await expect(
-      page.getByText("Pick a stack from the navigation bar to get started.")
+      page.getByText("Pick a stack on the homepage to get started.")
     ).toBeVisible();
   });
 
@@ -38,7 +38,7 @@ test.describe("Error Scenarios - RequireStack Guard", () => {
     // Should stay on ACAAN URL and show prompt to pick a stack
     await expect(page).toHaveURL(ACAAN_URL_PATTERN);
     await expect(
-      page.getByText("Pick a stack from the navigation bar to get started.")
+      page.getByText("Pick a stack on the homepage to get started.")
     ).toBeVisible();
   });
 
@@ -52,7 +52,7 @@ test.describe("Error Scenarios - RequireStack Guard", () => {
     // Should stay on toolbox URL and show prompt to pick a stack
     await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
     await expect(
-      page.getByText("Pick a stack from the navigation bar to get started.")
+      page.getByText("Pick a stack on the homepage to get started.")
     ).toBeVisible();
   });
 
@@ -86,7 +86,7 @@ test.describe("Error Scenarios - RequireStack Guard", () => {
 
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
     await expect(
-      page.getByText("Pick a stack from the navigation bar to get started.")
+      page.getByText("Pick a stack on the homepage to get started.")
     ).toBeVisible();
   });
 });
@@ -297,7 +297,7 @@ test.describe("Error Scenarios - Invalid Stack Key", () => {
     await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
     await expect(
-      page.getByText("Pick a stack from the navigation bar to get started.")
+      page.getByText("Pick a stack on the homepage to get started.")
     ).toBeVisible();
   });
 
@@ -391,7 +391,7 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
     // Should stay on flashcard and show no-stack message
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
     await expect(
-      page.getByText("Pick a stack from the navigation bar to get started.")
+      page.getByText("Pick a stack on the homepage to get started.")
     ).toBeVisible();
 
     // Navigate to resources
@@ -405,7 +405,7 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
     // Should be back on flashcard with no-stack message
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
     await expect(
-      page.getByText("Pick a stack from the navigation bar to get started.")
+      page.getByText("Pick a stack on the homepage to get started.")
     ).toBeVisible();
   });
 
@@ -446,7 +446,7 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
     // Should be on flashcard with no-stack message
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
     await expect(
-      page.getByText("Pick a stack from the navigation bar to get started.")
+      page.getByText("Pick a stack on the homepage to get started.")
     ).toBeVisible();
   });
 });

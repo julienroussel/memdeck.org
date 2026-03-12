@@ -15,7 +15,8 @@
     "duration": "Durée",
     "revealAriaLabel": "Révéler la réponse",
     "moreColumnsOnWiderScreen": "Des détails supplémentaires sont disponibles sur un écran plus large.",
-    "noStackSelected": "Choisissez un stack dans la barre de navigation pour commencer."
+    "noStackSelected": "Choisissez un stack sur la page d'accueil pour commencer.",
+    "goToHomepage": "Aller à l'accueil"
   },
   "cards": {
     "ranks": {
@@ -51,7 +52,6 @@
     "acaan": "ACAAN",
     "spotCheck": "Spot Check",
     "toolbox": "Boîte à outils",
-    "disabledTooltip": "Sélectionnez d'abord un stack",
     "about": "À propos"
   },
   "header": {
