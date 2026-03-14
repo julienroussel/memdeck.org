@@ -20,10 +20,10 @@ const mockOnINP = vi.fn<(callback: WebVitalCallback) => void>();
 const mockOnLCP = vi.fn<(callback: WebVitalCallback) => void>();
 
 vi.mock("react-ga4", () => ({
-  default: {
-    initialize: (id: string) => mockInitialize(id),
-    send: (data: unknown) => mockSend(data),
-    event: (data: unknown) => mockEvent(data),
+  ReactGAImplementation: class {
+    initialize = (id: string) => mockInitialize(id);
+    send = (data: unknown) => mockSend(data);
+    event = (data: unknown) => mockEvent(data);
   },
 }));
 

@@ -1,10 +1,12 @@
-import ReactGA from "react-ga4";
+import { ReactGAImplementation } from "react-ga4";
 import { type Metric, onCLS, onINP, onLCP } from "web-vitals";
 import type { FlashcardMode, NeighborDirection } from "../types/flashcard";
 import type { SessionConfig, TrainingMode } from "../types/session";
 import type { SpotCheckMode } from "../types/spot-check";
 import type { ShareResult } from "../utils/share";
 import { eventBus } from "./event-bus";
+
+const ReactGA = new ReactGAImplementation();
 
 type ShareSource = "nav" | "nudge" | "about";
 
