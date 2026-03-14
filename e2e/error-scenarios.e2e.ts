@@ -692,3 +692,51 @@ test.describe("Error Scenarios - Edge Cases", () => {
     await context.close();
   });
 });
+
+// Matches the About page chunk in production ("about-HASH.js")
+const ABOUT_CHUNK_PATTERN = /\/about[.-]/;
+// Matches the About page module in Vite dev server ("/src/pages/about.tsx")
+const ABOUT_DEV_MODULE_PATTERN = /\/src\/pages\/about/;
+
+test.describe("Error Scenarios - Error Boundary Fallback", () => {
+  test("should render error fallback when a lazy-loaded page fails to load", async ({
+    page,
+  }) => {
+    // Intercept the About page chunk. In production builds this matches
+    // "about-HASH.js"; in dev mode Vite serves "/src/pages/about.tsx".
+    await page.route(
+      (url) => {
+        const path = url.pathname + url.search;
+        return (
+          ABOUT_CHUNK_PATTERN.test(path) || ABOUT_DEV_MODULE_PATTERN.test(path)
+        );
+      },
+      (route) => {
+        route.fulfill({
+          contentType: "application/javascript",
+          body: 'throw new Error("Simulated chunk error");',
+        });
+      }
+    );
+
+    // Start on home page, then use client-side navigation so the lazy chunk
+    // is loaded via JS (page.goto would serve pre-rendered HTML).
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
+    await page.locator("#main-nav a:has-text('About')").click();
+
+    // The app-level ErrorBoundary (in src/components/error-boundary.tsx),
+    // which wraps routes inside MantineProvider, catches this error and
+    // shows its "Something went wrong" fallback.
+    await expect(
+      page.getByRole("heading", { name: "Something went wrong" })
+    ).toBeVisible();
+    await expect(
+      page.getByText(
+        "An unexpected error occurred. Please try again or refresh the page."
+      )
+    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+  });
+});
