@@ -10,8 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checks:
-    name: Checks
+  ci:
+    name: CI
     permissions:
       contents: read
       statuses: write
