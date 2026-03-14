@@ -171,28 +171,34 @@
       name="twitter:image"
       content="https://memdeck.org/memdeck-logo-white.webp"
     >
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "MemDeck",
-        "url": "https://memdeck.org",
-        "description": "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, Particle, and Elephant.",
-        "applicationCategory": "EducationalApplication",
-        "operatingSystem": "Any",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        },
-        "author": {
-          "@type": "Person",
-          "name": "Julien Roussel"
-        }
-      }
-    </script>
     <script>
     "use strict";
+    // Inject JSON-LD structured data programmatically to avoid Biome
+    // misinterpreting <script type="application/ld+json"> as JavaScript.
+    (() => {
+      const ld = document.createElement("script");
+      ld.type = "application/ld+json";
+      ld.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        name: "MemDeck",
+        url: "https://memdeck.org",
+        description:
+          "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, Particle, and Elephant.",
+        applicationCategory: "EducationalApplication",
+        operatingSystem: "Any",
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "USD",
+        },
+        author: {
+          "@type": "Person",
+          name: "Julien Roussel",
+        },
+      });
+      document.head.appendChild(ld);
+    })();
     // Apply Mantine color scheme before React boots to prevent theme flash
     (() => {
       try {

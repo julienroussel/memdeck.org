@@ -122,16 +122,16 @@ export const AccuracyChart = ({ history }: AccuracyChartProps) => {
             const color = getAccuracyColor(percent);
             const subModeKey = getSubModeI18nKey(record);
             const tooltipLabel =
-              subModeKey !== null
-                ? t("stats.chartTooltipWithSubMode", {
+              subModeKey === null
+                ? t("stats.chartTooltip", {
                     mode: t(MODE_LABELS[record.mode]),
-                    subMode: t(subModeKey),
                     stack: stacks[record.stackKey]?.name ?? record.stackKey,
                     successes: record.successes,
                     total: record.questionsCompleted,
                   })
-                : t("stats.chartTooltip", {
+                : t("stats.chartTooltipWithSubMode", {
                     mode: t(MODE_LABELS[record.mode]),
+                    subMode: t(subModeKey),
                     stack: stacks[record.stackKey]?.name ?? record.stackKey,
                     successes: record.successes,
                     total: record.questionsCompleted,

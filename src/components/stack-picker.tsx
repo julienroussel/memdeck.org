@@ -18,12 +18,12 @@ export const StackPicker = memo(function StackPicker() {
 
   const stackSelection = useMemo(
     () =>
-      stackKey !== ""
-        ? availableStacks
-        : [
+      stackKey === ""
+        ? [
             { label: t("stackPicker.placeholder"), value: "" },
             ...availableStacks,
-          ],
+          ]
+        : availableStacks,
     [stackKey, t]
   );
 
