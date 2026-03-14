@@ -80,6 +80,64 @@ const RootErrorFallback = ({ error }: { error: unknown }) => (
   </Center>
 );
 
+const OuterErrorFallback = ({ error }: { error: unknown }) => (
+  <div
+    role="alert"
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "100vh",
+      padding: "1rem",
+      fontFamily: "system-ui, sans-serif",
+      textAlign: "center",
+      color: "#212529",
+      backgroundColor: "#ffffff",
+    }}
+  >
+    <div>
+      <h1 style={{ fontSize: "1.5rem", margin: 0 }}>Application Error</h1>
+      <p style={{ color: "#868e96", maxWidth: 400 }}>
+        A critical error occurred. Please refresh the page to continue.
+      </p>
+      {import.meta.env.DEV && (
+        <pre
+          style={{
+            color: "#c92a2a",
+            fontFamily: "monospace",
+            fontSize: "0.8rem",
+            maxWidth: 500,
+            overflow: "auto",
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
+          }}
+        >
+          {error instanceof Error ? error.message : String(error)}
+        </pre>
+      )}
+      <button
+        onClick={() => window.location.reload()}
+        style={{
+          padding: "0.5rem 1rem",
+          border: "1px solid #dee2e6",
+          borderRadius: 4,
+          background: "transparent",
+          cursor: "pointer",
+          fontSize: "0.875rem",
+        }}
+        type="button"
+      >
+        Refresh Page
+      </button>
+    </div>
+  </div>
+);
+
+const handleOuterError = (error: unknown) => {
+  const errorObj = error instanceof Error ? error : new Error(String(error));
+  analytics.trackError(errorObj, "OuterBoundary");
+};
+
 const handleRootError = (error: unknown) => {
   const errorObj = error instanceof Error ? error : new Error(String(error));
   analytics.trackError(errorObj, "Root");
@@ -88,8 +146,8 @@ const handleRootError = (error: unknown) => {
 export const Provider = () => {
   return (
     <ErrorBoundary
-      FallbackComponent={RootErrorFallback}
-      onError={handleRootError}
+      FallbackComponent={OuterErrorFallback}
+      onError={handleOuterError}
     >
       <MantineProvider
         colorSchemeManager={colorSchemeManager}
@@ -97,13 +155,18 @@ export const Provider = () => {
         defaultColorScheme={systemColorScheme}
         theme={theme}
       >
-        <Notifications />
-        <LanguageLoadNotifier />
-        <PwaUpdateNotifier />
-        <BrowserRouter>
-          <FocusOnNavigate />
-          <App />
-        </BrowserRouter>
+        <ErrorBoundary
+          FallbackComponent={RootErrorFallback}
+          onError={handleRootError}
+        >
+          <Notifications />
+          <LanguageLoadNotifier />
+          <PwaUpdateNotifier />
+          <BrowserRouter>
+            <FocusOnNavigate />
+            <App />
+          </BrowserRouter>
+        </ErrorBoundary>
       </MantineProvider>
     </ErrorBoundary>
   );
