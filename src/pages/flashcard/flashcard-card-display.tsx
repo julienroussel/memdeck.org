@@ -48,7 +48,7 @@ export const FlashcardCardDisplay = ({
       >
         {isNeighborMode && (
           <IconChevronLeft
-            aria-hidden={resolvedDirection !== "before" ? true : undefined}
+            aria-hidden={resolvedDirection === "before" ? undefined : true}
             aria-label={t("flashcard.neighborArrowBefore")}
             role="img"
             size={48}
@@ -85,7 +85,7 @@ export const FlashcardCardDisplay = ({
         </div>
         {isNeighborMode && (
           <IconChevronRight
-            aria-hidden={resolvedDirection !== "after" ? true : undefined}
+            aria-hidden={resolvedDirection === "after" ? undefined : true}
             aria-label={t("flashcard.neighborArrowAfter")}
             role="img"
             size={48}
