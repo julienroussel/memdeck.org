@@ -59,16 +59,16 @@
     "postcss-simple-vars": "7.0.1",
     "sharp": "0.34.5",
     "typescript": "5.9.3",
-    "ultracite": "7.3.0",
+    "ultracite": "7.3.1",
     "vite": "8.0.0",
     "vite-plugin-pwa": "1.2.0",
     "vitest": "4.1.0",
     "workbox-window": "7.4.0"
   },
   "dependencies": {
-    "@mantine/core": "8.3.16",
-    "@mantine/hooks": "8.3.16",
-    "@mantine/notifications": "8.3.16",
+    "@mantine/core": "8.3.17",
+    "@mantine/hooks": "8.3.17",
+    "@mantine/notifications": "8.3.17",
     "@tabler/icons-react": "3.40.0",
     "i18next": "25.8.18",
     "react": "19.2.4",
@@ -93,7 +93,8 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "sharp"
+      "@swc/core",
+      "lefthook"
     ]
   }
 }
