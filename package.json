@@ -48,11 +48,11 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react-swc": "4.3.0",
-    "@vitest/coverage-v8": "4.1.0",
+    "@vitest/coverage-v8": "4.1.1",
     "fta-cli": "3.0.0",
     "globals": "17.4.0",
     "happy-dom": "20.8.4",
-    "knip": "6.0.2",
+    "knip": "6.0.3",
     "lefthook": "2.1.4",
     "postcss": "8.5.8",
     "postcss-preset-mantine": "1.18.0",
@@ -60,9 +60,9 @@
     "sharp": "0.34.5",
     "typescript": "5.9.3",
     "ultracite": "7.3.2",
-    "vite": "8.0.1",
+    "vite": "8.0.2",
     "vite-plugin-pwa": "1.2.0",
-    "vitest": "4.1.0",
+    "vitest": "4.1.1",
     "workbox-window": "7.4.0"
   },
   "dependencies": {
@@ -76,7 +76,7 @@
     "react-error-boundary": "6.1.1",
     "react-ga4": "2.1.0",
     "react-i18next": "16.6.2",
-    "react-router": "7.13.1",
+    "react-router": "7.13.2",
     "web-vitals": "5.1.0"
   },
   "browserslist": {
