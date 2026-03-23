@@ -157,7 +157,7 @@ This project uses **Ultracite** (a Biome preset) for formatting and linting.
 
 ## Configuration Files
 
-- **knip.json**: Dependency and export checker config. Ignores `@biomejs/biome`, `globals`, and `lefthook`
+- **knip.json**: Dependency and export checker config. Ignores `@biomejs/biome` and `globals`
 - **tsconfig.json**: Project references to `tsconfig.app.json` and `tsconfig.node.json`
 - **vite.config.ts**: Minimal Vite config with React plugin
 - **vitest.config.ts**: Test runner configuration
