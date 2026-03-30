@@ -70,7 +70,7 @@
     "@mantine/hooks": "8.3.18",
     "@mantine/notifications": "8.3.18",
     "@tabler/icons-react": "3.41.1",
-    "i18next": "25.10.10",
+    "i18next": "26.0.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-error-boundary": "6.1.1",
