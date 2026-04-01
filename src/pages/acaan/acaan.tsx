@@ -108,7 +108,7 @@ export const Acaan = () => {
   return (
     <div className="fullMantineContainerHeight">
       <Grid
-        gutter={0}
+        gap={0}
         overflow="hidden"
         style={{
           display: "grid",

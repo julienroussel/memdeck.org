@@ -11,7 +11,7 @@ const detectedLng = detectLanguage();
 // non-English bundles are lazy-loaded below but fallbackLng covers the gap.
 i18n
   .use(initReactI18next)
-  .init({ ...i18nConfig, lng: detectedLng, initImmediate: false });
+  .init({ ...i18nConfig, lng: detectedLng, initAsync: false });
 
 // Always start with "en" since English is the bundled fallback rendered during
 // the loading gap.  Once changeLanguage() finishes below it will set the
