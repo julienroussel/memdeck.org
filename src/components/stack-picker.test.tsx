@@ -75,6 +75,9 @@ describe("StackPicker", () => {
       expect(
         screen.getByRole("option", { name: "Redford Stack" })
       ).toBeInTheDocument();
+      expect(
+        screen.getByRole("option", { name: "Infinity" })
+      ).toBeInTheDocument();
     });
 
     it("renders a placeholder option when no stack is selected", () => {

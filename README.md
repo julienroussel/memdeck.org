@@ -72,6 +72,7 @@ Toggle themes freely. Your preference is saved across sessions.
 | Redford | Patrick Redford |
 | Particle | Joshua Jay |
 | Elephant | Pierre Boc & Yves Meret |
+| Infinity | Tim Conover |
 
 ## Getting Started
 

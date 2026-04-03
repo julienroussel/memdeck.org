@@ -96,7 +96,7 @@ Curated collection of books and resources for memorized deck study:
 
 ## Supported Stacks
 
-MemDeck supports six memorized deck systems:
+MemDeck supports seven memorized deck systems:
 
 1. **Tamariz (Mnemonica)** by Juan Tamariz - The most widely used memorized stack in the world. Published in 1991, it has built-in properties like stay-stack sequences and is designed for a vast repertoire of effects.
 
@@ -109,6 +109,8 @@ MemDeck supports six memorized deck systems:
 5. **Particle System** by Joshua Jay - A relatively recent stack designed with a strong emphasis on ease of memorization through patterns and groupings.
 
 6. **Elephant** by Pierre Boc & Yves Meret - A stack built on image-based associations and wordplay, designed for fast memorization and easy recall. Prioritizes accessibility and retention over built-in mathematical properties, making it ideal for magicians who want reliable recall without deep sequential drilling.
+
+7. **Infinity** by Tim Conover - A stack that combines three systems in one: Si Stebbins, the Infinity Stack, and the Odd/Even Stack, all capable of transitioning to new-deck order. Designed so that memorizing one order gives you access to three different stacking systems.
 
 ## Technical Details
 

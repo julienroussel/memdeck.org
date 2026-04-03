@@ -62,7 +62,7 @@
   },
   "home": {
     "pageTitle": "MemDeck — Meistere dein memoriertes Kartendeck",
-    "pageDescription": "Kostenloses Online-Tool zum Meistern von memorierten Kartensystemen wie Mnemonica, Aronson, Memorandum, Redford, Particle und Elephant.",
+    "pageDescription": "Kostenloses Online-Tool zum Meistern von memorierten Kartensystemen wie Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant und Infinity.",
     "welcomeNew": "Meistere dein memoriertes Kartendeck",
     "welcomeReturning": "Bereit zum Üben?",
     "intro": "Ich hoffe, diese Tools helfen dir beim Erlernen deines Stacks. Wirf einen Blick in die <guideLink>Anleitung</guideLink> für einen Überblick über alles, was MemDeck bietet. Brauchst du Hilfe oder fehlt etwas? Kontaktiere mich auf <githubLink>GitHub</githubLink>!",
@@ -381,14 +381,15 @@
     "gettingStarted": {
       "title": "Erste Schritte",
       "intro": "MemDeck ist ein Trainingstool für Zauberkünstler und Gedächtnisenthusiasten, die ein memoriertes Kartendeck meistern wollen. Es hilft dir, Kartenpositionen durch Flashcard-Übungen und Tools zu trainieren, damit du jede Karte an jeder Position abrufen kannst — sofort.",
-      "selectStack": "Um zu beginnen, wähle einen Stack über das Dropdown am unteren Rand der Seitenleiste. MemDeck unterstützt sechs memorierte Kartensysteme:",
+      "selectStack": "Um zu beginnen, wähle einen Stack über das Dropdown am unteren Rand der Seitenleiste. MemDeck unterstützt sieben memorierte Kartensysteme:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
         "memorandum": "<bold>Memorandum</bold> — Woody Aragón",
         "redford": "<bold>Redford Stack</bold> — Patrick Redford",
         "particle": "<bold>Particle System</bold> — Joshua Jay",
-        "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret"
+        "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret",
+        "infinity": "<bold>Infinity</bold> — Tim Conover"
       },
       "alertTitle": "Wähle zuerst einen Stack",
       "alertDescription": "Die meisten Trainingstools erfordern einen ausgewählten Stack. Wähle einen aus, um Flashcard, ACAAN und den Werkzeugkasten freizuschalten.",

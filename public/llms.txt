@@ -28,6 +28,7 @@ A global per-stack setting lets users focus training on a specific range of posi
 - Redford Stack by Patrick Redford
 - Particle System by Joshua Jay
 - Elephant by Pierre Boc & Yves Meret
+- Infinity by Tim Conover
 
 ## Technical Details
 
