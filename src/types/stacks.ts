@@ -3,6 +3,7 @@ import type { PlayingCard } from "./playingcard";
 import type { StackLimits } from "./stack-limits";
 import { aronson } from "./stacks/aronson";
 import { elephant } from "./stacks/elephant";
+import { infinity } from "./stacks/infinity";
 import { memorandum } from "./stacks/memorandum";
 import { mnemonica } from "./stacks/mnemonica";
 import { particle } from "./stacks/particle";
@@ -30,6 +31,7 @@ export const stacks = {
   redford,
   particle,
   elephant,
+  infinity,
 } as const;
 
 export type StackKey = keyof typeof stacks;

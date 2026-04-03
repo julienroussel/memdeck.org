@@ -62,7 +62,7 @@
   },
   "home": {
     "pageTitle": "MemDeck — Master your memorized deck",
-    "pageDescription": "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, Particle, and Elephant.",
+    "pageDescription": "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant, and Infinity.",
     "welcomeNew": "Master your memorized deck",
     "welcomeReturning": "Ready to train?",
     "intro": "Hope these tools help you level up your memorized deck learning. Check out the <guideLink>guide</guideLink> for a walkthrough of everything MemDeck offers. Need a hand or think something's missing? Hit me up on <githubLink>GitHub</githubLink>!",
@@ -381,14 +381,15 @@
     "gettingStarted": {
       "title": "Getting Started",
       "intro": "MemDeck is a training tool for magicians and memory enthusiasts who want to master a memorized deck. It helps you drill card positions through flashcard exercises and utilities so you can recall any card at any position — instantly.",
-      "selectStack": "To get started, select a stack using the dropdown at the bottom of the sidebar. MemDeck supports six memorized deck systems:",
+      "selectStack": "To get started, select a stack using the dropdown at the bottom of the sidebar. MemDeck supports seven memorized deck systems:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
         "memorandum": "<bold>Memorandum</bold> — Woody Aragón",
         "redford": "<bold>Redford Stack</bold> — Patrick Redford",
         "particle": "<bold>Particle System</bold> — Joshua Jay",
-        "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret"
+        "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret",
+        "infinity": "<bold>Infinity</bold> — Tim Conover"
       },
       "selected": "Selected",
       "alertTitle": "Pick a stack first",

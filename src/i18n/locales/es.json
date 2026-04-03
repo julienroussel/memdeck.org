@@ -62,7 +62,7 @@
   },
   "home": {
     "pageTitle": "MemDeck — Domina tu baraja memorizada",
-    "pageDescription": "Herramienta online gratuita para dominar sistemas de barajas memorizadas como Mnemonica, Aronson, Memorandum, Redford, Particle y Elephant.",
+    "pageDescription": "Herramienta online gratuita para dominar sistemas de barajas memorizadas como Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant e Infinity.",
     "welcomeNew": "Domina tu baraja memorizada",
     "welcomeReturning": "¿Listo para entrenar?",
     "intro": "Espero que estas herramientas te ayuden a mejorar tu aprendizaje del stack. Consulta la <guideLink>guía</guideLink> para un recorrido por todo lo que MemDeck ofrece. ¿Necesitas ayuda o echas algo en falta? ¡Escríbeme en <githubLink>GitHub</githubLink>!",
@@ -381,14 +381,15 @@
     "gettingStarted": {
       "title": "Primeros pasos",
       "intro": "MemDeck es una herramienta de entrenamiento para magos y entusiastas de la memoria que quieren dominar una baraja memorizada. Te ayuda a practicar posiciones de cartas mediante ejercicios de Flashcard y utilidades para recordar cualquier carta en cualquier posición, al instante.",
-      "selectStack": "Para empezar, selecciona un stack en el menú desplegable de la parte inferior de la barra lateral. MemDeck admite seis sistemas de barajas memorizadas:",
+      "selectStack": "Para empezar, selecciona un stack en el menú desplegable de la parte inferior de la barra lateral. MemDeck admite siete sistemas de barajas memorizadas:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
         "memorandum": "<bold>Memorandum</bold> — Woody Aragón",
         "redford": "<bold>Redford Stack</bold> — Patrick Redford",
         "particle": "<bold>Particle System</bold> — Joshua Jay",
-        "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret"
+        "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret",
+        "infinity": "<bold>Infinity</bold> — Tim Conover"
       },
       "alertTitle": "Elige un stack primero",
       "alertDescription": "La mayoría de las herramientas de entrenamiento requieren un stack seleccionado. Elige uno para desbloquear los modos Flashcard, ACAAN y Caja de herramientas.",

@@ -62,7 +62,7 @@
   },
   "home": {
     "pageTitle": "MemDeck — Beheers je gememoriseerde kaartspel",
-    "pageDescription": "Gratis online tool voor het beheersen van gememoriseerde kaartsystemen zoals Mnemonica, Aronson, Memorandum, Redford, Particle en Elephant.",
+    "pageDescription": "Gratis online tool voor het beheersen van gememoriseerde kaartsystemen zoals Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant en Infinity.",
     "welcomeNew": "Beheers je gememoriseerde kaartspel",
     "welcomeReturning": "Klaar om te trainen?",
     "intro": "Hopelijk helpen deze tools je om je stack beter te leren. Bekijk de <guideLink>gids</guideLink> voor een overzicht van alles wat MemDeck biedt. Hulp nodig of mist er iets? Neem contact op via <githubLink>GitHub</githubLink>!",
@@ -381,14 +381,15 @@
     "gettingStarted": {
       "title": "Aan de slag",
       "intro": "MemDeck is een trainingstool voor goochelaars en geheugenliefhebbers die een gememoriseerd kaartspel willen beheersen. Het helpt je kaartposities te oefenen met flashcards en hulpmiddelen zodat je elke kaart op elke positie kunt herinneren — direct.",
-      "selectStack": "Om te beginnen, selecteer een stack in het keuzemenu onderaan de zijbalk. MemDeck ondersteunt zes gememoriseerde kaartsystemen:",
+      "selectStack": "Om te beginnen, selecteer een stack in het keuzemenu onderaan de zijbalk. MemDeck ondersteunt zeven gememoriseerde kaartsystemen:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
         "memorandum": "<bold>Memorandum</bold> — Woody Aragón",
         "redford": "<bold>Redford Stack</bold> — Patrick Redford",
         "particle": "<bold>Particle System</bold> — Joshua Jay",
-        "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret"
+        "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret",
+        "infinity": "<bold>Infinity</bold> — Tim Conover"
       },
       "alertTitle": "Selecteer eerst een stack",
       "alertDescription": "De meeste trainingstools vereisen een geselecteerde stack. Kies er een om Flashcard, ACAAN en Gereedschap te ontgrendelen.",
