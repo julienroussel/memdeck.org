@@ -8,10 +8,10 @@ import { test } from "./fixtures/test-setup";
 
 // URL patterns
 const HOME_URL_PATTERN = /\/$/;
-const FLASHCARD_URL_PATTERN = /\/flashcard$/;
-const ACAAN_URL_PATTERN = /\/acaan$/;
-const TOOLBOX_URL_PATTERN = /\/toolbox$/;
-const RESOURCES_URL_PATTERN = /\/resources$/;
+const FLASHCARD_URL_PATTERN = /\/flashcard\/?$/;
+const ACAAN_URL_PATTERN = /\/acaan\/?$/;
+const TOOLBOX_URL_PATTERN = /\/toolbox\/?$/;
+const RESOURCES_URL_PATTERN = /\/resources\/?$/;
 
 test.describe("Error Scenarios - RequireStack Guard", () => {
   test("should show no-stack message when navigating to flashcard without selected stack", async ({
