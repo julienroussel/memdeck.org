@@ -19,7 +19,7 @@ export const AcaanTraining = () => {
       <Space h="sm" />
       <Text>{t("guide.acaanTraining.description")}</Text>
       <Space h="xs" />
-      <Anchor component={Link} to="/acaan">
+      <Anchor component={Link} to="/acaan/">
         {t("guide.acaanTraining.link")}
       </Anchor>
     </section>

@@ -73,7 +73,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 
 ### Application Structure
 
-- **Routing**: Route definitions in `src/routes.tsx`, route paths centralized in `src/constants.ts` (`ROUTES` object), `BrowserRouter` in `src/provider.tsx`. All routes are statically pre-rendered at build time. `public/404.html` is a standalone 404 page. Pages are lazy-loaded with `lazyWithReload` (a custom wrapper around `React.lazy` with chunk-error retry) and `Suspense`
+- **Routing**: Route definitions in `src/routes.tsx`, route paths centralized in `src/constants.ts` (`ROUTES` object), `BrowserRouter` in `src/provider.tsx`. All routes are statically pre-rendered at build time. `public/404.html` is a standalone 404 page. Pages are lazy-loaded with `lazyWithReload` (a custom wrapper around `React.lazy` with chunk-error retry) and `Suspense`. **All route paths and internal links must use trailing slashes** (e.g., `/spot-check/`, not `/spot-check`) to match the canonical URLs, sitemap, and GitHub Pages directory structure — omitting the trailing slash causes a 301 redirect that hurts SEO
 - **UI Framework**: Mantine with custom color scheme management stored in localStorage
 - **Pages**: Self-contained in `src/pages/` — each training mode is its own page. Stack-dependent pages are wrapped in `RequireStack`
 - **Components**: Reusable UI in `src/components/` (e.g., `CardSpread`, `StackPicker`, `NumberCard`, `ShareButton`, `ShareNudge`, `NavFooter`)

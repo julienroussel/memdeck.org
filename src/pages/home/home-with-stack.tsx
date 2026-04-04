@@ -65,7 +65,7 @@ export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
           <Button
             component={Link}
             leftSection={<IconCards aria-hidden="true" size={18} />}
-            to="/flashcard"
+            to="/flashcard/"
             variant="light"
           >
             {t("home.featureFlashcardTitle")}
@@ -74,7 +74,7 @@ export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
             color="cyan"
             component={Link}
             leftSection={<IconEyeSearch aria-hidden="true" size={18} />}
-            to="/spot-check"
+            to="/spot-check/"
             variant="light"
           >
             {t("home.featureSpotCheckTitle")}
@@ -83,7 +83,7 @@ export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
             color="orange"
             component={Link}
             leftSection={<IconTarget aria-hidden="true" size={18} />}
-            to="/acaan"
+            to="/acaan/"
             variant="light"
           >
             {t("home.featureAcaanTitle")}
@@ -92,7 +92,7 @@ export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
             color="green"
             component={Link}
             leftSection={<IconTools aria-hidden="true" size={18} />}
-            to="/toolbox"
+            to="/toolbox/"
             variant="light"
           >
             {t("home.featureToolboxTitle")}
@@ -101,7 +101,7 @@ export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
             color="violet"
             component={Link}
             leftSection={<IconChartBar aria-hidden="true" size={18} />}
-            to="/stats"
+            to="/stats/"
             variant="light"
           >
             {t("home.featureStatsTitle")}

@@ -17,7 +17,7 @@ export const StatsSection = () => {
       <Space h="sm" />
       <Text>{t("guide.stats.description")}</Text>
       <Space h="xs" />
-      <Anchor component={Link} to="/stats">
+      <Anchor component={Link} to="/stats/">
         {t("guide.stats.link")}
       </Anchor>
     </section>

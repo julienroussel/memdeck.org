@@ -82,7 +82,7 @@ export const HomeNoStack = () => {
         radius="md"
         shadow="sm"
         td="none"
-        to="/guide"
+        to="/guide/"
         withBorder
       >
         <Group>

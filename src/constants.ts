@@ -74,12 +74,12 @@ export const RANGE_PRESETS = [13, 26, 39, 52] as const;
 /** All route paths used by the app — shared between routes.tsx and the pre-render script */
 export const ROUTES = {
   home: "/",
-  guide: "/guide",
-  resources: "/resources",
-  flashcard: "/flashcard",
-  spotCheck: "/spot-check",
-  acaan: "/acaan",
-  toolbox: "/toolbox",
-  stats: "/stats",
-  about: "/about",
+  guide: "/guide/",
+  resources: "/resources/",
+  flashcard: "/flashcard/",
+  spotCheck: "/spot-check/",
+  acaan: "/acaan/",
+  toolbox: "/toolbox/",
+  stats: "/stats/",
+  about: "/about/",
 } as const;

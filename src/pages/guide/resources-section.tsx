@@ -17,7 +17,7 @@ export const ResourcesSection = () => {
       <Space h="sm" />
       <Text>{t("guide.resources.description")}</Text>
       <Space h="xs" />
-      <Anchor component={Link} to="/resources">
+      <Anchor component={Link} to="/resources/">
         {t("guide.resources.link")}
       </Anchor>
     </section>

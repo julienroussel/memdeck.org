@@ -52,7 +52,7 @@ describe("ROUTES", () => {
       Object.values(ROUTES).map((route) =>
         route === "/"
           ? "http://localhost/index.html"
-          : `http://localhost${route}/index.html`
+          : `http://localhost${route}index.html`
       )
     );
 
