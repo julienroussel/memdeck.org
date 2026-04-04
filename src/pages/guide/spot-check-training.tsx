@@ -40,7 +40,7 @@ export const SpotCheckTraining = () => {
       <Space h="sm" />
       <Text>{t("guide.spotCheckTraining.settings")}</Text>
       <Space h="xs" />
-      <Anchor component={Link} to="/spot-check">
+      <Anchor component={Link} to="/spot-check/">
         {t("guide.spotCheckTraining.link")}
       </Anchor>
     </section>

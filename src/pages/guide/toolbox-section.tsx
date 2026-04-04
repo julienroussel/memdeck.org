@@ -44,7 +44,7 @@ export const ToolboxSection = () => {
         </List.Item>
       </List>
       <Space h="sm" />
-      <Anchor component={Link} to="/toolbox">
+      <Anchor component={Link} to="/toolbox/">
         {t("guide.toolbox.link")}
       </Anchor>
     </section>

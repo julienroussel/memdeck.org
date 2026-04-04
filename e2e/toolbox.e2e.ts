@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures/test-setup";
 
-const TOOLBOX_URL_PATTERN = /\/toolbox$/;
+const TOOLBOX_URL_PATTERN = /\/toolbox\/?$/;
 const HOME_URL_PATTERN = /\/$/;
 const SEARCH_INPUT_PATTERN = /search/i;
 

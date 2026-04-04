@@ -46,7 +46,7 @@ export const FlashcardTraining = () => {
       <Space h="sm" />
       <Text>{t("guide.flashcardTraining.settings")}</Text>
       <Space h="xs" />
-      <Anchor component={Link} to="/flashcard">
+      <Anchor component={Link} to="/flashcard/">
         {t("guide.flashcardTraining.link")}
       </Anchor>
     </section>
