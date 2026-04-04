@@ -461,6 +461,33 @@
       "stackRange": "Utilisez la plage du stack à côté du sélecteur de stack dans le menu pour vous entraîner sur une partie des positions. Commencez avec quelques cartes et élargissez au fur et à mesure que vous mémorisez."
     }
   },
+  "faq": {
+    "pageTitle": "FAQ — Questions sur les jeux mémorisés",
+    "pageDescription": "Réponses aux questions fréquentes sur les jeux mémorisés, les stacks comme Mnemonica et Aronson, l'ACAAN, les techniques d'entraînement et MemDeck.",
+    "title": "Questions fréquentes",
+    "subtitle": "Questions courantes sur les jeux mémorisés et l'utilisation de MemDeck.",
+    "whatIsMemDeckQ": "Qu'est-ce qu'un jeu mémorisé ?",
+    "whatIsMemDeckA": "Un jeu mémorisé (aussi appelé stack ou mem-deck) est un jeu complet de 52 cartes arrangé dans un ordre précis qu'un magicien apprend par cœur. Une fois mémorisé, l'artiste peut instantanément nommer la carte à n'importe quelle position ou donner la position de n'importe quelle carte nommée. Cela rend possible une magie qui semble impossible — le jeu peut être montré et manipulé librement tandis que le magicien connaît secrètement l'emplacement de chaque carte.",
+    "bestForBeginnersQ": "Quel est le meilleur jeu mémorisé pour débuter ?",
+    "bestForBeginnersA": "Les deux points de départ les plus populaires sont le stack Mnemonica de Juan Tamariz et le stack Aronson de Simon Aronson. Mnemonica est le stack le plus utilisé au monde et dispose du plus grand nombre d'effets publiés. Aronson est particulièrement populaire aux États-Unis et reconnu pour ses propriétés mathématiques. Choisissez celui dont les effets publiés vous attirent le plus — vous allez travailler avec pendant longtemps.",
+    "howLongQ": "Combien de temps faut-il pour mémoriser un jeu de cartes ?",
+    "howLongA": "La plupart des magiciens peuvent mémoriser les 52 positions en 1 à 4 semaines de pratique quotidienne régulière. Le rappel instantané — être capable de nommer la position d'une carte sans hésitation — prend généralement 2 à 6 mois d'entraînement régulier. Des outils comme les modes Flashcard et Spot Check de MemDeck accélèrent ce processus en proposant des sessions d'entraînement structurées et répétables.",
+    "whatIsMnemonicaQ": "Qu'est-ce que le stack Mnemonica ?",
+    "whatIsMnemonicaA": "Mnemonica est un système de jeu mémorisé créé par Juan Tamariz et publié dans son livre éponyme de 1991. C'est le stack le plus utilisé au monde. Il intègre des propriétés mathématiques comme les séquences stay-stack et a été conçu pour permettre un vaste répertoire d'effets. Le livre de Tamariz comprend des dizaines de routines et la théorie sous-jacente du travail avec un jeu mémorisé.",
+    "whatIsAronsonQ": "Qu'est-ce que le stack Aronson ?",
+    "whatIsAronsonA": "Le stack Aronson est un système de jeu mémorisé créé par Simon Aronson. C'est l'un des stacks les plus populaires aux États-Unis. Il est reconnu pour ses propriétés mathématiques et le nombre important d'effets publiés spécifiquement conçus pour lui, notamment dans « The Aronson Approach », « Bound to Please » et l'essai PDF gratuit « Memories Are Made of This ».",
+    "whatIsAcaanQ": "Qu'est-ce que l'ACAAN en magie des cartes ?",
+    "whatIsAcaanA": "ACAAN signifie « Any Card At Any Number ». C'est l'un des effets les plus célèbres en magie des cartes — un spectateur nomme une carte et un numéro de 1 à 52, et la carte nommée se trouve exactement à cette position dans le jeu. Avec un jeu mémorisé, le magicien calcule mentalement combien de cartes couper pour obtenir ce résultat. L'entraînement ACAAN de MemDeck vous aide à pratiquer ces calculs mentaux avec des exercices chronométrés.",
+    "differenceMnemonicaAronsonQ": "Quelle est la différence entre Mnemonica et Aronson ?",
+    "differenceMnemonicaAronsonA": "Mnemonica (de Juan Tamariz) et Aronson (de Simon Aronson) sont deux systèmes de jeu mémorisé différents — chacun utilise un ordre de cartes complètement distinct. Mnemonica est le stack le plus utilisé au monde et intègre des séquences stay-stack. Aronson est particulièrement populaire aux États-Unis et met l'accent sur les propriétés mathématiques. Le choix entre les deux dépend souvent des effets publiés qui vous attirent, car changer de stack plus tard signifie réapprendre les 52 positions.",
+    "howToPracticeQ": "Comment s'entraîner avec un jeu mémorisé ?",
+    "howToPracticeA": "Un entraînement efficace combine plusieurs approches : exercices de flashcard (rappel de la carte au numéro et du numéro à la carte), Spot Check (détection d'anomalies dans un jeu étalé), calculs ACAAN et répétition avec un jeu physique. Commencez par apprendre les positions en petits groupes — la plage du stack dans MemDeck vous permet de vous entraîner sur les positions 1 à 13, puis d'élargir à 1–26, et ainsi de suite. 10 à 15 minutes de pratique quotidienne sont plus efficaces que de longues sessions occasionnelles.",
+    "whatIsFaroQ": "Qu'est-ce qu'un mélange faro ?",
+    "whatIsFaroA": "Un mélange faro (aussi appelé mélange parfait) est une technique où le jeu est divisé en deux moitiés égales et les cartes sont parfaitement entrelacées une à une. Dans un out-faro, les cartes du dessus et du dessous restent en place. Dans un in-faro, elles se déplacent vers l'intérieur. Les mélanges faro sont un outil clé pour les pratiquants de jeux mémorisés, car ils transforment le stack de manière prévisible et réversible. L'outil Mélange Faro de MemDeck vous permet de visualiser le résultat de plusieurs faros sur votre stack.",
+    "offlineQ": "Puis-je utiliser MemDeck hors ligne ?",
+    "offlineA": "Oui. MemDeck est une Progressive Web App (PWA) qui fonctionne entièrement hors ligne une fois chargée. Vous pouvez l'installer sur votre téléphone ou tablette pour une expérience similaire à une application native. Entraînez-vous en coulisses, dans le métro ou dans l'avion — aucune connexion internet requise. Toutes vos données d'entraînement sont stockées localement sur votre appareil.",
+    "readGuide": "Lire le guide complet"
+  },
   "stackLimits": {
     "label": "Plage du stack",
     "description": "Positions {{start}}–{{end}} ({{count}} cartes)",

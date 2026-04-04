@@ -132,6 +132,9 @@
       media="(prefers-color-scheme: dark)"
     >
     <link rel="canonical" href="https://memdeck.org/">
+    <link rel="llms-txt" href="/llms.txt">
+    <meta name="author" content="Julien Roussel">
+    <meta name="robots" content="max-snippet:-1, max-image-preview:large">
 
     <meta
       name="theme-color"
@@ -184,9 +187,23 @@
         name: "MemDeck",
         url: "https://memdeck.org",
         description:
-          "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, Particle, and Elephant.",
+          "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant, and Infinity.",
         applicationCategory: "EducationalApplication",
         operatingSystem: "Any",
+        browserRequirements:
+          "Requires a modern web browser with JavaScript enabled",
+        featureList: [
+          "Flashcard Training",
+          "Spot Check Training",
+          "ACAAN Calculator",
+          "Stack Lookup",
+          "Faro Shuffle Simulator",
+          "Card Spelling",
+          "Stay Stack Sequences",
+          "Session Statistics",
+        ],
+        inLanguage: ["en", "fr", "es", "de", "it", "nl", "pt"],
+        screenshot: "https://memdeck.org/screenshots/home-desktop.png",
         offers: {
           "@type": "Offer",
           price: "0",
@@ -195,7 +212,9 @@
         author: {
           "@type": "Person",
           name: "Julien Roussel",
+          url: "https://linktr.ee/julien.roussel",
         },
+        sameAs: ["https://github.com/julienroussel/memdeck.org"],
       });
       document.head.appendChild(ld);
     })();

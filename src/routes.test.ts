@@ -14,6 +14,7 @@ type RoutesUsed =
   | "home"
   | "guide"
   | "resources"
+  | "faq"
   | "flashcard"
   | "spotCheck"
   | "acaan"

@@ -461,6 +461,33 @@
       "stackRange": "Usa l'intervallo dello stack accanto al selettore nel menu per allenarti su una parte delle posizioni. Parti da poche ed espandi man mano che memorizzi più carte."
     }
   },
+  "faq": {
+    "pageTitle": "FAQ — Domande sul mazzo memorizzato",
+    "pageDescription": "Risposte alle domande più frequenti su mazzi memorizzati, sistemi di stack come Mnemonica e Aronson, ACAAN, tecniche di allenamento e MemDeck.",
+    "title": "Domande frequenti",
+    "subtitle": "Domande comuni sui mazzi memorizzati e su come usare MemDeck.",
+    "whatIsMemDeckQ": "Cos'è un mazzo memorizzato?",
+    "whatIsMemDeckA": "Un mazzo memorizzato (detto anche stack memorizzato o mem-deck) è un mazzo completo di 52 carte disposto in un ordine preciso che il mago impara a memoria. Una volta memorizzato, il performer può nominare istantaneamente la carta in qualsiasi posizione o indicare la posizione di qualsiasi carta nominata. Questo rende possibili effetti di cartomagia apparentemente impossibili — il mazzo può essere mostrato e maneggiato liberamente mentre il mago conosce segretamente la posizione di ogni carta.",
+    "bestForBeginnersQ": "Qual è il miglior mazzo memorizzato per iniziare?",
+    "bestForBeginnersA": "I due punti di partenza più diffusi sono lo stack Mnemonica di Juan Tamariz e lo stack Aronson di Simon Aronson. Mnemonica è lo stack più usato al mondo e vanta il maggior numero di effetti pubblicati. Aronson è particolarmente popolare negli Stati Uniti ed è noto per le sue proprietà matematiche. Scegli quello i cui effetti pubblicati ti attraggono di più — ti allenerai con quello per molto tempo.",
+    "howLongQ": "Quanto tempo serve per memorizzare un mazzo di carte?",
+    "howLongA": "La maggior parte dei maghi riesce a memorizzare tutte le 52 posizioni in 1–4 settimane di pratica quotidiana costante. Il richiamo istantaneo — nominare la posizione di qualsiasi carta senza esitazione — richiede in genere 2–6 mesi di allenamento regolare. Strumenti come la modalità Flashcard e lo Spot Check di MemDeck accelerano il processo offrendo sessioni di pratica strutturate e ripetibili.",
+    "whatIsMnemonicaQ": "Cos'è lo stack Mnemonica?",
+    "whatIsMnemonicaA": "Mnemonica è un sistema di mazzo memorizzato creato da Juan Tamariz e pubblicato nel suo omonimo libro del 1991. È lo stack più usato al mondo. Lo stack ha proprietà matematiche integrate, come le sequenze stay-stack, ed è stato progettato per supportare un vasto repertorio di effetti con le carte. Il libro di Tamariz include decine di routine e la teoria alla base del lavoro con il mazzo memorizzato.",
+    "whatIsAronsonQ": "Cos'è lo stack Aronson?",
+    "whatIsAronsonA": "Lo stack Aronson è un sistema di mazzo memorizzato creato da Simon Aronson. È uno degli stack più diffusi negli Stati Uniti. È noto per le sue proprietà matematiche e per l'ampio corpus di effetti pubblicati specificamente per questo stack, tra cui materiale in \"The Aronson Approach\", \"Bound to Please\" e il PDF gratuito \"Memories Are Made of This\".",
+    "whatIsAcaanQ": "Cos'è l'ACAAN nella cartomagia?",
+    "whatIsAcaanA": "ACAAN sta per \"Any Card At Any Number\". È uno degli effetti più celebri della cartomagia — uno spettatore nomina una carta qualsiasi e un numero qualsiasi da 1 a 52, e la carta nominata si trova esattamente in quella posizione nel mazzo. Con un mazzo memorizzato, il performer calcola mentalmente quante carte tagliare per ottenere questo risultato. L'allenamento ACAAN di MemDeck ti aiuta a esercitare questi calcoli mentali con esercizi a tempo.",
+    "differenceMnemonicaAronsonQ": "Qual è la differenza tra Mnemonica e Aronson?",
+    "differenceMnemonicaAronsonA": "Mnemonica (di Juan Tamariz) e Aronson (di Simon Aronson) sono due sistemi di mazzo memorizzato diversi — ciascuno usa un ordine delle carte completamente differente. Mnemonica è lo stack più usato a livello globale e include sequenze stay-stack integrate. Aronson è particolarmente popolare negli Stati Uniti e punta sulle proprietà matematiche. La scelta tra i due dipende spesso dagli effetti pubblicati che ti attraggono di più, dato che cambiare stack in seguito significa reimparare tutte le 52 posizioni.",
+    "howToPracticeQ": "Come allenarsi con un mazzo memorizzato?",
+    "howToPracticeA": "Un allenamento efficace con il mazzo memorizzato combina diversi approcci: esercizi con flashcard (richiamo carta-numero e numero-carta), spot check (individuare anomalie nel mazzo steso), calcoli ACAAN e prove con un mazzo fisico. Inizia imparando le posizioni a piccoli gruppi — la funzione intervallo dello stack di MemDeck ti permette di allenarti sulle posizioni 1–13, poi espandere a 1–26, e così via. 10–15 minuti di pratica quotidiana sono più efficaci di sessioni lunghe occasionali.",
+    "whatIsFaroQ": "Cos'è la mescola faro?",
+    "whatIsFaroA": "La mescola faro (detta anche mescola perfetta) è una tecnica in cui il mazzo viene diviso in due metà uguali e le carte vengono intercalate perfettamente una a una. Nell'out-faro, la carta superiore e quella inferiore restano al loro posto. Nell'in-faro, si spostano verso l'interno. Le mescole faro sono uno strumento chiave per chi lavora con il mazzo memorizzato, perché trasformano lo stack in modi prevedibili e reversibili. Lo strumento Mescola Faro di MemDeck ti permette di visualizzare il risultato di più mescole faro sul tuo stack.",
+    "offlineQ": "Posso usare MemDeck offline?",
+    "offlineA": "Sì. MemDeck è una Progressive Web App (PWA) che funziona completamente offline una volta caricata. Puoi installarla sul telefono o sul tablet per un'esperienza simile a un'app nativa. Allenati nel backstage, in metropolitana o in aereo — non serve connessione a internet. Tutti i dati di allenamento sono archiviati localmente sul tuo dispositivo.",
+    "readGuide": "Leggi la guida completa"
+  },
   "stackLimits": {
     "label": "Intervallo dello stack",
     "description": "Posizioni {{start}}–{{end}} ({{count}} carte)",

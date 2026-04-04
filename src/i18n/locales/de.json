@@ -278,11 +278,11 @@
     "install": "Installieren",
     "modalTitle": "MemDeck installieren",
     "iosStep1": "Tippe auf das Teilen-Symbol am unteren Bildschirmrand",
-    "iosStep2": "Scrolle nach unten und tippe auf \u201EZum Home-Bildschirm hinzuf\u00FCgen\u201C",
-    "iosStep3": "Tippe auf \u201EHinzuf\u00FCgen\u201C zur Best\u00E4tigung",
-    "androidStep1": "Tippe auf das Men\u00FC (drei Punkte) oben rechts",
-    "androidStep2": "Tippe auf \u201EZum Startbildschirm hinzuf\u00FCgen\u201C oder \u201EApp installieren\u201C",
-    "androidStep3": "Tippe auf \u201EInstallieren\u201C zur Best\u00E4tigung"
+    "iosStep2": "Scrolle nach unten und tippe auf „Zum Home-Bildschirm hinzufügen“",
+    "iosStep3": "Tippe auf „Hinzufügen“ zur Bestätigung",
+    "androidStep1": "Tippe auf das Menü (drei Punkte) oben rechts",
+    "androidStep2": "Tippe auf „Zum Startbildschirm hinzufügen“ oder „App installieren“",
+    "androidStep3": "Tippe auf „Installieren“ zur Bestätigung"
   },
   "pwaUpdate": {
     "title": "Aktualisiert",
@@ -460,6 +460,33 @@
       "reset": "Verwende die Zurücksetzen-Schaltfläche im Menü, um deine Daten zu löschen. Du kannst nur die Einstellungen zurücksetzen (Trainingshistorie bleibt erhalten) oder alles zurücksetzen.",
       "stackRange": "Verwende den Stack-Bereich neben der Stack-Auswahl im Menü, um nur einen Teil der Positionen zu trainieren. Fang mit wenigen an und erweitere den Bereich, wenn du mehr Karten memoriert hast."
     }
+  },
+  "faq": {
+    "pageTitle": "FAQ — Fragen zum memorierten Kartendeck",
+    "pageDescription": "Antworten auf häufige Fragen zu memorierten Kartendecks, Stack-Systemen wie Mnemonica und Aronson, ACAAN, Übungstechniken und MemDeck.",
+    "title": "Häufig gestellte Fragen",
+    "subtitle": "Häufige Fragen zu memorierten Kartendecks und zur Nutzung von MemDeck.",
+    "whatIsMemDeckQ": "Was ist ein memoriertes Kartendeck?",
+    "whatIsMemDeckA": "Ein memoriertes Kartendeck (auch memorierter Stack oder Mem-Deck genannt) ist ein vollständiges Kartenspiel mit 52 Karten in einer bestimmten Reihenfolge, die sich ein Zauberkünstler einprägt. Einmal memoriert, kann der Vorführende sofort die Karte an jeder Position benennen oder die Position jeder genannten Karte angeben. Das ermöglicht starke Kartenmagie, die unmöglich erscheint — das Deck kann gezeigt und frei gehandhabt werden, während der Zauberkünstler insgeheim die Position jeder einzelnen Karte kennt.",
+    "bestForBeginnersQ": "Welches memorierte Kartendeck eignet sich am besten für Anfänger?",
+    "bestForBeginnersA": "Die beiden beliebtesten Einstiegspunkte sind der Mnemonica-Stack von Juan Tamariz und der Aronson-Stack von Simon Aronson. Mnemonica ist der weltweit am häufigsten verwendete Stack und hat die größte Sammlung veröffentlichter Effekte. Aronson ist besonders in den USA verbreitet und für seine mathematischen Eigenschaften bekannt. Wähle den Stack, dessen veröffentlichte Effekte dich am meisten ansprechen — du wirst lange damit üben.",
+    "howLongQ": "Wie lange dauert es, ein Kartendeck auswendig zu lernen?",
+    "howLongA": "Die meisten Zauberkünstler können alle 52 Kartenpositionen mit konsequentem täglichem Üben in 1–4 Wochen memorieren. Sofortiger Abruf — jede Kartenposition ohne Zögern nennen zu können — erfordert in der Regel 2–6 Monate regelmäßiges Training. Tools wie MemDecks Flashcard-Modus und Spot-Check-Modus beschleunigen diesen Prozess durch strukturierte, wiederholbare Übungssitzungen.",
+    "whatIsMnemonicaQ": "Was ist der Mnemonica-Stack?",
+    "whatIsMnemonicaA": "Mnemonica ist ein memoriertes Kartendeck-System von Juan Tamariz, veröffentlicht in seinem gleichnamigen Buch von 1991. Es ist der weltweit am häufigsten verwendete memorierte Stack. Der Stack hat eingebaute mathematische Eigenschaften wie Stay-Stack-Sequenzen und wurde für ein umfangreiches Repertoire an Karteneffekten konzipiert. Tamariz' Buch enthält Dutzende Routinen und die zugrunde liegende Theorie der Arbeit mit memorierten Kartendecks.",
+    "whatIsAronsonQ": "Was ist der Aronson-Stack?",
+    "whatIsAronsonA": "Der Aronson-Stack ist ein memoriertes Kartendeck-System von Simon Aronson. Er ist einer der beliebtesten Stacks in den USA. Der Stack ist bekannt für seine mathematischen Eigenschaften und die umfangreiche Sammlung veröffentlichter Effekte, die speziell dafür entwickelt wurden — darunter Material in \u201EThe Aronson Approach\u201C, \u201EBound to Please\u201C und dem kostenlosen PDF-Essay \u201EMemories Are Made of This\u201C.",
+    "whatIsAcaanQ": "Was ist ACAAN in der Kartenmagie?",
+    "whatIsAcaanA": "ACAAN steht für \u201EAny Card At Any Number\u201C. Es ist einer der beeindruckendsten Effekte der Kartenmagie — ein Zuschauer nennt eine beliebige Karte und eine beliebige Zahl von 1 bis 52, und die genannte Karte wird genau an dieser Position im Deck gefunden. Mit einem memorierten Kartendeck berechnet der Vorführende im Kopf, wie viele Karten abgehoben werden müssen. MemDecks ACAAN-Trainer hilft dir, diese Kopfrechnungen mit zeitgesteuerten Übungen zu trainieren.",
+    "differenceMnemonicaAronsonQ": "Was ist der Unterschied zwischen Mnemonica und Aronson?",
+    "differenceMnemonicaAronsonA": "Mnemonica (von Juan Tamariz) und Aronson (von Simon Aronson) sind zwei verschiedene memorierte Kartendeck-Systeme — jedes verwendet eine völlig andere Kartenreihenfolge. Mnemonica ist der weltweit am häufigsten verwendete Stack und hat eingebaute Stay-Stack-Sequenzen. Aronson ist besonders in den USA verbreitet und betont mathematische Eigenschaften. Die Wahl zwischen beiden hängt oft davon ab, welche veröffentlichten Effekte dich ansprechen — denn ein späterer Wechsel des Stacks bedeutet, alle 52 Positionen neu zu lernen.",
+    "howToPracticeQ": "Wie übe ich mit einem memorierten Kartendeck?",
+    "howToPracticeA": "Effektives Training mit einem memorierten Kartendeck kombiniert mehrere Ansätze: Flashcard-Übungen (Karte-zu-Nummer und Nummer-zu-Karte), Spot Checks (Anomalien in einem ausgebreiteten Deck erkennen), ACAAN-Berechnungen und Praxisübungen mit einem echten Kartendeck. Lerne die Positionen zunächst in kleinen Gruppen — MemDecks Stack-Bereich-Funktion ermöglicht das Training der Positionen 1–13, dann auf 1–26 erweitern und so weiter. Tägliches Üben von 10–15 Minuten ist effektiver als gelegentliche lange Sitzungen.",
+    "whatIsFaroQ": "Was ist ein Faro-Mischen?",
+    "whatIsFaroA": "Ein Faro-Mischen (auch perfektes Mischen genannt) ist eine Technik, bei der ein Deck in zwei gleiche Hälften geteilt und die Karten einzeln perfekt ineinander verschränkt werden. Bei einem Out-Faro bleiben die oberste und unterste Karte an ihrem Platz. Bei einem In-Faro wandern sie nach innen. Faro-Mischvorgänge sind ein wichtiges Werkzeug für Zauberkünstler, die mit memorierten Kartendecks arbeiten, da sie den Stack auf vorhersehbare und umkehrbare Weise verändern. MemDecks Faro-Mischen-Tool zeigt dir das Ergebnis mehrerer Faros auf deinen Stack.",
+    "offlineQ": "Kann ich MemDeck offline nutzen?",
+    "offlineA": "Ja. MemDeck ist eine Progressive Web App (PWA), die nach dem ersten Laden vollständig offline funktioniert. Du kannst sie auf deinem Smartphone oder Tablet installieren und wie eine native App nutzen. Trainiere hinter der Bühne, in der U-Bahn oder im Flugzeug — keine Internetverbindung nötig. Alle Trainingsdaten werden lokal auf deinem Gerät gespeichert.",
+    "readGuide": "Zur vollständigen Anleitung"
   },
   "stackLimits": {
     "label": "Stack-Bereich",

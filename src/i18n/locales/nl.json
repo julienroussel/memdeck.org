@@ -461,6 +461,33 @@
       "stackRange": "Gebruik het stack-bereik naast de stack-kiezer in het menu om op een deel van de posities te trainen. Begin klein en breid uit naarmate je meer kaarten memoriseert."
     }
   },
+  "faq": {
+    "pageTitle": "FAQ — Vragen over gememoriseerde kaartspellen",
+    "pageDescription": "Antwoorden op veelgestelde vragen over gememoriseerde kaartspellen, stacksystemen zoals Mnemonica en Aronson, ACAAN, oefentechnieken en MemDeck.",
+    "title": "Veelgestelde vragen",
+    "subtitle": "Veelgestelde vragen over gememoriseerde kaartspellen en het gebruik van MemDeck.",
+    "whatIsMemDeckQ": "Wat is een gememoriseerd kaartspel?",
+    "whatIsMemDeckA": "Een gememoriseerd kaartspel (ook wel een gememoriseerde stack of mem-deck genoemd) is een volledig spel van 52 speelkaarten in een vaste volgorde die een goochelaar uit het hoofd leert. Eenmaal gememoriseerd kan de performer direct de kaart op elke positie noemen, of de positie van elke genoemde kaart vertellen. Dit maakt krachtige kaartmagie mogelijk die onmogelijk lijken — het spel kan vrij getoond en gehanteerd worden terwijl de goochelaar stiekem de locatie van elke kaart kent.",
+    "bestForBeginnersQ": "Wat is het beste gememoriseerde kaartspel voor beginners?",
+    "bestForBeginnersA": "De twee populairste startpunten zijn de Mnemonica-stack van Juan Tamariz en de Aronson-stack van Simon Aronson. Mnemonica is de meest gebruikte stack ter wereld en heeft het grootste aanbod aan gepubliceerde effecten. Aronson is vooral populair in de Verenigde Staten en staat bekend om zijn wiskundige eigenschappen. Kies degene waarvan de gepubliceerde effecten je het meest aanspreken — je zult er lang mee oefenen.",
+    "howLongQ": "Hoe lang duurt het om een kaartspel te memoriseren?",
+    "howLongA": "De meeste goochelaars kunnen alle 52 kaartposities in 1 tot 4 weken dagelijkse oefening memoriseren. Directe herkenning — elke kaartpositie zonder aarzeling kunnen noemen — kost doorgaans 2 tot 6 maanden regelmatig oefenen. Functies zoals de flashcard-modus en spot check-modus van MemDeck versnellen dit proces door gestructureerde, herhaalbare oefensessies aan te bieden.",
+    "whatIsMnemonicaQ": "Wat is de Mnemonica-stack?",
+    "whatIsMnemonicaA": "Mnemonica is een gememoriseerd kaartsysteem bedacht door Juan Tamariz en gepubliceerd in zijn gelijknamige boek uit 1991. Het is de meest gebruikte gememoriseerde stack ter wereld. De stack heeft ingebouwde wiskundige eigenschappen zoals stay-stack-sequenties en is ontworpen om een uitgebreid repertoire aan kaarteffecten te ondersteunen. Het boek van Tamariz bevat tientallen routines en de achterliggende theorie van het werken met gememoriseerde kaartspellen.",
+    "whatIsAronsonQ": "Wat is de Aronson-stack?",
+    "whatIsAronsonA": "De Aronson-stack is een gememoriseerd kaartsysteem bedacht door Simon Aronson. Het is een van de populairste stacks in de Verenigde Staten. De stack staat bekend om zijn wiskundige eigenschappen en het uitgebreide aanbod aan effecten die er specifiek voor zijn ontworpen, waaronder materiaal uit \"The Aronson Approach\", \"Bound to Please\" en het gratis PDF-essay \"Memories Are Made of This\".",
+    "whatIsAcaanQ": "Wat is ACAAN in de goochelkunst?",
+    "whatIsAcaanA": "ACAAN staat voor \"Any Card At Any Number\". Het is een van de meest gevierde effecten in de kaartmagie — een toeschouwer noemt een willekeurige kaart en een willekeurig getal van 1 tot 52, en de genoemde kaart blijkt zich op precies die positie in het spel te bevinden. Met een gememoriseerd kaartspel berekent de performer in gedachten hoeveel kaarten er gecoupeerd moeten worden. De ACAAN-trainer van MemDeck helpt je deze mentale berekeningen te oefenen met oefeningen met timer.",
+    "differenceMnemonicaAronsonQ": "Wat is het verschil tussen Mnemonica en Aronson?",
+    "differenceMnemonicaAronsonA": "Mnemonica (van Juan Tamariz) en Aronson (van Simon Aronson) zijn twee verschillende gememoriseerde kaartsystemen — elk met een compleet andere kaartvolgorde. Mnemonica is wereldwijd de meest gebruikte stack en heeft ingebouwde stay-stack-sequenties. Aronson is vooral populair in de VS en legt de nadruk op wiskundige eigenschappen. De keuze komt vaak neer op welke gepubliceerde effecten je het meest aanspreken, aangezien het wisselen van stack betekent dat je alle 52 posities opnieuw moet leren.",
+    "howToPracticeQ": "Hoe oefen ik een gememoriseerd kaartspel?",
+    "howToPracticeA": "Effectief oefenen van een gememoriseerd kaartspel combineert meerdere aanpakken: flashcard-oefeningen (kaart-naar-nummer en nummer-naar-kaart), spot checks (afwijkingen herkennen in een uitgespreid spel), ACAAN-berekeningen en oefenen in de praktijk met een echt kaartspel. Begin met het leren van posities in kleine groepen — de stack-bereik van MemDeck laat je trainen op posities 1 t/m 13, daarna uitbreiden naar 1 t/m 26, enzovoort. Dagelijks 10 tot 15 minuten oefenen is effectiever dan af en toe een lange sessie.",
+    "whatIsFaroQ": "Wat is een faro shuffle?",
+    "whatIsFaroA": "Een faro shuffle (ook wel een perfecte shuffle genoemd) is een techniek waarbij een kaartspel in twee gelijke helften wordt gesplitst en de kaarten perfect een voor een worden afgewisseld. Bij een out-faro blijven de bovenste en onderste kaart op hun plek. Bij een in-faro schuiven ze naar binnen. Faro shuffles zijn een belangrijk hulpmiddel voor performers met een gememoriseerd kaartspel, omdat ze de stack op voorspelbare en omkeerbare manieren transformeren. De Faro Shuffle-tool van MemDeck laat je het resultaat van meerdere faro's op je stack visualiseren.",
+    "offlineQ": "Kan ik MemDeck offline gebruiken?",
+    "offlineA": "Ja. MemDeck is een Progressive Web App (PWA) die volledig offline werkt zodra deze geladen is. Je kunt het op je telefoon of tablet installeren voor een native app-achtige ervaring. Train backstage, in de metro of in het vliegtuig — geen internetverbinding nodig. Al je trainingsgegevens worden lokaal op je apparaat opgeslagen.",
+    "readGuide": "Lees de volledige gids"
+  },
   "stackLimits": {
     "label": "Stack-bereik",
     "description": "Posities {{start}}–{{end}} ({{count}} kaarten)",

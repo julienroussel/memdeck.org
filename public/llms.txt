@@ -2,6 +2,8 @@
 
 > MemDeck is a free, open-source memorized deck trainer for magicians and memory enthusiasts. It helps users master famous memorized deck systems through flashcard exercises, spot checks, ACAAN practice, and deck utilities. Available as a PWA that works offline, in 7 languages, with no account required.
 
+Last updated: 2026-04-05
+
 MemDeck is designed for card magicians who use memorized stacks (also known as memorized decks or mem-decks). A memorized stack is a specific, pre-arranged order of all 52 cards that a magician commits to memory, enabling powerful card effects. MemDeck provides interactive training tools to help memorize and maintain recall of these systems.
 
 All training data stays on the user's device via localStorage. No server, no sign-up. Uses Google Analytics for anonymous usage metrics.
@@ -18,6 +20,7 @@ A global per-stack setting lets users focus training on a specific range of posi
 - [Toolbox](https://memdeck.org/toolbox/): Stack lookup, faro shuffle simulator, card spelling tool, and stay stack sequence finder. Stack lookup and card spelling respect the stack range; faro shuffle and stay stack use the full deck.
 - [Stats](https://memdeck.org/stats/): Track session history, accuracy, and progress over time.
 - [Guide](https://memdeck.org/guide/): Getting started instructions and training tips.
+- [FAQ](https://memdeck.org/faq/): Frequently asked questions about memorized decks and MemDeck.
 - [Resources](https://memdeck.org/resources/): Curated books, PDFs, and links for memorized deck study.
 
 ## Supported Stacks

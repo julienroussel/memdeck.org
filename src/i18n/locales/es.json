@@ -461,6 +461,33 @@
       "stackRange": "Usa el rango del stack junto al selector de stack en el menú para entrenar con una parte de las posiciones. Empieza con pocas y amplía a medida que memorices más cartas."
     }
   },
+  "faq": {
+    "pageTitle": "FAQ — Preguntas sobre barajas memorizadas",
+    "pageDescription": "Respuestas a preguntas frecuentes sobre barajas memorizadas, sistemas de stack como Mnemonica y Aronson, ACAAN, técnicas de práctica y MemDeck.",
+    "title": "Preguntas frecuentes",
+    "subtitle": "Preguntas habituales sobre barajas memorizadas y cómo usar MemDeck.",
+    "whatIsMemDeckQ": "¿Qué es una baraja memorizada?",
+    "whatIsMemDeckA": "Una baraja memorizada (también llamada stack memorizado o mem-deck) es una baraja completa de 52 cartas dispuestas en un orden específico que el mago aprende de memoria. Una vez memorizada, el intérprete puede nombrar al instante la carta en cualquier posición o indicar la posición de cualquier carta que le nombren. Esto permite efectos de cartomagia que parecen imposibles — la baraja se puede mostrar y manipular libremente mientras el mago conoce en secreto la ubicación de cada carta.",
+    "bestForBeginnersQ": "¿Cuál es la mejor baraja memorizada para empezar?",
+    "bestForBeginnersA": "Los dos puntos de partida más populares son el stack Mnemonica de Juan Tamariz y el stack Aronson de Simon Aronson. Mnemonica es el stack más utilizado del mundo y cuenta con la mayor cantidad de efectos publicados. Aronson es especialmente popular en Estados Unidos y destaca por sus propiedades matemáticas. Elige el que tenga los efectos publicados que más te atraigan — vas a practicar con él durante mucho tiempo.",
+    "howLongQ": "¿Cuánto tiempo se tarda en memorizar una baraja?",
+    "howLongA": "La mayoría de los magos pueden memorizar las 52 posiciones en 1–4 semanas de práctica diaria constante. El recuerdo instantáneo — poder nombrar la posición de cualquier carta sin dudar — suele llevar entre 2 y 6 meses de entrenamiento regular. Herramientas como el modo Flashcard y el modo Spot Check de MemDeck aceleran este proceso al ofrecer sesiones de práctica estructuradas y repetibles.",
+    "whatIsMnemonicaQ": "¿Qué es el stack Mnemonica?",
+    "whatIsMnemonicaA": "Mnemonica es un sistema de baraja memorizada creado por Juan Tamariz y publicado en su libro homónimo de 1991. Es el stack memorizado más utilizado del mundo. Cuenta con propiedades matemáticas integradas, como las secuencias stay-stack, y fue diseñado para ofrecer un amplio repertorio de efectos con cartas. El libro de Tamariz incluye decenas de rutinas y la teoría subyacente del trabajo con barajas memorizadas.",
+    "whatIsAronsonQ": "¿Qué es el stack Aronson?",
+    "whatIsAronsonA": "El stack Aronson es un sistema de baraja memorizada creado por Simon Aronson. Es uno de los stacks más populares en Estados Unidos. Destaca por sus propiedades matemáticas y por la extensa cantidad de efectos publicados diseñados específicamente para él, incluyendo material en \"The Aronson Approach\", \"Bound to Please\" y el ensayo gratuito en PDF \"Memories Are Made of This\".",
+    "whatIsAcaanQ": "¿Qué es ACAAN en cartomagia?",
+    "whatIsAcaanA": "ACAAN significa \"Any Card At Any Number\" (cualquier carta en cualquier número). Es uno de los efectos más celebrados de la cartomagia — un espectador nombra cualquier carta y cualquier número del 1 al 52, y la carta nombrada aparece exactamente en esa posición de la baraja. Con una baraja memorizada, el intérprete calcula mentalmente cuántas cartas debe cortar para lograr el resultado. El entrenador ACAAN de MemDeck te ayuda a practicar estos cálculos mentales con ejercicios cronometrados.",
+    "differenceMnemonicaAronsonQ": "¿Cuál es la diferencia entre Mnemonica y Aronson?",
+    "differenceMnemonicaAronsonA": "Mnemonica (de Juan Tamariz) y Aronson (de Simon Aronson) son dos sistemas de baraja memorizada distintos — cada uno usa un orden de cartas completamente diferente. Mnemonica es el stack más utilizado a nivel mundial y tiene secuencias stay-stack integradas. Aronson es especialmente popular en EE. UU. y destaca por sus propiedades matemáticas. La elección entre ambos suele depender de qué efectos publicados te atraigan más, ya que cambiar de stack después implica reaprender las 52 posiciones.",
+    "howToPracticeQ": "¿Cómo practico una baraja memorizada?",
+    "howToPracticeA": "La práctica eficaz de una baraja memorizada combina varios enfoques: ejercicios de Flashcard (asociación carta-número y número-carta), Spot Check (detectar anomalías en la baraja extendida), cálculos ACAAN y ensayo con una baraja física. Empieza aprendiendo posiciones en grupos pequeños — la función de rango de stack de MemDeck te permite entrenar las posiciones 1–13, luego ampliar a 1–26, y así sucesivamente. Practicar 10–15 minutos al día es más efectivo que sesiones largas esporádicas.",
+    "whatIsFaroQ": "¿Qué es una mezcla faro?",
+    "whatIsFaroA": "La mezcla faro (también llamada mezcla perfecta) es una técnica en la que la baraja se divide en dos mitades iguales y las cartas se intercalan perfectamente una a una. En un out-faro, las cartas superior e inferior se mantienen en su lugar. En un in-faro, se desplazan hacia el interior. Las mezclas faro son una herramienta clave para los intérpretes de baraja memorizada, ya que transforman el stack de forma predecible y reversible. La herramienta Mezcla Faro de MemDeck te permite visualizar el resultado de múltiples faros en tu stack.",
+    "offlineQ": "¿Puedo usar MemDeck sin conexión?",
+    "offlineA": "Sí. MemDeck es una Progressive Web App (PWA) que funciona completamente sin conexión una vez cargada. Puedes instalarla en tu teléfono o tableta para una experiencia similar a una app nativa. Entrena entre bastidores, en el metro o en un avión — sin necesidad de internet. Todos tus datos de entrenamiento se almacenan localmente en tu dispositivo.",
+    "readGuide": "Leer la guía completa"
+  },
   "stackLimits": {
     "label": "Rango del stack",
     "description": "Posiciones {{start}}–{{end}} ({{count}} cartas)",

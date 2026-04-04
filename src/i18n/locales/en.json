@@ -461,6 +461,33 @@
       "stackRange": "Use the stack range next to the stack picker in the menu to train on a subset of positions. Start small and expand as you memorize more cards."
     }
   },
+  "faq": {
+    "pageTitle": "FAQ — Memorized Deck Questions",
+    "pageDescription": "Answers to common questions about memorized decks, stack systems like Mnemonica and Aronson, ACAAN, practice techniques, and MemDeck.",
+    "title": "Frequently Asked Questions",
+    "subtitle": "Common questions about memorized decks and how to use MemDeck.",
+    "whatIsMemDeckQ": "What is a memorized deck?",
+    "whatIsMemDeckA": "A memorized deck (also called a memorized stack or mem-deck) is a full deck of 52 playing cards arranged in a specific order that a magician commits to memory. Once memorized, the performer can instantly name the card at any position or tell the position of any named card. This enables powerful card magic that appears impossible — the deck can be shown and handled freely while the magician secretly knows the location of every card.",
+    "bestForBeginnersQ": "What is the best memorized deck for beginners?",
+    "bestForBeginnersA": "The two most popular starting points are the Mnemonica stack by Juan Tamariz and the Aronson stack by Simon Aronson. Mnemonica is the most widely used stack in the world and has the largest body of published effects. Aronson is especially popular in the United States and is known for its mathematical properties. Choose the one whose published effects appeal to you most — you'll be practicing with it for a long time.",
+    "howLongQ": "How long does it take to memorize a deck of cards?",
+    "howLongA": "Most magicians can memorize all 52 card positions in 1–4 weeks of consistent daily practice. Instant recall — being able to name any card's position without hesitation — typically takes 2–6 months of regular drilling. Tools like MemDeck's flashcard mode and spot check mode accelerate this process by providing structured, repeatable practice sessions.",
+    "whatIsMnemonicaQ": "What is the Mnemonica stack?",
+    "whatIsMnemonicaA": "Mnemonica is a memorized deck system created by Juan Tamariz and published in his 1991 book of the same name. It is the most widely used memorized stack in the world. The stack has built-in mathematical properties like stay-stack sequences and was designed to support a vast repertoire of card effects. Tamariz's book includes dozens of routines and the underlying theory of memorized deck work.",
+    "whatIsAronsonQ": "What is the Aronson stack?",
+    "whatIsAronsonA": "The Aronson stack is a memorized deck system created by Simon Aronson. It is one of the most popular stacks in the United States. The stack is known for its mathematical properties and the extensive body of published effects designed specifically for it, including material in \"The Aronson Approach,\" \"Bound to Please,\" and the free PDF essay \"Memories Are Made of This.\"",
+    "whatIsAcaanQ": "What is ACAAN in card magic?",
+    "whatIsAcaanA": "ACAAN stands for \"Any Card At Any Number.\" It is one of the most celebrated effects in card magic — a spectator names any card and any number from 1 to 52, and the named card is found at exactly that position in the deck. With a memorized deck, the performer mentally calculates how many cards to cut to achieve this result. MemDeck's ACAAN trainer helps you practice these mental calculations with timed drills.",
+    "differenceMnemonicaAronsonQ": "What is the difference between Mnemonica and Aronson?",
+    "differenceMnemonicaAronsonA": "Mnemonica (by Juan Tamariz) and Aronson (by Simon Aronson) are two different memorized deck systems — each uses a completely different card order. Mnemonica is the most widely used stack globally and has built-in stay-stack sequences. Aronson is especially popular in the US and emphasizes mathematical properties. The choice between them often comes down to which published effects appeal to you, since switching stacks later means relearning all 52 positions.",
+    "howToPracticeQ": "How do I practice a memorized deck?",
+    "howToPracticeA": "Effective memorized deck practice combines several approaches: flashcard drills (card-to-number and number-to-card recall), spot checks (detecting anomalies in a deck spread), ACAAN calculations, and real-world rehearsal with a physical deck. Start by learning positions in small groups — MemDeck's stack range feature lets you train on positions 1–13, then expand to 1–26, and so on. Daily practice of 10–15 minutes is more effective than occasional long sessions.",
+    "whatIsFaroQ": "What is a faro shuffle?",
+    "whatIsFaroA": "A faro shuffle (also called a perfect shuffle) is a technique where a deck is split into two equal halves and the cards are perfectly interlaced one-by-one. In an out-faro, the top and bottom cards stay in place. In an in-faro, they move inward. Faro shuffles are a key tool for memorized deck performers because they transform the stack in predictable, reversible ways. MemDeck's Faro Shuffle tool lets you visualize the result of multiple faros on your stack.",
+    "offlineQ": "Can I use MemDeck offline?",
+    "offlineA": "Yes. MemDeck is a Progressive Web App (PWA) that works fully offline once loaded. You can install it on your phone or tablet for a native app-like experience. Train backstage, on the subway, or on a plane — no internet connection required. All your training data is stored locally on your device.",
+    "readGuide": "Read the full guide"
+  },
   "stackLimits": {
     "label": "Stack range",
     "description": "Positions {{start}}–{{end}} ({{count}} cards)",
