@@ -11,7 +11,8 @@ import {
 } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
 import { Trans, useTranslation } from "react-i18next";
-import { GITHUB_URL } from "../constants";
+import { JsonLd } from "../components/json-ld";
+import { GITHUB_URL, SITE_URL } from "../constants";
 import { useDocumentMeta } from "../hooks/use-document-meta";
 import type en from "../i18n/locales/en.json";
 
@@ -120,6 +121,47 @@ const otherResources = [
   },
 ] as const satisfies readonly Resource[];
 
+const allResources: readonly Resource[] = [
+  ...primaryResources,
+  ...otherResources,
+];
+
+const itemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Memorized Deck Resources",
+  description:
+    "Curated books and resources for memorized deck magic, including Mnemonica by Tamariz and The Aronson Approach.",
+  itemListElement: allResources.map((resource, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    item: {
+      "@type": "Book",
+      name: resource.title,
+      author: { "@type": "Person", name: resource.author },
+      url: resource.link,
+    },
+  })),
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: `${SITE_URL}/`,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Resources",
+    },
+  ],
+};
+
 type ResourceCardProps = {
   resource: PrimaryResource;
 };
@@ -176,6 +218,8 @@ export const Resources = () => {
 
   return (
     <>
+      <JsonLd data={itemListSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <Title mb="md" order={1}>
         {t("resources.title")}
       </Title>

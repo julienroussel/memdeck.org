@@ -76,6 +76,7 @@ export const ROUTES = {
   home: "/",
   guide: "/guide/",
   resources: "/resources/",
+  faq: "/faq/",
   flashcard: "/flashcard/",
   spotCheck: "/spot-check/",
   acaan: "/acaan/",

@@ -22,7 +22,7 @@
     "knip": "knip",
     "lint": "ultracite check",
     "dev": "vite",
-    "build": "vite build && node scripts/prerender.ts",
+    "build": "vite build && node scripts/generate-sitemap.ts && node scripts/prerender.ts",
     "typecheck": "tsc -b",
     "preview": "vite preview",
     "test": "vitest run",

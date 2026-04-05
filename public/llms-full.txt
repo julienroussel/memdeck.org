@@ -2,6 +2,8 @@
 
 > MemDeck is a free, open-source memorized deck trainer for magicians and memory enthusiasts. It helps users master famous memorized deck systems through flashcard exercises, spot checks, ACAAN practice, and deck utilities. Available as a PWA that works offline, in 7 languages, with no account required.
 
+Last updated: 2026-04-05
+
 ## What Is a Memorized Deck?
 
 A memorized deck (also called a memorized stack or mem-deck) is a specific, pre-arranged order of all 52 playing cards that a magician commits to memory. Once memorized, the performer can instantly name the card at any position, or tell you the position of any named card. This enables extraordinarily powerful card magic effects that appear impossible, since the deck can be shown and handled freely while the magician secretly knows the location of every card.
@@ -144,3 +146,4 @@ The app auto-detects the user's browser language and defaults to English if the 
 - GitHub: https://github.com/julienroussel/memdeck.org
 - Resources: https://memdeck.org/resources/
 - Guide: https://memdeck.org/guide/
+- FAQ: https://memdeck.org/faq/

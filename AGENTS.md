@@ -76,7 +76,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Routing**: Route definitions in `src/routes.tsx`, route paths centralized in `src/constants.ts` (`ROUTES` object), `BrowserRouter` in `src/provider.tsx`. All routes are statically pre-rendered at build time. `public/404.html` is a standalone 404 page. Pages are lazy-loaded with `lazyWithReload` (a custom wrapper around `React.lazy` with chunk-error retry) and `Suspense`. **All route paths and internal links must use trailing slashes** (e.g., `/spot-check/`, not `/spot-check`) to match the canonical URLs, sitemap, and GitHub Pages directory structure — omitting the trailing slash causes a 301 redirect that hurts SEO
 - **UI Framework**: Mantine with custom color scheme management stored in localStorage
 - **Pages**: Self-contained in `src/pages/` — each training mode is its own page. Stack-dependent pages are wrapped in `RequireStack`
-- **Components**: Reusable UI in `src/components/` (e.g., `CardSpread`, `StackPicker`, `NumberCard`, `ShareButton`, `ShareNudge`, `NavFooter`)
+- **Components**: Reusable UI in `src/components/` (e.g., `CardSpread`, `StackPicker`, `NumberCard`, `ShareButton`, `ShareNudge`, `NavFooter`, `JsonLd`)
 - **Hooks**: Custom hooks in `src/hooks/` (e.g., `useSelectedStack`, `usePwaInstall`, `useDocumentMeta`)
 - **Utils**: Pure utility functions in `src/utils/` (e.g., `card-selection`, `card-formatting`, `localstorage`, `share`, `is-pwa`)
 - **Services**: `src/services/analytics.ts` — Google Analytics 4 integration with event tracking (only active on `memdeck.org`). Tracks flashcard/spot-check/ACAAN answers, session completions, share actions, web vitals, and errors
@@ -91,15 +91,18 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **ACAAN** (`src/pages/acaan/`): Any Card At Any Number calculator with instant feedback. Always uses full deck
 - **Toolbox** (`src/pages/toolbox/`): Collection of memorized deck utilities
 - **Stats** (`src/pages/stats/`): Session history, accuracy statistics, and best streak tracking
-- **Guide** (`src/pages/guide/`): Getting started and training instructions
-- **Resources** (`src/pages/resources.tsx`): Curated reading list of memorized deck books and PDFs
+- **Guide** (`src/pages/guide/`): Getting started and training instructions. Includes `HowTo` and `BreadcrumbList` JSON-LD schemas
+- **FAQ** (`src/pages/faq.tsx`): Frequently asked questions about memorized decks, targeting LLM search discoverability. Includes `FAQPage` and `BreadcrumbList` JSON-LD schemas
+- **Resources** (`src/pages/resources.tsx`): Curated reading list of memorized deck books and PDFs. Includes `ItemList`/`Book` and `BreadcrumbList` JSON-LD schemas
 - **About** (`src/pages/about.tsx`): Project info and links
 
 ### PWA & SEO
 
 - **Progressive Web App**: Full offline support via service worker (Vite PWA plugin). Silent auto-updates with subtle toast notification. Mobile install prompt with iOS/Android-specific instructions
-- **Pre-rendering**: Static HTML generated for all routes at build time for SEO
-- **AI Discoverability**: `public/llms.txt` and `public/llms-full.txt` for LLM indexing
+- **Pre-rendering**: Static HTML generated for all routes at build time via `scripts/prerender.ts` (Playwright-based). Per-page JSON-LD schemas injected via the `JsonLd` component are captured because they render inside `#root`
+- **Sitemap**: Generated at build time by `scripts/generate-sitemap.ts` with per-route `<lastmod>` dates derived from `git log`. The static `public/sitemap.xml` was removed — the build script writes directly to `dist/sitemap.xml`
+- **AI Discoverability**: `public/llms.txt` and `public/llms-full.txt` for LLM indexing. `<link rel="llms-txt">` in `<head>` for automatic discovery. `robots.txt` explicitly allows major AI crawlers (GPTBot, ClaudeBot, PerplexityBot, etc.)
+- **Structured Data**: Global `WebApplication` JSON-LD in `index.html` (injected programmatically to avoid Biome issues). Per-page schemas (`FAQPage`, `HowTo`, `ItemList`/`Book`, `BreadcrumbList`) via the `JsonLd` component in `src/components/json-ld.tsx`
 - **Share**: Native Web Share API on mobile, clipboard fallback on desktop. Share nudge appears after 5+ completed sessions
 
 ## TypeScript Standards

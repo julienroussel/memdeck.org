@@ -18,6 +18,9 @@ const Guide = lazyWithReload(() =>
 const Resources = lazyWithReload(() =>
   import("./pages/resources").then((m) => ({ default: m.Resources }))
 );
+const Faq = lazyWithReload(() =>
+  import("./pages/faq").then((m) => ({ default: m.Faq }))
+);
 const Flashcard = lazyWithReload(() =>
   import("./pages/flashcard/flashcard").then((m) => ({ default: m.Flashcard }))
 );
@@ -73,6 +76,14 @@ export const Routes = () => (
         </LazyRoute>
       }
       path={ROUTES.resources}
+    />
+    <RouterRoute
+      element={
+        <LazyRoute>
+          <Faq />
+        </LazyRoute>
+      }
+      path={ROUTES.faq}
     />
     <RouterRoute
       element={
