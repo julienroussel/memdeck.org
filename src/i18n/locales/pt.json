@@ -111,6 +111,7 @@
   "flashcard": {
     "pageTitle": "Treino Flashcard",
     "pageDescription": "Pratique o seu baralho memorizado com exercícios interativos de flashcard. Treine carta para número, número para carta, ou ambos.",
+    "seoIntro": "Treine o seu baralho memorizado com exercícios interativos de flashcard. Escolha entre os modos carta para número, número para carta, ou ambos. Defina um temporizador, acompanhe a sua pontuação e desenvolva uma memória instantânea — uma carta de cada vez.",
     "title": "Flashcard",
     "settingsAriaLabel": "Definições do Flashcard",
     "modePosition": "Posição",
@@ -142,6 +143,7 @@
   "acaan": {
     "pageTitle": "Treino ACAAN",
     "pageDescription": "Pratique cálculos de ACAAN para o seu stack memorizado.",
+    "seoIntro": "Treine Any Card At Any Number — a pedra angular da performance com baralho memorizado. É-lhe mostrada uma carta e uma posição alvo. Recorde a que profundidade deve cortar para a colocar nessa posição.",
     "title": "ACAAN",
     "settingsAriaLabel": "Definições do ACAAN",
     "cutDepthAriaLabel": "Profundidade de corte",
@@ -295,6 +297,7 @@
   "stats": {
     "pageTitle": "Estatísticas",
     "pageDescription": "Acompanhe o seu progresso com gráficos de precisão e histórico de sessões.",
+    "seoIntro": "O seu histórico de treino num relance. Acompanhe a precisão em sessões de Flashcard, Spot Check e ACAAN, consulte as suas melhores sequências e detete tendências ao longo do tempo.",
     "title": "Estatísticas",
     "noData": "Ainda sem dados. Complete uma sessão de flashcard, ACAAN ou spot check para ver as suas estatísticas aqui.",
     "totalSessions": "Total de sessões",
@@ -367,6 +370,7 @@
   "about": {
     "pageTitle": "Sobre",
     "pageDescription": "Informações de contacto e links para o projeto MemDeck.",
+    "seoIntro": "MemDeck é uma ferramenta de treino gratuita e de código aberto para entusiastas do baralho memorizado. Quer esteja a aprender Mnemonica, Aronson ou qualquer um dos sete stacks suportados, o MemDeck ajuda-o a desenvolver uma memória confiante através de prática focada.",
     "title": "Sobre",
     "intro": "MemDeck é um projeto pessoal criado por Julien Roussel. Não hesite em contactar-me através dos links abaixo.",
     "githubDescription": "Código-fonte, relatórios de bugs e pedidos de funcionalidades",

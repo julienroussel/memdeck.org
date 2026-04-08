@@ -13,10 +13,34 @@ import {
 } from "@tabler/icons-react";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { GITHUB_URL, LINKTREE_URL, MAGIC_LAB_URL } from "../constants";
+import { JsonLd } from "../components/json-ld";
+import {
+  GITHUB_URL,
+  LINKTREE_URL,
+  MAGIC_LAB_URL,
+  SITE_URL,
+} from "../constants";
 import { useDocumentMeta } from "../hooks/use-document-meta";
 import { analytics } from "../services/analytics";
 import { shareMemDeck } from "../utils/share";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: `${SITE_URL}/`,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "About",
+    },
+  ],
+};
 
 export const About = () => {
   const { t } = useTranslation();
@@ -32,9 +56,13 @@ export const About = () => {
 
   return (
     <>
+      <JsonLd data={breadcrumbSchema} />
       <Title mb="md" order={1}>
         {t("about.title")}
       </Title>
+      <Text c="dimmed" mb="md" size="sm">
+        {t("about.seoIntro")}
+      </Text>
       <Text mb="xl">{t("about.intro")}</Text>
       <Stack gap="sm">
         <Group gap="xs">
