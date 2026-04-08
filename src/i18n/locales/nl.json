@@ -78,7 +78,7 @@
     "featureFlashcardTitle": "Flashcard",
     "featureFlashcardDescription": "Oefen kaart-naar-nummer en nummer-naar-kaart met sessies met timer.",
     "featureAcaanTitle": "ACAAN",
-    "featureAcaanDescription": "Bereken coupeerdieptes voor Any Card At Any Number-effecten.",
+    "featureAcaanDescription": "Bereken coupedieptes voor Any Card At Any Number-effecten.",
     "featureToolboxTitle": "Gereedschap",
     "featureToolboxDescription": "Stack opzoeken, faro shuffles, kaartspelling en stay-stack-sequenties.",
     "featureStatsTitle": "Statistieken",
@@ -111,6 +111,7 @@
   "flashcard": {
     "pageTitle": "Flashcard Training",
     "pageDescription": "Oefen je gememoriseerde kaartspel met interactieve flashcard-oefeningen. Train kaart naar nummer, nummer naar kaart, of beide.",
+    "seoIntro": "Train je gememoriseerde kaartspel met interactieve flashcard-oefeningen. Kies uit kaart naar nummer, nummer naar kaart, of beide modi. Stel een timer in, volg je score en bouw direct geheugen op — kaart voor kaart.",
     "title": "Flashcard",
     "settingsAriaLabel": "Flashcard-instellingen",
     "modePosition": "Positie",
@@ -142,6 +143,7 @@
   "acaan": {
     "pageTitle": "ACAAN Training",
     "pageDescription": "Oefen Any Card At Any Number-berekeningen voor je gememoriseerde stack.",
+    "seoIntro": "Train Any Card At Any Number — de hoeksteen van het optreden met een gememoriseerd kaartspel. Je ziet een kaart en een doelpositie. Onthoud de coupediepte om de kaart daar te plaatsen.",
     "title": "ACAAN",
     "settingsAriaLabel": "ACAAN-instellingen",
     "cutDepthAriaLabel": "Coupeerdiepte",
@@ -295,6 +297,7 @@
   "stats": {
     "pageTitle": "Statistieken",
     "pageDescription": "Volg je trainingsvoortgang met nauwkeurigheidsgrafieken en sessiegeschiedenis.",
+    "seoIntro": "Je trainingsgeschiedenis in een oogopslag. Volg de nauwkeurigheid in Flashcard-, Spot Check- en ACAAN-sessies, bekijk je beste reeksen en ontdek trends in de loop van de tijd.",
     "title": "Statistieken",
     "noData": "Nog geen gegevens. Voltooi een flashcard-, ACAAN- of spot check-sessie om je statistieken hier te zien.",
     "totalSessions": "Totaal sessies",
@@ -367,6 +370,7 @@
   "about": {
     "pageTitle": "Over",
     "pageDescription": "Contactgegevens en links voor het MemDeck-project.",
+    "seoIntro": "MemDeck is een gratis, open-source trainingstool voor liefhebbers van het gememoriseerde kaartspel. Of je nu Mnemonica, Aronson of een van de zeven ondersteunde stacks leert, MemDeck helpt je om zelfverzekerd geheugen op te bouwen door gerichte oefening.",
     "title": "Over",
     "intro": "MemDeck is een hobbyproject van Julien Roussel. Neem gerust contact op via de links hieronder.",
     "githubDescription": "Broncode, bugrapporten en functieverzoeken",
@@ -408,7 +412,7 @@
     "acaanTraining": {
       "title": "ACAAN Training",
       "intro": "ACAAN staat voor \"Any Card At Any Number\" — een klassiek effect waarbij een toeschouwer een willekeurige kaart en een willekeurig nummer noemt, en de kaart precies op die positie in het kaartspel wordt gevonden.",
-      "description": "In deze modus krijg je een kaart en een doelpositie te zien. Je moet de coupeerdiepte berekenen die nodig is om de kaart naar die positie te verplaatsen. Voer een waarde in van 0 tot 51. Timer- en sessieopties werken hetzelfde als bij Flashcard.",
+      "description": "In deze modus krijg je een kaart en een doelpositie te zien. Je moet de coupediepte berekenen die nodig is om de kaart naar die positie te verplaatsen. Voer een waarde in van 0 tot 51. Timer- en sessieopties werken hetzelfde als bij Flashcard.",
       "link": "Ga naar ACAAN Training"
     },
     "spotCheckTraining": {

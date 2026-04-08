@@ -42,3 +42,4 @@ tasks/
 
 # claude code generated artifacts
 .claude/audit-*
+.claude/review-*.json

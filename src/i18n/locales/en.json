@@ -111,6 +111,7 @@
   "flashcard": {
     "pageTitle": "Flashcard Training",
     "pageDescription": "Practice your memorized deck with interactive flashcard drills. Train card-to-number, number-to-card, or both.",
+    "seoIntro": "Drill your memorized deck with interactive flashcard exercises. Choose from card-to-number, number-to-card, or both modes. Set a timer, track your score, and build instant recall — one card at a time.",
     "title": "Flashcard",
     "settingsAriaLabel": "Flashcard settings",
     "modePosition": "Position",
@@ -142,6 +143,7 @@
   "acaan": {
     "pageTitle": "ACAAN Training",
     "pageDescription": "Practice Any Card At Any Number calculations for your memorized deck.",
+    "seoIntro": "Train Any Card At Any Number — the cornerstone of memorized deck performance. You're shown a card and a target position. Recall the cut depth to place it there.",
     "title": "ACAAN",
     "settingsAriaLabel": "ACAAN settings",
     "cutDepthAriaLabel": "Cut depth",
@@ -295,6 +297,7 @@
   "stats": {
     "pageTitle": "Stats",
     "pageDescription": "Track your memorized deck training progress with accuracy charts and session history.",
+    "seoIntro": "Your training history at a glance. Track accuracy across Flashcard, Spot Check, and ACAAN sessions, see your best streaks, and spot trends over time.",
     "title": "Stats",
     "noData": "No training data yet. Complete a Flashcard, ACAAN, or Spot Check session to see your stats here.",
     "totalSessions": "Total Sessions",
@@ -367,6 +370,7 @@
   "about": {
     "pageTitle": "About",
     "pageDescription": "Contact information and links for the MemDeck project.",
+    "seoIntro": "MemDeck is a free, open-source training tool for memorized deck enthusiasts. Whether you're learning Mnemonica, Aronson, or any of the seven supported stacks, MemDeck helps you build confident recall through focused practice.",
     "title": "About",
     "intro": "MemDeck is a side project built by Julien Roussel. Feel free to reach out through any of the links below.",
     "githubDescription": "Source code, bug reports, and feature requests",

@@ -2,29 +2,40 @@ import { Grid, Space, Text } from "@mantine/core";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CardSpread } from "../../components/card-spread/card-spread";
+import { JsonLd } from "../../components/json-ld";
 import { RevealButton } from "../../components/reveal-button";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
 import { TrainingHeader } from "../../components/training-header";
-import { FLASHCARD_OPTION_LSK, NEIGHBOR_DIRECTION_LSK } from "../../constants";
+import { SITE_URL } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
-import { useFlashcardTimer } from "../../hooks/use-flashcard-timer";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import { useStackLimits } from "../../hooks/use-stack-limits";
 import { analytics } from "../../services/analytics";
-import { eventBus } from "../../services/event-bus";
-import {
-  type FlashcardMode,
-  isFlashcardMode,
-  isNeighborDirection,
-  type NeighborDirection,
-} from "../../types/flashcard";
 import { cardItems, numberItems } from "../../types/typeguards";
-import { useLocalDb } from "../../utils/localstorage";
 import { FlashcardCardDisplay } from "./flashcard-card-display";
 import { FlashcardSettingsContent } from "./flashcard-settings-content";
 import { useFlashcardGame } from "./use-flashcard-game";
+import { useFlashcardSettings } from "./use-flashcard-settings";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: `${SITE_URL}/`,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Flashcard",
+    },
+  ],
+};
 
 export const Flashcard = () => {
   const { t } = useTranslation();
@@ -34,17 +45,15 @@ export const Flashcard = () => {
   });
   const { stackKey, stackOrder, stackName } = useRequiredStack();
 
-  const [mode, setMode] = useLocalDb<FlashcardMode>(
-    FLASHCARD_OPTION_LSK,
-    "bothmodes",
-    isFlashcardMode
-  );
-  const [neighborDirection, setNeighborDirection] =
-    useLocalDb<NeighborDirection>(
-      NEIGHBOR_DIRECTION_LSK,
-      "random",
-      isNeighborDirection
-    );
+  const {
+    mode,
+    neighborDirection,
+    timerSettings,
+    setTimerDuration,
+    handleModeChange,
+    handleDirectionChange,
+    handleTimerEnabledChange,
+  } = useFlashcardSettings();
 
   const { limits, rangeSize } = useStackLimits(stackKey);
 
@@ -64,31 +73,6 @@ export const Flashcard = () => {
     autoStart: true,
     stackLimits: limits,
   });
-
-  const handleModeChange = useCallback(
-    (value: FlashcardMode) => {
-      if (!isFlashcardMode(value)) {
-        return;
-      }
-      setMode(value);
-      eventBus.emit.FLASHCARD_MODE_CHANGED({ mode: value });
-    },
-    [setMode]
-  );
-
-  const handleDirectionChange = useCallback(
-    (value: NeighborDirection) => {
-      if (!isNeighborDirection(value)) {
-        return;
-      }
-      setNeighborDirection(value);
-      eventBus.emit.NEIGHBOR_DIRECTION_CHANGED({ direction: value });
-    },
-    [setNeighborDirection]
-  );
-
-  const { timerSettings, setTimerEnabled, setTimerDuration } =
-    useFlashcardTimer();
 
   const {
     score,
@@ -111,18 +95,6 @@ export const Flashcard = () => {
     { onAnswer: handleAnswer }
   );
 
-  const handleTimerEnabledChange = useCallback(
-    (enabled: boolean) => {
-      analytics.trackEvent(
-        "Settings",
-        `Timer ${enabled ? "Enabled" : "Disabled"}`,
-        "Flashcard"
-      );
-      setTimerEnabled(enabled);
-    },
-    [setTimerEnabled]
-  );
-
   const handleRevealAnswer = useCallback(() => {
     analytics.trackFeatureUsed("Reveal Answer - Flashcard");
     revealAnswer();
@@ -139,6 +111,7 @@ export const Flashcard = () => {
 
   return (
     <div className="fullMantineContainerHeight">
+      <JsonLd data={breadcrumbSchema} />
       <Grid
         gap={0}
         overflow="hidden"
@@ -179,6 +152,9 @@ export const Flashcard = () => {
               </>
             }
           />
+          <Text c="dimmed" mb="xs" size="sm">
+            {t("flashcard.seoIntro")}
+          </Text>
         </Grid.Col>
         <Grid.Col span={12}>
           <Space h="xl" />

@@ -110,7 +110,8 @@
   },
   "flashcard": {
     "pageTitle": "Allenamento Flashcard",
-    "pageDescription": "Allenati con esercizi flashcard interattivi. Pratica carta verso numero, numero verso carta, o entrambi.",
+    "pageDescription": "Allenati con esercizi flashcard interattivi. Pratica da carta a numero, da numero a carta, o entrambi.",
+    "seoIntro": "Allena il tuo mazzo memorizzato con esercizi flashcard interattivi. Scegli tra i modi da carta a numero, da numero a carta, o entrambi. Imposta un timer, registra il tuo punteggio e sviluppa un richiamo istantaneo — una carta alla volta.",
     "title": "Flashcard",
     "settingsAriaLabel": "Impostazioni Flashcard",
     "modePosition": "Posizione",
@@ -142,6 +143,7 @@
   "acaan": {
     "pageTitle": "Allenamento ACAAN",
     "pageDescription": "Allenati con i calcoli Any Card At Any Number per il tuo stack memorizzato.",
+    "seoIntro": "Allenati su Any Card At Any Number — il pilastro della performance con mazzo memorizzato. Ti vengono mostrati una carta e una posizione target. Ricorda la profondità di taglio per piazzarla in quella posizione.",
     "title": "ACAAN",
     "settingsAriaLabel": "Impostazioni ACAAN",
     "cutDepthAriaLabel": "Profondità del taglio",
@@ -295,6 +297,7 @@
   "stats": {
     "pageTitle": "Statistiche",
     "pageDescription": "Monitora i tuoi progressi con grafici di precisione e cronologia delle sessioni.",
+    "seoIntro": "La tua cronologia di allenamento in un colpo d'occhio. Monitora la precisione nelle sessioni Flashcard, Spot Check e ACAAN, consulta le tue migliori serie e individua le tendenze nel tempo.",
     "title": "Statistiche",
     "noData": "Ancora nessun dato. Completa una sessione Flashcard, ACAAN o Spot Check per vedere le tue statistiche qui.",
     "totalSessions": "Sessioni totali",
@@ -367,6 +370,7 @@
   "about": {
     "pageTitle": "Info",
     "pageDescription": "Informazioni di contatto e link per il progetto MemDeck.",
+    "seoIntro": "MemDeck è uno strumento di allenamento gratuito e open source per gli appassionati di mazzo memorizzato. Che tu stia imparando Mnemonica, Aronson o uno qualsiasi dei sette stack supportati, MemDeck ti aiuta a sviluppare un richiamo sicuro attraverso la pratica mirata.",
     "title": "Info",
     "intro": "MemDeck è un progetto personale di Julien Roussel. Contattami pure tramite i link qui sotto.",
     "githubDescription": "Codice sorgente, segnalazione bug e richieste di funzionalità",

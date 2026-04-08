@@ -111,6 +111,7 @@
   "flashcard": {
     "pageTitle": "Entraînement Flashcard",
     "pageDescription": "Entraînez-vous sur votre jeu mémorisé avec des exercices de flashcard interactifs. Carte vers numéro, numéro vers carte, ou les deux.",
+    "seoIntro": "Entraînez votre jeu mémorisé avec des exercices de flashcard interactifs. Choisissez entre les modes carte vers numéro, numéro vers carte, ou les deux. Réglez un chrono, suivez votre score et développez un rappel instantané — une carte à la fois.",
     "title": "Flashcard",
     "settingsAriaLabel": "Paramètres Flashcard",
     "modePosition": "Position",
@@ -142,6 +143,7 @@
   "acaan": {
     "pageTitle": "Entraînement ACAAN",
     "pageDescription": "Entraînez-vous aux calculs ACAAN (Any Card At Any Number) pour votre stack mémorisé.",
+    "seoIntro": "Entraînez-vous au Any Card At Any Number — la pièce maîtresse du jeu mémorisé en spectacle. On vous montre une carte et une position cible. Retrouvez la profondeur de coupe pour l'y placer.",
     "title": "ACAAN",
     "settingsAriaLabel": "Paramètres ACAAN",
     "cutDepthAriaLabel": "Profondeur de coupe",
@@ -295,6 +297,7 @@
   "stats": {
     "pageTitle": "Statistiques",
     "pageDescription": "Suivez vos progrès d'entraînement avec des graphiques de précision et un historique des sessions.",
+    "seoIntro": "Votre historique d'entraînement en un coup d'œil. Suivez votre précision en Flashcard, Spot Check et ACAAN, consultez vos meilleures séries et repérez les tendances au fil du temps.",
     "title": "Statistiques",
     "noData": "Pas encore de données. Terminez une session Flashcard, ACAAN ou Spot Check pour voir vos statistiques ici.",
     "totalSessions": "Sessions totales",
@@ -367,6 +370,7 @@
   "about": {
     "pageTitle": "À propos",
     "pageDescription": "Informations de contact et liens pour le projet MemDeck.",
+    "seoIntro": "MemDeck est un outil d'entraînement gratuit et open source pour les passionnés de jeu mémorisé. Que vous appreniez Mnemonica, Aronson ou l'un des sept stacks disponibles, MemDeck vous aide à développer un rappel fiable grâce à un entraînement ciblé.",
     "title": "À propos",
     "intro": "MemDeck est un projet personnel créé par Julien Roussel. N'hésitez pas à me contacter via les liens ci-dessous.",
     "githubDescription": "Code source, rapports de bugs et demandes de fonctionnalités",

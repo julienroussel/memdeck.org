@@ -111,6 +111,7 @@
   "flashcard": {
     "pageTitle": "Flashcard-Training",
     "pageDescription": "Übe dein memoriertes Kartendeck mit interaktiven Flashcard-Übungen. Trainiere Karte-zu-Nummer, Nummer-zu-Karte oder beides.",
+    "seoIntro": "Trainiere dein memoriertes Kartendeck mit interaktiven Flashcard-Übungen. Wähle zwischen Karte-zu-Nummer, Nummer-zu-Karte oder beiden Modi. Stelle einen Timer ein, verfolge deinen Punktestand und baue sofortigen Abruf auf — eine Karte nach der anderen.",
     "title": "Flashcard",
     "settingsAriaLabel": "Flashcard-Einstellungen",
     "modePosition": "Position",
@@ -142,6 +143,7 @@
   "acaan": {
     "pageTitle": "ACAAN-Training",
     "pageDescription": "Übe ACAAN-Berechnungen (Any Card At Any Number) für deinen memorierten Stack.",
+    "seoIntro": "Trainiere Any Card At Any Number — das Herzstück der Performance mit memoriertem Kartendeck. Dir wird eine Karte und eine Zielposition gezeigt. Erinnere dich an die Abhebentiefe, um sie an diese Position zu bringen.",
     "title": "ACAAN",
     "settingsAriaLabel": "ACAAN-Einstellungen",
     "cutDepthAriaLabel": "Abhebentiefe",
@@ -295,6 +297,7 @@
   "stats": {
     "pageTitle": "Statistiken",
     "pageDescription": "Verfolge deinen Trainingsfortschritt mit Genauigkeitsdiagrammen und Sitzungsverlauf.",
+    "seoIntro": "Dein Trainingsverlauf auf einen Blick. Verfolge die Genauigkeit in Flashcard-, Spot-Check- und ACAAN-Sitzungen, sieh dir deine besten Serien an und erkenne Trends im Zeitverlauf.",
     "title": "Statistiken",
     "noData": "Noch keine Trainingsdaten. Schließe eine Flashcard-, ACAAN- oder Spot-Check-Sitzung ab, um deine Statistiken hier zu sehen.",
     "totalSessions": "Sitzungen gesamt",
@@ -367,6 +370,7 @@
   "about": {
     "pageTitle": "Über",
     "pageDescription": "Kontaktinformationen und Links für das MemDeck-Projekt.",
+    "seoIntro": "MemDeck ist ein kostenloses, quelloffenes Trainingstool für Fans memorierter Kartendecks. Ob du Mnemonica, Aronson oder einen der sieben unterstützten Stacks lernst — MemDeck hilft dir, durch gezieltes Training sicheren Abruf aufzubauen.",
     "title": "Über",
     "intro": "MemDeck ist ein Nebenprojekt von Julien Roussel. Kontaktiere mich gerne über die folgenden Links.",
     "githubDescription": "Quellcode, Fehlermeldungen und Funktionswünsche",

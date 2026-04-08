@@ -14,6 +14,36 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    // Vite's built-in HTML processing strips non-standard <link rel> values
+    // and adjacent meta tags. Inject them post-build so they survive.
+    {
+      name: "inject-seo-meta",
+      transformIndexHtml: {
+        order: "post",
+        handler() {
+          return [
+            {
+              tag: "link",
+              attrs: { rel: "llms-txt", href: "/llms.txt" },
+              injectTo: "head",
+            },
+            {
+              tag: "meta",
+              attrs: { name: "author", content: "Julien Roussel" },
+              injectTo: "head",
+            },
+            {
+              tag: "meta",
+              attrs: {
+                name: "robots",
+                content: "max-snippet:-1, max-image-preview:large",
+              },
+              injectTo: "head",
+            },
+          ];
+        },
+      },
+    },
     VitePWA({
       registerType: "autoUpdate",
       injectRegister: false,
