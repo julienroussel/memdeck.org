@@ -52,7 +52,7 @@
     "fta-cli": "3.0.0",
     "globals": "17.5.0",
     "happy-dom": "20.8.9",
-    "knip": "6.4.0",
+    "knip": "6.4.1",
     "lefthook": "2.1.5",
     "postcss": "8.5.9",
     "postcss-preset-mantine": "1.18.0",
