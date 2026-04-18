@@ -127,9 +127,9 @@ test.describe("Language & i18n", () => {
       })
     ).toBeVisible();
 
-    const storedLang = await page.evaluate(() => {
-      return localStorage.getItem("memdeck-app-language");
-    });
+    const storedLang = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-language")
+    );
 
     expect(storedLang).toBe("de");
   });

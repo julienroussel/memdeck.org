@@ -143,31 +143,29 @@ const handleRootError = (error: unknown) => {
   analytics.trackError(errorObj, "Root");
 };
 
-export const Provider = () => {
-  return (
-    <ErrorBoundary
-      FallbackComponent={OuterErrorFallback}
-      onError={handleOuterError}
+export const Provider = () => (
+  <ErrorBoundary
+    FallbackComponent={OuterErrorFallback}
+    onError={handleOuterError}
+  >
+    <MantineProvider
+      colorSchemeManager={colorSchemeManager}
+      cssVariablesResolver={cssVariablesResolver}
+      defaultColorScheme={systemColorScheme}
+      theme={theme}
     >
-      <MantineProvider
-        colorSchemeManager={colorSchemeManager}
-        cssVariablesResolver={cssVariablesResolver}
-        defaultColorScheme={systemColorScheme}
-        theme={theme}
+      <ErrorBoundary
+        FallbackComponent={RootErrorFallback}
+        onError={handleRootError}
       >
-        <ErrorBoundary
-          FallbackComponent={RootErrorFallback}
-          onError={handleRootError}
-        >
-          <Notifications />
-          <LanguageLoadNotifier />
-          <PwaUpdateNotifier />
-          <BrowserRouter>
-            <FocusOnNavigate />
-            <App />
-          </BrowserRouter>
-        </ErrorBoundary>
-      </MantineProvider>
-    </ErrorBoundary>
-  );
-};
+        <Notifications />
+        <LanguageLoadNotifier />
+        <PwaUpdateNotifier />
+        <BrowserRouter>
+          <FocusOnNavigate />
+          <App />
+        </BrowserRouter>
+      </ErrorBoundary>
+    </MantineProvider>
+  </ErrorBoundary>
+);

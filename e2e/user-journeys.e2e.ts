@@ -213,9 +213,9 @@ test.describe("User Journeys", () => {
     }
 
     // Final state should be persisted (color scheme is stored as plain string)
-    const scheme = await page.evaluate(() => {
-      return localStorage.getItem("memdeck-app-color-scheme");
-    });
+    const scheme = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-color-scheme")
+    );
 
     const expectedScheme = isLight ? "light" : "dark";
     expect(scheme).toBe(expectedScheme);

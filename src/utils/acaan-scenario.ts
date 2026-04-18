@@ -67,6 +67,4 @@ export const generateAcaanScenario = (stack: Stack): AcaanScenario => {
 export const calculateCutDepth = (
   cardPosition: DeckPosition,
   targetPosition: DeckPosition
-): number => {
-  return (cardPosition - targetPosition + DECK_SIZE) % DECK_SIZE;
-};
+): number => (cardPosition - targetPosition + DECK_SIZE) % DECK_SIZE;

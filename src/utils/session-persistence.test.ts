@@ -35,7 +35,7 @@ vi.mock("@mantine/hooks", () => ({
   readLocalStorageValue: ({ key }: { key: string }) => {
     const raw = storage.get(key);
     if (raw === undefined || raw === null) {
-      return undefined;
+      return;
     }
     return JSON.parse(raw);
   },

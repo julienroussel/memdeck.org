@@ -15,9 +15,7 @@ export const ShareButton = ({ variant = "icon" }: ShareButtonProps) => {
   const [showCheck, setShowCheck] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  useEffect(() => {
-    return () => clearTimeout(timeoutRef.current);
-  }, []);
+  useEffect(() => () => clearTimeout(timeoutRef.current), []);
 
   const handleShare = useCallback(async () => {
     const result = await shareMemDeck(t("share.message"));
