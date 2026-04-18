@@ -30,14 +30,15 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
   const rafRef = useRef<number | null>(null);
   const movementAccumulatorRef = useRef(0);
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
       }
       movementAccumulatorRef.current = 0;
-    };
-  }, []);
+    },
+    []
+  );
 
   const updateOffset = useCallback(
     (movementX: number) => {

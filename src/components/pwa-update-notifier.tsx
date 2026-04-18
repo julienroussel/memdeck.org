@@ -38,13 +38,14 @@ export const PwaUpdateNotifier = () => {
     },
   });
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
-    };
-  }, []);
+    },
+    []
+  );
 
   useEffect(() => {
     const storedHash = localStorage.getItem(COMMIT_HASH_LSK);

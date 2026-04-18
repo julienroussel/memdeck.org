@@ -15,9 +15,9 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Verify localStorage (Mantine's useLocalStorage stores JSON stringified values)
-    const savedStack = await page.evaluate(() => {
-      return localStorage.getItem("memdeck-app-stack");
-    });
+    const savedStack = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-stack")
+    );
     expect(savedStack).toBe('"aronson"');
 
     // Reload page
@@ -57,9 +57,9 @@ test.describe("localStorage Persistence", () => {
     await secondarySelector.getByText("Card").click();
 
     // Verify localStorage (Mantine's useLocalStorage stores JSON stringified values)
-    const savedMode = await page.evaluate(() => {
-      return localStorage.getItem("memdeck-app-flashcard-option");
-    });
+    const savedMode = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-flashcard-option")
+    );
     expect(savedMode).toBe('"cardonly"');
 
     // Close popover and reload page
@@ -68,9 +68,9 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Mode should still be card-only
-    const mode = await page.evaluate(() => {
-      return localStorage.getItem("memdeck-app-flashcard-option");
-    });
+    const mode = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-flashcard-option")
+    );
     expect(mode).toBe('"cardonly"');
   });
 
@@ -90,9 +90,9 @@ test.describe("localStorage Persistence", () => {
     }
 
     // Verify localStorage (color scheme is stored as plain string, not JSON stringified)
-    const savedScheme = await page.evaluate(() => {
-      return localStorage.getItem("memdeck-app-color-scheme");
-    });
+    const savedScheme = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-color-scheme")
+    );
     expect(savedScheme).toBe("dark");
 
     // Reload page
@@ -156,15 +156,15 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Check mode (Mantine's useLocalStorage stores JSON stringified values)
-    const mode = await page.evaluate(() => {
-      return localStorage.getItem("memdeck-app-flashcard-option");
-    });
+    const mode = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-flashcard-option")
+    );
     expect(mode).toBe('"numberonly"');
 
     // Check theme (color scheme is stored as plain string)
-    const scheme = await page.evaluate(() => {
-      return localStorage.getItem("memdeck-app-color-scheme");
-    });
+    const scheme = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-color-scheme")
+    );
     expect(scheme).toBe("dark");
   });
 
@@ -213,9 +213,9 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Verify it's saved (Mantine's useLocalStorage stores JSON stringified values)
-    const savedStack = await page.evaluate(() => {
-      return localStorage.getItem("memdeck-app-stack");
-    });
+    const savedStack = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-stack")
+    );
     expect(savedStack).toBe('"memorandum"');
 
     // Clear localStorage via JavaScript
@@ -235,9 +235,9 @@ test.describe("localStorage Persistence", () => {
     expect(selectedValue).toBe("");
 
     // After reload, app re-initializes localStorage with default empty value
-    const clearedStack = await page.evaluate(() => {
-      return localStorage.getItem("memdeck-app-stack");
-    });
+    const clearedStack = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-stack")
+    );
     expect(clearedStack).toBe('""'); // JSON stringified empty string
   });
 

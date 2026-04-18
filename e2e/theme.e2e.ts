@@ -49,9 +49,9 @@ test.describe("Theme & Color Scheme", () => {
     await expect(themeSwitch).not.toBeChecked();
 
     // Check localStorage
-    const colorScheme = await page.evaluate(() => {
-      return localStorage.getItem("memdeck-app-color-scheme");
-    });
+    const colorScheme = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-color-scheme")
+    );
 
     expect(colorScheme).toBe("dark");
   });
@@ -86,18 +86,18 @@ test.describe("Theme & Color Scheme", () => {
 
     // Get initial background color
     const body = page.locator("body");
-    const initialBg = await body.evaluate((el) => {
-      return window.getComputedStyle(el).backgroundColor;
-    });
+    const initialBg = await body.evaluate(
+      (el) => window.getComputedStyle(el).backgroundColor
+    );
 
     // Toggle theme by clicking the visible track
     await themeSwitchTrack.click();
 
     // Wait for background color to change (CSS transition)
     await expect(async () => {
-      const newBg = await body.evaluate((el) => {
-        return window.getComputedStyle(el).backgroundColor;
-      });
+      const newBg = await body.evaluate(
+        (el) => window.getComputedStyle(el).backgroundColor
+      );
       expect(newBg).not.toBe(initialBg);
     }).toPass();
   });
