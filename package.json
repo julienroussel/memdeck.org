@@ -13,7 +13,7 @@
     "url": "git+https://github.com/julienroussel/memdeck.org.git"
   },
   "author": "Julien Roussel",
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@10.33.1",
   "engines": {
     "node": ">=25",
     "pnpm": ">=10"
@@ -53,7 +53,7 @@
     "fta-cli": "3.0.0",
     "globals": "17.5.0",
     "happy-dom": "20.9.0",
-    "knip": "6.6.0",
+    "knip": "6.6.1",
     "lefthook": "2.1.6",
     "postcss": "8.5.10",
     "postcss-preset-mantine": "1.18.0",
@@ -67,9 +67,9 @@
     "workbox-window": "7.4.0"
   },
   "dependencies": {
-    "@mantine/core": "9.0.2",
-    "@mantine/hooks": "9.0.2",
-    "@mantine/notifications": "9.0.2",
+    "@mantine/core": "9.1.0",
+    "@mantine/hooks": "9.1.0",
+    "@mantine/notifications": "9.1.0",
     "@tabler/icons-react": "3.41.1",
     "i18next": "26.0.6",
     "react": "19.2.5",
@@ -77,7 +77,7 @@
     "react-error-boundary": "6.1.1",
     "react-ga4": "3.0.1",
     "react-i18next": "17.0.4",
-    "react-router": "7.14.1",
+    "react-router": "7.14.2",
     "web-vitals": "5.2.0"
   },
   "browserslist": {
