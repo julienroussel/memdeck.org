@@ -13,7 +13,7 @@
     "url": "git+https://github.com/julienroussel/memdeck.org.git"
   },
   "author": "Julien Roussel",
-  "packageManager": "pnpm@10.33.1",
+  "packageManager": "pnpm@10.33.2",
   "engines": {
     "node": ">=25",
     "pnpm": ">=10"
@@ -39,7 +39,7 @@
     "prepare": "lefthook install"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.12",
+    "@biomejs/biome": "2.4.13",
     "@lhci/cli": "0.15.1",
     "@playwright/test": "1.59.1",
     "@testing-library/jest-dom": "6.9.1",
@@ -53,7 +53,7 @@
     "fta-cli": "3.0.0",
     "globals": "17.5.0",
     "happy-dom": "20.9.0",
-    "knip": "6.6.1",
+    "knip": "6.6.2",
     "lefthook": "2.1.6",
     "postcss": "8.5.10",
     "postcss-preset-mantine": "1.18.0",
@@ -71,7 +71,7 @@
     "@mantine/hooks": "9.1.0",
     "@mantine/notifications": "9.1.0",
     "@tabler/icons-react": "3.41.1",
-    "i18next": "26.0.6",
+    "i18next": "26.0.7",
     "react": "19.2.5",
     "react-dom": "19.2.5",
     "react-error-boundary": "6.1.1",
