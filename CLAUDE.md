@@ -16,7 +16,7 @@ Never sacrifice readability or testability for performance unless profiling prov
 
 ## Verification Protocol
 
-- **Verify before citing.** Before referencing any file path, function name, export, or type in your response or in code you write, confirm it exists via `Read`/`Grep` in the current turn. Do not rely on this CLAUDE.md, prior-conversation recall, or memory as the source of truth for code locations — those can drift. The codebase is authoritative.
+- **Verify before citing.** Before referencing any file path, function name, export, or type in your response or in code you write, confirm it exists via `mcp__codebase-memory-mcp__search_graph` / `get_code_snippet` / `trace_path` first; fall back to `Read`/`Grep` only for text content. Do not rely on this CLAUDE.md, prior-conversation recall, or memory as the source of truth for code locations — those can drift. The codebase is authoritative.
 - **Verify before declaring done.** After changes to `src/**` or `scripts/**`, run the Definition of Done below. A passing type-check alone is not sufficient once UI, routing, or tests are involved.
 - **If you can't actually run it, say so.** For UI changes you can't exercise in a browser, state that explicitly instead of claiming success. Type-checks and unit tests verify code correctness, not feature correctness.
 
