@@ -3,7 +3,7 @@ import type en from "../i18n/locales/en.json";
 /** Valid i18n keys for flashcard-related translations, derived from en.json */
 type FlashcardI18nKey = `flashcard.${keyof (typeof en)["flashcard"] & string}`;
 
-export const FLASHCARD_MODE_OPTIONS = [
+const FLASHCARD_MODE_OPTIONS = [
   {
     value: "cardonly",
     labelKey: "flashcard.modeCardOnly",
