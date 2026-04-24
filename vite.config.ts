@@ -99,19 +99,19 @@ export default defineConfig({
           {
             name: "Flashcard",
             short_name: "Flashcard",
-            url: "/flashcard",
+            url: "/flashcard/",
             description: "Practice memorized deck with flashcard drills",
           },
           {
             name: "ACAAN",
             short_name: "ACAAN",
-            url: "/acaan",
+            url: "/acaan/",
             description: "Any Card At Any Number calculator",
           },
           {
             name: "Toolbox",
             short_name: "Toolbox",
-            url: "/toolbox",
+            url: "/toolbox/",
             description: "Memorized deck utilities",
           },
         ],

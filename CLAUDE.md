@@ -14,13 +14,29 @@ The project is a React SPA using TypeScript, Mantine UI, and Vite. It runs entir
 
 Never sacrifice readability or testability for performance unless profiling proves it necessary. Prefer clear, obvious code over clever code. Explicit duplication is better than the wrong abstraction — but refactor once a pattern appears 3+ times.
 
+## Verification Protocol
+
+- **Verify before citing.** Before referencing any file path, function name, export, or type in your response or in code you write, confirm it exists via `Read`/`Grep` in the current turn. Do not rely on this CLAUDE.md, prior-conversation recall, or memory as the source of truth for code locations — those can drift. The codebase is authoritative.
+- **Verify before declaring done.** After changes to `src/**` or `scripts/**`, run the Definition of Done below. A passing type-check alone is not sufficient once UI, routing, or tests are involved.
+- **If you can't actually run it, say so.** For UI changes you can't exercise in a browser, state that explicitly instead of claiming success. Type-checks and unit tests verify code correctness, not feature correctness.
+
+### Definition of Done (run in order; stop at first failure)
+
+1. `pnpm run typecheck`
+2. `pnpm run lint`
+3. `pnpm run test` — when you edited a `.ts/.tsx` file that has or warrants a colocated `.test.ts`.
+4. `pnpm run test:e2e` — when you changed routing, page chrome, or a user-facing flow. Otherwise skip; it's slow.
+5. `pnpm run build` — when you changed `vite.config.ts`, `scripts/**`, `index.html`, or anything under `public/`.
+
+A `/verify` slash command exists (`.claude/commands/verify.md`) that runs steps 1–3.
+
 ## Development Commands
 
 ```bash
 # Start development server
 pnpm run dev
 
-# Run linter (uses Ultracite/Biome)
+# Run linter (Ultracite — a Biome preset; no biome.json exists)
 pnpm run lint
 
 # Type checking
@@ -79,7 +95,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Components**: Reusable UI in `src/components/` (e.g., `CardSpread`, `StackPicker`, `NumberCard`, `ShareButton`, `ShareNudge`, `NavFooter`, `JsonLd`)
 - **Hooks**: Custom hooks in `src/hooks/` (e.g., `useSelectedStack`, `usePwaInstall`, `useDocumentMeta`)
 - **Utils**: Pure utility functions in `src/utils/` (e.g., `card-selection`, `card-formatting`, `localstorage`, `share`, `is-pwa`)
-- **Services**: `src/services/analytics.ts` — Google Analytics 4 integration with event tracking (only active on `memdeck.org`). Tracks flashcard/spot-check/ACAAN answers, session completions, share actions, web vitals, and errors
+- **Services**: `src/services/analytics.ts` — Google Analytics 4 integration with event tracking. Only initialized when `window.location.hostname === "memdeck.org"` — local dev, preview deployments, and e2e runs are **silent** (no GA events fired). Don't treat "GA didn't log locally" as a bug. Tracks flashcard/spot-check/ACAAN answers, session completions, share actions, web vitals, and errors
 - **i18n**: `src/i18n/` — 7 languages (en, fr, es, de, it, nl, pt) using `react-i18next`. Locale files are lazy-loaded as separate chunks. Type-safe keys derived from the English locale
 - **State**: Primarily local component state with localStorage persistence
 
@@ -138,6 +154,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Run `pnpm run test` before committing.**
 - **E2E tests** live in `e2e/` and use Playwright. Use them for user journey validation.
 - Don't use `.only` or `.skip` in committed code.
+- **Coverage has per-directory ratchets** (in `vitest.config.ts`): `src/hooks/**` requires lines ≥ 85%, `src/utils/**` ≥ 90%, `src/types/*.ts` ≥ 85%, `src/services/**` ≥ 90%. Global floor is lines ≥ 55%. `pnpm run test:coverage` enforces them; raise them over time, never lower without justification.
 
 ## Code Organization
 
@@ -162,9 +179,25 @@ This project uses **Ultracite** (a Biome preset) for formatting and linting.
 
 - **knip.json**: Dependency and export checker config. Ignores `@biomejs/biome` and `globals`
 - **tsconfig.json**: Project references to `tsconfig.app.json` and `tsconfig.node.json`
-- **vite.config.ts**: Minimal Vite config with React plugin
-- **vitest.config.ts**: Test runner configuration
+- **vite.config.ts**: Vite config (React plugin, VitePWA with manifest, locale chunk splitting, vendor chunks). Not "minimal" — touch with care; changes here require `pnpm run build` in the Definition of Done.
+- **vitest.config.ts**: Test runner configuration with per-directory coverage thresholds
 - **playwright.config.ts**: E2E test configuration
+- **.claude/review-baseline.json** and **.claude/audit-\*.json**: Snapshots from prior audit/review runs. Treat timestamps as authoritative — if older than ~2 weeks, re-run the relevant review or audit before citing their findings. Don't edit by hand.
+- **.claude/settings.json**: Claude Code hook config. The PostToolUse hook pipes tool-use JSON through `jq` to scope Ultracite formatting to the edited file. `jq` must be on `PATH` (install via `brew install jq` on macOS) — without it the hook fails silently and format-on-save stops working.
+
+## Memory for This Project
+
+The user-level auto-memory system handles most of the work. For memdeck.org specifically, **do** save:
+
+- **Feedback about copy/tone decisions** — audience is card magicians (not newcomers to card magic), "recall" not "guess", "stack" vs "memorized deck" usage, first-person only for Julien-voice pages. These preferences apply every time copy changes.
+- **External references** dropped in conversation — book titles, trick names, URLs to PDFs or magicians' posts, forum threads about specific stacks. Hard to re-find later.
+- **Product decisions and their motivations** — why a deck/mode was added or rejected, why a feature was scoped a certain way. Code shows the *what*; memory preserves the *why*.
+
+**Do NOT** save:
+
+- Code patterns, file paths, function names, types, or architecture — derivable from the repo, and saved copies become stale citation traps (violates the Verification Protocol above).
+- Task state for in-progress work — use plans/tasks, not memory.
+- Anything already in this CLAUDE.md — that's this file's job.
 
 ## Constants
 
@@ -190,3 +223,19 @@ All user-facing English text must follow these principles:
 1. Create `src/types/stacks/newdeck.ts` with the 52-card order
 2. Import and add to the `stacks` object in `src/types/stacks.ts`
 3. The deck will automatically appear in the StackPicker component
+
+## Adding a New Locale
+
+1. Copy `src/i18n/locales/en.json` to `src/i18n/locales/<code>.json` and translate values. Keys must stay identical — they're typed off `en` via `src/i18n/types.ts`, so any drift is a type error.
+2. Register the locale in `src/i18n/language.ts` — add `<code>` to `SUPPORTED_LANGUAGES`, `LANGUAGE_LABELS`, `LANGUAGE_CODES`, and `languageLoaders` (all four must stay in sync; they share a `satisfies Record<SupportedLanguage, …>` constraint).
+3. The filename must match `vite.config.ts`'s `LOCALE_CHUNK_RE` (`/i18n/locales/(?!en)(\w+)\.json$/`) — use a plain `<code>.json`, not `<code>-<region>.json`, or the chunk won't be split correctly.
+4. Run `pnpm run build` — a new `dist/assets/locale-<code>-<hash>.js` chunk should appear and be excluded from precaching (see `globIgnores` in `vite.config.ts`).
+
+## Adding a New Route / Page
+
+1. Create the page under `src/pages/<name>/` (for complex pages with subcomponents) or `src/pages/<name>.tsx` (for simple pages).
+2. Add the route path to the `ROUTES` object in `src/constants.ts`. **Must end with a trailing slash** (see "Routing" section for why).
+3. Register the route in `src/routes.tsx` using `lazyWithReload` + `<Suspense>`. Wrap in `<RequireStack>` if the page reads the selected stack.
+4. If the page has structured data (FAQ, HowTo, Book list, etc.), add a `<JsonLd>` inside `#root` so `scripts/prerender.ts` captures it in the static HTML.
+5. If the page is a top-level training mode, add it to the PWA manifest `shortcuts` array in `vite.config.ts` — shortcut URLs must use trailing slashes too (same rule as the router; otherwise the PWA launch triggers a 301).
+6. The sitemap picks up new routes from `ROUTES` automatically via `scripts/generate-sitemap.ts` — no separate entry needed.
