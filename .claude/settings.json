@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "npx ultracite fix"
+            "command": "jq -r '.tool_input.file_path // empty' | xargs -r -I{} sh -c 'case \"$1\" in *.ts|*.tsx|*.js|*.jsx|*.json|*.md|*.css) npx ultracite fix \"$1\" ;; esac' _ {}"
           }
         ]
       }
