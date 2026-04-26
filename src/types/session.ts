@@ -80,7 +80,7 @@ export type AllTimeStats = Partial<Record<StatsKey, AllTimeStatsEntry>>;
 
 /** Valid i18n keys for session encouragement messages, derived from en.json */
 type EncouragementMessages = (typeof en)["session"]["encouragement"];
-export type EncouragementKey =
+type EncouragementKey =
   `session.encouragement.${keyof EncouragementMessages & string}`;
 
 /** Translation key with optional interpolation params for encouragement messages */
