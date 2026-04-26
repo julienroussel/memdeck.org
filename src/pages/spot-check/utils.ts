@@ -7,7 +7,7 @@ export type PuzzleState =
   | { mode: "moved"; puzzle: MovedCardPuzzle };
 
 /** Result of removing a single card from the deck */
-export type MissingCardPuzzle = {
+type MissingCardPuzzle = {
   /** Array with one card removed */
   cards: PlayingCard[];
   /** The card that was removed */
@@ -17,7 +17,7 @@ export type MissingCardPuzzle = {
 };
 
 /** Result of swapping two cards in the deck */
-export type SwappedCardsPuzzle = {
+type SwappedCardsPuzzle = {
   /** Array with two cards swapped */
   cards: PlayingCard[];
   /** 0-based index of the first swapped card */
@@ -27,7 +27,7 @@ export type SwappedCardsPuzzle = {
 };
 
 /** Result of moving one card to a different position */
-export type MovedCardPuzzle = {
+type MovedCardPuzzle = {
   /** Array with one card moved */
   cards: PlayingCard[];
   /** The card that was moved */
