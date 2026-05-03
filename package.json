@@ -39,7 +39,7 @@
     "prepare": "lefthook install"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.13",
+    "@biomejs/biome": "2.4.14",
     "@lhci/cli": "0.15.1",
     "@playwright/test": "1.59.1",
     "@testing-library/jest-dom": "6.9.1",
@@ -51,9 +51,9 @@
     "@vitejs/plugin-react": "6.0.1",
     "@vitest/coverage-v8": "4.1.5",
     "fta-cli": "3.0.0",
-    "globals": "17.5.0",
+    "globals": "17.6.0",
     "happy-dom": "20.9.0",
-    "knip": "6.9.0",
+    "knip": "6.11.0",
     "lefthook": "2.1.6",
     "postcss": "8.5.13",
     "postcss-preset-mantine": "1.18.0",
