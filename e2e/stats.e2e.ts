@@ -129,10 +129,15 @@ test.describe("Statistics Page", () => {
     // Empty state message should be visible
     await expect(page.getByText(NO_TRAINING_DATA_YET_PATTERN)).toBeVisible();
 
-    // Stats components should not be visible
+    // Stats components should not be visible. Match the session-history heading
+    // by role rather than raw text — the page description ("...accuracy charts
+    // and session history.") is rendered above the empty state and otherwise
+    // matches a /session history/i text query.
     await expect(page.getByText(TOTAL_SESSIONS_PATTERN)).not.toBeVisible();
     await expect(page.getByText(ACCURACY_TREND_PATTERN)).not.toBeVisible();
-    await expect(page.getByText(SESSION_HISTORY_PATTERN)).not.toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: SESSION_HISTORY_PATTERN })
+    ).not.toBeVisible();
   });
 
   test("should display stats overview when session history exists", async ({
