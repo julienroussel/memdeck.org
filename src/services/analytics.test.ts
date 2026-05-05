@@ -291,6 +291,51 @@ describe("analytics", () => {
         label: "signed",
       });
     });
+
+    it("tracks STACK_LIMITS_CHANGED event via event bus with the per-stack range label", () => {
+      eventBus.emit.STACK_LIMITS_CHANGED({
+        start: 1,
+        end: 20,
+        rangeSize: 20,
+        stackName: "Mnemonica",
+      });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Settings",
+        action: "Stack Range Changed",
+        label: "Mnemonica (1-20)",
+      });
+    });
+
+    it("reports a listener exception via trackError without re-entering the safeListener guard", async () => {
+      // First emit makes mockEvent throw on the trackStackSelected call;
+      // safeListener catches it and queues a trackError via queueMicrotask
+      // (which itself ends up calling mockEvent again).
+      mockEvent.mockImplementationOnce(() => {
+        throw new Error("ga-down");
+      });
+
+      eventBus.emit.STACK_SELECTED({ stackName: "Mnemonica" });
+
+      // Flush the queueMicrotask scheduled inside safeListener's catch block.
+      await new Promise<void>((resolve) => {
+        queueMicrotask(resolve);
+      });
+
+      // The first call threw; the second call is the trackError emit.
+      // trackError serialises as { category: "Error", action: error.name,
+      // label: error.message } — see analytics.trackError. The original
+      // listener error was `new Error("ga-down")`, so action = "Error" and
+      // label = "ga-down".
+      expect(mockEvent).toHaveBeenCalledTimes(2);
+      expect(mockEvent).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          category: "Error",
+          action: "Error",
+          label: "ga-down",
+        })
+      );
+    });
   });
 
   describe("initialize", () => {
