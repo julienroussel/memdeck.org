@@ -55,7 +55,7 @@
     "happy-dom": "20.9.0",
     "knip": "6.11.0",
     "lefthook": "2.1.6",
-    "postcss": "8.5.13",
+    "postcss": "8.5.14",
     "postcss-preset-mantine": "1.18.0",
     "postcss-simple-vars": "7.0.1",
     "sharp": "0.34.5",
@@ -64,13 +64,13 @@
     "vite": "8.0.10",
     "vite-plugin-pwa": "1.2.0",
     "vitest": "4.1.5",
-    "workbox-window": "7.4.0"
+    "workbox-window": "7.4.1"
   },
   "dependencies": {
     "@mantine/core": "9.1.1",
     "@mantine/hooks": "9.1.1",
     "@mantine/notifications": "9.1.1",
-    "@tabler/icons-react": "3.41.1",
+    "@tabler/icons-react": "3.42.0",
     "i18next": "26.0.8",
     "react": "19.2.5",
     "react-dom": "19.2.5",
