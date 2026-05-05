@@ -11,7 +11,7 @@ import { probeStoredValue } from "./localstorage";
  * The shape carries the failure reason so triage can distinguish a quota
  * write-failure from a corruption refusal.
  */
-export type LastSaveFailedBreadcrumb = {
+type LastSaveFailedBreadcrumb = {
   reason:
     | "write-failed"
     | "serialize-failed"

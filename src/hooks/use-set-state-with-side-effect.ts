@@ -5,7 +5,7 @@ import { type Dispatch, type SetStateAction, useCallback, useRef } from "react";
  * payload derived from `prev`. The updater is pure: it returns the next state
  * and an optional payload, never mutates outer variables.
  */
-export type ComputedUpdate<S, P> = {
+type ComputedUpdate<S, P> = {
   next: S;
   payload: P | null;
 };

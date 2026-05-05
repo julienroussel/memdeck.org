@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
  * present but invalid" so callers (e.g. `finalizeSession`) can refuse to
  * overwrite corrupt data instead of silently treating it as empty.
  */
-export type StoredValueProbe<T> =
+type StoredValueProbe<T> =
   | { status: "absent" }
   | { status: "valid"; value: T }
   | { status: "corrupt"; raw: unknown }

@@ -27,14 +27,6 @@ import {
 // --- Types ---
 
 /**
- * Choice payload — discriminated so the page picks the right CardSpread
- * variant. `numbers` for Compute mode, `cards` for Apply mode.
- */
-export type DistanceChoices =
-  | { kind: "numbers"; data: number[] }
-  | { kind: "cards"; data: PlayingCardPosition[] };
-
-/**
  * Round-shaped fields, discriminated by `display`. Compute rounds always have
  * a non-null `expectedDistance` and numeric choices; Apply rounds always have
  * a non-null `offset` and card choices. This makes the impossible states
