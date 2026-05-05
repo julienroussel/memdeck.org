@@ -1,10 +1,7 @@
 import { timerReducerCases } from "../../hooks/use-game-timer";
-import type {
-  InitialStateConfig,
-  ResetGameAction,
-} from "../../hooks/use-reset-game-on-stack-change";
-import type { NeighborDirection } from "../../types/flashcard";
+import type { FlashcardMode, NeighborDirection } from "../../types/flashcard";
 import type { PlayingCard } from "../../types/playingcard";
+import type { BaseResetGameAction } from "../../types/reset-game-action";
 import { shuffle } from "../../types/shuffle";
 import {
   DEFAULT_STACK_LIMITS,
@@ -28,6 +25,18 @@ import {
 import type { DisplayMode } from "./utils";
 
 // --- Types ---
+
+type InitialStateConfig = BaseResetGameAction & {
+  limits?: StackLimits;
+} & (
+    | { flashcardMode: "neighbor"; neighborDirection: NeighborDirection }
+    | { flashcardMode?: Exclude<FlashcardMode, "neighbor"> }
+  );
+
+type ResetGameAction = {
+  type: "RESET_GAME";
+  payload: InitialStateConfig;
+};
 
 export type GameState = {
   successes: number;

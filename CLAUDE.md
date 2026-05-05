@@ -95,16 +95,17 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Components**: Reusable UI in `src/components/` (e.g., `CardSpread`, `StackPicker`, `NumberCard`, `ShareButton`, `ShareNudge`, `NavFooter`, `JsonLd`)
 - **Hooks**: Custom hooks in `src/hooks/` (e.g., `useSelectedStack`, `usePwaInstall`, `useDocumentMeta`)
 - **Utils**: Pure utility functions in `src/utils/` (e.g., `card-selection`, `card-formatting`, `localstorage`, `share`, `is-pwa`)
-- **Services**: `src/services/analytics.ts` — Google Analytics 4 integration with event tracking. Only initialized when `window.location.hostname === "memdeck.org"` — local dev, preview deployments, and e2e runs are **silent** (no GA events fired). Don't treat "GA didn't log locally" as a bug. Tracks flashcard/spot-check/ACAAN answers, session completions, share actions, web vitals, and errors
+- **Services**: `src/services/analytics.ts` — Google Analytics 4 integration with event tracking. Only initialized when `window.location.hostname === "memdeck.org"` — local dev, preview deployments, and e2e runs are **silent** (no GA events fired). Don't treat "GA didn't log locally" as a bug. Tracks flashcard/spot-check/ACAAN/distance answers, session completions, share actions, web vitals, and errors
 - **i18n**: `src/i18n/` — 7 languages (en, fr, es, de, it, nl, pt) using `react-i18next`. Locale files are lazy-loaded as separate chunks. Type-safe keys derived from the English locale
 - **State**: Primarily local component state with localStorage persistence
 
 ### Key Features
 
-- **Stack Range** (`src/components/stack-range-badge.tsx`, `src/components/stack-limits-control.tsx`): Global per-stack position range (e.g., 1–20) accessible via the navbar. Lets users train on a subset of the deck for progressive learning. Stored in localStorage per stack. Applies to Flashcard, Spot Check, Stack Lookup, and Card Spelling. ACAAN, Faro Shuffle, and Stay Stack always use the full deck
-- **Flashcard Mode** (`src/pages/flashcard/`): Main training feature with three modes (card-only, index-only, both). Presents 5 choices with optional timer (5s–60s). Respects stack range
+- **Stack Range** (`src/components/stack-range-badge.tsx`, `src/components/stack-limits-control.tsx`): Global per-stack position range (e.g., 1–20) accessible via the navbar. Lets users train on a subset of the deck for progressive learning. Stored in localStorage per stack. Applies to Flashcard, Spot Check, Distance, Stack Lookup, and Card Spelling. ACAAN, Faro Shuffle, and Stay Stack always use the full deck
+- **Flashcard Mode** (`src/pages/flashcard/`): Main training feature with three position modes (card-only, index-only, both) plus a Neighbor mode (recall the card before/after a shown card). Presents 5 choices with optional timer (10/15/30 s). Respects stack range
 - **Spot Check** (`src/pages/spot-check/`): Visual deck inspection training with three variants — missing card, swapped cards, or moved card. Uses an interactive card spread. Respects stack range
 - **ACAAN** (`src/pages/acaan/`): Any Card At Any Number calculator with instant feedback. Always uses full deck
+- **Distance Number** (`src/pages/distance/`): Drill the offset between two cards in the stack — the math behind Pit Hartling's Quartets routines (*In Order to Amaze*). Two sub-modes (compute, apply) and two conventions (cyclic 1..N-1, signed shortest). Respects stack range; needs at least 6 cards in range
 - **Toolbox** (`src/pages/toolbox/`): Collection of memorized deck utilities
 - **Stats** (`src/pages/stats/`): Session history, accuracy statistics, and best streak tracking
 - **Guide** (`src/pages/guide/`): Getting started and training instructions. Includes `HowTo` and `BreadcrumbList` JSON-LD schemas

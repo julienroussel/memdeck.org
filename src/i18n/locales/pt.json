@@ -52,7 +52,8 @@
     "acaan": "ACAAN",
     "spotCheck": "Spot Check",
     "toolbox": "Ferramentas",
-    "about": "Sobre"
+    "about": "Sobre",
+    "distance": "Distância"
   },
   "header": {
     "githubAriaLabel": "GitHub",
@@ -83,6 +84,8 @@
     "featureToolboxDescription": "Consulta do stack, misturas faro, soletração de cartas e sequências stay-stack.",
     "featureStatsTitle": "Estatísticas",
     "featureStatsDescription": "Acompanhe a sua precisão, sequências e histórico de sessões ao longo do tempo.",
+    "featureDistanceTitle": "Distância",
+    "featureDistanceDescription": "Pratica a distância entre duas cartas — a matemática por trás das Quartets do Pit Hartling.",
     "featureSpotCheckTitle": "Spot Check",
     "featureSpotCheckDescription": "Treine a deteção de anomalias — cartas em falta, trocadas ou movidas no seu baralho.",
     "quickStart": "Início rápido",
@@ -138,7 +141,9 @@
     "activeModeNeighbor": "Modo vizinho",
     "timesUp": "Tempo esgotado!",
     "movingToNext": "A avançar para a próxima carta.",
-    "revealTitle": "Resposta"
+    "revealTitle": "Resposta",
+    "answerCorrect": "Correto",
+    "answerIncorrect": "Errado, a resposta era {{answer}}"
   },
   "acaan": {
     "pageTitle": "Treino ACAAN",
@@ -147,11 +152,20 @@
     "title": "ACAAN",
     "settingsAriaLabel": "Definições do ACAAN",
     "cutDepthAriaLabel": "Profundidade de corte",
-    "cutDepthPlaceholder": "Profundidade de corte"
+    "cutDepthPlaceholder": "Profundidade de corte",
+    "correctTitle": "Correto!",
+    "wrongTitle": "Resposta errada",
+    "wrongMessage": "Tente novamente!",
+    "revealTitle": "Resposta",
+    "timesUp": "Tempo esgotado!",
+    "movingToNext": "A passar para a próxima ronda.",
+    "cutDepthMessage": "Posição {{from}} → {{to}}, profundidade de corte: {{cutDepth}}",
+    "cutDepthZero": "0 (sem corte)"
   },
   "spotCheck": {
     "pageTitle": "Treino Spot Check",
     "pageDescription": "Treine a sua capacidade de detetar anomalias no seu baralho memorizado — cartas em falta, cartas trocadas ou cartas movidas.",
+    "seoIntro": "Treine a sua memória visual do baralho memorizado — detete uma carta em falta, um par trocado ou uma carta movida para a posição errada. Desenvolva o olho que apanha os erros antes que lhe custem uma rotina.",
     "title": "Spot Check",
     "settingsAriaLabel": "Definições do Spot Check",
     "modeMissing": "Carta em falta",
@@ -292,7 +306,23 @@
   },
   "errors": {
     "somethingWentWrong": "Algo correu mal",
-    "languageLoadFailed": "Não foi possível carregar o idioma preferido. A usar inglês."
+    "languageLoadFailed": "Não foi possível carregar o idioma preferido. A usar inglês.",
+    "sessionSaveFailed": {
+      "title": "Falha ao guardar",
+      "message": "Não foi possível guardar a sessão — o armazenamento do navegador pode estar cheio. Liberta espaço e tenta Parar novamente."
+    },
+    "sessionStorageCorrupt": {
+      "title": "Dados guardados parecem corrompidos",
+      "message": "O teu histórico ou estatísticas guardadas não passaram na validação, por isso recusámos sobrescrevê-los. Limpa o armazenamento do navegador para este site para começar de novo — tentar de novo não vai ajudar."
+    },
+    "lastSaveFailed": {
+      "title": "A sessão anterior não foi guardada",
+      "message": "A tua sessão anterior não pôde ser guardada — o armazenamento do navegador podia estar cheio. Foi descartada."
+    },
+    "stackLimitsCorrupt": {
+      "title": "Não foi possível carregar os intervalos do stack",
+      "message": "Os teus intervalos guardados por stack não passaram na validação. As edições de intervalo estão desativadas para não os sobrescrever. Limpa o armazenamento do navegador para este site para começar de novo — tentar de novo não vai ajudar."
+    }
   },
   "stats": {
     "pageTitle": "Estatísticas",
@@ -337,7 +367,12 @@
     "filterMissing": "Em falta",
     "filterSwapped": "Trocadas",
     "filterMoved": "Movida",
-    "filterBySpotCheckSubModeAriaLabel": "Filtrar por submodo de spot check"
+    "filterBySpotCheckSubModeAriaLabel": "Filtrar por submodo de spot check",
+    "modeDistance": "Distância",
+    "filterDistance": "Distância",
+    "subModeCompute": "Calcular",
+    "subModeApply": "Aplicar",
+    "subModeBoth": "Ambos"
   },
   "resources": {
     "pageTitle": "Recursos",
@@ -463,6 +498,16 @@
       "share": "Use o botão de partilha no menu de navegação para divulgar o MemDeck junto de outros magos.",
       "reset": "Use o botão de repor no menu para apagar os seus dados. Pode repor apenas as definições (mantendo o histórico de treino) ou repor tudo.",
       "stackRange": "Use o intervalo do stack junto ao seletor de stack no menu para treinar um subconjunto de posições. Comece com poucas e amplie à medida que memorizar mais cartas."
+    },
+    "distanceTraining": {
+      "title": "Treino de Números de Distância",
+      "intro": "Treine a aritmética de deslocamentos que está por trás das Quartets de Pit Hartling e de produções semelhantes em palco. Os «números de distância» — termo cunhado por Pit Hartling e Denis Behr em \"In Order to Amaze\" — são os deslocamentos entre cartas específicas do seu stack.",
+      "computeItem": "<bold>Calcular</bold> — veja duas cartas e escolha a distância entre elas",
+      "applyItem": "<bold>Aplicar</bold> — veja uma carta e um deslocamento e escolha a carta resultante",
+      "bothItem": "<bold>Ambos</bold> — mistura aleatória de rondas de cálculo e aplicação",
+      "convention": "Escolha nas definições entre a convenção <bold>cíclica</bold> (apenas para a frente, de 1 a N-1) e a <bold>com sinal</bold> (deslocamento com sinal mais curto).",
+      "settings": "Toque no ícone de engrenagem para alternar entre modos, mudar de convenção e ajustar as definições do temporizador. Use o ícone de alvo para iniciar uma sessão estruturada.",
+      "link": "Ir para Treino de Distância"
     }
   },
   "faq": {
@@ -490,7 +535,9 @@
     "whatIsFaroA": "A mistura faro (também chamada mistura perfeita) é uma técnica em que o baralho é dividido em duas metades iguais e as cartas são perfeitamente intercaladas uma a uma. Num out-faro, as cartas do topo e do fundo permanecem no lugar. Num in-faro, deslocam-se para o interior. As misturas faro são uma ferramenta essencial para performers de baralho memorizado porque transformam o stack de forma previsível e reversível. A ferramenta Mistura Faro do MemDeck permite visualizar o resultado de múltiplas misturas faro no seu stack.",
     "offlineQ": "Posso usar o MemDeck offline?",
     "offlineA": "Sim. O MemDeck é uma Progressive Web App (PWA) que funciona totalmente offline após o primeiro carregamento. Pode instalá-lo no telemóvel ou tablet para uma experiência semelhante a uma app nativa. Treine nos bastidores, no metro ou no avião — sem necessidade de ligação à internet. Todos os dados de treino são armazenados localmente no seu dispositivo.",
-    "readGuide": "Ler o guia completo"
+    "readGuide": "Ler o guia completo",
+    "whatIsDistanceNumberQ": "O que é um número de distância?",
+    "whatIsDistanceNumberA": "Um número de distância é o deslocamento entre duas cartas específicas no seu stack memorizado — quantas posições é preciso avançar a partir de uma carta para chegar à outra. O termo foi cunhado por Pit Hartling e Denis Behr em \"In Order to Amaze\". Os números de distância estão na base das rotinas Quartets, em que o mágico produz uma quadra a partir de cartas livremente tocadas por um espetador. O treino de Distância do MemDeck pratica os dois sentidos: calcular a distância entre duas cartas mostradas e encontrar a carta resultante a partir de uma carta inicial e de um deslocamento."
   },
   "stackLimits": {
     "label": "Intervalo do stack",
@@ -506,5 +553,37 @@
     "thumbEndLabel": "Posição final",
     "badgeFullAriaLabel": "Intervalo do stack: {{count}} cartas. Toque para ajustar.",
     "badgePartialAriaLabel": "Intervalo do stack: posições {{start}} a {{end}}. Toque para ajustar."
+  },
+  "distance": {
+    "pageTitle": "Treino de Números de Distância",
+    "pageDescription": "Pratique a distância — o deslocamento — entre duas cartas no seu stack memorizado.",
+    "seoIntro": "Treine os números de distância que estão por trás das Quartets de Pit Hartling e das produções de quadras em palco. Escolha a distância entre duas cartas ou recorde uma carta a partir de uma carta inicial e de um deslocamento.",
+    "title": "Distância",
+    "settingsAriaLabel": "Definições de Distância",
+    "modeAriaLabel": "Modo de distância",
+    "conventionAriaLabel": "Convenção de distância",
+    "modeCompute": "Calcular",
+    "modeComputeDescription": "São mostradas duas cartas — recorde a distância entre elas.",
+    "modeApply": "Aplicar",
+    "modeApplyDescription": "São mostrados uma carta e um deslocamento — recorde a carta resultante.",
+    "modeBoth": "Ambos",
+    "modeBothDescription": "Uma mistura aleatória de rondas de cálculo e aplicação.",
+    "conventionCyclic": "Cíclica",
+    "conventionCyclicDescription": "Apenas distância para a frente, de 1 a N-1. Corresponde à terminologia de Pit Hartling.",
+    "conventionSigned": "Com sinal",
+    "conventionSignedDescription": "Deslocamento com sinal mais curto — negativo para trás. Mais útil para cálculo mental durante a rotina.",
+    "activeModeCompute": "Modo Calcular",
+    "activeModeApply": "Modo Aplicar",
+    "activeModeBoth": "Ambos os modos",
+    "promptComputeAriaLabel": "Distância de {{from}} a {{to}}",
+    "promptApplyAriaLabel": "Aplicar deslocamento {{offset}} a {{card}}",
+    "offsetLabel": "Deslocamento",
+    "rangeTooSmall": "O treino de Distância precisa de pelo menos {{count}} cartas no intervalo. Alargue o intervalo do seu stack para começar a treinar.",
+    "rangeTooSmallTitle": "Intervalo demasiado pequeno",
+    "revealTitle": "Resposta",
+    "timesUp": "Tempo esgotado!",
+    "movingToNext": "A passar para a próxima ronda.",
+    "answerCorrect": "Correto",
+    "answerIncorrect": "Errado, a resposta era {{answer}}"
   }
 }

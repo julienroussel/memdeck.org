@@ -1,4 +1,5 @@
 import { DECK_SIZE } from "../constants";
+import { isDistanceConvention, isDistanceMode } from "../types/distance";
 import { isFlashcardMode } from "../types/flashcard";
 import {
   type AllTimeStats,
@@ -6,6 +7,7 @@ import {
   type SessionRecord,
   type StatsKey,
   TRAINING_MODES,
+  type TrainingMode,
 } from "../types/session";
 import { isSpotCheckMode } from "../types/spot-check";
 import { stacks } from "../types/stacks";
@@ -22,8 +24,13 @@ const isFiniteNumber = (v: unknown): v is number =>
 const isFraction = (v: unknown): v is number =>
   isFiniteNumber(v) && v >= 0 && v <= 1;
 
-const isISODateString = (v: unknown): v is string =>
-  typeof v === "string" && !Number.isNaN(Date.parse(v));
+const isISODateString = (v: unknown): v is string => {
+  if (typeof v !== "string") {
+    return false;
+  }
+  const parsed = new Date(v);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString() === v;
+};
 const VALID_TRAINING_MODES: ReadonlySet<string> = new Set(TRAINING_MODES);
 
 /** Validates that `value.stackLimits` is either absent/undefined or a valid {start, end} object.
@@ -115,36 +122,88 @@ export const isSessionRecord = (value: unknown): value is SessionRecord => {
   if (!isOptionalStackLimits(value)) {
     return false;
   }
-  // For flashcard mode, validate flashcardMode if present
-  if (value.mode === "flashcard") {
-    if (
-      "flashcardMode" in value &&
-      value.flashcardMode !== undefined &&
-      !isFlashcardMode(value.flashcardMode)
-    ) {
+  // System boundary: value has been validated structurally above (all required
+  // keys present with correct primitive types); cast is needed because
+  // `validatePerModeFields` indexes the per-mode optional fields generically
+  // and TS can't widen `object` to a string-indexable record.
+  return validatePerModeFields(value as Record<string, unknown>);
+};
+
+// Per-mode optional-field validation extracted to keep `isSessionRecord` under
+// the cognitive-complexity ceiling. `value` has already been narrowed to an
+// object with a valid TrainingMode string at `mode` (verified by the
+// `includes(TRAINING_MODES, value.mode)` check at the call site). Typed as
+// `Record<string, unknown>` so per-field lookups don't require a cast inside
+// `isOptionalEnumField`.
+// Foreign-mode field names per discriminator. A record's value at any of
+// these keys must be undefined for that variant — extra mode-specific fields
+// from other modes are a sign of corrupt persisted state, not just type-
+// system slack from structural typing.
+const FOREIGN_MODE_FIELDS = {
+  flashcard: ["spotCheckMode", "distanceMode", "distanceConvention"],
+  acaan: [
+    "flashcardMode",
+    "spotCheckMode",
+    "distanceMode",
+    "distanceConvention",
+  ],
+  spotcheck: ["flashcardMode", "distanceMode", "distanceConvention"],
+  distance: ["flashcardMode", "spotCheckMode"],
+} as const satisfies Record<TrainingMode, readonly string[]>;
+
+// A foreign-mode field is treated as "absent" only when the key is missing
+// entirely OR explicitly `undefined`. An explicit `null` (or any other value)
+// is corrupt — a record carrying `"flashcardMode": null` on an acaan session
+// would otherwise pass this guard and reach reducers that don't expect it.
+const hasOwn = (obj: object, key: string): boolean => Object.hasOwn(obj, key);
+
+const hasNoForeignModeFields = (
+  value: Record<string, unknown>,
+  mode: keyof typeof FOREIGN_MODE_FIELDS
+): boolean =>
+  FOREIGN_MODE_FIELDS[mode].every(
+    (key) => !hasOwn(value, key) || value[key] === undefined
+  );
+
+const validatePerModeFields = (value: Record<string, unknown>): boolean => {
+  switch (value.mode) {
+    case "flashcard":
+      return (
+        isOptionalEnumField(value, "flashcardMode", isFlashcardMode) &&
+        hasNoForeignModeFields(value, "flashcard")
+      );
+    case "acaan":
+      return hasNoForeignModeFields(value, "acaan");
+    case "spotcheck":
+      return (
+        isOptionalEnumField(value, "spotCheckMode", isSpotCheckMode) &&
+        hasNoForeignModeFields(value, "spotcheck")
+      );
+    case "distance":
+      return (
+        isOptionalEnumField(value, "distanceMode", isDistanceMode) &&
+        isOptionalEnumField(
+          value,
+          "distanceConvention",
+          isDistanceConvention
+        ) &&
+        hasNoForeignModeFields(value, "distance")
+      );
+    default:
       return false;
-    }
-    return true;
   }
-  // For acaan mode, flashcardMode should not be present
-  if (value.mode === "acaan") {
-    if ("flashcardMode" in value && value.flashcardMode !== undefined) {
-      return false;
-    }
-    return true;
-  }
-  // For spotcheck mode, validate spotCheckMode if present
-  if (value.mode === "spotcheck") {
-    if (
-      "spotCheckMode" in value &&
-      value.spotCheckMode !== undefined &&
-      !isSpotCheckMode(value.spotCheckMode)
-    ) {
-      return false;
-    }
-    return true;
-  }
-  return false;
+};
+
+// Helper: a field is valid if absent, undefined, or passes the type guard.
+// Takes `Record<string, unknown>` so the `value[field]` lookup is type-safe
+// without a cast at the access site.
+const isOptionalEnumField = <T>(
+  value: Record<string, unknown>,
+  field: string,
+  guard: (v: unknown) => v is T
+): boolean => {
+  const fieldValue = value[field];
+  return fieldValue === undefined || guard(fieldValue);
 };
 
 export const isSessionRecordArray = (

@@ -1,14 +1,35 @@
-import {
-  type Dispatch,
-  type RefObject,
-  type SetStateAction,
-  useCallback,
-} from "react";
+import { type Dispatch, type SetStateAction, useCallback } from "react";
 import type { ActiveSession, SessionPhase } from "../types/session";
+import { useSetStateWithSideEffect } from "./use-set-state-with-side-effect";
 
 type UseSessionRecordingOptions = {
   setStatus: Dispatch<SetStateAction<SessionPhase>>;
-  pendingFinalizationRef: RefObject<ActiveSession | null>;
+  requestFinalization: (session: ActiveSession) => void;
+};
+
+/**
+ * Pure derivation of the next phase plus an optional session-to-finalize from
+ * the previous phase. Extracted so the `setStatus` updater is a pure function
+ * — no outer-variable assignment, safe under React StrictMode double-invoke.
+ */
+const advanceQuestion = (
+  prev: SessionPhase
+): { next: SessionPhase; payload: ActiveSession | null } => {
+  if (prev.phase !== "active") {
+    return { next: prev, payload: null };
+  }
+  const newCompleted = prev.session.questionsCompleted + 1;
+  const updatedSession: ActiveSession = {
+    ...prev.session,
+    questionsCompleted: newCompleted,
+  };
+  const isStructuredComplete =
+    prev.session.config.type === "structured" &&
+    newCompleted >= prev.session.config.totalQuestions;
+  return {
+    next: { phase: "active", session: updatedSession },
+    payload: isStructuredComplete ? updatedSession : null,
+  };
 };
 
 type UseSessionRecordingResult = {
@@ -19,7 +40,7 @@ type UseSessionRecordingResult = {
 
 export const useSessionRecording = ({
   setStatus,
-  pendingFinalizationRef,
+  requestFinalization,
 }: UseSessionRecordingOptions): UseSessionRecordingResult => {
   const recordCorrect = useCallback(() => {
     setStatus((prev) => {
@@ -55,34 +76,18 @@ export const useSessionRecording = ({
     });
   }, [setStatus]);
 
+  // Compute the next phase and an optional session-to-finalize from the
+  // latest queued state, then dispatch finalization AFTER setStatus returns.
+  // The shared hook owns the updater→ref→post-setState plumbing; this hook
+  // just supplies the pure compute function.
+  const dispatchAdvance = useSetStateWithSideEffect(
+    setStatus,
+    requestFinalization
+  );
+
   const recordQuestionAdvanced = useCallback(() => {
-    setStatus((prev) => {
-      if (prev.phase !== "active") {
-        return prev;
-      }
-      const newCompleted = prev.session.questionsCompleted + 1;
-      const { config } = prev.session;
-
-      // Auto-complete structured session when done — schedule finalization
-      // via the ref so side effects run outside this pure updater.
-      if (
-        config.type === "structured" &&
-        newCompleted >= config.totalQuestions
-      ) {
-        const updatedSession = {
-          ...prev.session,
-          questionsCompleted: newCompleted,
-        };
-        pendingFinalizationRef.current = updatedSession;
-        return { phase: "active", session: updatedSession };
-      }
-
-      return {
-        phase: "active",
-        session: { ...prev.session, questionsCompleted: newCompleted },
-      };
-    });
-  }, [setStatus, pendingFinalizationRef]);
+    dispatchAdvance(advanceQuestion);
+  }, [dispatchAdvance]);
 
   return { recordCorrect, recordIncorrect, recordQuestionAdvanced };
 };

@@ -60,6 +60,7 @@ export const useAccuracyFilter = (
       { label: t("stats.filterFlashcard"), value: "flashcard" },
       { label: t("stats.filterSpotCheck"), value: "spotcheck" },
       { label: t("stats.filterAcaan"), value: "acaan" },
+      { label: t("stats.filterDistance"), value: "distance" },
     ],
     [t]
   );

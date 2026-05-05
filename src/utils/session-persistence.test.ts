@@ -1,23 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  ALL_TIME_STATS_LSK,
-  MAX_SESSION_HISTORY,
-  SESSION_HISTORY_LSK,
-} from "../constants";
+import { ALL_TIME_STATS_LSK, SESSION_HISTORY_LSK } from "../constants";
 import { eventBus } from "../services/event-bus";
 import { createMockLocalStorage } from "../test-utils/mock-local-storage";
 import {
   makeActiveSession,
   makeSessionRecord as makeRecord,
 } from "../test-utils/session-factories";
-import type { AllTimeStats, SessionRecord } from "../types/session";
+import type { AllTimeStats } from "../types/session";
 import { createDeckPosition } from "../types/stacks";
 import {
   buildSessionRecord,
   computeSessionSummary,
   finalizeSession,
-  saveSessionRecord,
-  updateAllTimeStats,
 } from "./session-persistence";
 
 const { storage, mockLocalStorage } = createMockLocalStorage();
@@ -30,9 +24,24 @@ vi.mock("../services/event-bus", () => ({
   },
 }));
 
+// Mock analytics so trackError doesn't try to talk to GA in tests
+vi.mock("../services/analytics", () => ({
+  analytics: {
+    trackError: vi.fn(),
+  },
+}));
+
+// Per-key read-error overrides for simulating Safari ITP / security failures
+// during `localStorage.getItem`. Tests register a key here to make the mocked
+// `readLocalStorageValue` throw for that key only.
+const readErrorKeys = new Map<string, unknown>();
+
 // Mock @mantine/hooks so getStoredValue can work
 vi.mock("@mantine/hooks", () => ({
   readLocalStorageValue: ({ key }: { key: string }) => {
+    if (readErrorKeys.has(key)) {
+      throw readErrorKeys.get(key);
+    }
     const raw = storage.get(key);
     if (raw === undefined || raw === null) {
       return;
@@ -66,6 +75,8 @@ const testStackLimits = {
 
 beforeEach(() => {
   storage.clear();
+  readErrorKeys.clear();
+  vi.clearAllMocks();
 });
 
 afterEach(() => {
@@ -121,85 +132,6 @@ describe("buildSessionRecord", () => {
     expect(record.spotCheckMode).toBe("missing");
     expect(record.stackKey).toBe("mnemonica");
     expect(typeof record.accuracy).toBe("number");
-  });
-});
-
-describe("saveSessionRecord", () => {
-  it("saves a record to localStorage", () => {
-    const record = makeRecord();
-    saveSessionRecord(record);
-
-    const stored = JSON.parse(storage.get(SESSION_HISTORY_LSK) ?? "[]");
-    expect(stored).toHaveLength(1);
-    expect(stored[0].id).toBe(record.id);
-  });
-
-  it("prepends new records", () => {
-    saveSessionRecord(makeRecord({ id: "first" }));
-    saveSessionRecord(makeRecord({ id: "second" }));
-
-    const stored = JSON.parse(storage.get(SESSION_HISTORY_LSK) ?? "[]");
-    expect(stored).toHaveLength(2);
-    expect(stored[0].id).toBe("second");
-    expect(stored[1].id).toBe("first");
-  });
-
-  it("caps history at MAX_SESSION_HISTORY", () => {
-    const records: SessionRecord[] = [];
-    for (let i = 0; i < MAX_SESSION_HISTORY; i++) {
-      records.push(makeRecord({ id: `record-${i}` }));
-    }
-    storage.set(SESSION_HISTORY_LSK, JSON.stringify(records));
-
-    saveSessionRecord(makeRecord({ id: "overflow" }));
-
-    const stored = JSON.parse(storage.get(SESSION_HISTORY_LSK) ?? "[]");
-    expect(stored).toHaveLength(MAX_SESSION_HISTORY);
-    expect(stored[0].id).toBe("overflow");
-  });
-});
-
-describe("updateAllTimeStats", () => {
-  it("creates a new entry for first session", () => {
-    const record = makeRecord();
-    updateAllTimeStats(record);
-
-    const stored: AllTimeStats = JSON.parse(
-      storage.get(ALL_TIME_STATS_LSK) ?? "{}"
-    );
-    const entry = stored["flashcard:mnemonica"];
-
-    expect(entry).toBeDefined();
-    expect(entry?.totalSessions).toBe(1);
-    expect(entry?.totalQuestions).toBe(10);
-    expect(entry?.totalSuccesses).toBe(8);
-    expect(entry?.totalFails).toBe(2);
-    expect(entry?.globalBestStreak).toBe(5);
-  });
-
-  it("accumulates stats across sessions", () => {
-    updateAllTimeStats(makeRecord({ successes: 5, fails: 5, bestStreak: 3 }));
-    updateAllTimeStats(makeRecord({ successes: 8, fails: 2, bestStreak: 7 }));
-
-    const stored: AllTimeStats = JSON.parse(
-      storage.get(ALL_TIME_STATS_LSK) ?? "{}"
-    );
-    const entry = stored["flashcard:mnemonica"];
-
-    expect(entry?.totalSessions).toBe(2);
-    expect(entry?.totalSuccesses).toBe(13);
-    expect(entry?.totalFails).toBe(7);
-    expect(entry?.globalBestStreak).toBe(7);
-  });
-
-  it("tracks best streak as max across sessions", () => {
-    updateAllTimeStats(makeRecord({ bestStreak: 10 }));
-    updateAllTimeStats(makeRecord({ bestStreak: 3 }));
-
-    const stored: AllTimeStats = JSON.parse(
-      storage.get(ALL_TIME_STATS_LSK) ?? "{}"
-    );
-    expect(stored["flashcard:mnemonica"]?.globalBestStreak).toBe(10);
   });
 });
 
@@ -332,8 +264,12 @@ describe("computeSessionSummary", () => {
 describe("finalizeSession", () => {
   it("returns a SessionSummary with the correct record", () => {
     const session = makeSession();
-    const summary = finalizeSession(session);
+    const result = finalizeSession(session);
 
+    if (!result.ok) {
+      throw new Error("Expected finalizeSession to succeed");
+    }
+    const { summary } = result;
     expect(summary.record.id).toBe(session.id);
     expect(summary.record.mode).toBe(session.mode);
     expect(summary.record.stackKey).toBe(session.stackKey);
@@ -346,6 +282,7 @@ describe("finalizeSession", () => {
       mode: "flashcard",
       accuracy: 0.8,
       questionsCompleted: 10,
+      saved: true,
     });
   });
 
@@ -394,11 +331,14 @@ describe("finalizeSession", () => {
 
     // Finalize a session with bestStreak=5, which exceeds the old globalBestStreak of 3
     const session = makeSession({ id: "new-session", bestStreak: 5 });
-    const summary = finalizeSession(session);
+    const result = finalizeSession(session);
 
+    if (!result.ok) {
+      throw new Error("Expected finalizeSession to succeed");
+    }
     // The summary should detect this as a new global best streak because
     // stats are updated AFTER summary computation
-    expect(summary.isNewGlobalBestStreak).toBe(true);
+    expect(result.summary.isNewGlobalBestStreak).toBe(true);
 
     // After finalization, the stored stats should now reflect the updated streak
     const updatedStats: AllTimeStats = JSON.parse(
@@ -409,12 +349,15 @@ describe("finalizeSession", () => {
 
   it("returns greatStart encouragement for first session with no history", () => {
     const session = makeSession({ successes: 7, fails: 3 });
-    const summary = finalizeSession(session);
+    const result = finalizeSession(session);
 
-    expect(summary.encouragement).toEqual({
+    if (!result.ok) {
+      throw new Error("Expected finalizeSession to succeed");
+    }
+    expect(result.summary.encouragement).toEqual({
       key: "session.encouragement.greatStart",
     });
-    expect(summary.previousAverageAccuracy).toBeNull();
+    expect(result.summary.previousAverageAccuracy).toBeNull();
   });
 
   it("finalizes a spotcheck session with the correct mode and spotCheckMode", () => {
@@ -422,8 +365,12 @@ describe("finalizeSession", () => {
       mode: "spotcheck",
       spotCheckMode: "swapped",
     });
-    const summary = finalizeSession(session);
+    const result = finalizeSession(session);
 
+    if (!result.ok) {
+      throw new Error("Expected finalizeSession to succeed");
+    }
+    const { summary } = result;
     expect(summary.record.mode).toBe("spotcheck");
     if (summary.record.mode !== "spotcheck") {
       throw new Error("Expected spotcheck mode");
@@ -440,18 +387,247 @@ describe("finalizeSession", () => {
     expect(stats["spotcheck:mnemonica"]).toBeDefined();
   });
 
-  it("does not fail when localStorage setItem throws", () => {
+  it("returns { ok: false, reason: 'write-failed' } when localStorage setItem throws", () => {
     const originalSetItem = mockLocalStorage.setItem;
     mockLocalStorage.setItem = () => {
       throw new Error("QuotaExceededError");
     };
 
     const session = makeSession();
-    // Should not throw — errors are swallowed internally
-    const summary = finalizeSession(session);
+    // Should not throw — errors are swallowed internally and surfaced via the
+    // discriminated result.
+    const result = finalizeSession(session);
 
-    expect(summary.record.id).toBe(session.id);
+    expect(result).toEqual({ ok: false, reason: "write-failed" });
 
     mockLocalStorage.setItem = originalSetItem;
+  });
+
+  it("returns { ok: false, reason: 'corrupt' } when the rollback write also fails", () => {
+    // Seed a valid history so finalizeSession proceeds past the dedupe check.
+    const seed = makeRecord({ id: "seed" });
+    storage.set(SESSION_HISTORY_LSK, JSON.stringify([seed]));
+
+    // Fail only the all-time stats write AND the rollback write (both target
+    // setItem). Sequence: history write succeeds, all-time stats write fails,
+    // rollback write fails — leaving on-disk state inconsistent.
+    let callCount = 0;
+    const originalSetItem = mockLocalStorage.setItem;
+    mockLocalStorage.setItem = (key: string, value: string) => {
+      callCount++;
+      if (callCount === 1) {
+        // First setItem: history write — let it through.
+        originalSetItem.call(mockLocalStorage, key, value);
+        return;
+      }
+      // Second + third setItem (all-time stats, then rollback) both fail.
+      throw new Error("QuotaExceededError");
+    };
+
+    const session = makeSession();
+    const result = finalizeSession(session);
+
+    expect(result).toEqual({ ok: false, reason: "corrupt" });
+
+    mockLocalStorage.setItem = originalSetItem;
+  });
+
+  // `serializePayloads` calls JSON.stringify three times in a single try block,
+  // in this order: (1) nextHistory, (2) nextAllTimeStats, (3) prevHistory. Each
+  // variant must surface as `serialize-failed` regardless of which call throws.
+  it.each([
+    { failingCall: 1, label: "nextHistory" },
+    { failingCall: 2, label: "nextAllTimeStats" },
+    { failingCall: 3, label: "prevHistory" },
+  ])("returns { ok: false, reason: 'serialize-failed' } when JSON.stringify throws on call $failingCall ($label)", ({
+    failingCall,
+  }) => {
+    // serialize-failed is distinct from write-failed so triage can split a
+    // bad payload (cyclic ref, BigInt) from a quota or permissions issue.
+    const originalStringify = JSON.stringify;
+    let callCount = 0;
+    const stringifySpy = vi
+      .spyOn(JSON, "stringify")
+      .mockImplementation((value, replacer, space) => {
+        callCount++;
+        if (callCount === failingCall) {
+          throw new TypeError("circular reference");
+        }
+        return originalStringify(value, replacer, space);
+      });
+
+    const session = makeSession();
+    const result = finalizeSession(session);
+
+    expect(result).toEqual({ ok: false, reason: "serialize-failed" });
+
+    stringifySpy.mockRestore();
+  });
+
+  it("returns { ok: false, reason: 'corrupt-prior-state' } and refuses to overwrite when stored history fails validation", () => {
+    // Simulate corrupt prior history (e.g. partial write or schema drift after
+    // an app update). finalizeSession must refuse to overwrite — otherwise the
+    // user's previously-recoverable history would be silently destroyed by a
+    // single new record.
+    storage.set(
+      SESSION_HISTORY_LSK,
+      JSON.stringify([{ totally: "not", a: "session", record: true }])
+    );
+
+    const session = makeSession();
+    const result = finalizeSession(session);
+
+    expect(result).toEqual({ ok: false, reason: "corrupt-prior-state" });
+
+    // Importantly, the history was NOT overwritten — the corrupt blob is still
+    // present so the user can attempt manual recovery (export, repair, etc.).
+    expect(storage.get(SESSION_HISTORY_LSK)).toBe(
+      JSON.stringify([{ totally: "not", a: "session", record: true }])
+    );
+    // Stats must also be untouched.
+    expect(storage.get(ALL_TIME_STATS_LSK)).toBeUndefined();
+  });
+
+  it("returns { ok: false, reason: 'corrupt-prior-state' } when stored all-time stats fail validation", () => {
+    // History is fine but stats are corrupt — same refusal applies.
+    storage.set(SESSION_HISTORY_LSK, JSON.stringify([]));
+    storage.set(
+      ALL_TIME_STATS_LSK,
+      JSON.stringify({ "flashcard:mnemonica": "not an entry shape" })
+    );
+
+    const session = makeSession();
+    const result = finalizeSession(session);
+
+    expect(result).toEqual({ ok: false, reason: "corrupt-prior-state" });
+
+    // Neither key was overwritten.
+    expect(storage.get(SESSION_HISTORY_LSK)).toBe(JSON.stringify([]));
+    expect(storage.get(ALL_TIME_STATS_LSK)).toBe(
+      JSON.stringify({ "flashcard:mnemonica": "not an entry shape" })
+    );
+  });
+
+  it("repairs stats on retry after a prior 'corrupt' failure (history written, stats failed, rollback failed)", () => {
+    // Simulate the on-disk state left behind by a corrupt finalize:
+    // history was successfully written (record at position 0) but the
+    // all-time stats write failed AND the history rollback also failed,
+    // so stats are missing for this stack. The record's id sits in
+    // history[0] but stats have no entry.
+    const session = makeSession();
+    const record = {
+      // Build the same record finalizeSession would produce. Date fields are
+      // overridden inside buildSessionRecord, but the dedupe check only
+      // compares ids, so the seed shape just needs the id to match.
+      ...makeRecord({ id: session.id, accuracy: 0.8 }),
+    };
+    storage.set(SESSION_HISTORY_LSK, JSON.stringify([record]));
+    // Stats intentionally absent — this is the "corrupt" inconsistency.
+
+    const result = finalizeSession(session);
+
+    if (!result.ok) {
+      throw new Error(
+        "Expected retry after corrupt failure to succeed, got: " +
+          JSON.stringify(result)
+      );
+    }
+
+    // History must NOT have been duplicated — still a single entry with the
+    // same id.
+    const storedHistory = JSON.parse(storage.get(SESSION_HISTORY_LSK) ?? "[]");
+    expect(storedHistory).toHaveLength(1);
+    expect(storedHistory[0].id).toBe(session.id);
+
+    // Stats must now exist and reflect a single session — the retry repaired
+    // the inconsistency rather than short-circuiting on dedupe.
+    const stats: AllTimeStats = JSON.parse(
+      storage.get(ALL_TIME_STATS_LSK) ?? "{}"
+    );
+    const entry = stats["flashcard:mnemonica"];
+    expect(entry).toBeDefined();
+    expect(entry?.totalSessions).toBe(1);
+    expect(entry?.totalSuccesses).toBe(8);
+    expect(entry?.totalFails).toBe(2);
+  });
+
+  it("returns { ok: false, reason: 'corrupt-prior-state' } when the history read throws (Safari ITP / security error)", () => {
+    // A transient `localStorage.getItem` failure (Safari ITP, SecurityError,
+    // quota during read) is indistinguishable from intact-data-we-can't-read.
+    // Refusing to overwrite is the safe default — otherwise the next write
+    // would silently destroy data the user might still recover.
+    readErrorKeys.set(
+      SESSION_HISTORY_LSK,
+      new Error("SecurityError: ITP read denied")
+    );
+
+    const session = makeSession();
+    const result = finalizeSession(session);
+
+    expect(result).toEqual({ ok: false, reason: "corrupt-prior-state" });
+
+    // Nothing was written.
+    expect(storage.get(SESSION_HISTORY_LSK)).toBeUndefined();
+    expect(storage.get(ALL_TIME_STATS_LSK)).toBeUndefined();
+  });
+
+  it("returns { ok: false, reason: 'corrupt-prior-state' } when the all-time stats read throws", () => {
+    storage.set(SESSION_HISTORY_LSK, JSON.stringify([]));
+    readErrorKeys.set(
+      ALL_TIME_STATS_LSK,
+      new Error("SecurityError: ITP read denied")
+    );
+
+    const session = makeSession();
+    const result = finalizeSession(session);
+
+    expect(result).toEqual({ ok: false, reason: "corrupt-prior-state" });
+
+    // History was not overwritten beyond the seeded empty array.
+    expect(storage.get(SESSION_HISTORY_LSK)).toBe(JSON.stringify([]));
+    expect(storage.get(ALL_TIME_STATS_LSK)).toBeUndefined();
+  });
+
+  it("does not duplicate the history entry when the same session is finalized twice (history-level dedupe only)", () => {
+    // Per-record dedupe at the persistence layer was removed (it relied on a
+    // heuristic that conflated 'any prior session in this mode+stack' with
+    // 'this specific record persisted', causing silent stats loss on retry
+    // after a `corrupt` failure when the user already had prior sessions in
+    // the same bucket). In-mount retry safety lives upstream in
+    // `finalizedIdsRef` (use-session.ts). Here we only guarantee that history
+    // isn't duplicated. The cross-tab finalize-twice race may double-increment
+    // stats by 1 — accepted as strictly better than silent loss.
+    const session = makeSession();
+    const first = finalizeSession(session);
+    if (!first.ok) {
+      throw new Error("Expected first finalizeSession to succeed");
+    }
+
+    const second = finalizeSession(session);
+    if (!second.ok) {
+      throw new Error("Expected second finalizeSession to succeed");
+    }
+
+    // History must contain a single entry with the same id — not duplicated.
+    const stored = JSON.parse(storage.get(SESSION_HISTORY_LSK) ?? "[]");
+    expect(stored).toHaveLength(1);
+    expect(stored[0].id).toBe(session.id);
+
+    // Stats, however, are incremented on every successful finalize call —
+    // there's no per-record stats dedupe at this layer. Two finalize calls for
+    // the same session means totalSessions=2 (and the per-attempt counts also
+    // doubled). This is the documented "double-increment on retry" tradeoff:
+    // strictly better than silently dropping the stats increment when a prior
+    // `corrupt` failure left history written but stats unwritten.
+    const stats: AllTimeStats = JSON.parse(
+      storage.get(ALL_TIME_STATS_LSK) ?? "{}"
+    );
+    const entry = stats["flashcard:mnemonica"];
+    expect(entry).toBeDefined();
+    expect(entry?.totalSessions).toBe(2);
+    expect(entry?.totalQuestions).toBe(20);
+    expect(entry?.totalSuccesses).toBe(16);
+    expect(entry?.totalFails).toBe(4);
+    expect(entry?.globalBestStreak).toBe(5);
   });
 });

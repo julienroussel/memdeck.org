@@ -52,7 +52,8 @@
     "acaan": "ACAAN",
     "spotCheck": "Spot Check",
     "toolbox": "Caja de herramientas",
-    "about": "Acerca de"
+    "about": "Acerca de",
+    "distance": "Distancia"
   },
   "header": {
     "githubAriaLabel": "GitHub",
@@ -83,6 +84,8 @@
     "featureToolboxDescription": "Consulta de stack, mezclas faro, deletreo de cartas y secuencias stay-stack.",
     "featureStatsTitle": "Estadísticas",
     "featureStatsDescription": "Sigue tu precisión, rachas e historial de sesiones a lo largo del tiempo.",
+    "featureDistanceTitle": "Distancia",
+    "featureDistanceDescription": "Practica la distancia entre dos cartas — las matemáticas detrás de los Quartets de Pit Hartling.",
     "featureSpotCheckTitle": "Spot Check",
     "featureSpotCheckDescription": "Entrena para detectar anomalías — cartas faltantes, intercambiadas o movidas en tu baraja.",
     "quickStart": "Inicio rápido",
@@ -138,7 +141,9 @@
     "activeModeNeighbor": "Modo vecino",
     "timesUp": "¡Se acabó el tiempo!",
     "movingToNext": "Pasando a la siguiente carta.",
-    "revealTitle": "Respuesta"
+    "revealTitle": "Respuesta",
+    "answerCorrect": "Correcto",
+    "answerIncorrect": "Incorrecto, la respuesta era {{answer}}"
   },
   "acaan": {
     "pageTitle": "Entrenamiento ACAAN",
@@ -147,11 +152,20 @@
     "title": "ACAAN",
     "settingsAriaLabel": "Configuración de ACAAN",
     "cutDepthAriaLabel": "Profundidad de corte",
-    "cutDepthPlaceholder": "Profundidad de corte"
+    "cutDepthPlaceholder": "Profundidad de corte",
+    "correctTitle": "¡Correcto!",
+    "wrongTitle": "Respuesta incorrecta",
+    "wrongMessage": "¡Inténtalo de nuevo!",
+    "revealTitle": "Respuesta",
+    "timesUp": "¡Se acabó el tiempo!",
+    "movingToNext": "Pasando a la siguiente ronda.",
+    "cutDepthMessage": "Posición {{from}} → {{to}}, profundidad de corte: {{cutDepth}}",
+    "cutDepthZero": "0 (sin corte)"
   },
   "spotCheck": {
     "pageTitle": "Entrenamiento Spot Check",
     "pageDescription": "Entrena tu capacidad para detectar anomalías en tu baraja memorizada — cartas faltantes, cartas intercambiadas o cartas movidas.",
+    "seoIntro": "Entrena tu memoria visual con la baraja memorizada — detecta una carta faltante, un par de cartas intercambiadas o una carta movida fuera de su lugar. Desarrolla el ojo que capta los errores antes de que te arruinen una rutina.",
     "title": "Spot Check",
     "settingsAriaLabel": "Configuración de Spot Check",
     "modeMissing": "Carta faltante",
@@ -292,7 +306,23 @@
   },
   "errors": {
     "somethingWentWrong": "Algo salió mal",
-    "languageLoadFailed": "No se pudo cargar tu idioma preferido. Usando inglés."
+    "languageLoadFailed": "No se pudo cargar tu idioma preferido. Usando inglés.",
+    "sessionSaveFailed": {
+      "title": "Error al guardar",
+      "message": "No se pudo guardar tu sesión — el almacenamiento del navegador puede estar lleno. Libera espacio y vuelve a intentar Detener."
+    },
+    "sessionStorageCorrupt": {
+      "title": "Los datos guardados parecen corruptos",
+      "message": "Tu historial o estadísticas guardados no pasaron la validación, por lo que no los sobrescribiremos. Borra el almacenamiento del navegador para este sitio y empieza de cero — reintentar no servirá."
+    },
+    "lastSaveFailed": {
+      "title": "La sesión anterior no se guardó",
+      "message": "Tu sesión anterior no pudo guardarse — puede que el almacenamiento del navegador estuviera lleno. Se ha descartado."
+    },
+    "stackLimitsCorrupt": {
+      "title": "No se pudieron cargar los rangos del stack",
+      "message": "Tus rangos guardados por cada stack no pasaron la validación. La edición de rangos está desactivada para no sobrescribirlos. Borra el almacenamiento del navegador para este sitio para empezar de cero — reintentar no servirá."
+    }
   },
   "stats": {
     "pageTitle": "Estadísticas",
@@ -337,7 +367,12 @@
     "filterMissing": "Faltante",
     "filterSwapped": "Intercambiadas",
     "filterMoved": "Movida",
-    "filterBySpotCheckSubModeAriaLabel": "Filtrar por submodo de spot check"
+    "filterBySpotCheckSubModeAriaLabel": "Filtrar por submodo de spot check",
+    "modeDistance": "Distancia",
+    "filterDistance": "Distancia",
+    "subModeCompute": "Calcular",
+    "subModeApply": "Aplicar",
+    "subModeBoth": "Ambos"
   },
   "resources": {
     "pageTitle": "Recursos",
@@ -463,6 +498,16 @@
       "share": "Usa el botón de compartir en el menú de navegación para dar a conocer MemDeck entre tus compañeros magos.",
       "reset": "Usa el botón de restablecer en el menú para borrar tus datos. Puedes restablecer solo los ajustes (conservando el historial de entrenamiento) o restablecer todo.",
       "stackRange": "Usa el rango del stack junto al selector de stack en el menú para entrenar con una parte de las posiciones. Empieza con pocas y amplía a medida que memorices más cartas."
+    },
+    "distanceTraining": {
+      "title": "Entrenamiento de número de distancia",
+      "intro": "Entrena la aritmética de diferencias que da vida a los Quartets de Pit Hartling y a producciones improvisadas similares. Los «números de distancia» — término acuñado por Pit Hartling y Denis Behr en «In Order to Amaze» — son las diferencias entre cartas concretas de tu stack.",
+      "computeItem": "<bold>Calcular</bold> — ves dos cartas, elige la distancia entre ellas",
+      "applyItem": "<bold>Aplicar</bold> — ves una carta y una diferencia, elige la carta resultante",
+      "bothItem": "<bold>Ambos</bold> — mezcla aleatoria de rondas de cálculo y aplicación",
+      "convention": "Elige entre la convención <bold>cíclica</bold> (solo hacia adelante, de 1 a N-1) y <bold>con signo</bold> (diferencia con signo más corta) en los ajustes.",
+      "settings": "Pulsa el icono de engranaje para cambiar de modo, cambiar la convención y ajustar el temporizador. Usa el icono de diana para iniciar una sesión estructurada.",
+      "link": "Ir al entrenamiento de Distancia"
     }
   },
   "faq": {
@@ -490,7 +535,9 @@
     "whatIsFaroA": "La mezcla faro (también llamada mezcla perfecta) es una técnica en la que la baraja se divide en dos mitades iguales y las cartas se intercalan perfectamente una a una. En un out-faro, las cartas superior e inferior se mantienen en su lugar. En un in-faro, se desplazan hacia el interior. Las mezclas faro son una herramienta clave para los intérpretes de baraja memorizada, ya que transforman el stack de forma predecible y reversible. La herramienta Mezcla Faro de MemDeck te permite visualizar el resultado de múltiples faros en tu stack.",
     "offlineQ": "¿Puedo usar MemDeck sin conexión?",
     "offlineA": "Sí. MemDeck es una Progressive Web App (PWA) que funciona completamente sin conexión una vez cargada. Puedes instalarla en tu teléfono o tableta para una experiencia similar a una app nativa. Entrena entre bastidores, en el metro o en un avión — sin necesidad de internet. Todos tus datos de entrenamiento se almacenan localmente en tu dispositivo.",
-    "readGuide": "Leer la guía completa"
+    "readGuide": "Leer la guía completa",
+    "whatIsDistanceNumberQ": "¿Qué es un número de distancia?",
+    "whatIsDistanceNumberA": "Un número de distancia es la diferencia entre dos cartas concretas de tu baraja memorizada — cuántas posiciones avanzarías desde una carta para llegar a la otra. El término fue acuñado por Pit Hartling y Denis Behr en «In Order to Amaze». Los números de distancia son la base matemática de las rutinas Quartets, en las que el mago produce las cuatro cartas del mismo valor a partir de cartas que un espectador toca libremente. El entrenador de Distancia de MemDeck practica ambas direcciones: calcular la distancia entre dos cartas mostradas y encontrar la carta resultante a partir de una carta inicial y una diferencia."
   },
   "stackLimits": {
     "label": "Rango del stack",
@@ -506,5 +553,37 @@
     "thumbEndLabel": "Posición final",
     "badgeFullAriaLabel": "Rango del stack: {{count}} cartas. Toca para ajustar.",
     "badgePartialAriaLabel": "Rango del stack: posiciones {{start}} a {{end}}. Toca para ajustar."
+  },
+  "distance": {
+    "pageTitle": "Entrenamiento de número de distancia",
+    "pageDescription": "Practica la distancia — la diferencia — entre dos cartas de tu baraja memorizada.",
+    "seoIntro": "Entrena los números de distancia que dan vida a los Quartets de Pit Hartling y a las producciones improvisadas de cuatro cartas del mismo valor. Calcula la distancia entre dos cartas o recuerda una carta a partir de una carta inicial y una diferencia.",
+    "title": "Distancia",
+    "settingsAriaLabel": "Configuración de Distancia",
+    "modeAriaLabel": "Modo de distancia",
+    "conventionAriaLabel": "Convención de distancia",
+    "modeCompute": "Calcular",
+    "modeComputeDescription": "Se muestran dos cartas — recuerda la distancia entre ellas.",
+    "modeApply": "Aplicar",
+    "modeApplyDescription": "Se muestran una carta y una diferencia — recuerda la carta resultante.",
+    "modeBoth": "Ambos",
+    "modeBothDescription": "Una mezcla aleatoria de rondas de cálculo y de aplicación.",
+    "conventionCyclic": "Cíclica",
+    "conventionCyclicDescription": "Solo distancia hacia adelante, de 1 a N-1. Coincide con la terminología de Pit Hartling.",
+    "conventionSigned": "Con signo",
+    "conventionSignedDescription": "Diferencia con signo más corta — negativa hacia atrás. Mejor para cálculos mentales durante la rutina.",
+    "activeModeCompute": "Modo Calcular",
+    "activeModeApply": "Modo Aplicar",
+    "activeModeBoth": "Ambos modos",
+    "promptComputeAriaLabel": "Distancia de {{from}} a {{to}}",
+    "promptApplyAriaLabel": "Aplica la diferencia {{offset}} a {{card}}",
+    "offsetLabel": "Diferencia",
+    "rangeTooSmall": "El entrenamiento de Distancia necesita al menos {{count}} cartas en el rango. Amplía el rango del stack para empezar a entrenar.",
+    "rangeTooSmallTitle": "Rango demasiado pequeño",
+    "revealTitle": "Respuesta",
+    "timesUp": "¡Se acabó el tiempo!",
+    "movingToNext": "Pasando a la siguiente ronda.",
+    "answerCorrect": "Correcto",
+    "answerIncorrect": "Incorrecto, la respuesta era {{answer}}"
   }
 }

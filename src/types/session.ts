@@ -1,11 +1,17 @@
 import type en from "../i18n/locales/en.json";
+import type { DistanceConvention, DistanceMode } from "./distance";
 import type { FlashcardMode } from "./flashcard";
 import type { SpotCheckMode } from "./spot-check";
 import type { StackLimits } from "./stack-limits";
 import type { StackKey } from "./stacks";
 
 /** Training mode identifier (extensible for future modes) */
-export const TRAINING_MODES = ["flashcard", "acaan", "spotcheck"] as const;
+export const TRAINING_MODES = [
+  "flashcard",
+  "acaan",
+  "spotcheck",
+  "distance",
+] as const;
 export type TrainingMode = (typeof TRAINING_MODES)[number];
 
 /** Session presets for structured sessions */
@@ -34,7 +40,12 @@ export type ActiveSessionBase = {
 export type ActiveSession =
   | (ActiveSessionBase & { mode: "flashcard"; flashcardMode: FlashcardMode })
   | (ActiveSessionBase & { mode: "acaan" })
-  | (ActiveSessionBase & { mode: "spotcheck"; spotCheckMode: SpotCheckMode });
+  | (ActiveSessionBase & { mode: "spotcheck"; spotCheckMode: SpotCheckMode })
+  | (ActiveSessionBase & {
+      mode: "distance";
+      distanceMode: DistanceMode;
+      distanceConvention: DistanceConvention;
+    });
 
 /** Shared fields for a persisted session record */
 type SessionRecordBase = {
@@ -51,6 +62,8 @@ type SessionRecordBase = {
   bestStreak: number;
   // Intentional brand erasure: DeckPosition doesn't survive JSON.stringify/JSON.parse,
   // so the persisted type uses plain numbers instead of the branded StackLimits type.
+  // Spelled out explicitly so adding a field to the runtime StackLimits type doesn't
+  // silently widen the persisted shape.
   stackLimits?: { start: number; end: number };
 };
 
@@ -61,6 +74,11 @@ export type SessionRecord =
   | (SessionRecordBase & {
       mode: "spotcheck";
       spotCheckMode?: SpotCheckMode;
+    })
+  | (SessionRecordBase & {
+      mode: "distance";
+      distanceMode?: DistanceMode;
+      distanceConvention?: DistanceConvention;
     });
 
 /** Aggregated all-time stats entry */

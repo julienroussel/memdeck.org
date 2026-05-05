@@ -20,7 +20,7 @@ Test your recall with three training modes:
 - **Position → Card** — See a position, pick the correct card
 - **Mixed** — Randomly alternates between the two
 
-Each mode presents five choices and tracks your score in real time. An optional timer adds time pressure (5s–60s).
+Each mode presents five choices and tracks your score in real time. An optional timer adds time pressure (10s, 15s, or 30s).
 
 ### Spot Check
 
@@ -33,6 +33,15 @@ Visual deck inspection training with three variants:
 ### ACAAN Calculator
 
 Practice Any Card At Any Number calculations: a target card and position are shown, you calculate the required cut depth and get instant feedback.
+
+### Distance Number Trainer
+
+Drill the offsets between cards in your stack — the math behind Pit Hartling's Quartets. Two sub-modes:
+
+- **Compute** — See two cards, recall the distance between them
+- **Apply** — See a card and an offset, recall the resulting card
+
+Switch between cyclic (forward only) and signed (shortest signed offset) conventions to match the style you actually use in performance.
 
 ### Interactive Card Spread
 

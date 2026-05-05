@@ -1,6 +1,7 @@
 import { Button, Group, Table, Text, Title } from "@mantine/core";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { type DistanceMode, isDistanceMode } from "../../types/distance";
 import type { SessionRecord } from "../../types/session";
 import type { SpotCheckMode } from "../../types/spot-check";
 import { stacks } from "../../types/stacks";
@@ -32,6 +33,12 @@ const SPOT_CHECK_SUB_MODE_KEYS = {
   moved: "stats.subModeMoved",
 } as const satisfies Record<SpotCheckMode, StatsI18nKey>;
 
+const DISTANCE_SUB_MODE_KEYS = {
+  compute: "stats.subModeCompute",
+  apply: "stats.subModeApply",
+  both: "stats.subModeBoth",
+} as const satisfies Record<DistanceMode, StatsI18nKey>;
+
 const formatModeLabel = (
   record: SessionRecord,
   t: (key: StatsI18nKey) => string
@@ -46,6 +53,9 @@ const formatModeLabel = (
   }
   if (record.mode === "spotcheck" && record.spotCheckMode !== undefined) {
     return `${baseLabel} · ${t(SPOT_CHECK_SUB_MODE_KEYS[record.spotCheckMode])}`;
+  }
+  if (record.mode === "distance" && isDistanceMode(record.distanceMode)) {
+    return `${baseLabel} · ${t(DISTANCE_SUB_MODE_KEYS[record.distanceMode])}`;
   }
   return baseLabel;
 };

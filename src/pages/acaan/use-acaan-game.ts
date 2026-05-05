@@ -1,9 +1,9 @@
 import { notifications } from "@mantine/notifications";
 import { useCallback, useReducer, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
 import { useAcaanTimer } from "../../hooks/use-acaan-timer";
 import { useGameTimer } from "../../hooks/use-game-timer";
-import { useResetGameOnStackChange } from "../../hooks/use-reset-game-on-stack-change";
 import { eventBus } from "../../services/event-bus";
 import type { GameScore } from "../../types/game";
 import type { AnswerOutcome } from "../../types/session";
@@ -12,7 +12,7 @@ import type { AcaanScenario } from "../../utils/acaan-scenario";
 import { generateAcaanScenario } from "../../utils/acaan-scenario";
 import {
   createInitialState,
-  formatCutDepthMessage,
+  formatCutDepth,
   gameReducer,
   getCurrentCutDepth,
 } from "./acaan-game-reducer";
@@ -38,9 +38,11 @@ export const useAcaanGame = (
   stackName: StackValue["name"],
   options?: UseAcaanGameOptions
 ): UseAcaanGameResult => {
+  const { t } = useTranslation();
   const { timerSettings } = useAcaanTimer();
 
-  // Use ref to access latest stackOrder/stackName in callbacks without re-creating them
+  // Refs let callbacks below read the latest stackOrder/stackName without
+  // being re-created when those props change.
   const stackOrderRef = useRef(stackOrder);
   stackOrderRef.current = stackOrder;
   const stackNameRef = useRef(stackName);
@@ -52,11 +54,32 @@ export const useAcaanGame = (
   const [state, dispatch] = useReducer(
     gameReducer,
     { stackOrder, timerDuration: timerSettings.duration },
-    ({ stackOrder, timerDuration }) =>
-      createInitialState(stackOrder, timerDuration)
+    ({ stackOrder: s, timerDuration }) => createInitialState(s, timerDuration)
   );
 
-  useResetGameOnStackChange(stackOrder, timerSettings.duration, dispatch);
+  // Reset synchronously when the stack changes. Inline "store previous props"
+  // pattern, mirroring flashcard and distance — avoids the useEffect flicker
+  // a deferred reset would introduce.
+  const prevStackOrderRef = useRef(stackOrder);
+  if (prevStackOrderRef.current !== stackOrder) {
+    prevStackOrderRef.current = stackOrder;
+    dispatch({
+      type: "RESET_GAME",
+      payload: { stackOrder, timerDuration: timerSettings.duration },
+    });
+  }
+
+  const buildCutDepthMessage = useCallback(
+    (scenario: AcaanScenario): string => {
+      const cutDepth = getCurrentCutDepth(scenario);
+      return t("acaan.cutDepthMessage", {
+        from: scenario.cardPosition,
+        to: scenario.targetPosition,
+        cutDepth: formatCutDepth(cutDepth, t("acaan.cutDepthZero")),
+      });
+    },
+    [t]
+  );
 
   const createTimeoutAction = useCallback(
     () => ({
@@ -67,16 +90,10 @@ export const useAcaanGame = (
   );
 
   const handleTimeout = useCallback(() => {
-    const cutDepth = getCurrentCutDepth(state.scenario);
-
     notifications.show({
       color: "red",
-      title: "Time's up!",
-      message: formatCutDepthMessage(
-        state.scenario.cardPosition,
-        state.scenario.targetPosition,
-        cutDepth
-      ),
+      title: t("acaan.timesUp"),
+      message: buildCutDepthMessage(state.scenario),
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
     });
     eventBus.emit.ACAAN_ANSWER({
@@ -84,7 +101,7 @@ export const useAcaanGame = (
       stackName: stackNameRef.current,
     });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
-  }, [state.scenario]);
+  }, [buildCutDepthMessage, state.scenario, t]);
 
   useGameTimer({
     timerSettings,
@@ -102,12 +119,8 @@ export const useAcaanGame = (
       if (isCorrect) {
         notifications.show({
           color: "green",
-          title: "Correct!",
-          message: formatCutDepthMessage(
-            state.scenario.cardPosition,
-            state.scenario.targetPosition,
-            cutDepth
-          ),
+          title: t("acaan.correctTitle"),
+          message: buildCutDepthMessage(state.scenario),
           autoClose: NOTIFICATION_CLOSE_TIMEOUT,
         });
         dispatch({
@@ -124,8 +137,8 @@ export const useAcaanGame = (
       } else {
         notifications.show({
           color: "red",
-          title: "Wrong answer",
-          message: "Try again!",
+          title: t("acaan.wrongTitle"),
+          message: t("acaan.wrongMessage"),
           autoClose: NOTIFICATION_CLOSE_TIMEOUT,
         });
         dispatch({ type: "WRONG_ANSWER" });
@@ -136,20 +149,14 @@ export const useAcaanGame = (
         onAnswerRef.current?.({ correct: false, questionAdvanced: false });
       }
     },
-    [state.scenario]
+    [state.scenario, buildCutDepthMessage, t]
   );
 
   const revealAnswer = useCallback(() => {
-    const cutDepth = getCurrentCutDepth(state.scenario);
-
     notifications.show({
       color: "yellow",
-      title: "Answer",
-      message: formatCutDepthMessage(
-        state.scenario.cardPosition,
-        state.scenario.targetPosition,
-        cutDepth
-      ),
+      title: t("acaan.revealTitle"),
+      message: buildCutDepthMessage(state.scenario),
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
     });
 
@@ -162,7 +169,7 @@ export const useAcaanGame = (
       stackName: stackNameRef.current,
     });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
-  }, [state.scenario]);
+  }, [buildCutDepthMessage, state.scenario, t]);
 
   return {
     scenario: state.scenario,

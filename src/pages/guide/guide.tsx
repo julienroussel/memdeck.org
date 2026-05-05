@@ -5,6 +5,7 @@ import { JsonLd } from "../../components/json-ld";
 import { SITE_URL } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { AcaanTraining } from "./acaan-training";
+import { DistanceTraining } from "./distance-training";
 import { FlashcardTraining } from "./flashcard-training";
 import { GettingStarted } from "./getting-started";
 import { ResourcesSection } from "./resources-section";
@@ -98,6 +99,8 @@ export const Guide = () => {
       <SpotCheckTraining />
       <Space h="xl" />
       <AcaanTraining />
+      <Space h="xl" />
+      <DistanceTraining />
       <Space h="xl" />
       <StatsSection />
       <Space h="xl" />

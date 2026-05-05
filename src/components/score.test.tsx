@@ -42,19 +42,20 @@ describe("Score", () => {
     expect(liveRegion).toHaveTextContent("Incorrect answers: 0");
   });
 
-  it("does not announce the score when the total is not a multiple of 5 and not the first answer", () => {
-    render(<Score fails={1} successes={2} />);
-
-    const liveRegion = getLiveRegion();
-    expect(liveRegion).toHaveTextContent("");
-  });
-
-  it("announces the score when the total answer count is a multiple of 5", () => {
+  it("announces the score when the total answer count reaches 5", () => {
     render(<Score fails={2} successes={3} />);
 
     const liveRegion = getLiveRegion();
     expect(liveRegion).toHaveTextContent("Correct answers: 3");
     expect(liveRegion).toHaveTextContent("Incorrect answers: 2");
+  });
+
+  it("announces the score when total reaches 10", () => {
+    render(<Score fails={4} successes={6} />);
+
+    const liveRegion = getLiveRegion();
+    expect(liveRegion).toHaveTextContent("Correct answers: 6");
+    expect(liveRegion).toHaveTextContent("Incorrect answers: 4");
   });
 
   it("does not announce the score when total is zero", () => {
@@ -64,11 +65,20 @@ describe("Score", () => {
     expect(liveRegion).toHaveTextContent("");
   });
 
-  it("announces the score when total reaches 10", () => {
-    render(<Score fails={4} successes={6} />);
+  it.each([
+    { fails: 1, successes: 1 },
+    { fails: 1, successes: 2 },
+    { fails: 2, successes: 2 },
+  ])("throttles announcements between milestones (fails=$fails, successes=$successes)", ({
+    fails,
+    successes,
+  }) => {
+    // Aria-live is throttled to first answer + every 5th total to avoid
+    // screen-reader overload during fast-paced training. Totals 2, 3, and 4
+    // must NOT produce an announcement.
+    render(<Score fails={fails} successes={successes} />);
 
     const liveRegion = getLiveRegion();
-    expect(liveRegion).toHaveTextContent("Correct answers: 6");
-    expect(liveRegion).toHaveTextContent("Incorrect answers: 4");
+    expect(liveRegion).toHaveTextContent("");
   });
 });

@@ -1,12 +1,13 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createDeckPosition } from "../../types/stacks";
+import { createDeckPosition, type Stack } from "../../types/stacks";
+import { aronson } from "../../types/stacks/aronson";
 import { mnemonica } from "../../types/stacks/mnemonica";
 import type { AcaanScenario } from "../../utils/acaan-scenario";
 import { calculateCutDepth } from "../../utils/acaan-scenario";
 import {
   createInitialState,
-  formatCutDepthMessage,
+  formatCutDepth,
   type GameAction,
   type GameState,
   gameReducer,
@@ -49,10 +50,6 @@ vi.mock("../../hooks/use-game-timer", () => {
   };
 });
 
-vi.mock("../../hooks/use-reset-game-on-stack-change", () => ({
-  useResetGameOnStackChange: vi.fn(),
-}));
-
 vi.mock("../../services/event-bus", () => ({
   eventBus: {
     emit: { ACAAN_ANSWER: vi.fn() },
@@ -79,41 +76,19 @@ const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
   ...overrides,
 });
 
-describe("formatCutDepthMessage", () => {
-  it("formats message with non-zero cut depth", () => {
-    const message = formatCutDepthMessage(
-      createDeckPosition(10),
-      createDeckPosition(5),
-      5
-    );
-    expect(message).toBe("Position 10 → 5, cut depth: 5");
+describe("formatCutDepth", () => {
+  it("returns the cut depth as a string for non-zero values", () => {
+    expect(formatCutDepth(5, "0 (no cut needed)")).toBe("5");
+    expect(formatCutDepth(47, "0 (no cut needed)")).toBe("47");
+    expect(formatCutDepth(1, "0 (no cut needed)")).toBe("1");
   });
 
-  it("formats message with large cut depth", () => {
-    const message = formatCutDepthMessage(
-      createDeckPosition(5),
-      createDeckPosition(10),
-      47
-    );
-    expect(message).toBe("Position 5 → 10, cut depth: 47");
+  it("returns the zero label when cut depth is 0", () => {
+    expect(formatCutDepth(0, "0 (no cut needed)")).toBe("0 (no cut needed)");
   });
 
-  it("formats message with special text when cut depth is zero", () => {
-    const message = formatCutDepthMessage(
-      createDeckPosition(10),
-      createDeckPosition(10),
-      0
-    );
-    expect(message).toBe("Position 10 → 10, cut depth: 0 (no cut needed)");
-  });
-
-  it("formats message for edge positions", () => {
-    const message = formatCutDepthMessage(
-      createDeckPosition(1),
-      createDeckPosition(52),
-      1
-    );
-    expect(message).toBe("Position 1 → 52, cut depth: 1");
+  it("uses the supplied zero label verbatim (i18n-friendly)", () => {
+    expect(formatCutDepth(0, "ninguna corte")).toBe("ninguna corte");
   });
 });
 
@@ -566,11 +541,9 @@ describe("useAcaanGame hook", () => {
 
       const { cardPosition, targetPosition } = result.current.scenario;
       const expectedCutDepth = calculateCutDepth(cardPosition, targetPosition);
-      const expectedMessage = formatCutDepthMessage(
-        cardPosition,
-        targetPosition,
-        expectedCutDepth
-      );
+      const expectedCutDepthText =
+        expectedCutDepth === 0 ? "0 (no cut needed)" : String(expectedCutDepth);
+      const expectedMessage = `Position ${cardPosition} → ${targetPosition}, cut depth: ${expectedCutDepthText}`;
 
       act(() => {
         result.current.revealAnswer();
@@ -712,6 +685,31 @@ describe("useAcaanGame hook", () => {
         correct: false,
         stackName: "Mnemonica",
       });
+    });
+  });
+
+  describe("when stack changes", () => {
+    it("resets score and draws scenario from the new stack", () => {
+      type Props = { stack: Stack; name: string };
+      const initialProps: Props = {
+        stack: mnemonica.order,
+        name: "Mnemonica",
+      };
+      const { result, rerender } = renderHook(
+        ({ stack, name }: Props) => useAcaanGame(stack, name),
+        { initialProps }
+      );
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+      expect(result.current.score.fails).toBe(1);
+
+      rerender({ stack: aronson.order, name: "Aronson" });
+
+      expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+      const { card, cardPosition } = result.current.scenario;
+      expect(aronson.order[cardPosition - 1]).toBe(card);
     });
   });
 });

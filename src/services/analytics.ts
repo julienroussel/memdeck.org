@@ -1,5 +1,6 @@
 import { ReactGAImplementation } from "react-ga4";
 import { type Metric, onCLS, onINP, onLCP } from "web-vitals";
+import type { DistanceConvention, DistanceMode } from "../types/distance";
 import type { FlashcardMode, NeighborDirection } from "../types/flashcard";
 import type { SessionConfig, TrainingMode } from "../types/session";
 import type { SpotCheckMode } from "../types/spot-check";
@@ -33,50 +34,119 @@ const formatSessionLabel = (
     ? `${mode} (${config.totalQuestions}q)`
     : `${mode} (open)`;
 
+// Wrap a subscriber so an exception inside it surfaces through trackError
+// without recursing back into the event bus (which would risk a loop, since
+// analytics is itself an emitter via SESSION_COMPLETED etc.). Reporting
+// happens in a microtask so the throwing listener has fully unwound before
+// the report runs, and a module-level latch short-circuits re-entry if the
+// report path itself throws.
+let isReportingListenerError = false;
+const safeListener =
+  <T>(channel: string, fn: (payload: T) => void): ((payload: T) => void) =>
+  (payload: T) => {
+    try {
+      fn(payload);
+    } catch (error) {
+      if (isReportingListenerError) {
+        return;
+      }
+      isReportingListenerError = true;
+      try {
+        queueMicrotask(() => {
+          isReportingListenerError = false;
+          analytics.trackError(
+            error instanceof Error ? error : new Error(String(error)),
+            `eventBus listener:${channel}`
+          );
+        });
+      } catch {
+        isReportingListenerError = false;
+      }
+    }
+  };
+
 const subscribeToEvents = () => {
-  eventBus.subscribe.STACK_SELECTED(({ stackName }) => {
-    analytics.trackStackSelected(stackName);
-  });
+  eventBus.subscribe.STACK_SELECTED(
+    safeListener("STACK_SELECTED", ({ stackName }) => {
+      analytics.trackStackSelected(stackName);
+    })
+  );
 
-  eventBus.subscribe.FLASHCARD_ANSWER(({ correct, stackName }) => {
-    analytics.trackFlashcardAnswer(correct, stackName);
-  });
+  eventBus.subscribe.FLASHCARD_ANSWER(
+    safeListener("FLASHCARD_ANSWER", ({ correct, stackName }) => {
+      analytics.trackFlashcardAnswer(correct, stackName);
+    })
+  );
 
-  eventBus.subscribe.FLASHCARD_MODE_CHANGED(({ mode }) => {
-    analytics.trackFlashcardModeChanged(mode);
-  });
+  eventBus.subscribe.FLASHCARD_MODE_CHANGED(
+    safeListener("FLASHCARD_MODE_CHANGED", ({ mode }) => {
+      analytics.trackFlashcardModeChanged(mode);
+    })
+  );
 
-  eventBus.subscribe.NEIGHBOR_DIRECTION_CHANGED(({ direction }) => {
-    analytics.trackNeighborDirectionChanged(direction);
-  });
+  eventBus.subscribe.NEIGHBOR_DIRECTION_CHANGED(
+    safeListener("NEIGHBOR_DIRECTION_CHANGED", ({ direction }) => {
+      analytics.trackNeighborDirectionChanged(direction);
+    })
+  );
 
-  eventBus.subscribe.ACAAN_ANSWER(({ correct, stackName }) => {
-    analytics.trackAcaanAnswer(correct, stackName);
-  });
+  eventBus.subscribe.ACAAN_ANSWER(
+    safeListener("ACAAN_ANSWER", ({ correct, stackName }) => {
+      analytics.trackAcaanAnswer(correct, stackName);
+    })
+  );
 
-  eventBus.subscribe.SPOT_CHECK_ANSWER(({ correct, stackName }) => {
-    analytics.trackSpotCheckAnswer(correct, stackName);
-  });
+  eventBus.subscribe.SPOT_CHECK_ANSWER(
+    safeListener("SPOT_CHECK_ANSWER", ({ correct, stackName }) => {
+      analytics.trackSpotCheckAnswer(correct, stackName);
+    })
+  );
 
-  eventBus.subscribe.SPOT_CHECK_MODE_CHANGED(({ mode }) => {
-    analytics.trackSpotCheckModeChanged(mode);
-  });
+  eventBus.subscribe.SPOT_CHECK_MODE_CHANGED(
+    safeListener("SPOT_CHECK_MODE_CHANGED", ({ mode }) => {
+      analytics.trackSpotCheckModeChanged(mode);
+    })
+  );
 
-  eventBus.subscribe.SESSION_STARTED(({ mode, config }) => {
-    analytics.trackSessionStarted(mode, config);
-  });
+  eventBus.subscribe.DISTANCE_ANSWER(
+    safeListener("DISTANCE_ANSWER", ({ correct, stackName }) => {
+      analytics.trackDistanceAnswer(correct, stackName);
+    })
+  );
 
-  eventBus.subscribe.SESSION_COMPLETED(({ mode, accuracy }) => {
-    analytics.trackSessionCompleted(mode, accuracy);
-  });
+  eventBus.subscribe.DISTANCE_MODE_CHANGED(
+    safeListener("DISTANCE_MODE_CHANGED", ({ mode }) => {
+      analytics.trackDistanceModeChanged(mode);
+    })
+  );
 
-  eventBus.subscribe.STACK_LIMITS_CHANGED(({ start, end, stackName }) => {
-    analytics.trackEvent(
-      "Settings",
-      "Stack Range Changed",
-      `${stackName} (${start}-${end})`
-    );
-  });
+  eventBus.subscribe.DISTANCE_CONVENTION_CHANGED(
+    safeListener("DISTANCE_CONVENTION_CHANGED", ({ convention }) => {
+      analytics.trackDistanceConventionChanged(convention);
+    })
+  );
+
+  eventBus.subscribe.SESSION_STARTED(
+    safeListener("SESSION_STARTED", ({ mode, config }) => {
+      analytics.trackSessionStarted(mode, config);
+    })
+  );
+
+  eventBus.subscribe.SESSION_COMPLETED(
+    safeListener("SESSION_COMPLETED", ({ mode, accuracy, saved }) => {
+      analytics.trackSessionCompleted(mode, accuracy, saved);
+    })
+  );
+
+  eventBus.subscribe.STACK_LIMITS_CHANGED(
+    safeListener("STACK_LIMITS_CHANGED", ({ start, end, stackName }) => {
+      analytics.trackEvent(
+        "Settings",
+        "Stack Range Changed",
+        `${stackName} (${start}-${end})`
+      );
+    })
+  );
 };
 
 export const analytics = {
@@ -182,6 +252,39 @@ export const analytics = {
     });
   },
 
+  trackDistanceAnswer: (correct: boolean, stackName: string) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "Distance",
+      action: correct ? "Correct Answer" : "Wrong Answer",
+      label: stackName,
+    });
+  },
+
+  trackDistanceModeChanged: (mode: DistanceMode) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "Distance",
+      action: "Mode Changed",
+      label: mode,
+    });
+  },
+
+  trackDistanceConventionChanged: (convention: DistanceConvention) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "Distance",
+      action: "Convention Changed",
+      label: convention,
+    });
+  },
+
   trackSessionStarted: (mode: TrainingMode, config: SessionConfig) => {
     if (!isEnabled()) {
       return;
@@ -193,13 +296,17 @@ export const analytics = {
     });
   },
 
-  trackSessionCompleted: (mode: TrainingMode, accuracy: number) => {
+  trackSessionCompleted: (
+    mode: TrainingMode,
+    accuracy: number,
+    saved: boolean
+  ) => {
     if (!isEnabled()) {
       return;
     }
     ReactGA.event({
       category: "Session",
-      action: "Completed",
+      action: saved ? "Completed" : "Save Failed",
       label: mode,
       value: Math.round(accuracy * 100),
     });
@@ -239,17 +346,24 @@ export const analytics = {
 
   trackError: (error: Error, componentStack?: string) => {
     if (!isEnabled()) {
+      if (import.meta.env.DEV) {
+        console.warn("[analytics.trackError]", componentStack, error);
+      }
       return;
     }
-    ReactGA.event({
-      category: "Error",
-      action: error.name,
-      label: error.message,
-    });
-    ReactGA.send({
-      hitType: "exception",
-      exDescription: `${error.name}: ${error.message}${componentStack ? ` | ${componentStack.slice(0, 100)}` : ""}`,
-      exFatal: false,
-    });
+    try {
+      ReactGA.event({
+        category: "Error",
+        action: error.name,
+        label: error.message,
+      });
+      ReactGA.send({
+        hitType: "exception",
+        exDescription: `${error.name}: ${error.message}${componentStack ? ` | ${componentStack.slice(0, 100)}` : ""}`,
+        exFatal: false,
+      });
+    } catch {
+      // Analytics MUST NOT break user-facing flows.
+    }
   },
 };

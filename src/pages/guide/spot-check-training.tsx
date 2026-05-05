@@ -2,6 +2,7 @@ import { Anchor, List, Space, Text } from "@mantine/core";
 import { IconEyeSearch } from "@tabler/icons-react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { ROUTES } from "../../constants";
 import { SectionHeading } from "./section-heading";
 
 export const SpotCheckTraining = () => {
@@ -40,7 +41,7 @@ export const SpotCheckTraining = () => {
       <Space h="sm" />
       <Text>{t("guide.spotCheckTraining.settings")}</Text>
       <Space h="xs" />
-      <Anchor component={Link} to="/spot-check/">
+      <Anchor component={Link} to={ROUTES.spotCheck}>
         {t("guide.spotCheckTraining.link")}
       </Anchor>
     </section>

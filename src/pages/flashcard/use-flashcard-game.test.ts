@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AnswerOutcome } from "../../types/session";
 import { DEFAULT_STACK_LIMITS } from "../../types/stack-limits";
-import { createDeckPosition, stacks } from "../../types/stacks";
+import { createDeckPosition, type Stack, stacks } from "../../types/stacks";
 import type { TimerSettings } from "../../types/timer";
 import { formatCardName } from "../../utils/card-formatting";
 import { useFlashcardGame } from "./use-flashcard-game";
@@ -792,6 +792,37 @@ describe("useFlashcardGame hook", () => {
           message: expect.not.stringMatching(INDEX_ANSWER_PATTERN),
         })
       );
+    });
+  });
+
+  describe("when stack changes", () => {
+    it("resets score and draws cards from the new stack", () => {
+      type Props = { stack: Stack; name: string };
+      const initialProps: Props = { stack: testStack, name: "Mnemonica" };
+      const { result, rerender } = renderHook(
+        ({ stack, name }: Props) =>
+          useFlashcardGame(
+            stack,
+            name,
+            "cardonly",
+            "random",
+            defaultTimerSettings,
+            DEFAULT_STACK_LIMITS
+          ),
+        { initialProps }
+      );
+
+      const correctCard = result.current.card.card;
+      act(() => {
+        result.current.submitAnswer(correctCard);
+      });
+      expect(result.current.score.successes).toBe(1);
+
+      rerender({ stack: stacks.aronson.order, name: stacks.aronson.name });
+
+      expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+      const { index, card } = result.current.card;
+      expect(stacks.aronson.order[index - 1]).toBe(card);
     });
   });
 });

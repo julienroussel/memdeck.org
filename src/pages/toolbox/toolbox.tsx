@@ -6,6 +6,7 @@ import { SITE_URL, TOOLBOX_SECTIONS_LSK } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { analytics } from "../../services/analytics";
 import { useLocalDb } from "../../utils/localstorage";
+import { reportLocalDbCorruption } from "../../utils/localstorage-telemetry";
 import { CardSpelling } from "./card-spelling";
 import { FaroShuffle } from "./faro-shuffle";
 import { StackLookup } from "./stack-lookup";
@@ -37,7 +38,8 @@ export const Toolbox = () => {
   const [openSections, setOpenSections] = useLocalDb<string[]>(
     TOOLBOX_SECTIONS_LSK,
     [],
-    isStringArray
+    isStringArray,
+    reportLocalDbCorruption
   );
 
   const openSectionsRef = useRef(openSections);

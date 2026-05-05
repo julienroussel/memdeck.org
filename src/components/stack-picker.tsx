@@ -1,7 +1,7 @@
 import { NativeSelect } from "@mantine/core";
 import { memo, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelectedStack } from "../hooks/use-selected-stack";
+import { isStackKey, useSelectedStack } from "../hooks/use-selected-stack";
 import { eventBus } from "../services/event-bus";
 import { stacks } from "../types/stacks";
 
@@ -30,9 +30,10 @@ export const StackPicker = memo(function StackPicker() {
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
       const value = event.currentTarget.value;
-      setStackKey(value);
-      if (value) {
-        const selectedStack = availableStacks.find((s) => s.value === value);
+      const narrowed = isStackKey(value) ? value : "";
+      setStackKey(narrowed);
+      if (narrowed !== "") {
+        const selectedStack = availableStacks.find((s) => s.value === narrowed);
         if (selectedStack) {
           eventBus.emit.STACK_SELECTED({ stackName: selectedStack.label });
         }

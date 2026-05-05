@@ -4,13 +4,15 @@ import { SESSION_HISTORY_LSK } from "../constants";
 import type { SessionRecord, TrainingMode } from "../types/session";
 import type { StackKey } from "../types/stacks";
 import { useLocalDb } from "../utils/localstorage";
+import { reportLocalDbCorruption } from "../utils/localstorage-telemetry";
 import { isSessionRecordArray } from "../utils/session-typeguards";
 
 export const useSessionHistory = () => {
   const [history] = useLocalDb<SessionRecord[]>(
     SESSION_HISTORY_LSK,
     [],
-    isSessionRecordArray
+    isSessionRecordArray,
+    reportLocalDbCorruption
   );
 
   const sessionsByMode = useCallback(

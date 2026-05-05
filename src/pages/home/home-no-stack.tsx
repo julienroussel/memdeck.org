@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { ShareNudge } from "../../components/share-nudge";
 import { StackPicker } from "../../components/stack-picker";
+import { ROUTES } from "../../constants";
 import { FEATURE_CARDS } from "./feature-cards";
 import { WhyNotAi } from "./why-not-ai";
 
@@ -22,7 +23,7 @@ export const HomeNoStack = () => {
   return (
     <Stack gap="lg">
       <div>
-        <Title order={2}>{t("home.welcomeNew")}</Title>
+        <Title order={1}>{t("home.welcomeNew")}</Title>
         <Space h="xs" />
         <Text c="dimmed" size="sm">
           {t("home.whatIsMemdeck")}
@@ -82,7 +83,7 @@ export const HomeNoStack = () => {
         radius="md"
         shadow="sm"
         td="none"
-        to="/guide/"
+        to={ROUTES.guide}
         withBorder
       >
         <Group>

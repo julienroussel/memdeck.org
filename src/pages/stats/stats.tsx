@@ -45,8 +45,11 @@ export const Stats = () => {
       <JsonLd data={breadcrumbSchema} />
       <Title order={1}>{t("stats.title")}</Title>
       <Text c="dimmed" size="sm">
-        {t("stats.seoIntro")}
+        {t("stats.pageDescription")}
       </Text>
+      <span aria-hidden="true" className="sr-only">
+        {t("stats.seoIntro")}
+      </span>
 
       {!hasData && (
         <Text c="dimmed" ta="center">

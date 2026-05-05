@@ -2,6 +2,7 @@ import { Anchor, Space, Text } from "@mantine/core";
 import { IconNumber } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { ROUTES } from "../../constants";
 import { SectionHeading } from "./section-heading";
 
 export const AcaanTraining = () => {
@@ -19,7 +20,7 @@ export const AcaanTraining = () => {
       <Space h="sm" />
       <Text>{t("guide.acaanTraining.description")}</Text>
       <Space h="xs" />
-      <Anchor component={Link} to="/acaan/">
+      <Anchor component={Link} to={ROUTES.acaan}>
         {t("guide.acaanTraining.link")}
       </Anchor>
     </section>

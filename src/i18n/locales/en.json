@@ -50,6 +50,7 @@
     "tools": "Practice",
     "flashcard": "Flashcard",
     "acaan": "ACAAN",
+    "distance": "Distance",
     "spotCheck": "Spot Check",
     "toolbox": "Toolbox",
     "about": "About"
@@ -85,6 +86,8 @@
     "featureStatsDescription": "Track your accuracy, streaks, and session history over time.",
     "featureSpotCheckTitle": "Spot Check",
     "featureSpotCheckDescription": "Train to spot anomalies — missing, swapped, or moved cards in your deck.",
+    "featureDistanceTitle": "Distance",
+    "featureDistanceDescription": "Drill the offset between two cards — the math behind Pit Hartling's Quartets.",
     "quickStart": "Quick Start",
     "statsTitle": "Your Progress",
     "statSessions": "Sessions",
@@ -138,7 +141,41 @@
     "activeModeNeighbor": "Neighbor mode",
     "timesUp": "Time's up!",
     "movingToNext": "Moving to the next card.",
-    "revealTitle": "Answer"
+    "revealTitle": "Answer",
+    "answerCorrect": "Correct",
+    "answerIncorrect": "Incorrect, the answer was {{answer}}"
+  },
+  "distance": {
+    "pageTitle": "Distance Number Training",
+    "pageDescription": "Practice the distance — the offset — between two cards in your memorized stack.",
+    "seoIntro": "Drill the distance numbers that power Pit Hartling's Quartets and on-the-fly four-of-a-kind productions. Pick a distance from two cards, or recall a card from a starting card and an offset.",
+    "title": "Distance",
+    "settingsAriaLabel": "Distance settings",
+    "modeAriaLabel": "Distance mode",
+    "conventionAriaLabel": "Distance convention",
+    "modeCompute": "Compute",
+    "modeComputeDescription": "Two cards are shown — recall the distance between them.",
+    "modeApply": "Apply",
+    "modeApplyDescription": "A card and an offset are shown — recall the resulting card.",
+    "modeBoth": "Both",
+    "modeBothDescription": "A random mix of compute and apply rounds.",
+    "conventionCyclic": "Cyclic",
+    "conventionCyclicDescription": "Forward distance only, from 1 to N-1. Matches Pit Hartling's terminology.",
+    "conventionSigned": "Signed",
+    "conventionSignedDescription": "Shortest signed offset — negative for backward. Better for in-trick mental math.",
+    "activeModeCompute": "Compute mode",
+    "activeModeApply": "Apply mode",
+    "activeModeBoth": "Both modes",
+    "promptComputeAriaLabel": "Distance from {{from}} to {{to}}",
+    "promptApplyAriaLabel": "Apply offset {{offset}} to {{card}}",
+    "offsetLabel": "Offset",
+    "rangeTooSmall": "Distance training needs at least {{count}} cards in range. Widen your stack range to start training.",
+    "rangeTooSmallTitle": "Range too small",
+    "revealTitle": "Answer",
+    "timesUp": "Time's up!",
+    "movingToNext": "Moving to the next round.",
+    "answerCorrect": "Correct",
+    "answerIncorrect": "Incorrect, the answer was {{answer}}"
   },
   "acaan": {
     "pageTitle": "ACAAN Training",
@@ -147,11 +184,20 @@
     "title": "ACAAN",
     "settingsAriaLabel": "ACAAN settings",
     "cutDepthAriaLabel": "Cut depth",
-    "cutDepthPlaceholder": "Cut depth"
+    "cutDepthPlaceholder": "Cut depth",
+    "correctTitle": "Correct!",
+    "wrongTitle": "Wrong answer",
+    "wrongMessage": "Try again!",
+    "revealTitle": "Answer",
+    "timesUp": "Time's up!",
+    "movingToNext": "Moving to the next round.",
+    "cutDepthMessage": "Position {{from}} → {{to}}, cut depth: {{cutDepth}}",
+    "cutDepthZero": "0 (no cut needed)"
   },
   "spotCheck": {
     "pageTitle": "Spot Check Training",
     "pageDescription": "Train your ability to spot anomalies in your memorized deck — missing cards, swapped cards, or moved cards.",
+    "seoIntro": "Train your visual recall on the memorized deck — spot a missing card, a swapped pair, or a card moved out of position. Build the eye that catches errors before they cost you a routine.",
     "title": "Spot Check",
     "settingsAriaLabel": "Spot Check settings",
     "modeMissing": "Missing Card",
@@ -292,7 +338,23 @@
   },
   "errors": {
     "somethingWentWrong": "Something went wrong",
-    "languageLoadFailed": "Could not load your preferred language. Using English."
+    "languageLoadFailed": "Could not load your preferred language. Using English.",
+    "sessionSaveFailed": {
+      "title": "Save failed",
+      "message": "Couldn't save your session — your browser storage may be full. Clear space and try Stop again."
+    },
+    "sessionStorageCorrupt": {
+      "title": "Stored data looks corrupted",
+      "message": "Your saved history or stats failed validation, so we refused to overwrite them. Clear browser storage for this site to start fresh — retrying won't help."
+    },
+    "lastSaveFailed": {
+      "title": "Last session wasn't saved",
+      "message": "Your previous session couldn't be saved — your browser storage may have been full. It's been discarded."
+    },
+    "stackLimitsCorrupt": {
+      "title": "Stack ranges couldn't be loaded",
+      "message": "Your saved per-stack range data failed validation. Range edits are disabled to avoid overwriting it. Clear browser storage for this site to start fresh — retrying won't help."
+    }
   },
   "stats": {
     "pageTitle": "Stats",
@@ -331,6 +393,11 @@
     "filterBySubModeAriaLabel": "Filter by flashcard sub-mode",
     "modeSpotCheck": "Spot Check",
     "filterSpotCheck": "Spot Check",
+    "modeDistance": "Distance",
+    "filterDistance": "Distance",
+    "subModeCompute": "Compute",
+    "subModeApply": "Apply",
+    "subModeBoth": "Both",
     "subModeMissing": "Missing",
     "subModeSwapped": "Swapped",
     "subModeMoved": "Moved",
@@ -415,6 +482,16 @@
       "description": "In this mode, you're shown a card and a target position. Your job is to calculate the cut depth needed to move the card to that position. Enter a value from 0 to 51. Timer and session options work the same as Flashcard mode.",
       "link": "Go to ACAAN Training"
     },
+    "distanceTraining": {
+      "title": "Distance Number Training",
+      "intro": "Train the offset arithmetic that powers Pit Hartling's Quartets and similar on-the-fly productions. \"Distance numbers\" — coined by Pit Hartling and Denis Behr in \"In Order to Amaze\" — are the offsets between specific cards in your stack.",
+      "computeItem": "<bold>Compute</bold> — see two cards, pick the distance between them",
+      "applyItem": "<bold>Apply</bold> — see a card and an offset, pick the resulting card",
+      "bothItem": "<bold>Both</bold> — random mix of compute and apply rounds",
+      "convention": "Pick between <bold>cyclic</bold> (forward only, 1 to N-1) and <bold>signed</bold> (shortest signed offset) convention in settings.",
+      "settings": "Tap the gear icon to switch modes, change conventions, and adjust timer settings. Use the target icon to start a structured session.",
+      "link": "Go to Distance Training"
+    },
     "spotCheckTraining": {
       "title": "Spot Check Training",
       "intro": "Train your ability to quickly detect anomalies in your memorized deck spread. Three modes are available:",
@@ -482,6 +559,8 @@
     "whatIsAronsonA": "The Aronson stack is a memorized deck system created by Simon Aronson. It is one of the most popular stacks in the United States. The stack is known for its mathematical properties and the extensive body of published effects designed specifically for it, including material in \"The Aronson Approach,\" \"Bound to Please,\" and the free PDF essay \"Memories Are Made of This.\"",
     "whatIsAcaanQ": "What is ACAAN in card magic?",
     "whatIsAcaanA": "ACAAN stands for \"Any Card At Any Number.\" It is one of the most celebrated effects in card magic — a spectator names any card and any number from 1 to 52, and the named card is found at exactly that position in the deck. With a memorized deck, the performer mentally calculates how many cards to cut to achieve this result. MemDeck's ACAAN trainer helps you practice these mental calculations with timed drills.",
+    "whatIsDistanceNumberQ": "What is a distance number?",
+    "whatIsDistanceNumberA": "A distance number is the offset between two specific cards in your memorized stack — how many positions you'd advance from one card to reach the other. The term was coined by Pit Hartling and Denis Behr in \"In Order to Amaze.\" Distance numbers are the math behind the Quartets routines, where the magician produces four-of-a-kind from cards a spectator freely touches. MemDeck's Distance trainer drills both directions: computing the distance between two shown cards, and finding the resulting card from a starting card and an offset.",
     "differenceMnemonicaAronsonQ": "What is the difference between Mnemonica and Aronson?",
     "differenceMnemonicaAronsonA": "Mnemonica (by Juan Tamariz) and Aronson (by Simon Aronson) are two different memorized deck systems — each uses a completely different card order. Mnemonica is the most widely used stack globally and has built-in stay-stack sequences. Aronson is especially popular in the US and emphasizes mathematical properties. The choice between them often comes down to which published effects appeal to you, since switching stacks later means relearning all 52 positions.",
     "howToPracticeQ": "How do I practice a memorized deck?",

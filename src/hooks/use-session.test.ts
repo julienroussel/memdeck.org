@@ -7,8 +7,10 @@
  * and applyAnswerOutcome live in their colocated file session-phase.test.ts.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { DistanceConvention, DistanceMode } from "../types/distance";
 import type { ActiveSession } from "../types/session";
-import type { StackKey } from "../types/stacks";
+import { DEFAULT_STACK_LIMITS, type StackLimits } from "../types/stack-limits";
+import { createDeckPosition, type StackKey } from "../types/stacks";
 import type { SessionPhase } from "./use-session";
 
 // ---------------------------------------------------------------------------
@@ -20,6 +22,10 @@ let pendingEffects: Array<() => undefined | (() => void)>;
 let effectCleanups: Array<(() => void) | undefined>;
 let refStore: Array<{ current: unknown }>;
 let refIndex: number;
+// Slots for additional useState calls beyond the primary status state.
+// useSession uses a secondary useState for the flush-tick counter.
+let stateSlots: unknown[];
+let stateIndex: number;
 
 // ---------------------------------------------------------------------------
 // Mocks (must be declared before vi.mock calls since vi.mock is hoisted)
@@ -42,39 +48,74 @@ const mockEventBusEmit = {
 // Mock finalizeSession to delegate to the mocked persistence functions.
 // This is needed because finalizeSession now lives in ../utils/session-persistence alongside
 // the functions it calls, so vi.mock cannot intercept its internal references.
-const mockFinalizeSession = vi.fn((session: ActiveSession) => {
-  const record = mockBuildSessionRecord(session);
-  mockSaveSessionRecord(record);
-  const history = mockReadSessionHistory();
-  const allTimeStats = mockReadAllTimeStats();
-  const summary = mockComputeSessionSummary(record, history, allTimeStats);
-  mockUpdateAllTimeStats(record);
-  mockEventBusEmit.SESSION_COMPLETED({
-    mode: record.mode,
-    accuracy: record.accuracy,
-    questionsCompleted: record.questionsCompleted,
-  });
-  return summary;
-});
+// Typed loosely as the union of success and failure shapes so individual
+// tests can `mockReturnValueOnce` a specific failure reason without TS
+// narrowing the inferred return type to the success branch.
+type MockFinalizeResult =
+  | { ok: true; summary: unknown }
+  | {
+      ok: false;
+      reason:
+        | "write-failed"
+        | "serialize-failed"
+        | "corrupt"
+        | "corrupt-prior-state";
+    };
+const mockFinalizeSession = vi.fn(
+  (session: ActiveSession): MockFinalizeResult => {
+    const record = mockBuildSessionRecord(session);
+    mockSaveSessionRecord(record);
+    const history = mockReadSessionHistory();
+    const allTimeStats = mockReadAllTimeStats();
+    const summary = mockComputeSessionSummary(record, history, allTimeStats);
+    mockUpdateAllTimeStats(record);
+    mockEventBusEmit.SESSION_COMPLETED({
+      mode: record.mode,
+      accuracy: record.accuracy,
+      questionsCompleted: record.questionsCompleted,
+    });
+    return { ok: true, summary };
+  }
+);
 
 vi.mock("react", async () => {
   const actual = await vi.importActual<typeof import("react")>("react");
   return {
     ...actual,
     useState: (initial: unknown) => {
-      if (currentStatus === undefined) {
-        currentStatus = initial as SessionPhase;
+      // First useState call is the SessionPhase status. Subsequent calls
+      // (e.g. the flush-tick counter) use independent slots so that
+      // updating one doesn't clobber the other.
+      const slot = stateIndex;
+      stateIndex++;
+      if (slot === 0) {
+        if (currentStatus === undefined) {
+          currentStatus = initial as SessionPhase;
+        }
+        const setState = (valueOrUpdater: unknown) => {
+          if (typeof valueOrUpdater === "function") {
+            currentStatus = (
+              valueOrUpdater as (prev: SessionPhase) => SessionPhase
+            )(currentStatus);
+          } else {
+            currentStatus = valueOrUpdater as SessionPhase;
+          }
+        };
+        return [currentStatus, setState];
       }
-      const setState = (valueOrUpdater: unknown) => {
+      if (slot >= stateSlots.length) {
+        stateSlots.push(initial);
+      }
+      const setSlot = (valueOrUpdater: unknown) => {
         if (typeof valueOrUpdater === "function") {
-          currentStatus = (
-            valueOrUpdater as (prev: SessionPhase) => SessionPhase
-          )(currentStatus);
+          stateSlots[slot] = (valueOrUpdater as (prev: unknown) => unknown)(
+            stateSlots[slot]
+          );
         } else {
-          currentStatus = valueOrUpdater as SessionPhase;
+          stateSlots[slot] = valueOrUpdater;
         }
       };
-      return [currentStatus, setState];
+      return [stateSlots[slot], setSlot];
     },
     useRef: (initial: unknown) => {
       if (refIndex >= refStore.length) {
@@ -103,6 +144,32 @@ vi.mock("../utils/session-persistence", async () => {
 
 vi.mock("../services/event-bus", () => ({
   eventBus: { emit: mockEventBusEmit },
+}));
+
+const mockNotificationsShow = vi.fn();
+vi.mock("@mantine/notifications", () => ({
+  notifications: {
+    show: (args: unknown) => mockNotificationsShow(args),
+  },
+}));
+
+const mockTrackError = vi.fn();
+vi.mock("../services/analytics", () => ({
+  analytics: {
+    trackError: (...args: unknown[]) => mockTrackError(...args),
+  },
+}));
+
+const mockReadBreadcrumb = vi.fn();
+const mockClearBreadcrumb = vi.fn();
+vi.mock("../utils/session-breadcrumbs", () => ({
+  readLastSaveFailedBreadcrumb: () => mockReadBreadcrumb(),
+  clearLastSaveFailedBreadcrumb: () => mockClearBreadcrumb(),
+  writeLastSaveFailedBreadcrumb: vi.fn(),
+}));
+
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({ t: (key: string) => key }),
 }));
 
 // Dynamic imports after mocks are wired up (vi.mock is hoisted above these)
@@ -142,6 +209,7 @@ describe("useSession hook", () => {
   /** Re-invoke the hook to collect new effects, then flush them */
   const rerenderAndFlush = () => {
     refIndex = 0;
+    stateIndex = 0;
     pendingEffects = [];
     // biome-ignore lint/correctness/useHookAtTopLevel: test simulation — not a real React render
     const result = useSession({
@@ -157,6 +225,7 @@ describe("useSession hook", () => {
     options: { mode?: "flashcard" | "acaan"; stackKey?: string } = {}
   ) => {
     refIndex = 0;
+    stateIndex = 0;
     pendingEffects = [];
     const result = useSession({
       mode: options.mode ?? "flashcard",
@@ -173,6 +242,8 @@ describe("useSession hook", () => {
     effectCleanups = [];
     refStore = [];
     refIndex = 0;
+    stateSlots = [];
+    stateIndex = 0;
     uuidCounter = 0;
 
     vi.stubGlobal("crypto", {
@@ -459,5 +530,402 @@ describe("useSession hook", () => {
     expect(updated.activeSession?.successes).toBe(0);
     expect(updated.activeSession?.fails).toBe(0);
     expect(updated.activeSession?.questionsCompleted).toBe(0);
+  });
+
+  // --- Distance mode -----------------------------------------------------
+
+  /** Invoke useSession in distance mode and flush initial effects. Used for
+   *  both the initial render and subsequent re-invocations — the React state
+   *  mocks (`currentStatus`, `refStore`) carry state across calls. */
+  const renderDistance = (overrides?: {
+    distanceMode?: DistanceMode;
+    distanceConvention?: DistanceConvention;
+  }) => {
+    refIndex = 0;
+    stateIndex = 0;
+    pendingEffects = [];
+    const result = useSession({
+      mode: "distance",
+      stackKey: "mnemonica",
+      distanceMode: overrides?.distanceMode,
+      distanceConvention: overrides?.distanceConvention,
+    });
+    flushEffects();
+    return result;
+  };
+
+  it("starts a distance session with explicit distanceMode and distanceConvention", () => {
+    const result = renderDistance({
+      distanceMode: "compute",
+      distanceConvention: "signed",
+    });
+    result.startSession({ type: "open" });
+
+    const updated = renderDistance({
+      distanceMode: "compute",
+      distanceConvention: "signed",
+    });
+
+    expect(updated.status.phase).toBe("active");
+    expect(updated.activeSession?.mode).toBe("distance");
+    if (updated.activeSession?.mode === "distance") {
+      expect(updated.activeSession.distanceMode).toBe("compute");
+      expect(updated.activeSession.distanceConvention).toBe("signed");
+    }
+  });
+
+  it("falls back to default distanceMode and distanceConvention when undefined", () => {
+    const result = renderDistance();
+    result.startSession({ type: "open" });
+
+    const updated = renderDistance();
+
+    expect(updated.activeSession?.mode).toBe("distance");
+    if (updated.activeSession?.mode === "distance") {
+      expect(updated.activeSession.distanceMode).toBe("both");
+      expect(updated.activeSession.distanceConvention).toBe("cyclic");
+    }
+  });
+
+  it("emits SESSION_STARTED with mode 'distance'", () => {
+    const result = renderDistance({
+      distanceMode: "apply",
+      distanceConvention: "cyclic",
+    });
+    result.startSession({ type: "structured", totalQuestions: 10 });
+
+    expect(mockEventBusEmit.SESSION_STARTED).toHaveBeenCalledWith({
+      mode: "distance",
+      config: { type: "structured", totalQuestions: 10 },
+    });
+  });
+
+  // --- Mid-session stackLimits re-snapshot --------------------------------
+
+  /** Invoke useSession with a specific stackLimits and flush effects. */
+  const renderWithLimits = (stackLimits: StackLimits) => {
+    refIndex = 0;
+    stateIndex = 0;
+    pendingEffects = [];
+    // biome-ignore lint/correctness/useHookAtTopLevel: test simulation — not a real React render
+    const result = useSession({
+      mode: "flashcard",
+      stackKey: "mnemonica",
+      stackLimits,
+    });
+    flushEffects();
+    return result;
+  };
+
+  it("re-snapshots stackLimits in the active session when limits change mid-session", () => {
+    const limitsA = DEFAULT_STACK_LIMITS;
+    const limitsB: StackLimits = {
+      start: createDeckPosition(1),
+      end: createDeckPosition(20),
+    };
+
+    const result = renderWithLimits(limitsA);
+    result.startSession({ type: "open" });
+
+    let updated = renderWithLimits(limitsA);
+    expect(updated.activeSession?.stackLimits).toEqual(limitsA);
+
+    // Change stackLimits — the re-snapshot effect calls setStatus during
+    // the flush, so a second render is needed to read the updated state
+    // (same pattern as auto-completion / stop-session tests above).
+    renderWithLimits(limitsB);
+    updated = renderWithLimits(limitsB);
+    expect(updated.activeSession?.stackLimits).toEqual(limitsB);
+  });
+
+  it("does not re-snapshot when limits are structurally equal across renders", () => {
+    const limits: StackLimits = {
+      start: createDeckPosition(1),
+      end: createDeckPosition(20),
+    };
+    const sameLimitsNewRef: StackLimits = {
+      start: createDeckPosition(1),
+      end: createDeckPosition(20),
+    };
+
+    const result = renderWithLimits(limits);
+    result.startSession({ type: "open" });
+
+    let updated = renderWithLimits(limits);
+    const sessionBefore = updated.activeSession;
+    expect(sessionBefore?.stackLimits).toEqual(limits);
+
+    // Re-render with a DIFFERENT object identity but identical start/end.
+    // The structural-equality early-return should prevent any setStatus.
+    updated = renderWithLimits(sameLimitsNewRef);
+    expect(updated.activeSession).toBe(sessionBefore);
+  });
+
+  it("does not fire the re-snapshot effect while phase is idle", () => {
+    // Mount in idle (no startSession) and change limits — nothing should
+    // happen because the effect early-returns when phase !== "active".
+    const limitsA = DEFAULT_STACK_LIMITS;
+    const limitsB: StackLimits = {
+      start: createDeckPosition(1),
+      end: createDeckPosition(20),
+    };
+
+    let updated = renderWithLimits(limitsA);
+    expect(updated.status.phase).toBe("idle");
+
+    updated = renderWithLimits(limitsB);
+    expect(updated.status.phase).toBe("idle");
+    expect(updated.activeSession).toBeNull();
+  });
+
+  it("patches a queued pendingFinalizationRef when limits change after stopSession", () => {
+    const limitsA = DEFAULT_STACK_LIMITS;
+    const limitsB: StackLimits = {
+      start: createDeckPosition(1),
+      end: createDeckPosition(20),
+    };
+
+    const result = renderWithLimits(limitsA);
+    result.startSession({ type: "open" });
+
+    let updated = renderWithLimits(limitsA);
+
+    // Reach the auto-save threshold so stopSession will queue finalization
+    // rather than just returning to idle.
+    for (let i = 0; i < 3; i++) {
+      updated.handleAnswer({ correct: true, questionAdvanced: true });
+      updated = renderWithLimits(limitsA);
+    }
+
+    // Stop now: stopSession sets pendingFinalizationRef but leaves
+    // phase === "active" until the flush effect runs.
+    updated.stopSession();
+    // Change limits BEFORE the next flush so the re-snapshot effect runs
+    // alongside the flush effect on the same render. The re-snapshot must
+    // patch pendingFinalizationRef, otherwise the persisted record
+    // captures the OLD limits.
+    renderWithLimits(limitsB);
+    // Two more renders: one to flush the finalization effect (which calls
+    // setStatus to summary), one to read the updated state.
+    renderWithLimits(limitsB);
+    updated = renderWithLimits(limitsB);
+
+    expect(updated.status.phase).toBe("summary");
+    // The persisted record should reflect the new limits, not the old ones.
+    const calls = mockBuildSessionRecord.mock.calls;
+    // biome-ignore lint/style/useAtIndex: tsconfig.app lib is ES2020 — Array.prototype.at type is not available on mock.calls' inferred type
+    const finalizedSession = calls[calls.length - 1]?.[0];
+    expect(finalizedSession?.stackLimits).toEqual(limitsB);
+  });
+
+  describe("flush effect — persistence failure surfacing", () => {
+    /**
+     * Drives a session through Stop and asserts `finalizeSession` returned the
+     * supplied failure shape, then re-renders so the flush effect runs.
+     */
+    const completeAndStop = (): ReturnType<typeof useSession> => {
+      let updated = rerenderAndFlush();
+      // Build at least 3 questions to clear meetsMinimumSaveThreshold.
+      for (let i = 0; i < 3; i++) {
+        updated.handleAnswer({ correct: true, questionAdvanced: true });
+        updated = rerenderAndFlush();
+      }
+      updated.stopSession();
+      // Two flushes: one to enqueue the finalization, one to run the flush
+      // effect that surfaces the failure.
+      updated = rerenderAndFlush();
+      updated = rerenderAndFlush();
+      return updated;
+    };
+
+    it("shows the generic save-failed notification and keeps phase active when finalize returns write-failed", () => {
+      mockFinalizeSession.mockReturnValueOnce({
+        ok: false,
+        reason: "write-failed",
+      });
+      const result = initHook();
+      result.startSession({ type: "open" });
+      const updated = completeAndStop();
+
+      expect(mockNotificationsShow).toHaveBeenCalledWith(
+        expect.objectContaining({
+          color: "red",
+          title: "errors.sessionSaveFailed.title",
+          message: "errors.sessionSaveFailed.message",
+        })
+      );
+      // Phase stays active so the user can retry Stop after clearing storage.
+      expect(updated.status.phase).toBe("active");
+      // Every finalize failure reports to analytics — the auto-save cleanup
+      // path reports unconditionally and asymmetry here was undercounting
+      // user-Stop quota failures in GA.
+      expect(mockTrackError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: "Session finalize: write-failed" }),
+        "useSession:flush"
+      );
+    });
+
+    it("shows the corrupt-storage notification and reports analytics when finalize returns corrupt", () => {
+      mockFinalizeSession.mockReturnValueOnce({
+        ok: false,
+        reason: "corrupt",
+      });
+      const result = initHook();
+      result.startSession({ type: "open" });
+      const updated = completeAndStop();
+
+      expect(mockNotificationsShow).toHaveBeenCalledWith(
+        expect.objectContaining({
+          color: "red",
+          title: "errors.sessionStorageCorrupt.title",
+          message: "errors.sessionStorageCorrupt.message",
+        })
+      );
+      expect(mockTrackError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: "Session finalize: corrupt" }),
+        "useSession:flush"
+      );
+      // Phase stays active but the session id was added to finalizedIds so
+      // a Stop retry doesn't re-show the notification — the user must clear
+      // storage to recover.
+      expect(updated.status.phase).toBe("active");
+    });
+
+    it("shows the corrupt-storage notification when finalize returns corrupt-prior-state (refused to overwrite)", () => {
+      mockFinalizeSession.mockReturnValueOnce({
+        ok: false,
+        reason: "corrupt-prior-state",
+      });
+      const result = initHook();
+      result.startSession({ type: "open" });
+      completeAndStop();
+
+      expect(mockNotificationsShow).toHaveBeenCalledWith(
+        expect.objectContaining({
+          color: "red",
+          title: "errors.sessionStorageCorrupt.title",
+        })
+      );
+      expect(mockTrackError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "Session finalize: corrupt-prior-state",
+        }),
+        "useSession:flush"
+      );
+    });
+
+    it("reports analytics on serialize-failed but uses the generic notification (recoverable bucket)", () => {
+      mockFinalizeSession.mockReturnValueOnce({
+        ok: false,
+        reason: "serialize-failed",
+      });
+      const result = initHook();
+      result.startSession({ type: "open" });
+      completeAndStop();
+
+      expect(mockNotificationsShow).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "errors.sessionSaveFailed.title",
+        })
+      );
+      expect(mockTrackError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "Session finalize: serialize-failed",
+        }),
+        "useSession:flush"
+      );
+    });
+  });
+
+  describe("last-save-failed breadcrumb on mount", () => {
+    it("surfaces a yellow notification and clears the breadcrumb when one was left by the prior session", () => {
+      mockReadBreadcrumb.mockReturnValueOnce({
+        reason: "write-failed",
+        failedAt: "2025-01-01T00:00:00.000Z",
+      });
+      initHook();
+
+      expect(mockNotificationsShow).toHaveBeenCalledWith(
+        expect.objectContaining({
+          color: "yellow",
+          title: "errors.lastSaveFailed.title",
+          message: "errors.lastSaveFailed.message",
+        })
+      );
+      expect(mockClearBreadcrumb).toHaveBeenCalledOnce();
+    });
+
+    it("does nothing when no breadcrumb is present", () => {
+      mockReadBreadcrumb.mockReturnValueOnce(null);
+      initHook();
+
+      expect(mockNotificationsShow).not.toHaveBeenCalled();
+      expect(mockClearBreadcrumb).not.toHaveBeenCalled();
+    });
+
+    it("shows the mount-time notification at most once even when clearLastSaveFailedBreadcrumb cannot actually clear the breadcrumb", () => {
+      // Simulate the stuck-breadcrumb scenario: clear is silent (the util
+      // swallows internal errors) but storage still holds the breadcrumb,
+      // so every subsequent `readLastSaveFailedBreadcrumb` returns the same
+      // value. The session-scoped latch (lastSaveBreadcrumbCheckedRef) must
+      // prevent the notification from re-firing across re-renders.
+      mockReadBreadcrumb.mockReturnValue({
+        reason: "write-failed",
+        failedAt: "2025-01-01T00:00:00.000Z",
+      });
+      // clear silently succeeds (does not throw) but in this scenario the
+      // underlying storage write also failed — i.e. the breadcrumb remains.
+      mockClearBreadcrumb.mockImplementation(() => undefined);
+
+      initHook();
+      // Re-render multiple times: latch must keep the notification idempotent
+      // even though the breadcrumb read keeps returning a value.
+      rerenderAndFlush();
+      rerenderAndFlush();
+
+      const lastSaveFailedShows = mockNotificationsShow.mock.calls.filter(
+        (call) => call[0]?.title === "errors.lastSaveFailed.title"
+      );
+      expect(lastSaveFailedShows).toHaveLength(1);
+
+      mockReadBreadcrumb.mockReset();
+      mockClearBreadcrumb.mockReset();
+    });
+  });
+
+  describe("flush effect — language-change isolation (M7)", () => {
+    it("does not re-finalize a completed session on a language change re-render", () => {
+      // Run a full Stop flow so finalize succeeds and the session id is in
+      // finalizedIdsRef. A subsequent re-render that would have happened
+      // because `t` changed identity (language change) must not re-fire
+      // finalize. Pre-fix, the flush effect's dep list included `t`, so a
+      // language change would re-run the effect — pendingFinalizationRef is
+      // cleared so it would no-op for the queue, but the test pins the
+      // observable invariant: no extra finalize calls.
+      const result = initHook();
+      result.startSession({ type: "open" });
+      let updated = rerenderAndFlush();
+      for (let i = 0; i < 3; i++) {
+        updated.handleAnswer({ correct: true, questionAdvanced: true });
+        updated = rerenderAndFlush();
+      }
+      updated.stopSession();
+      updated = rerenderAndFlush();
+      updated = rerenderAndFlush();
+      expect(updated.status.phase).toBe("summary");
+      const finalizeCallsAfterStop = mockFinalizeSession.mock.calls.length;
+
+      // Simulate a language-change re-render (additional rerenders).
+      rerenderAndFlush();
+      rerenderAndFlush();
+
+      // No additional finalize calls — the dep-list fix means the flush
+      // effect doesn't re-run on `t` identity changes, and the
+      // pendingFinalizationRef-null + finalizedIdsRef guards keep it
+      // idempotent under the harness's flush-everything semantics.
+      expect(mockFinalizeSession.mock.calls.length).toBe(
+        finalizeCallsAfterStop
+      );
+    });
   });
 });

@@ -1,11 +1,9 @@
-import { Grid, Space, Text } from "@mantine/core";
+import { Grid, Text } from "@mantine/core";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { CardSpread } from "../../components/card-spread/card-spread";
 import { JsonLd } from "../../components/json-ld";
 import { RevealButton } from "../../components/reveal-button";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
-import { TimerDisplay } from "../../components/timer-display";
 import { TrainingHeader } from "../../components/training-header";
 import { SITE_URL } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
@@ -14,7 +12,8 @@ import { useSession } from "../../hooks/use-session";
 import { useStackLimits } from "../../hooks/use-stack-limits";
 import { analytics } from "../../services/analytics";
 import { cardItems, numberItems } from "../../types/typeguards";
-import { FlashcardCardDisplay } from "./flashcard-card-display";
+import { getNeighborCard } from "../../utils/neighbor";
+import { FlashcardActiveRound } from "./flashcard-active-round";
 import { FlashcardSettingsContent } from "./flashcard-settings-content";
 import { useFlashcardGame } from "./use-flashcard-game";
 import { useFlashcardSettings } from "./use-flashcard-settings";
@@ -108,6 +107,12 @@ export const Flashcard = () => {
     () => cardItems(choices.map((c) => c.card)),
     [choices]
   );
+  const answerCard = useMemo(() => {
+    if (isNeighborMode && resolvedDirection !== null) {
+      return getNeighborCard(stackOrder, card, resolvedDirection, limits);
+    }
+    return card;
+  }, [isNeighborMode, resolvedDirection, stackOrder, card, limits]);
 
   return (
     <div className="fullMantineContainerHeight">
@@ -141,54 +146,33 @@ export const Flashcard = () => {
               />
             }
             settingsTooltip={t("flashcard.settingsAriaLabel")}
-            title={
-              <>
-                {t("flashcard.title")}
-                <Text c="dimmed" fs="italic" size="xs">
-                  {mode === "neighbor"
-                    ? t("flashcard.activeModeNeighbor")
-                    : t("flashcard.activeModePosition")}
-                </Text>
-              </>
+            subtitle={
+              mode === "neighbor"
+                ? t("flashcard.activeModeNeighbor")
+                : t("flashcard.activeModePosition")
             }
+            title={t("flashcard.title")}
           />
           <Text c="dimmed" mb="xs" size="sm">
-            {t("flashcard.seoIntro")}
+            {t("flashcard.pageDescription")}
           </Text>
+          <span aria-hidden="true" className="sr-only">
+            {t("flashcard.seoIntro")}
+          </span>
         </Grid.Col>
-        <Grid.Col span={12}>
-          <Space h="xl" />
-          {timerSettings.enabled && (
-            <TimerDisplay
-              timeRemaining={timeRemaining}
-              timerDuration={timerDuration}
-            />
-          )}
-          <FlashcardCardDisplay
-            card={card}
-            isNeighborMode={isNeighborMode}
-            resolvedDirection={resolvedDirection}
-            shouldShowCard={shouldShowCard}
-          />
-          <Space h="xl" />
-        </Grid.Col>
-        <Grid.Col span={12} style={{ height: "100%" }}>
-          {!isNeighborMode && shouldShowCard ? (
-            <CardSpread
-              canMove={false}
-              hasCursor={true}
-              items={numberChoices}
-              onItemClick={submitAnswer}
-            />
-          ) : (
-            <CardSpread
-              canMove={false}
-              hasCursor={true}
-              items={cardChoices}
-              onItemClick={submitAnswer}
-            />
-          )}
-        </Grid.Col>
+        <FlashcardActiveRound
+          answerCard={answerCard}
+          card={card}
+          cardChoices={cardChoices}
+          isNeighborMode={isNeighborMode}
+          numberChoices={numberChoices}
+          onSubmitAnswer={submitAnswer}
+          resolvedDirection={resolvedDirection}
+          shouldShowCard={shouldShowCard}
+          timeRemaining={timeRemaining}
+          timerDuration={timerDuration}
+          timerEnabled={timerSettings.enabled}
+        />
       </Grid>
       {status.phase === "summary" && (
         <SessionSummaryModal
