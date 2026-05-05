@@ -321,5 +321,45 @@ describe("useGameTimer hook effects", () => {
       // Should not throw
       expect(mockDispatch).toHaveBeenCalledWith({ type: "TIMEOUT" });
     });
+
+    it("invokes onTimeout BEFORE dispatching the timeout action", () => {
+      // Consumers (e.g. distance) emit analytics + session-fail counters in
+      // onTimeout and rely on the next-round payload coming from dispatch
+      // afterwards. Pinning the order here so a future refactor cannot
+      // silently flip it without a failing test.
+      const callOrder: Array<"onTimeout" | "dispatch"> = [];
+      const dispatched: Array<{ type: string }> = [];
+      const orderedDispatch = vi.fn((action: { type: string }) => {
+        dispatched.push(action);
+        callOrder.push("dispatch");
+      });
+      const orderedOnTimeout = vi.fn(() => {
+        callOrder.push("onTimeout");
+      });
+
+      renderHook(() =>
+        useGameTimer({
+          timerSettings: { enabled: true, duration: 30 },
+          timeRemaining: 0,
+          dispatch: orderedDispatch,
+          createTimeoutAction: () => ({ type: "TIMEOUT" as const }),
+          onTimeout: orderedOnTimeout,
+        })
+      );
+
+      // The duration-sync effect also fires on mount and dispatches
+      // RESET_TIMER, but that runs in a separate effect and is allowed to
+      // interleave. Filter to just the timeout-effect call.
+      const timeoutDispatches = dispatched.filter(
+        (action) => action.type === "TIMEOUT"
+      );
+      expect(timeoutDispatches).toHaveLength(1);
+      expect(orderedOnTimeout).toHaveBeenCalledOnce();
+      // onTimeout must appear before the TIMEOUT dispatch in the call order.
+      const onTimeoutIdx = callOrder.indexOf("onTimeout");
+      const dispatchIdx = callOrder.lastIndexOf("dispatch");
+      expect(onTimeoutIdx).toBeGreaterThanOrEqual(0);
+      expect(onTimeoutIdx).toBeLessThan(dispatchIdx);
+    });
   });
 });

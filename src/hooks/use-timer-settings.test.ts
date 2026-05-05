@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { FLASHCARD_TIMER_LSK } from "../constants";
-import { useTimerSettings } from "./use-timer-settings";
+import { isTimerSettings, useTimerSettings } from "./use-timer-settings";
 
 const mockSetSettings = vi.fn();
 
@@ -23,6 +23,48 @@ vi.mock("../utils/localstorage", () => ({
 const { useLocalDb } = await import("../utils/localstorage");
 const mockedUseLocalDb = vi.mocked(useLocalDb);
 
+describe("isTimerSettings", () => {
+  it("rejects duration of 0", () => {
+    expect(isTimerSettings({ enabled: true, duration: 0 })).toBe(false);
+  });
+
+  it("rejects duration of NaN", () => {
+    expect(isTimerSettings({ enabled: true, duration: Number.NaN })).toBe(
+      false
+    );
+  });
+
+  it("rejects out-of-range duration", () => {
+    expect(isTimerSettings({ enabled: true, duration: 99_999 })).toBe(false);
+  });
+
+  it("rejects negative duration", () => {
+    expect(isTimerSettings({ enabled: true, duration: -10 })).toBe(false);
+  });
+
+  it("accepts duration of 10", () => {
+    expect(isTimerSettings({ enabled: true, duration: 10 })).toBe(true);
+  });
+
+  it("accepts duration of 15", () => {
+    expect(isTimerSettings({ enabled: true, duration: 15 })).toBe(true);
+  });
+
+  it("accepts duration of 30", () => {
+    expect(isTimerSettings({ enabled: true, duration: 30 })).toBe(true);
+  });
+
+  it("rejects non-object values", () => {
+    expect(isTimerSettings(null)).toBe(false);
+    expect(isTimerSettings("hello")).toBe(false);
+  });
+
+  it("rejects objects missing required fields", () => {
+    expect(isTimerSettings({ enabled: true })).toBe(false);
+    expect(isTimerSettings({ duration: 10 })).toBe(false);
+  });
+});
+
 describe("useTimerSettings", () => {
   afterEach(() => {
     vi.clearAllMocks();
@@ -40,6 +82,7 @@ describe("useTimerSettings", () => {
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
       FLASHCARD_TIMER_LSK,
       expect.any(Object),
+      expect.any(Function),
       expect.any(Function)
     );
   });

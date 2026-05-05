@@ -21,6 +21,7 @@ import {
 } from "../../types/spot-check";
 import { cardItems } from "../../types/typeguards";
 import { useLocalDb } from "../../utils/localstorage";
+import { reportLocalDbCorruption } from "../../utils/localstorage-telemetry";
 import { SpotCheckSettingsContent } from "./spot-check-settings-content";
 import { useSpotCheckGame } from "./use-spot-check-game";
 
@@ -47,7 +48,8 @@ export const SpotCheck = () => {
   const [mode, setMode] = useLocalDb<SpotCheckMode>(
     SPOT_CHECK_MODE_LSK,
     "missing",
-    isSpotCheckMode
+    isSpotCheckMode,
+    reportLocalDbCorruption
   );
 
   const { limits, rangeSize } = useStackLimits(stackKey);
@@ -133,15 +135,15 @@ export const SpotCheck = () => {
             />
           }
           settingsTooltip={t("spotCheck.settingsAriaLabel")}
-          title={
-            <>
-              {t("spotCheck.title")}
-              <Text c="dimmed" fs="italic" size="xs">
-                {modeLabel}
-              </Text>
-            </>
-          }
+          subtitle={modeLabel}
+          title={t("spotCheck.title")}
         />
+        <Text c="dimmed" mb="xs" size="sm">
+          {t("spotCheck.pageDescription")}
+        </Text>
+        <span aria-hidden="true" className="sr-only">
+          {t("spotCheck.seoIntro")}
+        </span>
         <div>
           <Space h="md" />
           {timerSettings.enabled && (

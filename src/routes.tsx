@@ -32,6 +32,9 @@ const SpotCheck = lazyWithReload(() =>
 const Acaan = lazyWithReload(() =>
   import("./pages/acaan/acaan").then((m) => ({ default: m.Acaan }))
 );
+const Distance = lazyWithReload(() =>
+  import("./pages/distance/distance").then((m) => ({ default: m.Distance }))
+);
 const Toolbox = lazyWithReload(() =>
   import("./pages/toolbox/toolbox").then((m) => ({ default: m.Toolbox }))
 );
@@ -114,6 +117,16 @@ export const Routes = () => (
         </LazyRoute>
       }
       path={ROUTES.acaan}
+    />
+    <RouterRoute
+      element={
+        <LazyRoute>
+          <RequireStack descriptionKey="distance.pageDescription">
+            <Distance />
+          </RequireStack>
+        </LazyRoute>
+      }
+      path={ROUTES.distance}
     />
     <RouterRoute
       element={

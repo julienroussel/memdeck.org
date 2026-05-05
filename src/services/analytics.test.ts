@@ -173,6 +173,7 @@ describe("analytics", () => {
         mode: "flashcard",
         accuracy: 0.92,
         questionsCompleted: 10,
+        saved: true,
       });
 
       expect(mockEvent).toHaveBeenCalledWith({
@@ -188,6 +189,7 @@ describe("analytics", () => {
         mode: "acaan",
         accuracy: 0.333,
         questionsCompleted: 6,
+        saved: true,
       });
 
       expect(mockEvent).toHaveBeenCalledWith({
@@ -195,6 +197,22 @@ describe("analytics", () => {
         action: "Completed",
         label: "acaan",
         value: 33,
+      });
+    });
+
+    it("tracks SESSION_COMPLETED with action='Save Failed' when saved=false", () => {
+      eventBus.emit.SESSION_COMPLETED({
+        mode: "flashcard",
+        accuracy: 0.5,
+        questionsCompleted: 4,
+        saved: false,
+      });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Session",
+        action: "Save Failed",
+        label: "flashcard",
+        value: 50,
       });
     });
 
@@ -232,6 +250,91 @@ describe("analytics", () => {
         action: "Mode Changed",
         label: "missing",
       });
+    });
+
+    it("tracks DISTANCE_ANSWER correct event via event bus", () => {
+      eventBus.emit.DISTANCE_ANSWER({ correct: true, stackName: "Mnemonica" });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Distance",
+        action: "Correct Answer",
+        label: "Mnemonica",
+      });
+    });
+
+    it("tracks DISTANCE_ANSWER wrong event via event bus", () => {
+      eventBus.emit.DISTANCE_ANSWER({ correct: false, stackName: "Aronson" });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Distance",
+        action: "Wrong Answer",
+        label: "Aronson",
+      });
+    });
+
+    it("tracks DISTANCE_MODE_CHANGED event via event bus", () => {
+      eventBus.emit.DISTANCE_MODE_CHANGED({ mode: "compute" });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Distance",
+        action: "Mode Changed",
+        label: "compute",
+      });
+    });
+
+    it("tracks DISTANCE_CONVENTION_CHANGED event via event bus", () => {
+      eventBus.emit.DISTANCE_CONVENTION_CHANGED({ convention: "signed" });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Distance",
+        action: "Convention Changed",
+        label: "signed",
+      });
+    });
+
+    it("tracks STACK_LIMITS_CHANGED event via event bus with the per-stack range label", () => {
+      eventBus.emit.STACK_LIMITS_CHANGED({
+        start: 1,
+        end: 20,
+        rangeSize: 20,
+        stackName: "Mnemonica",
+      });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Settings",
+        action: "Stack Range Changed",
+        label: "Mnemonica (1-20)",
+      });
+    });
+
+    it("reports a listener exception via trackError without re-entering the safeListener guard", async () => {
+      // First emit makes mockEvent throw on the trackStackSelected call;
+      // safeListener catches it and queues a trackError via queueMicrotask
+      // (which itself ends up calling mockEvent again).
+      mockEvent.mockImplementationOnce(() => {
+        throw new Error("ga-down");
+      });
+
+      eventBus.emit.STACK_SELECTED({ stackName: "Mnemonica" });
+
+      // Flush the queueMicrotask scheduled inside safeListener's catch block.
+      await new Promise<void>((resolve) => {
+        queueMicrotask(resolve);
+      });
+
+      // The first call threw; the second call is the trackError emit.
+      // trackError serialises as { category: "Error", action: error.name,
+      // label: error.message } — see analytics.trackError. The original
+      // listener error was `new Error("ga-down")`, so action = "Error" and
+      // label = "ga-down".
+      expect(mockEvent).toHaveBeenCalledTimes(2);
+      expect(mockEvent).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          category: "Error",
+          action: "Error",
+          label: "ga-down",
+        })
+      );
     });
   });
 
@@ -649,6 +752,56 @@ describe("analytics", () => {
     });
   });
 
+  describe("trackDistanceAnswer", () => {
+    it("sends correct answer event", () => {
+      analytics.trackDistanceAnswer(true, "Mnemonica");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Distance",
+        action: "Correct Answer",
+        label: "Mnemonica",
+      });
+    });
+
+    it("sends wrong answer event", () => {
+      analytics.trackDistanceAnswer(false, "Aronson");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Distance",
+        action: "Wrong Answer",
+        label: "Aronson",
+      });
+    });
+  });
+
+  describe("trackDistanceModeChanged", () => {
+    for (const mode of ["compute", "apply", "both"] as const) {
+      it(`sends mode change event for ${mode}`, () => {
+        analytics.trackDistanceModeChanged(mode);
+
+        expect(mockEvent).toHaveBeenCalledWith({
+          category: "Distance",
+          action: "Mode Changed",
+          label: mode,
+        });
+      });
+    }
+  });
+
+  describe("trackDistanceConventionChanged", () => {
+    for (const convention of ["cyclic", "signed"] as const) {
+      it(`sends convention change event for ${convention}`, () => {
+        analytics.trackDistanceConventionChanged(convention);
+
+        expect(mockEvent).toHaveBeenCalledWith({
+          category: "Distance",
+          action: "Convention Changed",
+          label: convention,
+        });
+      });
+    }
+  });
+
   describe("trackSessionStarted", () => {
     it("sends session started event for structured session", () => {
       analytics.trackSessionStarted("flashcard", {
@@ -676,7 +829,7 @@ describe("analytics", () => {
 
   describe("trackSessionCompleted", () => {
     it("sends session completed event with accuracy as value", () => {
-      analytics.trackSessionCompleted("flashcard", 0.85);
+      analytics.trackSessionCompleted("flashcard", 0.85, true);
 
       expect(mockEvent).toHaveBeenCalledWith({
         category: "Session",
@@ -687,13 +840,24 @@ describe("analytics", () => {
     });
 
     it("rounds accuracy percentage", () => {
-      analytics.trackSessionCompleted("acaan", 0.666);
+      analytics.trackSessionCompleted("acaan", 0.666, true);
 
       expect(mockEvent).toHaveBeenCalledWith({
         category: "Session",
         action: "Completed",
         label: "acaan",
         value: 67,
+      });
+    });
+
+    it("uses action='Save Failed' when saved is false", () => {
+      analytics.trackSessionCompleted("distance", 0.5, false);
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Session",
+        action: "Save Failed",
+        label: "distance",
+        value: 50,
       });
     });
   });
@@ -792,6 +956,24 @@ describe("analytics", () => {
       });
     });
 
+    it("does not throw when ReactGA.event throws", () => {
+      mockEvent.mockImplementationOnce(() => {
+        throw new Error("ga unavailable");
+      });
+      const error = new Error("Test error");
+
+      expect(() => analytics.trackError(error)).not.toThrow();
+    });
+
+    it("does not throw when ReactGA.send throws", () => {
+      mockSend.mockImplementationOnce(() => {
+        throw new Error("ga send failed");
+      });
+      const error = new Error("Test error");
+
+      expect(() => analytics.trackError(error)).not.toThrow();
+    });
+
     it("handles error without component stack", () => {
       const error = new ReferenceError("x is not defined");
 
@@ -863,7 +1045,7 @@ describe("analytics", () => {
     });
 
     it("does not track session completed", () => {
-      analytics.trackSessionCompleted("flashcard", 0.85);
+      analytics.trackSessionCompleted("flashcard", 0.85, true);
 
       expect(mockEvent).not.toHaveBeenCalled();
     });
@@ -877,6 +1059,21 @@ describe("analytics", () => {
     it("does not track spot check mode changes", () => {
       analytics.trackSpotCheckModeChanged("missing");
 
+      expect(mockEvent).not.toHaveBeenCalled();
+    });
+
+    it("does not track distance answers", () => {
+      analytics.trackDistanceAnswer(true, "Mnemonica");
+      expect(mockEvent).not.toHaveBeenCalled();
+    });
+
+    it("does not track distance mode changes", () => {
+      analytics.trackDistanceModeChanged("compute");
+      expect(mockEvent).not.toHaveBeenCalled();
+    });
+
+    it("does not track distance convention changes", () => {
+      analytics.trackDistanceConventionChanged("signed");
       expect(mockEvent).not.toHaveBeenCalled();
     });
 

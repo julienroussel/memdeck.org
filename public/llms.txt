@@ -10,13 +10,14 @@ All training data stays on the user's device via localStorage. No server, no sig
 
 ## Stack Range
 
-A global per-stack setting lets users focus training on a specific range of positions (e.g., 1–20) instead of the full 52-card deck. Accessible via the navigation bar next to the stack picker. This supports progressive learning — start with a small range and expand as you memorize more cards. Applies to Flashcard Training, Spot Check, Stack Lookup, and Card Spelling. ACAAN, Faro Shuffle, and Stay Stack always use the full deck.
+A global per-stack setting lets users focus training on a specific range of positions (e.g., 1–20) instead of the full 52-card deck. Accessible via the navigation bar next to the stack picker. This supports progressive learning — start with a small range and expand as you memorize more cards. Applies to Flashcard Training, Spot Check, Distance Number, Stack Lookup, and Card Spelling. ACAAN, Faro Shuffle, and Stay Stack always use the full deck.
 
 ## Features
 
 - [Flashcard Training](https://memdeck.org/flashcard/): Practice recalling cards by position, position by card, or both. Includes neighbor mode for learning adjacent cards in the stack. Respects the stack range setting.
 - [Spot Check](https://memdeck.org/spot-check/): Test your knowledge by identifying missing, swapped, or moved cards in the deck. Respects the stack range setting.
 - [ACAAN Calculator](https://memdeck.org/acaan/): Practice Any Card At Any Number calculations with your memorized stack. Always uses the full deck.
+- [Distance Number](https://memdeck.org/distance/): Drill the offset between two cards in your stack — the math behind Pit Hartling's Quartets routines (*In Order to Amaze*). Two sub-modes (compute, apply) and two conventions (cyclic 1..N-1, signed shortest). Respects the stack range setting (needs at least 6 cards).
 - [Toolbox](https://memdeck.org/toolbox/): Stack lookup, faro shuffle simulator, card spelling tool, and stay stack sequence finder. Stack lookup and card spelling respect the stack range; faro shuffle and stay stack use the full deck.
 - [Stats](https://memdeck.org/stats/): Track session history, accuracy, and progress over time.
 - [Guide](https://memdeck.org/guide/): Getting started instructions and training tips.

@@ -14,6 +14,7 @@ const FAQ_KEYS = [
   "whatIsMnemonica",
   "whatIsAronson",
   "whatIsAcaan",
+  "whatIsDistanceNumber",
   "differenceMnemonicaAronson",
   "howToPractice",
   "whatIsFaro",

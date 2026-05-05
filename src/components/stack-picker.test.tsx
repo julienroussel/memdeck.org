@@ -11,9 +11,14 @@ const { mockUseSelectedStack, mockEmitStackSelected } = vi.hoisted(() => ({
   mockEmitStackSelected: vi.fn(),
 }));
 
-vi.mock("../hooks/use-selected-stack", () => ({
-  useSelectedStack: mockUseSelectedStack,
-}));
+vi.mock("../hooks/use-selected-stack", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("../hooks/use-selected-stack")>();
+  return {
+    ...actual,
+    useSelectedStack: mockUseSelectedStack,
+  };
+});
 
 vi.mock("../services/event-bus", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../services/event-bus")>();

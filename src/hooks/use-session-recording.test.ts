@@ -1,18 +1,25 @@
 import { act, renderHook } from "@testing-library/react";
 import { useRef, useState } from "react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { makeActiveSession } from "../test-utils/session-factories";
 import type { ActiveSession, SessionPhase } from "../types/session";
 import { useSessionRecording } from "./use-session-recording";
 
-const useTestHarness = (initialSession: ActiveSession) => {
+const useTestHarness = (
+  initialSession: ActiveSession,
+  requestFinalization = vi.fn()
+) => {
   const [status, setStatus] = useState<SessionPhase>({
     phase: "active",
     session: initialSession,
   });
-  const pendingFinalizationRef = useRef<ActiveSession | null>(null);
-  const recording = useSessionRecording({ setStatus, pendingFinalizationRef });
-  return { status, recording, pendingFinalizationRef };
+  const statusRef = useRef<SessionPhase>({
+    phase: "active",
+    session: initialSession,
+  });
+  statusRef.current = status;
+  const recording = useSessionRecording({ setStatus, requestFinalization });
+  return { status, recording, requestFinalization };
 };
 
 describe("useSessionRecording", () => {
@@ -112,13 +119,15 @@ describe("useSessionRecording", () => {
       expect(session.questionsCompleted).toBe(1);
     });
 
-    it("sets pendingFinalizationRef when a structured session reaches its limit", () => {
+    it("calls requestFinalization when a structured session reaches its limit", () => {
+      const requestFinalization = vi.fn();
       const { result } = renderHook(() =>
         useTestHarness(
           makeActiveSession({
             config: { type: "structured", totalQuestions: 10 },
             questionsCompleted: 9,
-          })
+          }),
+          requestFinalization
         )
       );
 
@@ -126,19 +135,88 @@ describe("useSessionRecording", () => {
         result.current.recording.recordQuestionAdvanced();
       });
 
-      expect(result.current.pendingFinalizationRef.current).not.toBeNull();
-      expect(
-        result.current.pendingFinalizationRef.current?.questionsCompleted
-      ).toBe(10);
+      expect(requestFinalization).toHaveBeenCalledOnce();
+      expect(requestFinalization.mock.calls[0][0].questionsCompleted).toBe(10);
     });
 
-    it("does not set pendingFinalizationRef for open sessions", () => {
+    it("calls requestFinalization with the latest queued state via the setState updater pattern", () => {
+      // Same-event invariant: when recordQuestionAdvanced's updater runs, it
+      // reads `prev` — the LATEST queued state. Reading via statusRef would
+      // return the value committed at the prior render, which is stale within
+      // a batched event. This test pins the invariant by seeding the harness
+      // with an already-bumped success count and verifying the finalized
+      // session reflects the seeded values rather than a zeroed default.
+      const requestFinalization = vi.fn();
+      const { result } = renderHook(() =>
+        useTestHarness(
+          makeActiveSession({
+            config: { type: "structured", totalQuestions: 10 },
+            questionsCompleted: 9,
+            successes: 8,
+            currentStreak: 8,
+            bestStreak: 8,
+          }),
+          requestFinalization
+        )
+      );
+
+      act(() => {
+        result.current.recording.recordQuestionAdvanced();
+      });
+
+      expect(requestFinalization).toHaveBeenCalledOnce();
+      const finalized = requestFinalization.mock.calls[0][0];
+      expect(finalized.questionsCompleted).toBe(10);
+      // Persisted record reflects seeded streak/successes — proving the
+      // updater is reading queued state (i.e. `prev`), not a stale ref.
+      expect(finalized.successes).toBe(8);
+      expect(finalized.currentStreak).toBe(8);
+      expect(finalized.bestStreak).toBe(8);
+    });
+
+    it("invokes requestFinalization after the setStatus call returns, decoupling the side effect from updater execution timing", () => {
+      // Pins the contract that requestFinalization is called by
+      // recordQuestionAdvanced AFTER setStatus has been invoked, not from
+      // inside the updater. The advanceQuestion helper is pure — its
+      // toFinalize result is bridged to the side-effect via finalizeRef
+      // (React's blessed updater→ref pattern). Order-of-events here proves
+      // the side effect does not depend on the updater running synchronously
+      // before the surrounding code returns.
+      const callOrder: string[] = [];
+      const requestFinalization = vi.fn(() => {
+        callOrder.push("requestFinalization");
+      });
+      const { result } = renderHook(() =>
+        useTestHarness(
+          makeActiveSession({
+            config: { type: "structured", totalQuestions: 5 },
+            questionsCompleted: 4,
+          }),
+          requestFinalization
+        )
+      );
+
+      act(() => {
+        result.current.recording.recordQuestionAdvanced();
+        callOrder.push("after-record");
+      });
+
+      expect(requestFinalization).toHaveBeenCalledOnce();
+      // requestFinalization must have been invoked before the synchronous
+      // `after-record` line — i.e. it ran during recordQuestionAdvanced's
+      // synchronous body, downstream of the updater.
+      expect(callOrder).toEqual(["requestFinalization", "after-record"]);
+    });
+
+    it("does not call requestFinalization for open sessions", () => {
+      const requestFinalization = vi.fn();
       const { result } = renderHook(() =>
         useTestHarness(
           makeActiveSession({
             config: { type: "open" },
             questionsCompleted: 99,
-          })
+          }),
+          requestFinalization
         )
       );
 
@@ -146,7 +224,7 @@ describe("useSessionRecording", () => {
         result.current.recording.recordQuestionAdvanced();
       });
 
-      expect(result.current.pendingFinalizationRef.current).toBeNull();
+      expect(requestFinalization).not.toHaveBeenCalled();
     });
   });
 
@@ -154,10 +232,11 @@ describe("useSessionRecording", () => {
     it("recordCorrect is a no-op when phase is idle", () => {
       const { result } = renderHook(() => {
         const [status, setStatus] = useState<SessionPhase>({ phase: "idle" });
-        const pendingFinalizationRef = useRef<ActiveSession | null>(null);
+        const statusRef = useRef<SessionPhase>({ phase: "idle" });
+        statusRef.current = status;
         const recording = useSessionRecording({
           setStatus,
-          pendingFinalizationRef,
+          requestFinalization: vi.fn(),
         });
         return { status, recording };
       });
@@ -172,10 +251,11 @@ describe("useSessionRecording", () => {
     it("recordIncorrect is a no-op when phase is idle", () => {
       const { result } = renderHook(() => {
         const [status, setStatus] = useState<SessionPhase>({ phase: "idle" });
-        const pendingFinalizationRef = useRef<ActiveSession | null>(null);
+        const statusRef = useRef<SessionPhase>({ phase: "idle" });
+        statusRef.current = status;
         const recording = useSessionRecording({
           setStatus,
-          pendingFinalizationRef,
+          requestFinalization: vi.fn(),
         });
         return { status, recording };
       });
@@ -190,10 +270,11 @@ describe("useSessionRecording", () => {
     it("recordQuestionAdvanced is a no-op when phase is idle", () => {
       const { result } = renderHook(() => {
         const [status, setStatus] = useState<SessionPhase>({ phase: "idle" });
-        const pendingFinalizationRef = useRef<ActiveSession | null>(null);
+        const statusRef = useRef<SessionPhase>({ phase: "idle" });
+        statusRef.current = status;
         const recording = useSessionRecording({
           setStatus,
-          pendingFinalizationRef,
+          requestFinalization: vi.fn(),
         });
         return { status, recording };
       });

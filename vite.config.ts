@@ -109,6 +109,13 @@ export default defineConfig({
             description: "Any Card At Any Number calculator",
           },
           {
+            name: "Distance",
+            short_name: "Distance",
+            url: "/distance/",
+            description:
+              "Practice distance numbers between cards in your memorized stack",
+          },
+          {
             name: "Toolbox",
             short_name: "Toolbox",
             url: "/toolbox/",

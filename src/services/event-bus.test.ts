@@ -104,6 +104,7 @@ describe("eventBus", () => {
         mode: "flashcard",
         accuracy: 0.85,
         questionsCompleted: 10,
+        saved: true,
       });
 
       expect(listener).toHaveBeenCalledOnce();
@@ -111,6 +112,7 @@ describe("eventBus", () => {
         mode: "flashcard",
         accuracy: 0.85,
         questionsCompleted: 10,
+        saved: true,
       });
 
       unsubscribe();
@@ -139,6 +141,89 @@ describe("eventBus", () => {
 
       unsub1();
       unsub2();
+    });
+  });
+
+  describe("listener isolation", () => {
+    it("logs a listener exception in DEV and continues iterating over remaining subscribers", () => {
+      // Vitest runs with import.meta.env.DEV === true. The bus logs to
+      // console.error and schedules an asynchronous rethrow via
+      // queueMicrotask so DevTools sees the error without aborting iteration
+      // over remaining subscribers.
+      const consoleErrorSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
+      // Intercept queueMicrotask so the asynchronous rethrow does not surface
+      // as an uncaught exception in the test runner. We assert it was scheduled.
+      const queuedThrows: unknown[] = [];
+      const queueSpy = vi
+        .spyOn(globalThis, "queueMicrotask")
+        .mockImplementation((cb: () => void) => {
+          try {
+            cb();
+          } catch (err) {
+            queuedThrows.push(err);
+          }
+        });
+
+      const throwing = vi.fn(() => {
+        throw new Error("listener boom");
+      });
+      const survivor = vi.fn();
+      const unsubA = eventBus.subscribe.STACK_SELECTED(throwing);
+      const unsubB = eventBus.subscribe.STACK_SELECTED(survivor);
+
+      expect(() =>
+        eventBus.emit.STACK_SELECTED({ stackName: "Mnemonica" })
+      ).not.toThrow();
+      expect(throwing).toHaveBeenCalledOnce();
+      expect(survivor).toHaveBeenCalledOnce();
+      expect(survivor).toHaveBeenCalledWith({ stackName: "Mnemonica" });
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining("[eventBus] listener for STACK_SELECTED threw"),
+        expect.any(Error)
+      );
+      expect(queuedThrows).toHaveLength(1);
+      expect(queuedThrows[0]).toBeInstanceOf(Error);
+
+      unsubA();
+      unsubB();
+      queueSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
+    });
+
+    it("isolates listener failures in production: a throwing subscriber does not abort iteration over remaining subscribers", async () => {
+      // In production import.meta.env.DEV is false and the bus swallows
+      // listener exceptions so one bad subscriber (e.g. an ad-blocker shim
+      // around analytics) cannot kill all telemetry. Stub DEV=false and
+      // re-import the bus module so we exercise the swallow branch.
+      vi.resetModules();
+      vi.stubEnv("DEV", false);
+      const { eventBus: prodBus } = await import("./event-bus");
+
+      const throwing = vi.fn(() => {
+        throw new Error("listener boom");
+      });
+      const survivor = vi.fn();
+      const unsubA = prodBus.subscribe.SESSION_COMPLETED(throwing);
+      const unsubB = prodBus.subscribe.SESSION_COMPLETED(survivor);
+
+      expect(() =>
+        prodBus.emit.SESSION_COMPLETED({
+          mode: "flashcard",
+          accuracy: 0.5,
+          questionsCompleted: 10,
+          saved: true,
+        })
+      ).not.toThrow();
+
+      expect(throwing).toHaveBeenCalledOnce();
+      expect(survivor).toHaveBeenCalledOnce();
+
+      unsubA();
+      unsubB();
+      vi.unstubAllEnvs();
+      vi.resetModules();
     });
   });
 });

@@ -1,5 +1,9 @@
+import { notifications } from "@mantine/notifications";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { analytics } from "../services/analytics";
 import { eventBus } from "../services/event-bus";
+import type { DistanceConvention, DistanceMode } from "../types/distance";
 import type { FlashcardMode } from "../types/flashcard";
 import type {
   ActiveSession,
@@ -12,7 +16,14 @@ import type {
 import type { SpotCheckMode } from "../types/spot-check";
 import type { StackLimits } from "../types/stack-limits";
 import type { StackKey } from "../types/stacks";
-import { finalizeSession } from "../utils/session-persistence";
+import {
+  clearLastSaveFailedBreadcrumb,
+  readLastSaveFailedBreadcrumb,
+} from "../utils/session-breadcrumbs";
+import {
+  type FinalizeSessionResult,
+  finalizeSession,
+} from "../utils/session-persistence";
 import {
   applyAnswerOutcome,
   deriveActiveSession,
@@ -39,6 +50,11 @@ type UseSessionOptions =
   | (UseSessionOptionsBase & {
       mode: "spotcheck";
       spotCheckMode?: SpotCheckMode;
+    })
+  | (UseSessionOptionsBase & {
+      mode: "distance";
+      distanceMode?: DistanceMode;
+      distanceConvention?: DistanceConvention;
     });
 
 type UseSessionResult = {
@@ -52,7 +68,35 @@ type UseSessionResult = {
   dismissSummary: () => void;
 };
 
+/**
+ * Discriminated result from `tryFinalizeSession` — lets callers distinguish
+ * an already-finalized no-op (`duplicate`) from a true write failure
+ * (`write-failed`) so they can decide whether to surface the failure to
+ * analytics or the user. `finalized` carries the computed summary on success.
+ *
+ * The `reason` on `write-failed` mirrors `FinalizeSessionResult.reason` so
+ * callers can differentiate quota/serialization failures from a corrupt
+ * on-disk state where the rollback also failed.
+ */
+export type TryFinalizeSessionResult =
+  | { status: "finalized"; summary: SessionSummary }
+  | { status: "duplicate" }
+  | {
+      status: "write-failed";
+      reason: Extract<FinalizeSessionResult, { ok: false }>["reason"];
+    };
+
 export const useSession = (options: UseSessionOptions): UseSessionResult => {
+  const { t } = useTranslation();
+  // Hold the latest `t` in a ref so the flush and breadcrumb effects' deps
+  // don't include `t`. `useTranslation`'s `t` changes identity on language
+  // change; if it were in the dep array, switching languages mid-session
+  // would re-run the flush effect (wasted work, and risks racing the
+  // pending-finalization queue) and re-fire the mount breadcrumb check
+  // (already latched, but the ref keeps the intent explicit and the dep
+  // list mount-only). Mirrors the pattern in use-session-auto-save.ts.
+  const tRef = useRef(t);
+  tRef.current = t;
   const { mode, stackKey, autoStart = false } = options;
   const stackLimits = options.stackLimits;
   const stackLimitsRef = useRef(stackLimits);
@@ -61,6 +105,10 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
     options.mode === "flashcard" ? options.flashcardMode : undefined;
   const spotCheckMode =
     options.mode === "spotcheck" ? options.spotCheckMode : undefined;
+  const distanceMode =
+    options.mode === "distance" ? options.distanceMode : undefined;
+  const distanceConvention =
+    options.mode === "distance" ? options.distanceConvention : undefined;
   const [status, setStatus] = useState<SessionPhase>({ phase: "idle" });
   const statusRef = useRef(status);
   statusRef.current = status;
@@ -68,34 +116,207 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
   const pendingFinalizationRef = useRef<ActiveSession | null>(null);
   const finalizedIdsRef = useRef<Set<string>>(new Set());
 
-  /** Deduplicating wrapper around finalizeSession. Returns null if already finalized. */
+  // Tick counter used to force a re-render after a ref-only mutation
+  // (e.g. queueing a session for finalization). The flush effect below
+  // depends on `flushTick` so it runs whenever a caller bumps the tick
+  // (and on initial mount). Every code path that queues work calls
+  // `triggerFlush`, so the effect is guaranteed to fire after the queue
+  // is populated.
+  const [flushTick, setFlushTick] = useState(0);
+  const triggerFlush = useCallback(() => {
+    setFlushTick((n) => n + 1);
+  }, []);
+
+  /**
+   * Deduplicating wrapper around finalizeSession. Returns a discriminated
+   * status so callers (e.g. the unmount/beforeunload path in
+   * useSessionAutoSave) can distinguish "already finalized" (no-op) from
+   * a true write failure that warrants surfacing to analytics.
+   *
+   * The id is added to `finalizedIdsRef` ONLY on a successful write so that
+   * a failed save can be retried from a subsequent path (e.g. user taps Stop
+   * again after clearing storage).
+   */
   const tryFinalizeSession = useCallback(
-    (session: ActiveSession): SessionSummary | null => {
+    (session: ActiveSession): TryFinalizeSessionResult => {
       if (finalizedIdsRef.current.has(session.id)) {
-        return null;
+        return { status: "duplicate" };
+      }
+      const result = finalizeSession(session);
+      if (!result.ok) {
+        return { status: "write-failed", reason: result.reason };
       }
       finalizedIdsRef.current.add(session.id);
-      return finalizeSession(session);
+      return { status: "finalized", summary: result.summary };
     },
     []
   );
 
-  // DO NOT add a dependency array — this must run after every render to flush pending
-  // side effects. This is the "effect flush" pattern: setState updaters (which must be
-  // pure) schedule side-effectful work by writing to pendingFinalizationRef, and this
-  // effect picks it up on the next render. This avoids calling localStorage/eventBus
-  // inside setState. Adding `[]` would silently break structured session completion.
+  /**
+   * Queue a session for finalization via the flush effect. Used by
+   * `stopSession` and by auto-save paths that have time for a re-render
+   * (stack-change). Mutates the ref outside any setState updater (see F4)
+   * and forces a render via `triggerFlush` so the flush effect picks it up.
+   *
+   * Snapshots the latest `stackLimits` at queue time so the persisted record
+   * reflects the range in effect when finalization was requested, regardless
+   * of whether the limits-merge effect below has run yet on this render.
+   * This makes the queueing invariant local — callers don't have to depend
+   * on effect-ordering to get the right snapshot. The limits-merge effect
+   * still patches the queued ref for the post-queue change case.
+   */
+  const requestFinalization = useCallback(
+    (session: ActiveSession) => {
+      pendingFinalizationRef.current = {
+        ...session,
+        stackLimits: stackLimitsRef.current,
+      };
+      triggerFlush();
+    },
+    [triggerFlush]
+  );
+
+  // If the user changes the stack range mid-session, the in-memory game
+  // reducer resets to the new range but the active session's stackLimits
+  // snapshot is stale — recorded answers would be persisted under the
+  // original range. Re-snapshot when limits change so the persisted record
+  // describes the range in effect when it ends.
+  //
+  // This effect MUST run before the finalization-flush effect below: when a
+  // limits change happens in the same render as a stopSession() call, the
+  // queued pendingFinalizationRef is what the flush effect persists. This
+  // effect patches that ref FIRST so the persisted record reflects the new
+  // limits.
   useEffect(() => {
+    if (statusRef.current.phase !== "active") {
+      return;
+    }
+    const current = statusRef.current.session.stackLimits;
+    const same =
+      current === stackLimits ||
+      (current !== undefined &&
+        stackLimits !== undefined &&
+        current.start === stackLimits.start &&
+        current.end === stackLimits.end);
+    if (same) {
+      return;
+    }
+    // If a stop / auto-complete already queued this session for finalization,
+    // patch the queued reference too — otherwise the persisted record carries
+    // pre-update limits.
+    if (pendingFinalizationRef.current !== null) {
+      pendingFinalizationRef.current = {
+        ...pendingFinalizationRef.current,
+        stackLimits,
+      };
+    }
+    setStatus((prev) => {
+      if (prev.phase !== "active") {
+        return prev;
+      }
+      return {
+        phase: "active",
+        session: { ...prev.session, stackLimits },
+      };
+    });
+  }, [stackLimits]);
+
+  // Flush effect — depends on `flushTick`, which every queueing path
+  // (`requestFinalization`, etc.) bumps via `triggerFlush`. The effect picks
+  // up `pendingFinalizationRef` whenever the tick changes (and on initial
+  // mount to drain anything queued during the first render). Using `[]` here
+  // would only run once on mount and silently break structured session
+  // completion; depending on `flushTick` instead bounds re-runs to the cases
+  // where work was actually queued.
+  //
+  // We inline dedupe + finalizeSession here (rather than reusing
+  // tryFinalizeSession) so we can distinguish "already finalized" from
+  // "persistence failed" via the discriminated FinalizeSessionResult, and only
+  // transition to the summary phase on a successful write. On failure we
+  // surface a Mantine notification so the user knows the session wasn't saved
+  // — and we KEEP `phase: "active"` so the user can retry Stop after clearing
+  // storage. A `corrupt` reason (rollback failed → on-disk inconsistency) is
+  // additionally reported via analytics so we have observability on a state
+  // the user cannot self-recover from without clearing storage.
+  useEffect(() => {
+    // `flushTick` is purely a trigger — value is irrelevant. The early return
+    // also keeps the dep list satisfied (linter requires a usage, not just an
+    // entry). On first mount no finalization has been requested.
+    if (flushTick === 0) {
+      return;
+    }
     const session = pendingFinalizationRef.current;
     if (session === null) {
       return;
     }
     pendingFinalizationRef.current = null;
-    const summary = tryFinalizeSession(session);
-    if (summary !== null) {
-      setStatus({ phase: "summary", summary });
+    if (finalizedIdsRef.current.has(session.id)) {
+      return;
     }
-  });
+    const result = finalizeSession(session);
+    if (result.ok) {
+      finalizedIdsRef.current.add(session.id);
+      setStatus({ phase: "summary", summary: result.summary });
+      return;
+    }
+    // Report every finalize failure to analytics so quota/serialize/corrupt
+    // buckets are all observable in GA — the auto-save cleanup path reports
+    // unconditionally, and asymmetry here was undercounting user-Stop quota
+    // failures. Distinct copy per reason still drives the user-facing message:
+    //  - corrupt / corrupt-prior-state: retry won't help; tell user to clear
+    //    storage. Mark the session id as finalized so we don't re-show the
+    //    notification on every Stop click.
+    //  - serialize-failed / write-failed: keep phase: "active" so the user
+    //    can retry Stop after clearing space.
+    analytics.trackError(
+      new Error(`Session finalize: ${result.reason}`),
+      "useSession:flush"
+    );
+    const isUnrecoverable =
+      result.reason === "corrupt" || result.reason === "corrupt-prior-state";
+    if (isUnrecoverable) {
+      finalizedIdsRef.current.add(session.id);
+      notifications.show({
+        color: "red",
+        title: tRef.current("errors.sessionStorageCorrupt.title"),
+        message: tRef.current("errors.sessionStorageCorrupt.message"),
+      });
+      return;
+    }
+    notifications.show({
+      color: "red",
+      title: tRef.current("errors.sessionSaveFailed.title"),
+      message: tRef.current("errors.sessionSaveFailed.message"),
+    });
+    // Leave phase: "active" intact so the user can retry Stop. The pending ref
+    // has been cleared above, so this effect won't loop.
+  }, [flushTick]);
+
+  // On mount, surface a "last save failed" breadcrumb left by the
+  // beforeunload/unmount auto-save path (which can't show notifications
+  // because it runs while the page is closing). The breadcrumb is cleared as
+  // soon as it's surfaced so it doesn't repeat across renders.
+  const lastSaveBreadcrumbCheckedRef = useRef(false);
+  useEffect(() => {
+    if (lastSaveBreadcrumbCheckedRef.current) {
+      return;
+    }
+    lastSaveBreadcrumbCheckedRef.current = true;
+    const breadcrumb = readLastSaveFailedBreadcrumb();
+    if (breadcrumb === null) {
+      return;
+    }
+    clearLastSaveFailedBreadcrumb();
+    notifications.show({
+      color: "yellow",
+      title: tRef.current("errors.lastSaveFailed.title"),
+      message: tRef.current("errors.lastSaveFailed.message"),
+    });
+    // Mount-only intent: the latch ref above guarantees idempotence even if
+    // React re-runs this effect. `tRef` keeps the latest translation
+    // available without putting `t` in the dep list (which would re-fire
+    // this on language change).
+  }, []);
 
   const startSession = useCallback(
     (config: SessionConfig) => {
@@ -135,17 +356,35 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
           mode: "spotcheck" as const,
           spotCheckMode: spotCheckMode ?? "missing",
         };
+      } else if (mode === "distance") {
+        session = {
+          ...baseSession,
+          mode: "distance" as const,
+          distanceMode: distanceMode ?? "both",
+          distanceConvention: distanceConvention ?? "cyclic",
+        };
       } else {
         session = { ...baseSession, mode: "acaan" as const };
       }
       setStatus({ phase: "active", session });
       eventBus.emit.SESSION_STARTED({ mode, config });
     },
-    [mode, stackKey, flashcardMode, spotCheckMode, tryFinalizeSession] // stackLimits removed, accessed via ref
+    [
+      mode,
+      stackKey,
+      flashcardMode,
+      spotCheckMode,
+      distanceMode,
+      distanceConvention,
+      tryFinalizeSession,
+    ] // stackLimits removed, accessed via ref
   );
 
   const { recordCorrect, recordIncorrect, recordQuestionAdvanced } =
-    useSessionRecording({ setStatus, pendingFinalizationRef });
+    useSessionRecording({
+      setStatus,
+      requestFinalization,
+    });
 
   const handleAnswer = useCallback(
     (outcome: AnswerOutcome) => {
@@ -162,19 +401,16 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
   );
 
   const stopSession = useCallback(() => {
-    setStatus((prev) => {
-      if (prev.phase !== "active") {
-        return prev;
-      }
-      if (!meetsMinimumSaveThreshold(prev.session)) {
-        return { phase: "idle" };
-      }
-      // Schedule finalization via the ref so side effects run outside
-      // this pure updater.
-      pendingFinalizationRef.current = prev.session;
-      return { phase: "active", session: prev.session };
-    });
-  }, []);
+    const current = statusRef.current;
+    if (current.phase !== "active") {
+      return;
+    }
+    if (!meetsMinimumSaveThreshold(current.session)) {
+      setStatus({ phase: "idle" });
+      return;
+    }
+    requestFinalization(current.session);
+  }, [requestFinalization]);
 
   const dismissSummary = useCallback(() => {
     setStatus({ phase: "idle" });
@@ -200,7 +436,13 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
     }
   }, [autoStart, status.phase, startSession]);
 
-  useSessionAutoSave({ stackKey, statusRef, setStatus, tryFinalizeSession });
+  useSessionAutoSave({
+    stackKey,
+    statusRef,
+    setStatus,
+    tryFinalizeSession,
+    requestFinalization,
+  });
 
   const activeSession = deriveActiveSession(status);
   const isStructuredSession = deriveIsStructuredSession(activeSession);

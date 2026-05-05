@@ -26,6 +26,14 @@ export const ALL_TIME_STATS_LSK = "memdeck-app-all-time-stats";
 /** Maximum number of session records to retain in localStorage */
 export const MAX_SESSION_HISTORY = 500;
 
+/**
+ * localStorage key for a "last save failed" breadcrumb. Set when the
+ * unmount/beforeunload auto-save path fails (no UI available at that point);
+ * read on next session start so the user is told the prior session wasn't
+ * saved. Cleared as soon as it's surfaced.
+ */
+export const LAST_SAVE_FAILED_LSK = "memdeck-app-last-save-failed";
+
 export const CARD_ASPECT_RATIO = 333 / 234;
 export const CARD_WIDTH = 120;
 export const CARD_HEIGHT = Math.round(CARD_WIDTH * CARD_ASPECT_RATIO);
@@ -37,6 +45,9 @@ export const SPREAD_CARD_HEIGHT = Math.round(
 export const SPOT_CHECK_MODE_LSK = "memdeck-app-spot-check-mode";
 export const SPOT_CHECK_TIMER_LSK = "memdeck-app-spot-check-timer";
 export const NEIGHBOR_DIRECTION_LSK = "memdeck-app-neighbor-direction";
+export const DISTANCE_OPTION_LSK = "memdeck-app-distance-option";
+export const DISTANCE_CONVENTION_LSK = "memdeck-app-distance-convention";
+export const DISTANCE_TIMER_LSK = "memdeck-app-distance-timer";
 export const LANGUAGE_LSK = "memdeck-app-language";
 export const TOOLBOX_SECTIONS_LSK = "memdeck-app-toolbox-sections";
 
@@ -69,7 +80,11 @@ export const SHARE_NUDGE_MIN_SESSIONS = 5;
 export const STACK_LIMITS_LSK = "memdeck-app-stack-limits";
 export const MIN_FLASHCARD_RANGE = 6;
 export const MIN_SPOT_CHECK_RANGE = 10;
+export const MIN_DISTANCE_RANGE = 6;
 export const RANGE_PRESETS = [13, 26, 39, 52] as const;
+
+/** Canonical route format — leading + trailing slash, so consumers (sitemap, internal links) never trip a 301 redirect. */
+type RoutePath = "/" | `/${string}/`;
 
 /** All route paths used by the app — shared between routes.tsx and the pre-render script */
 export const ROUTES = {
@@ -80,7 +95,8 @@ export const ROUTES = {
   flashcard: "/flashcard/",
   spotCheck: "/spot-check/",
   acaan: "/acaan/",
+  distance: "/distance/",
   toolbox: "/toolbox/",
   stats: "/stats/",
   about: "/about/",
-} as const;
+} as const satisfies Record<string, RoutePath>;

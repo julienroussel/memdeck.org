@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { DECK_SIZE } from "../../constants";
 import { DEFAULT_STACK_LIMITS } from "../../types/stack-limits";
-import { stacks } from "../../types/stacks";
+import { type Stack, stacks } from "../../types/stacks";
 import { useSpotCheckGame } from "./use-spot-check-game";
 
 vi.mock("@mantine/notifications", () => ({
@@ -447,6 +447,47 @@ describe("useSpotCheckGame", () => {
 
       expect(result.current.score).toEqual({ successes: 0, fails: 0 });
       expect(result.current.puzzleState.mode).toBe("swapped");
+    });
+  });
+
+  describe("when stack changes", () => {
+    it("resets score and rebuilds puzzle from the new stack", () => {
+      type Props = { stack: Stack; name: string };
+      const initialProps: Props = { stack: testStack, name: testStackName };
+      const { result, rerender } = renderHook(
+        ({ stack, name }: Props) =>
+          useSpotCheckGame(
+            stack,
+            name,
+            "missing",
+            timerOff,
+            DEFAULT_STACK_LIMITS
+          ),
+        { initialProps }
+      );
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+      expect(result.current.score.fails).toBe(1);
+
+      rerender({ stack: stacks.aronson.order, name: stacks.aronson.name });
+
+      expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+      const ps = result.current.puzzleState;
+      if (ps.mode !== "missing") {
+        throw new Error("Expected missing mode after rerender");
+      }
+      // Positional invariant: puzzleCards must follow aronson's order with one
+      // card removed at missingIndex. Cards are shared singletons across stacks,
+      // so membership checks are vacuous; positional checks prove the new stack
+      // is sourced.
+      for (let i = 0; i < result.current.puzzleCards.length; i++) {
+        const aronsonIndex = i < ps.puzzle.missingIndex ? i : i + 1;
+        expect(result.current.puzzleCards[i]).toBe(
+          stacks.aronson.order[aronsonIndex]
+        );
+      }
     });
   });
 

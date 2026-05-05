@@ -1,4 +1,12 @@
-import { ActionIcon, Group, Popover, Title, Tooltip } from "@mantine/core";
+import {
+  ActionIcon,
+  Group,
+  Popover,
+  Stack,
+  Text,
+  Title,
+  Tooltip,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSettings, IconTarget } from "@tabler/icons-react";
 import { type ReactNode, useCallback } from "react";
@@ -10,6 +18,7 @@ import { SessionStartControls } from "./session-start-controls";
 
 type TrainingHeaderProps = {
   title: ReactNode;
+  subtitle?: ReactNode;
   settingsTooltip: string;
   sessionTooltip: string;
   settingsContent: ReactNode;
@@ -23,6 +32,7 @@ type TrainingHeaderProps = {
 
 export const TrainingHeader = ({
   title,
+  subtitle,
   settingsTooltip,
   sessionTooltip,
   settingsContent,
@@ -51,9 +61,16 @@ export const TrainingHeader = ({
   return (
     <>
       <Group gap="xs" justify="space-between" wrap="nowrap">
-        <Title className="trainingHeaderTitle" order={1}>
-          {title}
-        </Title>
+        <Stack gap={0} style={{ minWidth: 0 }}>
+          <Title className="trainingHeaderTitle" order={1}>
+            {title}
+          </Title>
+          {subtitle && (
+            <Text c="dimmed" fs="italic" size="xs">
+              {subtitle}
+            </Text>
+          )}
+        </Stack>
         <Group gap="xs" wrap="nowrap">
           {!isStructuredSession && (
             <Score fails={score.fails} successes={score.successes} />

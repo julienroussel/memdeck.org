@@ -1,3 +1,4 @@
+import { renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const mockReadLocalStorageValue = vi.fn();
@@ -8,7 +9,9 @@ vi.mock("@mantine/hooks", () => ({
   useLocalStorage: (args: unknown) => mockUseLocalStorage(args),
 }));
 
-const { getStoredValue, useLocalDb } = await import("./localstorage");
+const { getStoredValue, probeStoredValue, useLocalDb } = await import(
+  "./localstorage"
+);
 
 // --- Shared validators for tests ---
 
@@ -345,6 +348,78 @@ describe("getStoredValue with validate", () => {
   });
 });
 
+describe("probeStoredValue", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("returns { status: 'valid' } when stored value passes validation", () => {
+    mockReadLocalStorageValue.mockReturnValue("ok");
+
+    const probe = probeStoredValue("test-key", isString);
+
+    expect(probe).toEqual({ status: "valid", value: "ok" });
+  });
+
+  it("returns { status: 'absent' } when stored value is undefined", () => {
+    mockReadLocalStorageValue.mockReturnValue(undefined);
+
+    const probe = probeStoredValue("test-key", isString);
+
+    expect(probe).toEqual({ status: "absent" });
+  });
+
+  it("returns { status: 'absent' } when stored value is null", () => {
+    mockReadLocalStorageValue.mockReturnValue(null);
+
+    const probe = probeStoredValue("test-key", isString);
+
+    expect(probe).toEqual({ status: "absent" });
+  });
+
+  it("returns { status: 'corrupt' } when stored value fails validation", () => {
+    mockReadLocalStorageValue.mockReturnValue(123);
+
+    const probe = probeStoredValue("test-key", isString);
+
+    expect(probe).toEqual({ status: "corrupt", raw: 123 });
+  });
+
+  it("returns { status: 'read-error', error } when readLocalStorageValue throws", () => {
+    const readError = new Error("SecurityError: ITP read denied");
+    mockReadLocalStorageValue.mockImplementation(() => {
+      throw readError;
+    });
+
+    const probe = probeStoredValue("test-key", isString);
+
+    expect(probe).toEqual({ status: "read-error", error: readError });
+  });
+
+  it("logs a DEV warning when the read throws", () => {
+    const originalDev = import.meta.env.DEV;
+    import.meta.env.DEV = true;
+
+    const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {
+      // Suppress console output
+    });
+
+    mockReadLocalStorageValue.mockImplementation(() => {
+      throw new Error("Storage error");
+    });
+
+    probeStoredValue("test-key", isString);
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[localStorage] Failed to read key "test-key":',
+      expect.any(Error)
+    );
+
+    consoleWarnSpy.mockRestore();
+    import.meta.env.DEV = originalDev;
+  });
+});
+
 describe("useLocalDb", () => {
   afterEach(() => {
     vi.clearAllMocks();
@@ -354,7 +429,7 @@ describe("useLocalDb", () => {
     mockReadLocalStorageValue.mockReturnValue(undefined);
     mockUseLocalStorage.mockReturnValue(["value", vi.fn(), vi.fn()]);
 
-    useLocalDb("test-key", "default", isString);
+    renderHook(() => useLocalDb("test-key", "default", isString));
 
     expect(mockUseLocalStorage).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -368,7 +443,7 @@ describe("useLocalDb", () => {
     mockReadLocalStorageValue.mockReturnValue("stored-value");
     mockUseLocalStorage.mockReturnValue(["stored-value", vi.fn(), vi.fn()]);
 
-    useLocalDb("test-key", "default", isString);
+    renderHook(() => useLocalDb("test-key", "default", isString));
 
     expect(mockUseLocalStorage).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -384,12 +459,11 @@ describe("useLocalDb", () => {
     mockReadLocalStorageValue.mockReturnValue("value");
     mockUseLocalStorage.mockReturnValue(["value", mockSetter, mockRemover]);
 
-    const [value, setValue, removeValue] = useLocalDb(
-      "test-key",
-      "default",
-      isString
+    const { result } = renderHook(() =>
+      useLocalDb("test-key", "default", isString)
     );
 
+    const [value, setValue, removeValue] = result.current;
     expect(value).toBe("value");
     expect(setValue).toBe(mockSetter);
     expect(removeValue).toBe(mockRemover);
@@ -399,18 +473,18 @@ describe("useLocalDb", () => {
     mockReadLocalStorageValue.mockReturnValue(42);
     mockUseLocalStorage.mockReturnValue([42, vi.fn(), vi.fn()]);
 
-    const [value] = useLocalDb("counter", 0, isNumber);
+    const { result } = renderHook(() => useLocalDb("counter", 0, isNumber));
 
-    expect(value).toBe(42);
+    expect(result.current[0]).toBe(42);
   });
 
   it("works with boolean type", () => {
     mockReadLocalStorageValue.mockReturnValue(true);
     mockUseLocalStorage.mockReturnValue([true, vi.fn(), vi.fn()]);
 
-    const [value] = useLocalDb("enabled", false, isBool);
+    const { result } = renderHook(() => useLocalDb("enabled", false, isBool));
 
-    expect(value).toBe(true);
+    expect(result.current[0]).toBe(true);
   });
 
   it("works with object type", () => {
@@ -427,9 +501,11 @@ describe("useLocalDb", () => {
       typeof (v as Settings).name === "string" &&
       typeof (v as Settings).value === "number";
 
-    const [value] = useLocalDb("settings", { name: "", value: 0 }, isSettings);
+    const { result } = renderHook(() =>
+      useLocalDb("settings", { name: "", value: 0 }, isSettings)
+    );
 
-    expect(value).toEqual({ name: "test", value: 123 });
+    expect(result.current[0]).toEqual({ name: "test", value: 123 });
   });
 
   it("works with array type", () => {
@@ -437,9 +513,11 @@ describe("useLocalDb", () => {
     mockReadLocalStorageValue.mockReturnValue(storedArray);
     mockUseLocalStorage.mockReturnValue([storedArray, vi.fn(), vi.fn()]);
 
-    const [value] = useLocalDb("items", [] as string[], isStringArray);
+    const { result } = renderHook(() =>
+      useLocalDb("items", [] as string[], isStringArray)
+    );
 
-    expect(value).toEqual(["item1", "item2"]);
+    expect(result.current[0]).toEqual(["item1", "item2"]);
   });
 
   it("falls back to default when storage read fails", () => {
@@ -448,7 +526,7 @@ describe("useLocalDb", () => {
     });
     mockUseLocalStorage.mockReturnValue(["default", vi.fn(), vi.fn()]);
 
-    useLocalDb("test-key", "default", isString);
+    renderHook(() => useLocalDb("test-key", "default", isString));
 
     expect(mockUseLocalStorage).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -456,5 +534,175 @@ describe("useLocalDb", () => {
         defaultValue: "default",
       })
     );
+  });
+
+  describe("onCorrupt callback", () => {
+    it("does not invoke onCorrupt when the stored value is valid", () => {
+      mockReadLocalStorageValue.mockReturnValue("stored");
+      mockUseLocalStorage.mockReturnValue(["stored", vi.fn(), vi.fn()]);
+      const onCorrupt = vi.fn();
+
+      renderHook(() => useLocalDb("test-key", "default", isString, onCorrupt));
+
+      expect(onCorrupt).not.toHaveBeenCalled();
+    });
+
+    it("does not invoke onCorrupt when the stored value is absent", () => {
+      mockReadLocalStorageValue.mockReturnValue(undefined);
+      mockUseLocalStorage.mockReturnValue(["default", vi.fn(), vi.fn()]);
+      const onCorrupt = vi.fn();
+
+      renderHook(() => useLocalDb("test-key", "default", isString, onCorrupt));
+
+      expect(onCorrupt).not.toHaveBeenCalled();
+    });
+
+    it("invokes onCorrupt with the key and raw value when validation fails", () => {
+      mockReadLocalStorageValue.mockReturnValue(123);
+      mockUseLocalStorage.mockReturnValue(["default", vi.fn(), vi.fn()]);
+      const onCorrupt = vi.fn();
+
+      renderHook(() => useLocalDb("test-key", "default", isString, onCorrupt));
+
+      expect(onCorrupt).toHaveBeenCalledTimes(1);
+      expect(onCorrupt).toHaveBeenCalledWith("test-key", 123);
+    });
+
+    it("invokes onCorrupt with the read error when the storage read throws", () => {
+      const readError = new Error("Storage read denied");
+      mockReadLocalStorageValue.mockImplementation(() => {
+        throw readError;
+      });
+      mockUseLocalStorage.mockReturnValue(["default", vi.fn(), vi.fn()]);
+      const onCorrupt = vi.fn();
+
+      renderHook(() => useLocalDb("test-key", "default", isString, onCorrupt));
+
+      expect(onCorrupt).toHaveBeenCalledTimes(1);
+      expect(onCorrupt).toHaveBeenCalledWith("test-key", readError);
+    });
+
+    it("falls back to defaultValue when corrupt and onCorrupt is provided", () => {
+      mockReadLocalStorageValue.mockReturnValue(123);
+      mockUseLocalStorage.mockReturnValue(["default", vi.fn(), vi.fn()]);
+      const onCorrupt = vi.fn();
+
+      renderHook(() => useLocalDb("test-key", "default", isString, onCorrupt));
+
+      expect(mockUseLocalStorage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: "test-key",
+          defaultValue: "default",
+        })
+      );
+    });
+
+    it("works without onCorrupt — no throw on corrupt value", () => {
+      mockReadLocalStorageValue.mockReturnValue(123);
+      mockUseLocalStorage.mockReturnValue(["default", vi.fn(), vi.fn()]);
+
+      expect(() =>
+        renderHook(() => useLocalDb("test-key", "default", isString))
+      ).not.toThrow();
+    });
+
+    it("fires onCorrupt only once across many re-renders for the same corrupt key", () => {
+      mockReadLocalStorageValue.mockReturnValue(123);
+      mockUseLocalStorage.mockReturnValue(["default", vi.fn(), vi.fn()]);
+      const onCorrupt = vi.fn();
+
+      const { rerender } = renderHook(() =>
+        useLocalDb("test-key", "default", isString, onCorrupt)
+      );
+
+      // Simulate a high-frequency render loop (e.g. 1Hz timer page).
+      for (let i = 0; i < 20; i++) {
+        rerender();
+      }
+
+      expect(onCorrupt).toHaveBeenCalledTimes(1);
+      expect(onCorrupt).toHaveBeenCalledWith("test-key", 123);
+    });
+
+    it("calls onCorrupt from the deserialize path on JSON.parse error", () => {
+      // Probe path is clean (absent), so only the deserialize callback can
+      // fire onCorrupt — exercising the parse-error branch.
+      mockReadLocalStorageValue.mockReturnValue(undefined);
+      let capturedDeserialize:
+        | ((raw: string | undefined) => unknown)
+        | undefined;
+      mockUseLocalStorage.mockImplementation(
+        (args: { deserialize?: (raw: string | undefined) => unknown }) => {
+          capturedDeserialize = args.deserialize;
+          return ["default", vi.fn(), vi.fn()];
+        }
+      );
+      const onCorrupt = vi.fn();
+
+      renderHook(() => useLocalDb("test-key", "default", isString, onCorrupt));
+
+      expect(capturedDeserialize).toBeDefined();
+      // Probe path was clean, so no onCorrupt fired yet.
+      expect(onCorrupt).not.toHaveBeenCalled();
+
+      // Cross-tab read with malformed JSON.
+      const result = capturedDeserialize?.("{not valid json");
+
+      expect(result).toBe("default");
+      expect(onCorrupt).toHaveBeenCalledTimes(1);
+      expect(onCorrupt).toHaveBeenCalledWith("test-key", expect.any(Error));
+    });
+
+    it("calls onCorrupt from the deserialize path on validate-failure", () => {
+      mockReadLocalStorageValue.mockReturnValue(undefined);
+      let capturedDeserialize:
+        | ((raw: string | undefined) => unknown)
+        | undefined;
+      mockUseLocalStorage.mockImplementation(
+        (args: { deserialize?: (raw: string | undefined) => unknown }) => {
+          capturedDeserialize = args.deserialize;
+          return ["default", vi.fn(), vi.fn()];
+        }
+      );
+      const onCorrupt = vi.fn();
+
+      renderHook(() => useLocalDb("test-key", "default", isString, onCorrupt));
+
+      expect(capturedDeserialize).toBeDefined();
+      expect(onCorrupt).not.toHaveBeenCalled();
+
+      // Valid JSON, but the parsed value fails the type guard.
+      const raw = JSON.stringify(42);
+      const result = capturedDeserialize?.(raw);
+
+      expect(result).toBe("default");
+      expect(onCorrupt).toHaveBeenCalledTimes(1);
+      expect(onCorrupt).toHaveBeenCalledWith("test-key", raw);
+    });
+
+    it("does not call onCorrupt for a clean read", () => {
+      mockReadLocalStorageValue.mockReturnValue("stored");
+      let capturedDeserialize:
+        | ((raw: string | undefined) => unknown)
+        | undefined;
+      mockUseLocalStorage.mockImplementation(
+        (args: { deserialize?: (raw: string | undefined) => unknown }) => {
+          capturedDeserialize = args.deserialize;
+          return ["stored", vi.fn(), vi.fn()];
+        }
+      );
+      const onCorrupt = vi.fn();
+
+      const { rerender } = renderHook(() =>
+        useLocalDb("test-key", "default", isString, onCorrupt)
+      );
+
+      // Multiple renders + a clean deserialize — should never fire onCorrupt.
+      rerender();
+      rerender();
+      capturedDeserialize?.(JSON.stringify("fresh-value"));
+
+      expect(onCorrupt).not.toHaveBeenCalled();
+    });
   });
 });

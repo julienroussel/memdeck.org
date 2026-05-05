@@ -1,5 +1,8 @@
-import { useCallback, useMemo } from "react";
+import { notifications } from "@mantine/notifications";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { STACK_LIMITS_LSK } from "../constants";
+import { analytics } from "../services/analytics";
 import {
   DEFAULT_STACK_LIMITS,
   getRangeSize,
@@ -9,7 +12,8 @@ import {
   type StackLimitsRecord,
 } from "../types/stack-limits";
 import { createDeckPosition, type StackKey } from "../types/stacks";
-import { useLocalDb } from "../utils/localstorage";
+import { probeStoredValue, useLocalDb } from "../utils/localstorage";
+import { reportLocalDbCorruption } from "../utils/localstorage-telemetry";
 
 type UseStackLimitsResult = {
   limits: StackLimits;
@@ -18,12 +22,52 @@ type UseStackLimitsResult = {
   isFullDeck: boolean;
 };
 
+// Approach 1 (corrupt-prior-state discipline): if the stored
+// `StackLimitsRecord` blob is corrupt or unreadable at mount, refuse to
+// write — `useLocalDb` would otherwise hand back the empty default `{}`
+// and the next `setLimits` call would merge into `{}`, silently destroying
+// every other stack's saved range. Splitting into per-stack keys would
+// require a migration touching consumers outside this hook's ownership.
 export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
+  const { t } = useTranslation();
+  const tRef = useRef(t);
+  tRef.current = t;
+
   const [record, setRecord] = useLocalDb<StackLimitsRecord>(
     STACK_LIMITS_LSK,
     {},
-    isStackLimitsRecord
+    isStackLimitsRecord,
+    reportLocalDbCorruption
   );
+
+  // Probe once on mount; if the stored blob is corrupt, lock writes for the
+  // lifetime of this hook instance so we don't overwrite recoverable data.
+  const corruptRef = useRef<boolean | null>(null);
+  if (corruptRef.current === null) {
+    const probe = probeStoredValue(STACK_LIMITS_LSK, isStackLimitsRecord);
+    const corrupt = probe.status === "corrupt" || probe.status === "read-error";
+    corruptRef.current = corrupt;
+    if (corrupt) {
+      analytics.trackError(new Error("stackLimits-corrupt"));
+    }
+  }
+
+  // Surface the corruption to the user via a Mantine notification once on
+  // mount. Side-effects can't run during render, so the visual notice is
+  // deferred to a mount-only effect. The latch ref also keeps it idempotent
+  // under StrictMode double-invoke.
+  const corruptNoticeShownRef = useRef(false);
+  useEffect(() => {
+    if (corruptRef.current !== true || corruptNoticeShownRef.current) {
+      return;
+    }
+    corruptNoticeShownRef.current = true;
+    notifications.show({
+      color: "red",
+      title: tRef.current("errors.stackLimitsCorrupt.title"),
+      message: tRef.current("errors.stackLimitsCorrupt.message"),
+    });
+  }, []);
 
   const rawStart = record[stackKey]?.start;
   const rawEnd = record[stackKey]?.end;
@@ -40,6 +84,11 @@ export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
 
   const handleSetLimits = useCallback(
     (newLimits: StackLimits) => {
+      // Refuse to overwrite a corrupt blob — preserves any other stacks'
+      // ranges that may still be recoverable manually.
+      if (corruptRef.current === true) {
+        return;
+      }
       setRecord((prev) => ({
         ...prev,
         [stackKey]: {

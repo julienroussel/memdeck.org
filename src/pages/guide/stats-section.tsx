@@ -2,6 +2,7 @@ import { Anchor, Space, Text } from "@mantine/core";
 import { IconChartBar } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { ROUTES } from "../../constants";
 import { SectionHeading } from "./section-heading";
 
 export const StatsSection = () => {
@@ -17,7 +18,7 @@ export const StatsSection = () => {
       <Space h="sm" />
       <Text>{t("guide.stats.description")}</Text>
       <Space h="xs" />
-      <Anchor component={Link} to="/stats/">
+      <Anchor component={Link} to={ROUTES.stats}>
         {t("guide.stats.link")}
       </Anchor>
     </section>

@@ -132,8 +132,11 @@ export const Acaan = () => {
             title={t("acaan.title")}
           />
           <Text c="dimmed" mb="xs" size="sm">
-            {t("acaan.seoIntro")}
+            {t("acaan.pageDescription")}
           </Text>
+          <span aria-hidden="true" className="sr-only">
+            {t("acaan.seoIntro")}
+          </span>
         </Grid.Col>
         <Grid.Col span={12}>
           <Space h="xl" />

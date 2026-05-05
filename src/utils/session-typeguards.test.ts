@@ -92,6 +92,51 @@ describe("isSessionRecord", () => {
     expect(isSessionRecord(badRecord)).toBe(false);
   });
 
+  it("returns true for a valid distance record with mode and convention", () => {
+    const record = makeRecord({
+      mode: "distance",
+      distanceMode: "compute",
+      distanceConvention: "cyclic",
+    });
+    expect(isSessionRecord(record)).toBe(true);
+  });
+
+  it("returns true for a distance record without distanceMode/Convention (backward compat)", () => {
+    const { mode: _m, ...base } = makeRecord();
+    const record = { ...base, mode: "distance" };
+    expect(isSessionRecord(record)).toBe(true);
+  });
+
+  it("returns false for a distance record with invalid distanceMode", () => {
+    const badRecord = {
+      ...makeRecord(),
+      mode: "distance",
+      distanceMode: "bogus",
+    };
+    expect(isSessionRecord(badRecord)).toBe(false);
+  });
+
+  it("returns false for a distance record with invalid distanceConvention", () => {
+    const badRecord = {
+      ...makeRecord(),
+      mode: "distance",
+      distanceConvention: "weird",
+    };
+    expect(isSessionRecord(badRecord)).toBe(false);
+  });
+
+  it("isSessionRecordArray accepts a mixed-mode array including distance", () => {
+    const arr = [
+      makeRecord({ mode: "flashcard" }),
+      makeRecord({
+        mode: "distance",
+        distanceMode: "apply",
+        distanceConvention: "signed",
+      }),
+    ];
+    expect(isSessionRecordArray(arr)).toBe(true);
+  });
+
   it("returns true when stackLimits is a valid object", () => {
     const record = { ...makeRecord(), stackLimits: { start: 1, end: 20 } };
     expect(isSessionRecord(record)).toBe(true);

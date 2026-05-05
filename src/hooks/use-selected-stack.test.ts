@@ -86,11 +86,11 @@ describe("useSelectedStack", () => {
     expect(mockSetValue).toHaveBeenCalledWith("aronson");
   });
 
-  it("setStackKey resets to empty string for invalid key", () => {
+  it("setStackKey passes empty string through to storage", () => {
     mockedUseLocalDb.mockReturnValue(["mnemonica", mockSetValue, vi.fn()]);
 
     const result = useSelectedStack();
-    result.setStackKey("not-a-real-stack");
+    result.setStackKey("");
 
     expect(mockSetValue).toHaveBeenCalledWith("");
   });

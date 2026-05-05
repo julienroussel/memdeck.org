@@ -2,6 +2,7 @@ import { Anchor, List, Space, Text } from "@mantine/core";
 import { IconTools } from "@tabler/icons-react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { ROUTES } from "../../constants";
 import { SectionHeading } from "./section-heading";
 
 export const ToolboxSection = () => {
@@ -44,7 +45,7 @@ export const ToolboxSection = () => {
         </List.Item>
       </List>
       <Space h="sm" />
-      <Anchor component={Link} to="/toolbox/">
+      <Anchor component={Link} to={ROUTES.toolbox}>
         {t("guide.toolbox.link")}
       </Anchor>
     </section>

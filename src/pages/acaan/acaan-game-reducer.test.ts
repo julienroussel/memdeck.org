@@ -5,7 +5,7 @@ import { FourOfClubs } from "../../types/suits/clubs";
 import type { AcaanScenario } from "../../utils/acaan-scenario";
 import {
   createInitialState,
-  formatCutDepthMessage,
+  formatCutDepth,
   type GameState,
   gameReducer,
   getCurrentCutDepth,
@@ -72,41 +72,18 @@ describe("getCurrentCutDepth", () => {
   });
 });
 
-describe("formatCutDepthMessage", () => {
-  it("formats a standard message with non-zero cut depth", () => {
-    const message = formatCutDepthMessage(
-      createDeckPosition(10),
-      createDeckPosition(5),
-      5
-    );
-    expect(message).toBe("Position 10 → 5, cut depth: 5");
+describe("formatCutDepth", () => {
+  it("returns the cut depth as a string for non-zero values", () => {
+    expect(formatCutDepth(5, "0 (no cut needed)")).toBe("5");
+    expect(formatCutDepth(51, "0 (no cut needed)")).toBe("51");
   });
 
-  it("formats the special case message when cut depth is 0", () => {
-    const message = formatCutDepthMessage(
-      createDeckPosition(10),
-      createDeckPosition(10),
-      0
-    );
-    expect(message).toBe("Position 10 → 10, cut depth: 0 (no cut needed)");
+  it("returns the supplied zero label when cut depth is 0", () => {
+    expect(formatCutDepth(0, "0 (no cut needed)")).toBe("0 (no cut needed)");
   });
 
-  it("includes both cardPosition and targetPosition in the message", () => {
-    const message = formatCutDepthMessage(
-      createDeckPosition(1),
-      createDeckPosition(52),
-      1
-    );
-    expect(message).toBe("Position 1 → 52, cut depth: 1");
-  });
-
-  it("formats message with large cut depth correctly", () => {
-    const message = formatCutDepthMessage(
-      createDeckPosition(52),
-      createDeckPosition(1),
-      51
-    );
-    expect(message).toBe("Position 52 → 1, cut depth: 51");
+  it("uses the zero label verbatim — i18n boundary", () => {
+    expect(formatCutDepth(0, "ningún corte")).toBe("ningún corte");
   });
 });
 

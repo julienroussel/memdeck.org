@@ -21,7 +21,7 @@ MemDeck provides interactive training tools to help magicians memorize and maint
 
 ## Stack Range
 
-A global per-stack setting accessible via the navigation bar next to the stack picker. It lets users focus training on a specific range of positions (e.g., 1–20) instead of the full 52-card deck. This supports progressive learning — start with a small range and expand as you memorize more cards. Each stack stores its own range independently. The range defaults to the full deck (1–52) and can be adjusted at any time via preset buttons (13, 26, 39, 52) or a slider. Modes that respect the stack range: Flashcard Training, Spot Check, Stack Lookup, Card Spelling. Modes that always use the full deck: ACAAN (cut depth math requires all 52 cards), Faro Shuffle, Stay Stack.
+A global per-stack setting accessible via the navigation bar next to the stack picker. It lets users focus training on a specific range of positions (e.g., 1–20) instead of the full 52-card deck. This supports progressive learning — start with a small range and expand as you memorize more cards. Each stack stores its own range independently. The range defaults to the full deck (1–52) and can be adjusted at any time via preset buttons (13, 26, 39, 52) or a slider. Modes that respect the stack range: Flashcard Training, Spot Check, Distance Number, Stack Lookup, Card Spelling. Modes that always use the full deck: ACAAN (cut depth math requires all 52 cards), Faro Shuffle, Stay Stack.
 
 ## Features
 
@@ -51,6 +51,23 @@ This trains the ability to quickly scan a deck and detect if anything is out of 
 ACAAN (Any Card At Any Number) is one of the most celebrated effects in card magic. A spectator names any card and any number, and the named card is found at the named position. With a memorized deck, the performer must calculate how many cards to cut or shift to achieve this.
 
 The ACAAN trainer presents random card-and-number combinations and lets you practice the mental calculation required to determine the correct cut. It supports timed practice to build speed.
+
+### Distance Number Trainer
+
+A "distance number" — a term coined by Pit Hartling and Denis Behr in *In Order to Amaze* — is the offset between two specific cards in a memorized stack. Distance numbers underpin the Quartets section of the book, where the magician produces four-of-a-kind from cards a spectator freely touches. Computing offsets between any pair of stack positions on the fly is the load-bearing skill.
+
+Where the Flashcard trainer builds the absolute lookup table (card ⇄ position), the Distance trainer drills the relative arithmetic that makes Quartets-style routines performable. Two sub-modes:
+
+- **Compute**: two cards are shown — recall the distance between them.
+- **Apply**: a card and an offset are shown — recall the resulting card.
+- **Both**: a random mix.
+
+Two conventions, user-selectable in settings:
+
+- **Cyclic** — forward distance only, in the range 1 to N-1. Matches the canonical "distance number" terminology.
+- **Signed** — shortest signed offset (positive for forward, negative for backward). Better for in-trick mental math.
+
+Respects the stack range setting and requires at least 6 cards in range to drill (need a pool large enough to generate five unique multiple-choice options). Includes the same timer and structured-session features as Flashcard mode.
 
 ### Toolbox
 

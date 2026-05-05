@@ -1,5 +1,6 @@
 import { NavLink } from "@mantine/core";
 import {
+  IconArrowsLeftRight,
   IconBook2,
   IconChartBar,
   IconExternalLink,
@@ -13,6 +14,7 @@ import {
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
+import { ROUTES } from "../constants";
 
 export const NavLinks = memo(function NavLinks({
   onClick,
@@ -25,36 +27,36 @@ export const NavLinks = memo(function NavLinks({
   return (
     <>
       <NavLink
-        active={location.pathname === "/"}
+        active={location.pathname === ROUTES.home}
         component={Link}
         label={t("nav.home")}
         leftSection={<IconHome2 size={16} stroke={1.5} />}
         onClick={onClick}
-        to="/"
+        to={ROUTES.home}
       />
       <NavLink
-        active={location.pathname === "/guide/"}
+        active={location.pathname === ROUTES.guide}
         component={Link}
         label={t("nav.guide")}
         leftSection={<IconBook2 size={16} stroke={1.5} />}
         onClick={onClick}
-        to="/guide/"
+        to={ROUTES.guide}
       />
       <NavLink
-        active={location.pathname === "/resources/"}
+        active={location.pathname === ROUTES.resources}
         component={Link}
         label={t("nav.resources")}
         leftSection={<IconExternalLink size={16} stroke={1.5} />}
         onClick={onClick}
-        to="/resources/"
+        to={ROUTES.resources}
       />
       <NavLink
-        active={location.pathname === "/stats/"}
+        active={location.pathname === ROUTES.stats}
         component={Link}
         label={t("nav.stats")}
         leftSection={<IconChartBar size={16} stroke={1.5} />}
         onClick={onClick}
-        to="/stats/"
+        to={ROUTES.stats}
       />
 
       <NavLink
@@ -64,48 +66,56 @@ export const NavLinks = memo(function NavLinks({
         leftSection={<IconTools size={16} stroke={1.5} />}
       >
         <NavLink
-          active={location.pathname === "/flashcard/"}
+          active={location.pathname === ROUTES.flashcard}
           component={Link}
           label={t("nav.flashcard")}
           leftSection={<IconPlayCardStar size={16} stroke={1.5} />}
           onClick={onClick}
-          to="/flashcard/"
+          to={ROUTES.flashcard}
         />
         <NavLink
-          active={location.pathname === "/spot-check/"}
+          active={location.pathname === ROUTES.spotCheck}
           component={Link}
           label={t("nav.spotCheck")}
           leftSection={<IconEyeSearch size={16} stroke={1.5} />}
           onClick={onClick}
-          to="/spot-check/"
+          to={ROUTES.spotCheck}
         />
         <NavLink
-          active={location.pathname === "/acaan/"}
+          active={location.pathname === ROUTES.acaan}
           component={Link}
           label={t("nav.acaan")}
           leftSection={<IconNumber size={16} stroke={1.5} />}
           onClick={onClick}
-          to="/acaan/"
+          to={ROUTES.acaan}
         />
         <NavLink
-          active={location.pathname === "/toolbox/"}
+          active={location.pathname === ROUTES.distance}
+          component={Link}
+          label={t("nav.distance")}
+          leftSection={<IconArrowsLeftRight size={16} stroke={1.5} />}
+          onClick={onClick}
+          to={ROUTES.distance}
+        />
+        <NavLink
+          active={location.pathname === ROUTES.toolbox}
           component={Link}
           label={t("nav.toolbox")}
           leftSection={<IconTools size={16} stroke={1.5} />}
           onClick={onClick}
-          to="/toolbox/"
+          to={ROUTES.toolbox}
         />
       </NavLink>
 
       <NavLink
-        active={location.pathname === "/about/"}
+        active={location.pathname === ROUTES.about}
         component={Link}
         label={t("nav.about")}
         leftSection={
           <IconInfoCircle aria-hidden="true" size={16} stroke={1.5} />
         }
         onClick={onClick}
-        to="/about/"
+        to={ROUTES.about}
       />
     </>
   );

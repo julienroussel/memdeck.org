@@ -2,6 +2,7 @@ import { Anchor, List, Space, Text } from "@mantine/core";
 import { IconPlayCardStar } from "@tabler/icons-react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { ROUTES } from "../../constants";
 import { SectionHeading } from "./section-heading";
 
 export const FlashcardTraining = () => {
@@ -46,7 +47,7 @@ export const FlashcardTraining = () => {
       <Space h="sm" />
       <Text>{t("guide.flashcardTraining.settings")}</Text>
       <Space h="xs" />
-      <Anchor component={Link} to="/flashcard/">
+      <Anchor component={Link} to={ROUTES.flashcard}>
         {t("guide.flashcardTraining.link")}
       </Anchor>
     </section>

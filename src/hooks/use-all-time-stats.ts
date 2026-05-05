@@ -7,6 +7,7 @@ import type {
 } from "../types/session";
 import type { StackKey } from "../types/stacks";
 import { useLocalDb } from "../utils/localstorage";
+import { reportLocalDbCorruption } from "../utils/localstorage-telemetry";
 import {
   aggregateStatsEntries,
   createEmptyStatsEntry,
@@ -23,7 +24,8 @@ export const useAllTimeStats = () => {
   const [stats] = useLocalDb<AllTimeStats>(
     ALL_TIME_STATS_LSK,
     {},
-    isAllTimeStats
+    isAllTimeStats,
+    reportLocalDbCorruption
   );
 
   const getStats = useCallback(

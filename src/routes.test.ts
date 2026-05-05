@@ -18,6 +18,7 @@ type RoutesUsed =
   | "flashcard"
   | "spotCheck"
   | "acaan"
+  | "distance"
   | "toolbox"
   | "stats"
   | "about";

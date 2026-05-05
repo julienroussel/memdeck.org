@@ -52,7 +52,8 @@
     "acaan": "ACAAN",
     "spotCheck": "Spot Check",
     "toolbox": "Gereedschap",
-    "about": "Over"
+    "about": "Over",
+    "distance": "Afstand"
   },
   "header": {
     "githubAriaLabel": "GitHub",
@@ -78,11 +79,13 @@
     "featureFlashcardTitle": "Flashcard",
     "featureFlashcardDescription": "Oefen kaart-naar-nummer en nummer-naar-kaart met sessies met timer.",
     "featureAcaanTitle": "ACAAN",
-    "featureAcaanDescription": "Bereken coupedieptes voor Any Card At Any Number-effecten.",
+    "featureAcaanDescription": "Bereken coupeerdieptes voor Any Card At Any Number-effecten.",
     "featureToolboxTitle": "Gereedschap",
     "featureToolboxDescription": "Stack opzoeken, faro shuffles, kaartspelling en stay-stack-sequenties.",
     "featureStatsTitle": "Statistieken",
     "featureStatsDescription": "Volg je nauwkeurigheid, reeksen en sessiegeschiedenis in de tijd.",
+    "featureDistanceTitle": "Afstand",
+    "featureDistanceDescription": "Train de afstand tussen twee kaarten — de wiskunde achter de Quartets van Pit Hartling.",
     "featureSpotCheckTitle": "Spot Check",
     "featureSpotCheckDescription": "Train het herkennen van afwijkingen — ontbrekende, verwisselde of verplaatste kaarten in je spel.",
     "quickStart": "Snel starten",
@@ -136,22 +139,33 @@
     "neighborArrowAfter": "Kaart erna",
     "activeModePosition": "Positiemodus",
     "activeModeNeighbor": "Buurmodus",
-    "timesUp": "Tijd om!",
+    "timesUp": "Tijd is om!",
     "movingToNext": "Door naar de volgende kaart.",
-    "revealTitle": "Antwoord"
+    "revealTitle": "Antwoord",
+    "answerCorrect": "Goed",
+    "answerIncorrect": "Fout, het antwoord was {{answer}}"
   },
   "acaan": {
     "pageTitle": "ACAAN Training",
     "pageDescription": "Oefen Any Card At Any Number-berekeningen voor je gememoriseerde stack.",
-    "seoIntro": "Train Any Card At Any Number — de hoeksteen van het optreden met een gememoriseerd kaartspel. Je ziet een kaart en een doelpositie. Onthoud de coupediepte om de kaart daar te plaatsen.",
+    "seoIntro": "Train Any Card At Any Number — de hoeksteen van het optreden met een gememoriseerd kaartspel. Je ziet een kaart en een doelpositie. Onthoud de coupeerdiepte om de kaart daar te plaatsen.",
     "title": "ACAAN",
     "settingsAriaLabel": "ACAAN-instellingen",
     "cutDepthAriaLabel": "Coupeerdiepte",
-    "cutDepthPlaceholder": "Coupeerdiepte"
+    "cutDepthPlaceholder": "Coupeerdiepte",
+    "correctTitle": "Correct!",
+    "wrongTitle": "Fout antwoord",
+    "wrongMessage": "Probeer opnieuw!",
+    "revealTitle": "Antwoord",
+    "timesUp": "Tijd is om!",
+    "movingToNext": "Door naar de volgende ronde.",
+    "cutDepthMessage": "Positie {{from}} → {{to}}, coupeerdiepte: {{cutDepth}}",
+    "cutDepthZero": "0 (geen coupe nodig)"
   },
   "spotCheck": {
     "pageTitle": "Spot Check Training",
     "pageDescription": "Train je vermogen om afwijkingen in je gememoriseerde kaartspel te herkennen — ontbrekende kaarten, verwisselde kaarten of verplaatste kaarten.",
+    "seoIntro": "Train je visuele herkenning op het gememoriseerde kaartspel — spot een ontbrekende kaart, een verwisseld paar of een verplaatste kaart die uit positie is geschoven. Ontwikkel het oog dat fouten opmerkt voordat ze je een routine kosten.",
     "title": "Spot Check",
     "settingsAriaLabel": "Spot Check-instellingen",
     "modeMissing": "Ontbrekende kaart",
@@ -292,7 +306,23 @@
   },
   "errors": {
     "somethingWentWrong": "Er is iets misgegaan",
-    "languageLoadFailed": "Kon je voorkeurstaal niet laden. Engels wordt gebruikt."
+    "languageLoadFailed": "Kon je voorkeurstaal niet laden. Engels wordt gebruikt.",
+    "sessionSaveFailed": {
+      "title": "Opslaan mislukt",
+      "message": "Je sessie kon niet worden opgeslagen — de browseropslag is misschien vol. Maak ruimte vrij en probeer Stop opnieuw."
+    },
+    "sessionStorageCorrupt": {
+      "title": "Opgeslagen gegevens lijken beschadigd",
+      "message": "Je opgeslagen geschiedenis of statistieken zijn niet door de validatie gekomen, dus weigerden we ze te overschrijven. Wis de browseropslag voor deze site om opnieuw te beginnen — opnieuw proberen helpt niet."
+    },
+    "lastSaveFailed": {
+      "title": "Vorige sessie niet opgeslagen",
+      "message": "Je vorige sessie kon niet worden opgeslagen — je browseropslag was misschien vol. De sessie is verwijderd."
+    },
+    "stackLimitsCorrupt": {
+      "title": "Stack-bereiken konden niet worden geladen",
+      "message": "Je opgeslagen bereiken per stack zijn niet door de validatie gekomen. Bereikbewerkingen zijn uitgeschakeld om de opgeslagen gegevens niet te overschrijven. Wis de browseropslag voor deze site om opnieuw te beginnen — opnieuw proberen helpt niet."
+    }
   },
   "stats": {
     "pageTitle": "Statistieken",
@@ -337,7 +367,12 @@
     "filterMissing": "Ontbrekend",
     "filterSwapped": "Verwisseld",
     "filterMoved": "Verplaatst",
-    "filterBySpotCheckSubModeAriaLabel": "Filter op spot check-submodus"
+    "filterBySpotCheckSubModeAriaLabel": "Filter op spot check-submodus",
+    "modeDistance": "Afstand",
+    "filterDistance": "Afstand",
+    "subModeCompute": "Berekenen",
+    "subModeApply": "Toepassen",
+    "subModeBoth": "Beide"
   },
   "resources": {
     "pageTitle": "Bronnen",
@@ -406,13 +441,13 @@
       "numberOnlyItem": "<bold>Alleen nummer</bold> — een positienummer wordt getoond, herinner je de kaart",
       "bothItem": "<bold>Beide</bold> — wisselt willekeurig tussen de twee",
       "neighborItem": "<bold>Buur</bold> — een kaart met een richtingspijl wordt getoond, kies de naburige kaart in de stack",
-      "settings": "Tik op het tandwielpictogram om te wisselen tussen Positie- en Buur-modus en timer-instellingen aan te passen. Gebruik het doelwitpictogram voor een gestructureerde sessie van 10, 20, 30 of 52 kaarten, of oefen vrij zonder sessie.",
+      "settings": "Tik op het tandwielpictogram om te wisselen tussen Positie- en Buur-modus en timer-instellingen aan te passen. Gebruik het doelpictogram voor een gestructureerde sessie van 10, 20, 30 of 52 kaarten, of oefen vrij zonder sessie.",
       "link": "Ga naar Flashcard Training"
     },
     "acaanTraining": {
       "title": "ACAAN Training",
       "intro": "ACAAN staat voor \"Any Card At Any Number\" — een klassiek effect waarbij een toeschouwer een willekeurige kaart en een willekeurig nummer noemt, en de kaart precies op die positie in het kaartspel wordt gevonden.",
-      "description": "In deze modus krijg je een kaart en een doelpositie te zien. Je moet de coupediepte berekenen die nodig is om de kaart naar die positie te verplaatsen. Voer een waarde in van 0 tot 51. Timer- en sessieopties werken hetzelfde als bij Flashcard.",
+      "description": "In deze modus krijg je een kaart en een doelpositie te zien. Je moet de coupeerdiepte berekenen die nodig is om de kaart naar die positie te verplaatsen. Voer een waarde in van 0 tot 51. Timer- en sessieopties werken hetzelfde als bij Flashcard.",
       "link": "Ga naar ACAAN Training"
     },
     "spotCheckTraining": {
@@ -421,7 +456,7 @@
       "missingItem": "<bold>Ontbrekende kaart</bold> — een kaart wordt verwijderd; identificeer welke ontbreekt",
       "swappedItem": "<bold>Verwisselde kaarten</bold> — twee kaarten wisselen van positie; tik op een van de verkeerd geplaatste kaarten",
       "movedItem": "<bold>Verplaatste kaart</bold> — een kaart wordt naar een verkeerde plek verplaatst; vind de verplaatste kaart",
-      "settings": "Gebruik het tandwielpictogram om tussen modi te wisselen en timer-instellingen aan te passen. Start een gestructureerde sessie met het doelwitpictogram.",
+      "settings": "Gebruik het tandwielpictogram om tussen modi te wisselen en timer-instellingen aan te passen. Start een gestructureerde sessie met het doelpictogram.",
       "link": "Ga naar Spot Check Training"
     },
     "toolbox": {
@@ -456,13 +491,23 @@
       "title": "Tips",
       "dataLocal": "Al je gegevens blijven in je browser — er wordt niets naar een server gestuurd.",
       "darkMode": "Wissel tussen donkere en lichte modus met het pictogram in de header.",
-      "gearIcon": "Gebruik in trainingsmodi het tandwielpictogram voor modus- en timer-instellingen, of het doelwitpictogram om een sessie te starten.",
+      "gearIcon": "Gebruik in trainingsmodi het tandwielpictogram voor modus- en timer-instellingen, of het doelpictogram om een sessie te starten.",
       "switchStacks": "Als je van stack wisselt, raak je geen gegevens kwijt — voortgang wordt per stack bijgehouden.",
       "pwa": "Installeer MemDeck als app op je apparaat voor offline toegang.",
       "language": "Wijzig de weergavetaal via de taalkiezer in het navigatiemenu.",
       "share": "Gebruik de deelknop in het navigatiemenu om MemDeck te delen met je collega-goochelaars.",
       "reset": "Gebruik de resetknop in het menu om je gegevens te wissen. Je kunt alleen de instellingen resetten (trainingsgeschiedenis blijft bewaard) of alles resetten.",
       "stackRange": "Gebruik het stack-bereik naast de stack-kiezer in het menu om op een deel van de posities te trainen. Begin klein en breid uit naarmate je meer kaarten memoriseert."
+    },
+    "distanceTraining": {
+      "title": "Distance Number Training",
+      "intro": "Train de afstandsberekeningen achter Pit Hartlings Quartets en vergelijkbare spontane producties. \"Distance numbers\" — een term van Pit Hartling en Denis Behr in \"In Order to Amaze\" — zijn de verschillen tussen specifieke kaarten in je stack.",
+      "computeItem": "<bold>Berekenen</bold> — zie twee kaarten, kies de afstand ertussen",
+      "applyItem": "<bold>Toepassen</bold> — zie een kaart en een verschil, kies de resulterende kaart",
+      "bothItem": "<bold>Beide</bold> — willekeurige mix van berekenings- en toepassingsrondes",
+      "convention": "Kies in de instellingen tussen de <bold>cyclische</bold> conventie (alleen voorwaarts, 1 tot N-1) en de conventie <bold>met teken</bold> (kortste verschil met teken).",
+      "settings": "Tik op het tandwielpictogram om van modus te wisselen, de conventie te veranderen en timer-instellingen aan te passen. Gebruik het doelpictogram om een gestructureerde sessie te starten.",
+      "link": "Ga naar Distance Training"
     }
   },
   "faq": {
@@ -490,7 +535,9 @@
     "whatIsFaroA": "Een faro shuffle (ook wel een perfecte shuffle genoemd) is een techniek waarbij een kaartspel in twee gelijke helften wordt gesplitst en de kaarten perfect een voor een worden afgewisseld. Bij een out-faro blijven de bovenste en onderste kaart op hun plek. Bij een in-faro schuiven ze naar binnen. Faro shuffles zijn een belangrijk hulpmiddel voor performers met een gememoriseerd kaartspel, omdat ze de stack op voorspelbare en omkeerbare manieren transformeren. De Faro Shuffle-tool van MemDeck laat je het resultaat van meerdere faro's op je stack visualiseren.",
     "offlineQ": "Kan ik MemDeck offline gebruiken?",
     "offlineA": "Ja. MemDeck is een Progressive Web App (PWA) die volledig offline werkt zodra deze geladen is. Je kunt het op je telefoon of tablet installeren voor een native app-achtige ervaring. Train backstage, in de metro of in het vliegtuig — geen internetverbinding nodig. Al je trainingsgegevens worden lokaal op je apparaat opgeslagen.",
-    "readGuide": "Lees de volledige gids"
+    "readGuide": "Lees de volledige gids",
+    "whatIsDistanceNumberQ": "Wat is een distance number?",
+    "whatIsDistanceNumberA": "Een distance number is het verschil tussen twee specifieke kaarten in je gememoriseerde stack — hoeveel posities je vanaf de ene kaart vooruit moet om bij de andere uit te komen. De term werd bedacht door Pit Hartling en Denis Behr in \"In Order to Amaze\". Distance numbers vormen de wiskunde achter de Quartets-routines, waarin de goochelaar four-of-a-kind produceert uit kaarten die een toeschouwer vrij aanraakt. De Distance-trainer van MemDeck oefent beide richtingen: de afstand tussen twee getoonde kaarten berekenen, en vanaf een startkaart met een verschil de juiste kaart vinden."
   },
   "stackLimits": {
     "label": "Stack-bereik",
@@ -506,5 +553,37 @@
     "thumbEndLabel": "Eindpositie",
     "badgeFullAriaLabel": "Stack-bereik: {{count}} kaarten. Tik om aan te passen.",
     "badgePartialAriaLabel": "Stack-bereik: posities {{start}} tot {{end}}. Tik om aan te passen."
+  },
+  "distance": {
+    "pageTitle": "Distance Number Training",
+    "pageDescription": "Oefen de afstand — het verschil — tussen twee kaarten in je gememoriseerde stack.",
+    "seoIntro": "Train de distance numbers achter Pit Hartlings Quartets en spontane four-of-a-kind-producties. Bepaal de afstand tussen twee kaarten, of vind de juiste kaart vanaf een startkaart met een verschil.",
+    "title": "Afstand",
+    "settingsAriaLabel": "Afstandsinstellingen",
+    "modeAriaLabel": "Afstandsmodus",
+    "conventionAriaLabel": "Afstandsconventie",
+    "modeCompute": "Berekenen",
+    "modeComputeDescription": "Twee kaarten worden getoond — herinner je de afstand ertussen.",
+    "modeApply": "Toepassen",
+    "modeApplyDescription": "Een kaart en een verschil worden getoond — herinner je de resulterende kaart.",
+    "modeBoth": "Beide",
+    "modeBothDescription": "Een willekeurige mix van berekenings- en toepassingsrondes.",
+    "conventionCyclic": "Cyclisch",
+    "conventionCyclicDescription": "Alleen voorwaarts, van 1 tot N-1. Komt overeen met de terminologie van Pit Hartling.",
+    "conventionSigned": "Met teken",
+    "conventionSignedDescription": "Kortste verschil met teken — negatief voor achterwaarts. Handiger voor hoofdrekenen tijdens de routine.",
+    "activeModeCompute": "Berekeningsmodus",
+    "activeModeApply": "Toepassingsmodus",
+    "activeModeBoth": "Beide modi",
+    "promptComputeAriaLabel": "Afstand van {{from}} tot {{to}}",
+    "promptApplyAriaLabel": "Verschil {{offset}} toepassen op {{card}}",
+    "offsetLabel": "Verschil",
+    "rangeTooSmall": "Voor afstandstraining heb je minstens {{count}} kaarten in het bereik nodig. Vergroot je stack-bereik om te beginnen.",
+    "rangeTooSmallTitle": "Bereik te klein",
+    "revealTitle": "Antwoord",
+    "timesUp": "Tijd is om!",
+    "movingToNext": "Door naar de volgende ronde.",
+    "answerCorrect": "Goed",
+    "answerIncorrect": "Fout, het antwoord was {{answer}}"
   }
 }

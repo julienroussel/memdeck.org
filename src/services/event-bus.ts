@@ -1,3 +1,4 @@
+import type { DistanceConvention, DistanceMode } from "../types/distance";
 import type { FlashcardMode, NeighborDirection } from "../types/flashcard";
 import type { SessionConfig, TrainingMode } from "../types/session";
 import type { SpotCheckMode } from "../types/spot-check";
@@ -10,11 +11,15 @@ type AnalyticsEvents = {
   ACAAN_ANSWER: { correct: boolean; stackName: string };
   SPOT_CHECK_ANSWER: { correct: boolean; stackName: string };
   SPOT_CHECK_MODE_CHANGED: { mode: SpotCheckMode };
+  DISTANCE_ANSWER: { correct: boolean; stackName: string };
+  DISTANCE_MODE_CHANGED: { mode: DistanceMode };
+  DISTANCE_CONVENTION_CHANGED: { convention: DistanceConvention };
   SESSION_STARTED: { mode: TrainingMode; config: SessionConfig };
   SESSION_COMPLETED: {
     mode: TrainingMode;
     accuracy: number;
     questionsCompleted: number;
+    saved: boolean;
   };
   STACK_LIMITS_CHANGED: {
     start: number;
@@ -50,7 +55,24 @@ function createEventBus<TEvents extends Record<string, unknown>>(
 
     emit[key] = (payload: TEvents[typeof name]) => {
       for (const listener of listeners) {
-        listener(payload);
+        try {
+          listener(payload);
+        } catch (error) {
+          // Isolate listener failures: a single throwing subscriber (e.g. an
+          // ad-blocker shimming gtag) must not abort iteration over remaining
+          // listeners or propagate back into UI handlers. We deliberately do
+          // NOT call analytics.trackError here — analytics itself is a likely
+          // listener, so reporting via the bus risks recursion.
+          console.error(`[eventBus] listener for ${key} threw:`, error);
+          if (import.meta.env.DEV) {
+            // Rethrow asynchronously so DevTools observes the error without
+            // aborting iteration over remaining subscribers.
+            queueMicrotask(() => {
+              throw error;
+            });
+          }
+          // Production: swallow to avoid one bad listener killing all subscribers.
+        }
       }
     };
 
@@ -82,6 +104,9 @@ const analyticsEventNames = allEventNames<AnalyticsEvents>()([
   "ACAAN_ANSWER",
   "SPOT_CHECK_ANSWER",
   "SPOT_CHECK_MODE_CHANGED",
+  "DISTANCE_ANSWER",
+  "DISTANCE_MODE_CHANGED",
+  "DISTANCE_CONVENTION_CHANGED",
   "SESSION_STARTED",
   "SESSION_COMPLETED",
   "STACK_LIMITS_CHANGED",

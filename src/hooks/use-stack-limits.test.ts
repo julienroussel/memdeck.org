@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { STACK_LIMITS_LSK } from "../constants";
 import {
   DEFAULT_STACK_LIMITS,
@@ -9,13 +9,27 @@ import { createDeckPosition } from "../types/stacks";
 import { useStackLimits } from "./use-stack-limits";
 
 const mockSetValue = vi.fn();
+const mockProbeStoredValue = vi.fn();
 
 vi.mock("../utils/localstorage", () => ({
   useLocalDb: vi.fn((_, defaultValue) => [defaultValue, mockSetValue, vi.fn()]),
+  probeStoredValue: (...args: unknown[]) => mockProbeStoredValue(...args),
+}));
+
+vi.mock("../services/analytics", () => ({
+  analytics: {
+    trackError: vi.fn(),
+  },
 }));
 
 const { useLocalDb } = await import("../utils/localstorage");
 const mockedUseLocalDb = vi.mocked(useLocalDb);
+const { analytics } = await import("../services/analytics");
+const mockedTrackError = vi.mocked(analytics.trackError);
+
+beforeEach(() => {
+  mockProbeStoredValue.mockReturnValue({ status: "absent" });
+});
 
 afterEach(() => {
   vi.clearAllMocks();
@@ -100,7 +114,8 @@ describe("useStackLimits", () => {
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
       STACK_LIMITS_LSK,
       expect.anything(),
-      isStackLimitsRecord
+      isStackLimitsRecord,
+      expect.any(Function)
     );
   });
 
@@ -135,5 +150,59 @@ describe("useStackLimits", () => {
       aronson: { start: 1, end: 10 },
       mnemonica: { start: 5, end: 25 },
     });
+  });
+
+  it("does not write when the stored blob is corrupt — would otherwise destroy other stacks' ranges", () => {
+    mockProbeStoredValue.mockReturnValue({
+      status: "corrupt",
+      raw: "garbage",
+    });
+
+    const { result } = renderHook(() => useStackLimits("mnemonica"));
+
+    result.current.setLimits({
+      start: createDeckPosition(5),
+      end: createDeckPosition(25),
+    });
+
+    expect(mockSetValue).not.toHaveBeenCalled();
+  });
+
+  it("does not write when the stored blob read errored", () => {
+    mockProbeStoredValue.mockReturnValue({
+      status: "read-error",
+      error: new Error("boom"),
+    });
+
+    const { result } = renderHook(() => useStackLimits("mnemonica"));
+
+    result.current.setLimits({
+      start: createDeckPosition(5),
+      end: createDeckPosition(25),
+    });
+
+    expect(mockSetValue).not.toHaveBeenCalled();
+  });
+
+  it("fires analytics.trackError once on mount when the stored blob is corrupt", () => {
+    mockProbeStoredValue.mockReturnValue({
+      status: "corrupt",
+      raw: "garbage",
+    });
+
+    renderHook(() => useStackLimits("mnemonica"));
+
+    expect(mockedTrackError).toHaveBeenCalledTimes(1);
+    const [errArg] = mockedTrackError.mock.calls[0];
+    expect(errArg).toBeInstanceOf(Error);
+    expect((errArg as Error).message).toBe("stackLimits-corrupt");
+  });
+
+  it("does not fire trackError when the stored blob is valid or absent", () => {
+    mockProbeStoredValue.mockReturnValue({ status: "absent" });
+
+    renderHook(() => useStackLimits("mnemonica"));
+
+    expect(mockedTrackError).not.toHaveBeenCalled();
   });
 });

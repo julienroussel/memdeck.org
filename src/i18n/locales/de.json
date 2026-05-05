@@ -52,7 +52,8 @@
     "acaan": "ACAAN",
     "spotCheck": "Spot Check",
     "toolbox": "Werkzeugkasten",
-    "about": "Über"
+    "about": "Über",
+    "distance": "Distanzzahl"
   },
   "header": {
     "githubAriaLabel": "GitHub",
@@ -78,11 +79,13 @@
     "featureFlashcardTitle": "Flashcard",
     "featureFlashcardDescription": "Trainiere Karte-zu-Nummer und Nummer-zu-Karte mit zeitgesteuerten Sitzungen.",
     "featureAcaanTitle": "ACAAN",
-    "featureAcaanDescription": "Berechne Abhebetiefen für Any-Card-At-Any-Number-Effekte.",
+    "featureAcaanDescription": "Berechne Abhebentiefen für Any-Card-At-Any-Number-Effekte.",
     "featureToolboxTitle": "Werkzeugkasten",
     "featureToolboxDescription": "Stack-Nachschlagen, Faro-Mischen, Karten-Buchstabieren und Stay-Stack-Sequenzen.",
     "featureStatsTitle": "Statistiken",
     "featureStatsDescription": "Verfolge deine Genauigkeit, Serien und den Sitzungsverlauf über die Zeit.",
+    "featureDistanceTitle": "Distanzzahl",
+    "featureDistanceDescription": "Trainiere den Abstand zwischen zwei Karten — die Mathematik hinter Pit Hartlings Quartets.",
     "featureSpotCheckTitle": "Spot Check",
     "featureSpotCheckDescription": "Trainiere das Erkennen von Anomalien — fehlende, vertauschte oder verschobene Karten in deinem Deck.",
     "quickStart": "Schnellstart",
@@ -138,7 +141,9 @@
     "activeModeNeighbor": "Nachbarmodus",
     "timesUp": "Zeit abgelaufen!",
     "movingToNext": "Weiter zur nächsten Karte.",
-    "revealTitle": "Antwort"
+    "revealTitle": "Antwort",
+    "answerCorrect": "Richtig",
+    "answerIncorrect": "Falsch, die Antwort war {{answer}}"
   },
   "acaan": {
     "pageTitle": "ACAAN-Training",
@@ -147,11 +152,20 @@
     "title": "ACAAN",
     "settingsAriaLabel": "ACAAN-Einstellungen",
     "cutDepthAriaLabel": "Abhebentiefe",
-    "cutDepthPlaceholder": "Abhebentiefe"
+    "cutDepthPlaceholder": "Abhebentiefe",
+    "correctTitle": "Richtig!",
+    "wrongTitle": "Falsche Antwort",
+    "wrongMessage": "Versuch es nochmal!",
+    "revealTitle": "Antwort",
+    "timesUp": "Zeit abgelaufen!",
+    "movingToNext": "Weiter zur nächsten Runde.",
+    "cutDepthMessage": "Position {{from}} → {{to}}, Abhebentiefe: {{cutDepth}}",
+    "cutDepthZero": "0 (nicht abheben)"
   },
   "spotCheck": {
     "pageTitle": "Spot-Check-Training",
     "pageDescription": "Trainiere deine Fähigkeit, Anomalien in deinem memorierten Kartendeck zu erkennen — fehlende Karten, vertauschte Karten oder verschobene Karten.",
+    "seoIntro": "Trainiere dein visuelles Gedächtnis am memorierten Kartendeck — finde eine fehlende Karte, vertauschte Karten oder eine verschobene Karte. Schule dein Auge, Fehler zu erkennen, bevor sie dir eine Routine vermasseln.",
     "title": "Spot Check",
     "settingsAriaLabel": "Spot-Check-Einstellungen",
     "modeMissing": "Fehlende Karte",
@@ -292,7 +306,23 @@
   },
   "errors": {
     "somethingWentWrong": "Etwas ist schiefgelaufen",
-    "languageLoadFailed": "Deine bevorzugte Sprache konnte nicht geladen werden. Englisch wird verwendet."
+    "languageLoadFailed": "Deine bevorzugte Sprache konnte nicht geladen werden. Englisch wird verwendet.",
+    "sessionSaveFailed": {
+      "title": "Speichern fehlgeschlagen",
+      "message": "Deine Sitzung konnte nicht gespeichert werden — dein Browser-Speicher ist möglicherweise voll. Schaffe Platz und versuche es erneut."
+    },
+    "sessionStorageCorrupt": {
+      "title": "Gespeicherte Daten scheinen beschädigt",
+      "message": "Dein gespeicherter Verlauf oder deine Statistiken haben die Validierung nicht bestanden — wir haben das Überschreiben verweigert. Lösche den Browser-Speicher für diese Seite, um neu anzufangen — ein erneuter Versuch hilft nicht."
+    },
+    "lastSaveFailed": {
+      "title": "Letzte Sitzung nicht gespeichert",
+      "message": "Deine vorherige Sitzung konnte nicht gespeichert werden — dein Browser-Speicher war möglicherweise voll. Sie wurde verworfen."
+    },
+    "stackLimitsCorrupt": {
+      "title": "Stack-Bereiche konnten nicht geladen werden",
+      "message": "Deine gespeicherten Stack-Bereichsdaten haben die Validierung nicht bestanden. Bereichsänderungen sind deaktiviert, damit sie nicht überschrieben werden. Lösche den Browser-Speicher für diese Seite, um neu anzufangen — ein erneuter Versuch hilft nicht."
+    }
   },
   "stats": {
     "pageTitle": "Statistiken",
@@ -337,7 +367,12 @@
     "filterMissing": "Fehlend",
     "filterSwapped": "Vertauscht",
     "filterMoved": "Verschoben",
-    "filterBySpotCheckSubModeAriaLabel": "Nach Spot-Check-Untermodus filtern"
+    "filterBySpotCheckSubModeAriaLabel": "Nach Spot-Check-Untermodus filtern",
+    "modeDistance": "Distanzzahl",
+    "filterDistance": "Distanzzahl",
+    "subModeCompute": "Berechnen",
+    "subModeApply": "Anwenden",
+    "subModeBoth": "Beide"
   },
   "resources": {
     "pageTitle": "Ressourcen",
@@ -463,6 +498,16 @@
       "share": "Verwende die Teilen-Schaltfläche im Navigationsmenü, um MemDeck bei deinen Zaubererkollegen bekannt zu machen.",
       "reset": "Verwende die Zurücksetzen-Schaltfläche im Menü, um deine Daten zu löschen. Du kannst nur die Einstellungen zurücksetzen (Trainingshistorie bleibt erhalten) oder alles zurücksetzen.",
       "stackRange": "Verwende den Stack-Bereich neben der Stack-Auswahl im Menü, um nur einen Teil der Positionen zu trainieren. Fang mit wenigen an und erweitere den Bereich, wenn du mehr Karten memoriert hast."
+    },
+    "distanceTraining": {
+      "title": "Distanzzahl-Training",
+      "intro": "Trainiere das Kopfrechnen hinter Pit Hartlings Quartets und ähnlichen Ad-hoc-Produktionen. „Distanzzahlen“ — von Pit Hartling und Denis Behr in „In Order to Amaze“ geprägt — sind die Abstände zwischen bestimmten Karten in deinem Stack.",
+      "computeItem": "<bold>Berechnen</bold> — zwei Karten werden gezeigt, wähle die Distanz zwischen ihnen",
+      "applyItem": "<bold>Anwenden</bold> — eine Karte und eine Distanz werden gezeigt, wähle die resultierende Karte",
+      "bothItem": "<bold>Beide</bold> — zufällige Mischung aus Berechnen- und Anwenden-Runden",
+      "convention": "Wähle in den Einstellungen zwischen <bold>zyklisch</bold> (nur vorwärts, 1 bis N-1) und <bold>vorzeichenbehaftet</bold> (kürzeste vorzeichenbehaftete Distanz).",
+      "settings": "Tippe auf das Zahnrad-Symbol, um Modi zu wechseln, Konventionen zu ändern und Timer-Einstellungen anzupassen. Verwende das Zielscheiben-Symbol, um eine strukturierte Sitzung zu starten.",
+      "link": "Zum Distanzzahl-Training"
     }
   },
   "faq": {
@@ -479,9 +524,9 @@
     "whatIsMnemonicaQ": "Was ist der Mnemonica-Stack?",
     "whatIsMnemonicaA": "Mnemonica ist ein memoriertes Kartendeck-System von Juan Tamariz, veröffentlicht in seinem gleichnamigen Buch von 1991. Es ist der weltweit am häufigsten verwendete memorierte Stack. Der Stack hat eingebaute mathematische Eigenschaften wie Stay-Stack-Sequenzen und wurde für ein umfangreiches Repertoire an Karteneffekten konzipiert. Tamariz' Buch enthält Dutzende Routinen und die zugrunde liegende Theorie der Arbeit mit memorierten Kartendecks.",
     "whatIsAronsonQ": "Was ist der Aronson-Stack?",
-    "whatIsAronsonA": "Der Aronson-Stack ist ein memoriertes Kartendeck-System von Simon Aronson. Er ist einer der beliebtesten Stacks in den USA. Der Stack ist bekannt für seine mathematischen Eigenschaften und die umfangreiche Sammlung veröffentlichter Effekte, die speziell dafür entwickelt wurden — darunter Material in \u201EThe Aronson Approach\u201C, \u201EBound to Please\u201C und dem kostenlosen PDF-Essay \u201EMemories Are Made of This\u201C.",
+    "whatIsAronsonA": "Der Aronson-Stack ist ein memoriertes Kartendeck-System von Simon Aronson. Er ist einer der beliebtesten Stacks in den USA. Der Stack ist bekannt für seine mathematischen Eigenschaften und die umfangreiche Sammlung veröffentlichter Effekte, die speziell dafür entwickelt wurden — darunter Material in „The Aronson Approach“, „Bound to Please“ und dem kostenlosen PDF-Essay „Memories Are Made of This“.",
     "whatIsAcaanQ": "Was ist ACAAN in der Kartenmagie?",
-    "whatIsAcaanA": "ACAAN steht für \u201EAny Card At Any Number\u201C. Es ist einer der beeindruckendsten Effekte der Kartenmagie — ein Zuschauer nennt eine beliebige Karte und eine beliebige Zahl von 1 bis 52, und die genannte Karte wird genau an dieser Position im Deck gefunden. Mit einem memorierten Kartendeck berechnet der Vorführende im Kopf, wie viele Karten abgehoben werden müssen. MemDecks ACAAN-Trainer hilft dir, diese Kopfrechnungen mit zeitgesteuerten Übungen zu trainieren.",
+    "whatIsAcaanA": "ACAAN steht für „Any Card At Any Number“. Es ist einer der beeindruckendsten Effekte der Kartenmagie — ein Zuschauer nennt eine beliebige Karte und eine beliebige Zahl von 1 bis 52, und die genannte Karte wird genau an dieser Position im Deck gefunden. Mit einem memorierten Kartendeck berechnet der Vorführende im Kopf, wie viele Karten abgehoben werden müssen. MemDecks ACAAN-Trainer hilft dir, diese Kopfrechnungen mit zeitgesteuerten Übungen zu trainieren.",
     "differenceMnemonicaAronsonQ": "Was ist der Unterschied zwischen Mnemonica und Aronson?",
     "differenceMnemonicaAronsonA": "Mnemonica (von Juan Tamariz) und Aronson (von Simon Aronson) sind zwei verschiedene memorierte Kartendeck-Systeme — jedes verwendet eine völlig andere Kartenreihenfolge. Mnemonica ist der weltweit am häufigsten verwendete Stack und hat eingebaute Stay-Stack-Sequenzen. Aronson ist besonders in den USA verbreitet und betont mathematische Eigenschaften. Die Wahl zwischen beiden hängt oft davon ab, welche veröffentlichten Effekte dich ansprechen — denn ein späterer Wechsel des Stacks bedeutet, alle 52 Positionen neu zu lernen.",
     "howToPracticeQ": "Wie übe ich mit einem memorierten Kartendeck?",
@@ -490,7 +535,9 @@
     "whatIsFaroA": "Ein Faro-Mischen (auch perfektes Mischen genannt) ist eine Technik, bei der ein Deck in zwei gleiche Hälften geteilt und die Karten einzeln perfekt ineinander verschränkt werden. Bei einem Out-Faro bleiben die oberste und unterste Karte an ihrem Platz. Bei einem In-Faro wandern sie nach innen. Faro-Mischvorgänge sind ein wichtiges Werkzeug für Zauberkünstler, die mit memorierten Kartendecks arbeiten, da sie den Stack auf vorhersehbare und umkehrbare Weise verändern. MemDecks Faro-Mischen-Tool zeigt dir das Ergebnis mehrerer Faros auf deinen Stack.",
     "offlineQ": "Kann ich MemDeck offline nutzen?",
     "offlineA": "Ja. MemDeck ist eine Progressive Web App (PWA), die nach dem ersten Laden vollständig offline funktioniert. Du kannst sie auf deinem Smartphone oder Tablet installieren und wie eine native App nutzen. Trainiere hinter der Bühne, in der U-Bahn oder im Flugzeug — keine Internetverbindung nötig. Alle Trainingsdaten werden lokal auf deinem Gerät gespeichert.",
-    "readGuide": "Zur vollständigen Anleitung"
+    "readGuide": "Zur vollständigen Anleitung",
+    "whatIsDistanceNumberQ": "Was ist eine Distanzzahl?",
+    "whatIsDistanceNumberA": "Eine Distanzzahl ist die Distanz zwischen zwei bestimmten Karten in deinem memorierten Stack — also um wie viele Positionen du von einer Karte weiterzählen musst, um die andere zu erreichen. Der Begriff wurde von Pit Hartling und Denis Behr in „In Order to Amaze“ geprägt. Distanzzahlen sind die Mathematik hinter den Quartets-Routinen, bei denen der Zauberkünstler aus frei berührten Karten einen Vierling produziert. MemDecks Distanz-Trainer übt beide Richtungen: die Distanz zwischen zwei gezeigten Karten berechnen und aus einer Startkarte plus Distanz die resultierende Karte ermitteln."
   },
   "stackLimits": {
     "label": "Stack-Bereich",
@@ -506,5 +553,37 @@
     "thumbEndLabel": "Endposition",
     "badgeFullAriaLabel": "Stack-Bereich: {{count}} Karten. Tippen zum Anpassen.",
     "badgePartialAriaLabel": "Stack-Bereich: Positionen {{start}} bis {{end}}. Tippen zum Anpassen."
+  },
+  "distance": {
+    "pageTitle": "Distanzzahl-Training",
+    "pageDescription": "Übe die Distanz zwischen zwei Karten in deinem memorierten Stack.",
+    "seoIntro": "Trainiere die Distanzzahlen hinter Pit Hartlings Quartets und Ad-hoc-Vierling-Produktionen. Bestimme die Distanz aus zwei Karten oder ermittle eine Karte aus einer Startkarte und einer Distanz.",
+    "title": "Distanzzahl",
+    "settingsAriaLabel": "Distanz-Einstellungen",
+    "modeAriaLabel": "Distanz-Modus",
+    "conventionAriaLabel": "Distanz-Konvention",
+    "modeCompute": "Berechnen",
+    "modeComputeDescription": "Zwei Karten werden gezeigt — nenne die Distanz zwischen ihnen.",
+    "modeApply": "Anwenden",
+    "modeApplyDescription": "Eine Karte und eine Distanz werden gezeigt — nenne die resultierende Karte.",
+    "modeBoth": "Beide",
+    "modeBothDescription": "Eine zufällige Mischung aus Berechnen- und Anwenden-Runden.",
+    "conventionCyclic": "Zyklisch",
+    "conventionCyclicDescription": "Distanz nur vorwärts gemessen, von 1 bis N-1. Entspricht Pit Hartlings Terminologie.",
+    "conventionSigned": "Mit Vorzeichen",
+    "conventionSignedDescription": "Kürzeste vorzeichenbehaftete Distanz — negativ für rückwärts. Praktischer fürs Kopfrechnen während der Vorführung.",
+    "activeModeCompute": "Berechnen-Modus",
+    "activeModeApply": "Anwenden-Modus",
+    "activeModeBoth": "Gemischter Modus",
+    "promptComputeAriaLabel": "Distanz von {{from}} zu {{to}}",
+    "promptApplyAriaLabel": "{{card}} mit Distanz {{offset}}",
+    "offsetLabel": "Distanz",
+    "rangeTooSmall": "Das Distanzzahl-Training braucht mindestens {{count}} Karten im Bereich. Erweitere deinen Stack-Bereich, um zu starten.",
+    "rangeTooSmallTitle": "Bereich zu klein",
+    "revealTitle": "Antwort",
+    "timesUp": "Zeit abgelaufen!",
+    "movingToNext": "Weiter zur nächsten Runde.",
+    "answerCorrect": "Richtig",
+    "answerIncorrect": "Falsch, die Antwort war {{answer}}"
   }
 }

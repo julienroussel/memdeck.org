@@ -8,4 +8,5 @@ export const MODE_LABELS = {
   flashcard: "stats.modeFlashcard",
   acaan: "stats.modeAcaan",
   spotcheck: "stats.modeSpotCheck",
+  distance: "stats.modeDistance",
 } as const satisfies Record<TrainingMode, StatsI18nKey>;

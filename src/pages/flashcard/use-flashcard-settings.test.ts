@@ -95,12 +95,14 @@ describe("useFlashcardSettings", () => {
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
       FLASHCARD_OPTION_LSK,
       "bothmodes",
-      isFlashcardMode
+      isFlashcardMode,
+      expect.any(Function)
     );
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
       NEIGHBOR_DIRECTION_LSK,
       "random",
-      isNeighborDirection
+      isNeighborDirection,
+      expect.any(Function)
     );
   });
 

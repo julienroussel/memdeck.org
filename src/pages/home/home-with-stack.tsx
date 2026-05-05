@@ -1,5 +1,6 @@
 import { Button, SimpleGrid, Space, Stack, Text, Title } from "@mantine/core";
 import {
+  IconArrowsRightLeft,
   IconCards,
   IconChartBar,
   IconEyeSearch,
@@ -11,6 +12,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { ShareNudge } from "../../components/share-nudge";
 import { StatDisplay } from "../../components/stat-display";
+import { ROUTES } from "../../constants";
 import { useAllTimeStats } from "../../hooks/use-all-time-stats";
 import { useStackLimits } from "../../hooks/use-stack-limits";
 import type { StackKey } from "../../types/stacks";
@@ -38,7 +40,7 @@ export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
   return (
     <Stack gap="lg">
       <div>
-        <Title order={2}>{t("home.welcomeReturning")}</Title>
+        <Title order={1}>{t("home.welcomeReturning")}</Title>
         <Space h="xs" />
         <Text c="dimmed">
           <Trans
@@ -61,11 +63,11 @@ export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
       <div>
         <Title order={3}>{t("home.quickStart")}</Title>
         <Space h="sm" />
-        <SimpleGrid cols={{ base: 2, sm: 5 }}>
+        <SimpleGrid cols={{ base: 2, sm: 3, md: 6 }}>
           <Button
             component={Link}
             leftSection={<IconCards aria-hidden="true" size={18} />}
-            to="/flashcard/"
+            to={ROUTES.flashcard}
             variant="light"
           >
             {t("home.featureFlashcardTitle")}
@@ -74,7 +76,7 @@ export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
             color="cyan"
             component={Link}
             leftSection={<IconEyeSearch aria-hidden="true" size={18} />}
-            to="/spot-check/"
+            to={ROUTES.spotCheck}
             variant="light"
           >
             {t("home.featureSpotCheckTitle")}
@@ -83,16 +85,25 @@ export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
             color="orange"
             component={Link}
             leftSection={<IconTarget aria-hidden="true" size={18} />}
-            to="/acaan/"
+            to={ROUTES.acaan}
             variant="light"
           >
             {t("home.featureAcaanTitle")}
           </Button>
           <Button
+            color="yellow"
+            component={Link}
+            leftSection={<IconArrowsRightLeft aria-hidden="true" size={18} />}
+            to={ROUTES.distance}
+            variant="light"
+          >
+            {t("home.featureDistanceTitle")}
+          </Button>
+          <Button
             color="green"
             component={Link}
             leftSection={<IconTools aria-hidden="true" size={18} />}
-            to="/toolbox/"
+            to={ROUTES.toolbox}
             variant="light"
           >
             {t("home.featureToolboxTitle")}
@@ -101,7 +112,7 @@ export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
             color="violet"
             component={Link}
             leftSection={<IconChartBar aria-hidden="true" size={18} />}
-            to="/stats/"
+            to={ROUTES.stats}
             variant="light"
           >
             {t("home.featureStatsTitle")}

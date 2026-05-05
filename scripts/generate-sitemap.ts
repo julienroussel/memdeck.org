@@ -18,6 +18,7 @@ const ROUTE_PRIORITIES: Record<RoutePath, string> = {
   "/faq/": "0.7",
   "/spot-check/": "0.7",
   "/acaan/": "0.7",
+  "/distance/": "0.7",
   "/toolbox/": "0.5",
   "/stats/": "0.3",
   "/about/": "0.3",
@@ -36,6 +37,7 @@ const getLastModified = (routePath: RoutePath): string => {
     "/faq/": "src/pages/faq.tsx",
     "/spot-check/": "src/pages/spot-check",
     "/acaan/": "src/pages/acaan",
+    "/distance/": "src/pages/distance",
     "/toolbox/": "src/pages/toolbox",
     "/stats/": "src/pages/stats",
     "/about/": "src/pages/about.tsx",
@@ -52,7 +54,14 @@ const getLastModified = (routePath: RoutePath): string => {
       }
     ).trim();
     return date || new Date().toISOString().slice(0, 10);
-  } catch {
+  } catch (error) {
+    // Don't fail the build — sitemap should still publish — but make the
+    // failure noisy so a silently-stuck "today's date" lastmod across many
+    // routes can be diagnosed instead of mistaken for a quiet build.
+    const message = error instanceof Error ? error.message : String(error);
+    process.stderr.write(
+      `[generate-sitemap] git log failed for route "${routePath}" (source "${source}"): ${message}\n`
+    );
     return new Date().toISOString().slice(0, 10);
   }
 };
