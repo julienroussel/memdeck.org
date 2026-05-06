@@ -4,13 +4,20 @@ import type { SessionRecord } from "../types/session";
 const mockSetValue = vi.fn();
 const mockRemoveValue = vi.fn();
 
-// Mock React hooks to allow testing without React rendering context
+// Mock React hooks to allow testing without a React rendering context. The
+// useState stub returns [initial, noop] so the consumer hook's corruption-
+// state declaration doesn't throw — the corruption transition itself is
+// covered by use-session-history-corruption.test.ts via renderHook.
 vi.mock("react", async () => {
   const actual = await vi.importActual<typeof import("react")>("react");
   return {
     ...actual,
     useMemo: vi.fn((fn) => fn()),
     useCallback: vi.fn((fn) => fn),
+    useState: vi.fn((initial) => [
+      typeof initial === "function" ? initial() : initial,
+      vi.fn(),
+    ]),
   };
 });
 

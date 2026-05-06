@@ -1,5 +1,5 @@
 import { readLocalStorageValue, useLocalStorage } from "@mantine/hooks";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * Result of probing a localStorage key: distinguishes "key absent" from "key
@@ -11,6 +11,15 @@ type StoredValueProbe<T> =
   | { status: "valid"; value: T }
   | { status: "corrupt"; raw: unknown }
   | { status: "read-error"; error: unknown };
+
+/**
+ * Corruption signal that consumer hooks track in their own state and surface
+ * to UI. `"corrupt"` collapses both validation failures and read errors —
+ * UI consumers don't need to distinguish (the user-facing message is the
+ * same), and `reportLocalDbCorruption` already preserves the distinction
+ * in telemetry.
+ */
+export type LocalDbStatus = "ready" | "corrupt";
 
 /**
  * Reads and validates a value from localStorage, returning a discriminated
@@ -111,11 +120,19 @@ export const useLocalDb = <T>(
   onCorrupt?: (key: string, error: unknown) => void,
   onWriteFailed?: (key: string, error: unknown) => void
 ): [T, UseLocalDbSetter<T>, () => void] => {
-  // Cache the initial probe in a ref so it isn't re-executed every render.
-  // Recomputed via useEffect when `key` changes.
-  const probeRef = useRef<StoredValueProbe<T> | null>(null);
-  if (probeRef.current === null) {
-    probeRef.current = probeStoredValue(key, validate);
+  // Probe state, lazy at mount and re-computed on `key` change via the
+  // React-recommended set-state-during-render pattern. Bundling key+probe
+  // together lets us re-probe synchronously and avoid a one-render lag in
+  // `storedDefault` on key change.
+  const [probeState, setProbeState] = useState<{
+    key: string;
+    probe: StoredValueProbe<T>;
+  }>(() => ({ key, probe: probeStoredValue(key, validate) }));
+
+  let probe = probeState.probe;
+  if (probeState.key !== key) {
+    probe = probeStoredValue(key, validate);
+    setProbeState({ key, probe });
   }
 
   // Dedup sentinel: tracks the storage key for which we've already invoked
@@ -149,27 +166,13 @@ export const useLocalDb = <T>(
     onWriteFailedRef.current = onWriteFailed;
   }, [onWriteFailed]);
 
-  const probe = probeRef.current;
-  const storedDefault = probe.status === "valid" ? probe.value : defaultValue;
-
-  // Recompute the probe and reset the dedup sentinels when `key` changes.
-  // We intentionally exclude `validate` from deps: it's typically a stable
-  // module-level type guard, and including it would re-probe on every render
-  // for callers that pass an inline guard.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: validate is expected to be a stable type guard; depending on it would re-probe on every render for inline guards
-  useEffect(() => {
-    probeRef.current = probeStoredValue(key, validate);
-    reportedKeyRef.current = null;
-    reportedWriteKeyRef.current = null;
-  }, [key]);
-
   // Fire onCorrupt at most once per mount per corrupt key, after render —
   // never during render, which is what caused the per-render telemetry storm.
+  // Cross-key dedup falls out of the `current !== key` comparison: a
+  // transition from key-a to key-b leaves `reportedKeyRef.current === "key-a"`,
+  // which differs from the new `key`, so the effect re-fires for the new key.
+  // No explicit reset on key change is needed.
   useEffect(() => {
-    const current = probeRef.current;
-    if (current === null) {
-      return;
-    }
     if (reportedKeyRef.current === key) {
       return;
     }
@@ -177,14 +180,16 @@ export const useLocalDb = <T>(
     if (!cb) {
       return;
     }
-    if (current.status === "corrupt") {
+    if (probe.status === "corrupt") {
       reportedKeyRef.current = key;
-      cb(key, current.raw);
-    } else if (current.status === "read-error") {
+      cb(key, probe.raw);
+    } else if (probe.status === "read-error") {
       reportedKeyRef.current = key;
-      cb(key, current.error);
+      cb(key, probe.error);
     }
-  }, [key]);
+  }, [key, probe]);
+
+  const storedDefault = probe.status === "valid" ? probe.value : defaultValue;
 
   const [value, setValue, removeValue] = useLocalStorage({
     key,

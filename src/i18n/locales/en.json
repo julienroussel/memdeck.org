@@ -355,6 +355,10 @@
       "title": "Stack ranges couldn't be loaded",
       "message": "Your saved per-stack range data failed validation. Range edits are disabled to avoid overwriting it. Clear browser storage for this site to start fresh — retrying won't help."
     },
+    "sessionHistoryCorrupt": {
+      "title": "Training history couldn't be loaded",
+      "message": "Your saved training data on this device failed validation. Sessions are preserved — clear browser storage for this site to start fresh."
+    },
     "localDbWriteFailed": {
       "title": "Couldn't save",
       "message": "Your browser storage may be full — recent changes won't persist after a refresh."

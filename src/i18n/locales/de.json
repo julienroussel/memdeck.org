@@ -323,6 +323,10 @@
       "title": "Stack-Bereiche konnten nicht geladen werden",
       "message": "Deine gespeicherten Stack-Bereichsdaten haben die Validierung nicht bestanden. Bereichsänderungen sind deaktiviert, damit sie nicht überschrieben werden. Lösche den Browser-Speicher für diese Seite, um neu anzufangen — ein erneuter Versuch hilft nicht."
     },
+    "sessionHistoryCorrupt": {
+      "title": "Trainingsverlauf konnte nicht geladen werden",
+      "message": "Deine auf diesem Gerät gespeicherten Trainingsdaten haben die Validierung nicht bestanden. Deine Sitzungen bleiben erhalten — lösche den Browser-Speicher für diese Seite, um neu anzufangen."
+    },
     "localDbWriteFailed": {
       "title": "Änderungen nicht gespeichert",
       "message": "Dein Browser-Speicher ist möglicherweise voll — letzte Änderungen bleiben nach einem Neuladen nicht erhalten."

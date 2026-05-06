@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { ALL_TIME_STATS_LSK } from "../constants";
 import type {
   AllTimeStats,
@@ -6,7 +6,7 @@ import type {
   TrainingMode,
 } from "../types/session";
 import type { StackKey } from "../types/stacks";
-import { useLocalDb } from "../utils/localstorage";
+import { type LocalDbStatus, useLocalDb } from "../utils/localstorage";
 import { reportLocalDbCorruption } from "../utils/localstorage-telemetry";
 import {
   aggregateStatsEntries,
@@ -20,12 +20,25 @@ const isDefined = (
   entry: AllTimeStatsEntry | undefined
 ): entry is AllTimeStatsEntry => entry !== undefined;
 
-export const useAllTimeStats = () => {
+type UseAllTimeStatsResult = {
+  stats: AllTimeStats;
+  statsStatus: LocalDbStatus;
+  getStats: (mode: TrainingMode, stackKey: StackKey) => AllTimeStatsEntry;
+  getStatsByMode: (mode: TrainingMode) => AllTimeStatsEntry;
+  getStatsByStack: (stackKey: StackKey) => AllTimeStatsEntry;
+  getGlobalStats: () => AllTimeStatsEntry;
+};
+
+export const useAllTimeStats = (): UseAllTimeStatsResult => {
+  const [statsStatus, setStatsStatus] = useState<LocalDbStatus>("ready");
   const [stats] = useLocalDb<AllTimeStats>(
     ALL_TIME_STATS_LSK,
     {},
     isAllTimeStats,
-    reportLocalDbCorruption
+    (key, error) => {
+      reportLocalDbCorruption(key, error);
+      setStatsStatus("corrupt");
+    }
   );
 
   const getStats = useCallback(
@@ -76,6 +89,7 @@ export const useAllTimeStats = () => {
 
   return {
     stats,
+    statsStatus,
     getStats,
     getStatsByMode,
     getStatsByStack,

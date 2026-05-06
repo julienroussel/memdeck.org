@@ -12,13 +12,20 @@ const makeEntry = (
   ...overrides,
 });
 
-// Mock React hooks to return the callback/memo value directly
+// Mock React hooks to allow testing without a React rendering context. The
+// useState stub returns [initial, noop] so the consumer hook's corruption-
+// state declaration doesn't throw — the corruption transition itself is
+// covered by use-all-time-stats-corruption.test.ts via renderHook.
 vi.mock("react", async () => {
   const actual = await vi.importActual<typeof import("react")>("react");
   return {
     ...actual,
     useMemo: (fn: () => unknown) => fn(),
     useCallback: (fn: unknown) => fn,
+    useState: <T>(initial: T | (() => T)): [T, (next: T) => void] => [
+      typeof initial === "function" ? (initial as () => T)() : initial,
+      () => undefined,
+    ],
   };
 });
 
