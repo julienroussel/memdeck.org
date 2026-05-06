@@ -323,6 +323,10 @@
       "title": "Intervalli dello stack non caricati",
       "message": "I tuoi intervalli salvati per ogni stack non hanno superato la validazione. Le modifiche agli intervalli sono disabilitate per non sovrascriverli. Cancella i dati del browser per questo sito per ricominciare — riprovare non aiuterà."
     },
+    "sessionHistoryCorrupt": {
+      "title": "Cronologia di allenamento non caricata",
+      "message": "I tuoi dati di allenamento salvati su questo dispositivo non hanno superato la validazione. Le sessioni sono intatte — cancella i dati del browser per questo sito per ricominciare."
+    },
     "localDbWriteFailed": {
       "title": "Modifiche non salvate",
       "message": "Lo spazio di archiviazione del browser potrebbe essere pieno — le modifiche recenti non saranno mantenute dopo aver ricaricato la pagina."

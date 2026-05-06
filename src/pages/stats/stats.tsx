@@ -7,6 +7,7 @@ import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useSessionHistory } from "../../hooks/use-session-history";
 import { AccuracyChart } from "./accuracy-chart";
 import { StatsByStack } from "./stats-by-stack";
+import { StatsCorruptionAlert } from "./stats-corruption-alert";
 import { StatsHistory } from "./stats-history";
 import { StatsOverview } from "./stats-overview";
 
@@ -34,11 +35,13 @@ export const Stats = () => {
     title: t("stats.pageTitle"),
     description: t("stats.pageDescription"),
   });
-  const { history } = useSessionHistory();
-  const { getGlobalStats } = useAllTimeStats();
+  const { history, historyStatus } = useSessionHistory();
+  const { getGlobalStats, statsStatus } = useAllTimeStats();
   const globalStats = getGlobalStats();
 
   const hasData = globalStats.totalSessions > 0;
+  const hasCorruption =
+    historyStatus === "corrupt" || statsStatus === "corrupt";
 
   return (
     <Stack gap="xl" p="md">
@@ -51,7 +54,9 @@ export const Stats = () => {
         {t("stats.seoIntro")}
       </span>
 
-      {!hasData && (
+      {hasCorruption && <StatsCorruptionAlert />}
+
+      {!(hasData || hasCorruption) && (
         <Text c="dimmed" ta="center">
           {t("stats.noData")}
         </Text>

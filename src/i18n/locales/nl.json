@@ -323,6 +323,10 @@
       "title": "Stack-bereiken konden niet worden geladen",
       "message": "Je opgeslagen bereiken per stack zijn niet door de validatie gekomen. Bereikbewerkingen zijn uitgeschakeld om de opgeslagen gegevens niet te overschrijven. Wis de browseropslag voor deze site om opnieuw te beginnen — opnieuw proberen helpt niet."
     },
+    "sessionHistoryCorrupt": {
+      "title": "Trainingsgeschiedenis kon niet worden geladen",
+      "message": "Je opgeslagen trainingsgegevens op dit apparaat zijn niet door de validatie gekomen. Sessies blijven bewaard — wis de browseropslag voor deze site om opnieuw te beginnen."
+    },
     "localDbWriteFailed": {
       "title": "Wijzigingen niet opgeslagen",
       "message": "Je browseropslag is misschien vol — recente wijzigingen gaan verloren na het herladen."

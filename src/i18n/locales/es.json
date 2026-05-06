@@ -323,6 +323,10 @@
       "title": "No se pudieron cargar los rangos del stack",
       "message": "Tus rangos guardados por cada stack no pasaron la validación. La edición de rangos está desactivada para no sobrescribirlos. Borra el almacenamiento del navegador para este sitio para empezar de cero — reintentar no servirá."
     },
+    "sessionHistoryCorrupt": {
+      "title": "No se pudo cargar el historial de entrenamiento",
+      "message": "Tus datos de entrenamiento guardados en este dispositivo no pasaron la validación. Tus sesiones se conservan — borra el almacenamiento del navegador para este sitio para empezar de cero."
+    },
     "localDbWriteFailed": {
       "title": "Cambios no guardados",
       "message": "El almacenamiento del navegador puede estar lleno — los cambios recientes no se mantendrán tras recargar la página."
