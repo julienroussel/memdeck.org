@@ -105,20 +105,49 @@ test.describe("Distance Number Training", () => {
     const failBadge = page.getByTestId("score-fail");
     const cardSpreadItems = page.locator(".cardSpreadCard");
 
-    // Click a handful of choices, alternating last/first to bias toward
-    // hitting both correct and wrong answers across rounds.
+    // The correct-answer position is at some index in [0, itemCount-1].
+    // Cycling through every position guarantees at least one correct hit
+    // per round, which deterministically advances the round counter and
+    // accumulates fails on the same-round wrong clicks. ATTEMPTS must be
+    // >= itemCount for the cycle to cover every position; the explicit
+    // assertion below guards against a future change to the spread size
+    // breaking that guarantee.
+    const itemCount = await cardSpreadItems.count();
+    expect(itemCount).toBeGreaterThan(0);
     const ATTEMPTS = 8;
+    expect(itemCount).toBeLessThanOrEqual(ATTEMPTS);
+
     for (let i = 0; i < ATTEMPTS; i++) {
-      const itemCount = await cardSpreadItems.count();
-      if (itemCount === 0) {
-        break;
-      }
-      // Use force:true since card spread items overlap visually.
-      await (i % 2 === 0
-        ? cardSpreadItems.last().click({ force: true })
-        : cardSpreadItems.first().click({ force: true }));
-      // Tiny pause so the next round renders before the next click.
-      await page.waitForTimeout(120);
+      // Capture the score total before clicking. Every click submits an
+      // answer that dispatches either CORRECT_ANSWER (successes+1) or
+      // WRONG_ANSWER (fails+1), so successes+fails is monotonic per click.
+      const beforeSuccess = Number(await successBadge.textContent()) || 0;
+      const beforeFail = Number(await failBadge.textContent()) || 0;
+      const beforeTotal = beforeSuccess + beforeFail;
+
+      // dispatchEvent fires the click directly on the button regardless of
+      // what's visually on top. Two overlays can intercept a coordinate-
+      // based click here: (1) sibling spread cards overlap each other in
+      // the fan-out (the original reason for force:true), and (2) the
+      // wrong-answer notification toasts accumulate over the loop and can
+      // sit over the spread. force:true bypassed Playwright's actionability
+      // check but the click event still went to whatever element was at the
+      // click coordinates; dispatchEvent bypasses hit-testing entirely.
+      await cardSpreadItems.nth(i % itemCount).dispatchEvent("click");
+
+      // Positive render signal: wait for the next render's commit to flush
+      // by observing the score badges advance. The Score component shares
+      // useDistanceGame state with the prompt/spread, so once the badge
+      // text reflects the new total the resulting state (whether the round
+      // advanced or not) is already mounted. Replaces a flaky fixed 120ms
+      // wait that let the next click race the React re-render under CI load.
+      await expect
+        .poll(async () => {
+          const success = Number(await successBadge.textContent()) || 0;
+          const fail = Number(await failBadge.textContent()) || 0;
+          return success + fail;
+        })
+        .toBeGreaterThan(beforeTotal);
     }
 
     await expect(async () => {
