@@ -11,7 +11,10 @@ import {
 } from "../../types/flashcard";
 import type { TimerDuration, TimerSettings } from "../../types/timer";
 import { useLocalDb } from "../../utils/localstorage";
-import { reportLocalDbCorruption } from "../../utils/localstorage-telemetry";
+import {
+  handleLocalDbWriteFailed,
+  reportLocalDbCorruption,
+} from "../../utils/localstorage-telemetry";
 
 type UseFlashcardSettingsResult = {
   mode: FlashcardMode;
@@ -28,14 +31,16 @@ export const useFlashcardSettings = (): UseFlashcardSettingsResult => {
     FLASHCARD_OPTION_LSK,
     "bothmodes",
     isFlashcardMode,
-    reportLocalDbCorruption
+    reportLocalDbCorruption,
+    handleLocalDbWriteFailed
   );
   const [neighborDirection, setNeighborDirection] =
     useLocalDb<NeighborDirection>(
       NEIGHBOR_DIRECTION_LSK,
       "random",
       isNeighborDirection,
-      reportLocalDbCorruption
+      reportLocalDbCorruption,
+      handleLocalDbWriteFailed
     );
 
   const { timerSettings, setTimerEnabled, setTimerDuration } =

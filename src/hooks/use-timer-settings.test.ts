@@ -83,6 +83,7 @@ describe("useTimerSettings", () => {
       FLASHCARD_TIMER_LSK,
       expect.any(Object),
       expect.any(Function),
+      expect.any(Function),
       expect.any(Function)
     );
   });

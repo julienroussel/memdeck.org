@@ -453,7 +453,7 @@ describe("useLocalDb", () => {
     );
   });
 
-  it("returns tuple with value, setter, and remover", () => {
+  it("returns tuple with value, wrapped setter, and remover", () => {
     const mockSetter = vi.fn();
     const mockRemover = vi.fn();
     mockReadLocalStorageValue.mockReturnValue("value");
@@ -465,7 +465,20 @@ describe("useLocalDb", () => {
 
     const [value, setValue, removeValue] = result.current;
     expect(value).toBe("value");
-    expect(setValue).toBe(mockSetter);
+    // The setter is wrapped to add a post-write probe, so it is not the same
+    // function reference as Mantine's setter — but invoking it must still
+    // forward the value through to the underlying setter via a function
+    // updater so the probe and Mantine resolve against the same `prev`.
+    expect(setValue).toBeInstanceOf(Function);
+    expect(setValue).not.toBe(mockSetter);
+    setValue("next");
+    expect(mockSetter).toHaveBeenCalledTimes(1);
+    const cbArg = mockSetter.mock.calls[0]?.[0];
+    expect(typeof cbArg).toBe("function");
+    // `as` justified: `cbArg` is typed `unknown` from the mock's call array,
+    // but we just verified it's a function. Invoking it with any prev should
+    // resolve to the static "next" value the caller passed.
+    expect((cbArg as (prev: unknown) => unknown)("anything")).toBe("next");
     expect(removeValue).toBe(mockRemover);
   });
 
@@ -624,6 +637,24 @@ describe("useLocalDb", () => {
       expect(onCorrupt).toHaveBeenCalledWith("test-key", 123);
     });
 
+    it("resets onCorrupt dedup when key changes", () => {
+      // Both keys are corrupt — dedup must be per-key, not per-mount.
+      mockReadLocalStorageValue.mockReturnValue(123);
+      mockUseLocalStorage.mockReturnValue(["default", vi.fn(), vi.fn()]);
+      const onCorrupt = vi.fn();
+
+      const { rerender } = renderHook(
+        ({ k }: { k: string }) => useLocalDb(k, "default", isString, onCorrupt),
+        { initialProps: { k: "key-a" } }
+      );
+
+      rerender({ k: "key-b" });
+
+      expect(onCorrupt).toHaveBeenCalledTimes(2);
+      expect(onCorrupt).toHaveBeenNthCalledWith(1, "key-a", 123);
+      expect(onCorrupt).toHaveBeenNthCalledWith(2, "key-b", 123);
+    });
+
     it("calls onCorrupt from the deserialize path on JSON.parse error", () => {
       // Probe path is clean (absent), so only the deserialize callback can
       // fire onCorrupt — exercising the parse-error branch.
@@ -703,6 +734,397 @@ describe("useLocalDb", () => {
       capturedDeserialize?.(JSON.stringify("fresh-value"));
 
       expect(onCorrupt).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("setter identity stability", () => {
+    it("returns the same setter reference across re-renders when key is unchanged", () => {
+      mockReadLocalStorageValue.mockReturnValue("value");
+      mockUseLocalStorage.mockReturnValue(["value", vi.fn(), vi.fn()]);
+
+      const { result, rerender } = renderHook(() =>
+        useLocalDb("test-key", "default", isString)
+      );
+
+      const initialSetter = result.current[1];
+      rerender();
+      rerender();
+
+      expect(result.current[1]).toBe(initialSetter);
+    });
+
+    it("returns a new setter reference when key changes", () => {
+      mockReadLocalStorageValue.mockReturnValue("value");
+      mockUseLocalStorage.mockReturnValue(["value", vi.fn(), vi.fn()]);
+
+      const { result, rerender } = renderHook(
+        ({ k }: { k: string }) => useLocalDb(k, "default", isString),
+        { initialProps: { k: "key-a" } }
+      );
+
+      const initialSetter = result.current[1];
+      rerender({ k: "key-b" });
+
+      expect(result.current[1]).not.toBe(initialSetter);
+    });
+  });
+
+  describe("write-failure handling", () => {
+    // happy-dom's window.localStorage isn't a real Storage instance whose
+    // methods can be spied via the prototype, and `vi.spyOn` on the live
+    // localStorage object errors with "property is not defined." Replace the
+    // global with a hand-rolled mock for each test instead and restore via
+    // vi.unstubAllGlobals.
+    let setItemMock: ReturnType<typeof vi.fn>;
+
+    const useFakeLocalStorage = (
+      impl: (key: string, value: string) => void
+    ) => {
+      setItemMock = vi.fn(impl);
+      vi.stubGlobal("localStorage", {
+        setItem: setItemMock,
+        getItem: vi.fn(),
+        removeItem: vi.fn(),
+        clear: vi.fn(),
+        key: vi.fn(),
+        length: 0,
+      });
+    };
+
+    afterEach(() => {
+      vi.clearAllMocks();
+      vi.unstubAllGlobals();
+    });
+
+    const setupHook = (key = "test-key", value: unknown = "stored-value") => {
+      // The wrapped setter now invokes Mantine's setValue with a function
+      // updater unconditionally; the mock must run that callback so the
+      // closed-over `resolved` is assigned before the synchronous probe.
+      const mockSetter = vi.fn((next: unknown) => {
+        if (typeof next === "function") {
+          // `as` justified: the callback is typed against the user's T, but
+          // the test mock is generic over `unknown`. We just need to invoke
+          // it with the current value to mirror Mantine's behavior.
+          (next as (prev: unknown) => unknown)(value);
+        }
+      });
+      const mockRemover = vi.fn();
+      mockReadLocalStorageValue.mockReturnValue(value);
+      mockUseLocalStorage.mockReturnValue([value, mockSetter, mockRemover]);
+      return { mockSetter, mockRemover, key };
+    };
+
+    it("skips onWriteFailed when the probe write succeeds", () => {
+      const { key, mockSetter } = setupHook();
+      const onWriteFailed = vi.fn();
+      useFakeLocalStorage(() => {
+        // Pretend the write succeeded.
+      });
+
+      const { result } = renderHook(() =>
+        useLocalDb(key, "default", isString, undefined, onWriteFailed)
+      );
+
+      result.current[1]("next-value");
+
+      expect(onWriteFailed).not.toHaveBeenCalled();
+      expect(setItemMock).toHaveBeenCalledWith(
+        key,
+        JSON.stringify("next-value")
+      );
+      expect(mockSetter).toHaveBeenCalledTimes(1);
+    });
+
+    it("forwards the error to onWriteFailed when the probe throws", () => {
+      const { key, mockSetter } = setupHook();
+      const onWriteFailed = vi.fn();
+      const quotaError = new DOMException("quota", "QuotaExceededError");
+      useFakeLocalStorage(() => {
+        throw quotaError;
+      });
+
+      const { result } = renderHook(() =>
+        useLocalDb(key, "default", isString, undefined, onWriteFailed)
+      );
+
+      result.current[1]("next-value");
+
+      expect(onWriteFailed).toHaveBeenCalledTimes(1);
+      expect(onWriteFailed).toHaveBeenCalledWith(key, quotaError);
+      expect(mockSetter).toHaveBeenCalledTimes(1);
+    });
+
+    it("fires onWriteFailed at most once per consecutive failure streak per key (dedup)", () => {
+      const { key, mockSetter } = setupHook();
+      const onWriteFailed = vi.fn();
+      useFakeLocalStorage(() => {
+        throw new DOMException("quota", "QuotaExceededError");
+      });
+
+      const { result } = renderHook(() =>
+        useLocalDb(key, "default", isString, undefined, onWriteFailed)
+      );
+
+      result.current[1]("a");
+      result.current[1]("b");
+      result.current[1]("c");
+
+      expect(onWriteFailed).toHaveBeenCalledTimes(1);
+      expect(setItemMock).toHaveBeenCalledTimes(3);
+      expect(mockSetter).toHaveBeenCalledTimes(3);
+    });
+
+    it("re-fires onWriteFailed after a successful write resets the streak", () => {
+      const { key, mockSetter } = setupHook();
+      const onWriteFailed = vi.fn();
+      const quotaError = new DOMException("quota", "QuotaExceededError");
+      const setItemImpl = vi
+        .fn<(k: string, v: string) => void>()
+        .mockImplementationOnce(() => {
+          throw quotaError;
+        })
+        .mockImplementationOnce(() => {
+          // Pretend success — should reset the dedup streak.
+        })
+        .mockImplementationOnce(() => {
+          throw quotaError;
+        });
+      useFakeLocalStorage((k, v) => setItemImpl(k, v));
+
+      const { result } = renderHook(() =>
+        useLocalDb(key, "default", isString, undefined, onWriteFailed)
+      );
+
+      result.current[1]("a");
+      result.current[1]("b");
+      result.current[1]("c");
+
+      expect(onWriteFailed).toHaveBeenCalledTimes(2);
+      expect(setItemMock).toHaveBeenCalledTimes(3);
+      expect(mockSetter).toHaveBeenCalledTimes(3);
+    });
+
+    it("fires onWriteFailed independently for each key (dedup resets on key change)", () => {
+      mockReadLocalStorageValue.mockReturnValue("v");
+      // Mantine-mirroring setter: invoke the callback so the probe runs.
+      const mockSetter = vi.fn((next: unknown) => {
+        if (typeof next === "function") {
+          // `as` justified: see setupHook — generic test mock over `unknown`.
+          (next as (prev: unknown) => unknown)("v");
+        }
+      });
+      mockUseLocalStorage.mockReturnValue(["v", mockSetter, vi.fn()]);
+      const onWriteFailed = vi.fn();
+      useFakeLocalStorage(() => {
+        throw new DOMException("quota", "QuotaExceededError");
+      });
+
+      const { result, rerender } = renderHook(
+        ({ k }: { k: string }) =>
+          useLocalDb(k, "default", isString, undefined, onWriteFailed),
+        { initialProps: { k: "key-a" } }
+      );
+
+      result.current[1]("x");
+      rerender({ k: "key-b" });
+      result.current[1]("y");
+
+      expect(onWriteFailed).toHaveBeenCalledTimes(2);
+      expect(onWriteFailed).toHaveBeenNthCalledWith(
+        1,
+        "key-a",
+        expect.any(Error)
+      );
+      expect(onWriteFailed).toHaveBeenNthCalledWith(
+        2,
+        "key-b",
+        expect.any(Error)
+      );
+    });
+
+    it("resolves function-updater payloads against the current value for the probe", () => {
+      mockReadLocalStorageValue.mockReturnValue(10);
+      // Mirror Mantine: invoke the callback with the current value so the
+      // closed-over `resolved` is populated before the probe runs.
+      const mockSetter = vi.fn((next: unknown) => {
+        if (typeof next === "function") {
+          // `as` justified: see setupHook — generic test mock over `unknown`.
+          (next as (prev: number) => number)(10);
+        }
+      });
+      mockUseLocalStorage.mockReturnValue([10, mockSetter, vi.fn()]);
+      useFakeLocalStorage(() => {
+        // Pretend success.
+      });
+
+      const { result } = renderHook(() =>
+        useLocalDb<number>("counter", 0, isNumber)
+      );
+
+      result.current[1]((prev) => prev + 5);
+
+      expect(setItemMock).toHaveBeenCalledWith("counter", JSON.stringify(15));
+    });
+
+    it("does not throw when no onWriteFailed callback is provided", () => {
+      setupHook();
+      useFakeLocalStorage(() => {
+        throw new DOMException("quota", "QuotaExceededError");
+      });
+
+      const { result } = renderHook(() =>
+        useLocalDb("test-key", "default", isString)
+      );
+
+      expect(() => result.current[1]("next")).not.toThrow();
+      expect(() => result.current[1]("again")).not.toThrow();
+    });
+
+    it("isolates onWriteFailed exceptions: setter does not throw and dedup latch is still set", () => {
+      // Realistic failure mode: i18next.t or notifications.show could throw
+      // (e.g. provider not yet mounted). The wrapped setter must swallow the
+      // callback exception so the consumer's UI handler doesn't crash, AND
+      // the dedup latch must still register so the next failure doesn't
+      // re-fire telemetry on every render.
+      const { key } = setupHook();
+      const onWriteFailed = vi.fn(() => {
+        throw new Error("notifications provider not mounted");
+      });
+      useFakeLocalStorage(() => {
+        throw new DOMException("quota", "QuotaExceededError");
+      });
+
+      const { result } = renderHook(() =>
+        useLocalDb(key, "default", isString, undefined, onWriteFailed)
+      );
+
+      expect(() => result.current[1]("next")).not.toThrow();
+      // Second consecutive failure with the same key: dedup latch was set on
+      // the first call despite the callback throwing, so onWriteFailed is
+      // not invoked again.
+      expect(() => result.current[1]("again")).not.toThrow();
+
+      expect(onWriteFailed).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not write the literal string 'undefined' when the updater is deferred", () => {
+      // Regression for the eager-state-skipped path. React calls setState
+      // updaters lazily when there are pending lanes on the fiber (e.g.
+      // chained setters in one handler). The previous implementation read a
+      // closure variable assigned inside the updater AFTER `setValue` returned;
+      // on the deferred path the variable was still `undefined` and the
+      // probe wrote `JSON.stringify(undefined)` (i.e. the string "undefined")
+      // to localStorage. Moving the probe inside the updater eliminates the
+      // race: if the updater never runs, neither does the probe.
+      mockReadLocalStorageValue.mockReturnValue("v");
+      const deferredSetter = vi.fn(() => {
+        // Mimic React skipping eager state computation: store the updater
+        // for later (or drop it entirely). Either way, the updater MUST NOT
+        // fire synchronously inside this mock.
+      });
+      mockUseLocalStorage.mockReturnValue(["v", deferredSetter, vi.fn()]);
+      useFakeLocalStorage(() => {
+        // Should never be called — the deferred setter never invokes the
+        // updater that owns the probe.
+      });
+
+      const { result } = renderHook(() =>
+        useLocalDb("test-key", "default", isString)
+      );
+
+      result.current[1]("next-value");
+
+      expect(deferredSetter).toHaveBeenCalledTimes(1);
+      expect(setItemMock).not.toHaveBeenCalled();
+      // Belt-and-braces: even if a future mock change invokes setItem, the
+      // wrong-shaped argument we are guarding against is the string
+      // "undefined". Make that assertion explicit.
+      const calledWithUndefinedString = setItemMock.mock.calls.some(
+        (args) => args[1] === "undefined"
+      );
+      expect(calledWithUndefinedString).toBe(false);
+    });
+
+    it("fires onSuccess once when the probe write succeeds", () => {
+      const { key } = setupHook();
+      const onSuccess = vi.fn();
+      useFakeLocalStorage(() => {
+        // Pretend success.
+      });
+
+      const { result } = renderHook(() => useLocalDb(key, "default", isString));
+
+      result.current[1]("next-value", { onSuccess });
+
+      expect(onSuccess).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not fire onSuccess when the probe write throws", () => {
+      const { key } = setupHook();
+      const onSuccess = vi.fn();
+      const onWriteFailed = vi.fn();
+      useFakeLocalStorage(() => {
+        throw new DOMException("quota", "QuotaExceededError");
+      });
+
+      const { result } = renderHook(() =>
+        useLocalDb(key, "default", isString, undefined, onWriteFailed)
+      );
+
+      result.current[1]("next-value", { onSuccess });
+
+      expect(onSuccess).not.toHaveBeenCalled();
+      expect(onWriteFailed).toHaveBeenCalledTimes(1);
+    });
+
+    it("isolates onSuccess exceptions: setter does not throw and onWriteFailed is not invoked", () => {
+      // Mirror of the onWriteFailed isolation test for the success path.
+      const { key } = setupHook();
+      const onSuccess = vi.fn(() => {
+        throw new Error("downstream emit threw");
+      });
+      const onWriteFailed = vi.fn();
+      useFakeLocalStorage(() => {
+        // Pretend success.
+      });
+
+      const { result } = renderHook(() =>
+        useLocalDb(key, "default", isString, undefined, onWriteFailed)
+      );
+
+      expect(() => result.current[1]("next", { onSuccess })).not.toThrow();
+      expect(onSuccess).toHaveBeenCalledTimes(1);
+      expect(onWriteFailed).not.toHaveBeenCalled();
+    });
+
+    it("fires onSuccess at most once even if the updater runs twice (StrictMode)", () => {
+      // React StrictMode invokes setState updaters twice in development to
+      // surface impurity. The wrapped setter must dedup outcomes per logical
+      // call so onSuccess (which typically emits analytics) doesn't double-fire.
+      mockReadLocalStorageValue.mockReturnValue("v");
+      const doubleInvokeSetter = vi.fn((next: unknown) => {
+        if (typeof next === "function") {
+          // `as` justified: see setupHook — generic test mock over `unknown`.
+          (next as (prev: unknown) => unknown)("v");
+          (next as (prev: unknown) => unknown)("v");
+        }
+      });
+      mockUseLocalStorage.mockReturnValue(["v", doubleInvokeSetter, vi.fn()]);
+      const onSuccess = vi.fn();
+      useFakeLocalStorage(() => {
+        // Pretend success on every call.
+      });
+
+      const { result } = renderHook(() =>
+        useLocalDb("test-key", "default", isString)
+      );
+
+      result.current[1]("next-value", { onSuccess });
+
+      // The updater itself may run twice (setItem may be called twice —
+      // that's React's prerogative under StrictMode), but the user-visible
+      // outcome callback only fires once per setter invocation.
+      expect(onSuccess).toHaveBeenCalledTimes(1);
     });
   });
 });

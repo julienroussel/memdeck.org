@@ -322,6 +322,10 @@
     "stackLimitsCorrupt": {
       "title": "Stack-Bereiche konnten nicht geladen werden",
       "message": "Deine gespeicherten Stack-Bereichsdaten haben die Validierung nicht bestanden. Bereichsänderungen sind deaktiviert, damit sie nicht überschrieben werden. Lösche den Browser-Speicher für diese Seite, um neu anzufangen — ein erneuter Versuch hilft nicht."
+    },
+    "localDbWriteFailed": {
+      "title": "Änderungen nicht gespeichert",
+      "message": "Dein Browser-Speicher ist möglicherweise voll — letzte Änderungen bleiben nach einem Neuladen nicht erhalten."
     }
   },
   "stats": {

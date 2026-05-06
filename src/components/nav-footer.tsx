@@ -13,7 +13,7 @@ const commitHashStyle: React.CSSProperties = { fontFamily: "monospace" };
 
 export const NavFooter = () => {
   const { t } = useTranslation();
-  const { stackKey, stackName } = useSelectedStack();
+  const { stackKey } = useSelectedStack();
   const hasStack = stackKey !== "";
 
   return (
@@ -29,7 +29,7 @@ export const NavFooter = () => {
             <div style={{ flex: 1 }}>
               <StackPicker />
             </div>
-            <StackRangeBadge stackKey={stackKey} stackName={stackName} />
+            <StackRangeBadge stackKey={stackKey} />
           </Group>
         </>
       )}

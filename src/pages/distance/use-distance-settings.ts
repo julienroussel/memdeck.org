@@ -15,7 +15,10 @@ import {
 } from "../../types/distance";
 import type { TimerDuration, TimerSettings } from "../../types/timer";
 import { useLocalDb } from "../../utils/localstorage";
-import { reportLocalDbCorruption } from "../../utils/localstorage-telemetry";
+import {
+  handleLocalDbWriteFailed,
+  reportLocalDbCorruption,
+} from "../../utils/localstorage-telemetry";
 
 type UseDistanceSettingsResult = {
   mode: DistanceMode;
@@ -32,13 +35,15 @@ export const useDistanceSettings = (): UseDistanceSettingsResult => {
     DISTANCE_OPTION_LSK,
     "compute",
     isDistanceMode,
-    reportLocalDbCorruption
+    reportLocalDbCorruption,
+    handleLocalDbWriteFailed
   );
   const [convention, setConvention] = useLocalDb<DistanceConvention>(
     DISTANCE_CONVENTION_LSK,
     "cyclic",
     isDistanceConvention,
-    reportLocalDbCorruption
+    reportLocalDbCorruption,
+    handleLocalDbWriteFailed
   );
 
   const { timerSettings, setTimerEnabled, setTimerDuration } =

@@ -6,7 +6,10 @@ import { SITE_URL, TOOLBOX_SECTIONS_LSK } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { analytics } from "../../services/analytics";
 import { useLocalDb } from "../../utils/localstorage";
-import { reportLocalDbCorruption } from "../../utils/localstorage-telemetry";
+import {
+  handleLocalDbWriteFailed,
+  reportLocalDbCorruption,
+} from "../../utils/localstorage-telemetry";
 import { CardSpelling } from "./card-spelling";
 import { FaroShuffle } from "./faro-shuffle";
 import { StackLookup } from "./stack-lookup";
@@ -39,7 +42,8 @@ export const Toolbox = () => {
     TOOLBOX_SECTIONS_LSK,
     [],
     isStringArray,
-    reportLocalDbCorruption
+    reportLocalDbCorruption,
+    handleLocalDbWriteFailed
   );
 
   const openSectionsRef = useRef(openSections);
@@ -50,10 +54,16 @@ export const Toolbox = () => {
       const opened = sections.filter(
         (s) => !openSectionsRef.current.includes(s)
       );
-      for (const section of opened) {
-        analytics.trackFeatureUsed(`Toolbox - ${section}`);
-      }
-      setOpenSections(sections);
+      setOpenSections(sections, {
+        // Gate analytics on a real persisted write so quota / ITP failures
+        // don't inflate "Toolbox - X" feature-used counts. Mirrors the
+        // pattern used in useStackLimits for STACK_LIMITS_CHANGED.
+        onSuccess: () => {
+          for (const section of opened) {
+            analytics.trackFeatureUsed(`Toolbox - ${section}`);
+          }
+        },
+      });
     },
     [setOpenSections]
   );

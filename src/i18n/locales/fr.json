@@ -322,6 +322,10 @@
     "stackLimitsCorrupt": {
       "title": "Plages de stack non chargées",
       "message": "Vos plages enregistrées par stack sont invalides. L'édition des plages est désactivée pour ne pas les écraser. Effacez les données du navigateur pour ce site pour repartir à zéro — réessayer ne servira à rien."
+    },
+    "localDbWriteFailed": {
+      "title": "Modifications non enregistrées",
+      "message": "Votre stockage navigateur est peut-être plein — les modifications récentes ne seront pas conservées après un rechargement."
     }
   },
   "stats": {

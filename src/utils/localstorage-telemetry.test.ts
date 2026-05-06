@@ -1,6 +1,19 @@
+import { notifications } from "@mantine/notifications";
+import i18next from "i18next";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { analytics } from "../services/analytics";
-import { reportLocalDbCorruption } from "./localstorage-telemetry";
+import {
+  handleLocalDbWriteFailed,
+  notifyLocalDbWriteFailed,
+  reportLocalDbCorruption,
+  reportLocalDbWriteFailed,
+} from "./localstorage-telemetry";
+
+// `as` justified: i18next.t has overloaded TFunction signatures; vi.fn's
+// mockImplementation only accepts a single signature. We don't exercise the
+// interpolation overloads in these tests.
+type TFn = typeof i18next.t;
+const makeTMock = (fn: (key: string) => string): TFn => fn as TFn;
 
 describe("reportLocalDbCorruption", () => {
   afterEach(() => {
@@ -85,5 +98,115 @@ describe("reportLocalDbCorruption", () => {
       expect.any(Error),
       "key=memdeck:flashcard-timer"
     );
+  });
+});
+
+describe("reportLocalDbWriteFailed", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("renames the wrapper to LocalDbWriteFailed and redacts the message", () => {
+    const trackErrorSpy = vi
+      .spyOn(analytics, "trackError")
+      .mockImplementation(() => undefined);
+
+    const cause = new DOMException(
+      "quota detail leaks here",
+      "QuotaExceededError"
+    );
+    reportLocalDbWriteFailed("flashcard-mode", cause);
+
+    expect(trackErrorSpy).toHaveBeenCalledTimes(1);
+    const [errArg, contextArg] = trackErrorSpy.mock.calls[0] ?? [];
+    expect(errArg).toBeInstanceOf(Error);
+    expect(errArg?.name).toBe("LocalDbWriteFailed");
+    expect(errArg?.message).toBe("type=Error name=QuotaExceededError");
+    expect(errArg?.message).not.toContain("quota detail");
+    expect(contextArg).toBe("key=flashcard-mode");
+  });
+
+  it("wraps a string cause by length only", () => {
+    const trackErrorSpy = vi
+      .spyOn(analytics, "trackError")
+      .mockImplementation(() => undefined);
+
+    reportLocalDbWriteFailed("k", "abcd");
+
+    const [errArg] = trackErrorSpy.mock.calls[0] ?? [];
+    expect(errArg?.message).toBe("type=string length=4");
+  });
+
+  it("wraps a non-Error, non-string cause by typeof", () => {
+    const trackErrorSpy = vi
+      .spyOn(analytics, "trackError")
+      .mockImplementation(() => undefined);
+
+    reportLocalDbWriteFailed("k", 42);
+
+    const [errArg] = trackErrorSpy.mock.calls[0] ?? [];
+    expect(errArg?.message).toBe("type=number");
+  });
+});
+
+describe("notifyLocalDbWriteFailed", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("shows a Mantine notification with a key-scoped id and yellow color", () => {
+    const showSpy = vi
+      .spyOn(notifications, "show")
+      .mockImplementation(() => "notification-id");
+    vi.spyOn(i18next, "t").mockImplementation(makeTMock((key) => `tr:${key}`));
+
+    notifyLocalDbWriteFailed("flashcard-mode");
+
+    expect(showSpy).toHaveBeenCalledTimes(1);
+    expect(showSpy).toHaveBeenCalledWith({
+      id: "local-db-write-failed-flashcard-mode",
+      color: "yellow",
+      title: "tr:errors.localDbWriteFailed.title",
+      message: "tr:errors.localDbWriteFailed.message",
+    });
+  });
+
+  it("scopes the id per key so concurrent toasts don't collide", () => {
+    const showSpy = vi
+      .spyOn(notifications, "show")
+      .mockImplementation(() => "id");
+    vi.spyOn(i18next, "t").mockImplementation(makeTMock((key) => key));
+
+    notifyLocalDbWriteFailed("a");
+    notifyLocalDbWriteFailed("b");
+
+    const ids = showSpy.mock.calls.map((args) => args[0].id);
+    expect(ids).toEqual(["local-db-write-failed-a", "local-db-write-failed-b"]);
+  });
+});
+
+describe("handleLocalDbWriteFailed", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("dispatches both the analytics report and the user-facing notification", () => {
+    const trackErrorSpy = vi
+      .spyOn(analytics, "trackError")
+      .mockImplementation(() => undefined);
+    const showSpy = vi
+      .spyOn(notifications, "show")
+      .mockImplementation(() => "id");
+    vi.spyOn(i18next, "t").mockImplementation(makeTMock((key) => key));
+
+    const cause = new DOMException("oops", "QuotaExceededError");
+    handleLocalDbWriteFailed("flashcard-mode", cause);
+
+    expect(trackErrorSpy).toHaveBeenCalledTimes(1);
+    expect(showSpy).toHaveBeenCalledTimes(1);
+    expect(showSpy.mock.calls[0]?.[0]).toMatchObject({
+      id: "local-db-write-failed-flashcard-mode",
+      color: "yellow",
+    });
   });
 });

@@ -95,18 +95,20 @@ describe("useDistanceSettings", () => {
     expect(result.current.convention).toBe("cyclic");
   });
 
-  it("calls useLocalDb with correct keys, defaults, and validators", () => {
+  it("calls useLocalDb with correct keys, defaults, validators, and write/corrupt callbacks", () => {
     expect(mockedUseLocalDb).toHaveBeenCalledTimes(2);
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
       DISTANCE_OPTION_LSK,
       "compute",
       isDistanceMode,
+      expect.any(Function),
       expect.any(Function)
     );
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
       DISTANCE_CONVENTION_LSK,
       "cyclic",
       isDistanceConvention,
+      expect.any(Function),
       expect.any(Function)
     );
   });
@@ -166,24 +168,24 @@ describe("useDistanceSettings", () => {
       act(() => {
         result.current.handleTimerEnabledChange(true);
       });
+      expect(mockSetTimerEnabled).toHaveBeenCalledWith(true);
       expect(mockTrackEvent).toHaveBeenCalledWith(
         "Settings",
         "Timer Enabled",
         "Distance"
       );
-      expect(mockSetTimerEnabled).toHaveBeenCalledWith(true);
     });
 
     it("tracks analytics and disables timer", () => {
       act(() => {
         result.current.handleTimerEnabledChange(false);
       });
+      expect(mockSetTimerEnabled).toHaveBeenCalledWith(false);
       expect(mockTrackEvent).toHaveBeenCalledWith(
         "Settings",
         "Timer Disabled",
         "Distance"
       );
-      expect(mockSetTimerEnabled).toHaveBeenCalledWith(false);
     });
   });
 });

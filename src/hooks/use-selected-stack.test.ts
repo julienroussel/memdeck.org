@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { SELECTED_STACK_LSK } from "../constants";
 import { stacks } from "../types/stacks";
 import {
   isStackKey,
@@ -93,6 +94,20 @@ describe("useSelectedStack", () => {
     result.setStackKey("");
 
     expect(mockSetValue).toHaveBeenCalledWith("");
+  });
+
+  it("calls useLocalDb with the selected-stack LSK, validator, and corruption/write-failure callbacks", () => {
+    mockedUseLocalDb.mockReturnValue(["", mockSetValue, vi.fn()]);
+
+    useSelectedStack();
+
+    expect(mockedUseLocalDb).toHaveBeenCalledWith(
+      SELECTED_STACK_LSK,
+      "",
+      expect.any(Function),
+      expect.any(Function),
+      expect.any(Function)
+    );
   });
 
   it("setStackKey handles empty string input", () => {
