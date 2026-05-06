@@ -75,9 +75,9 @@ export const getStoredValue = <T>(
   return probe.status === "valid" ? probe.value : defaultValue;
 };
 
-export type UseLocalDbSetOptions = { onSuccess?: () => void };
+type UseLocalDbSetOptions = { onSuccess?: () => void };
 
-export type UseLocalDbSetter<T> = (
+type UseLocalDbSetter<T> = (
   value: T | ((prevState: T) => T),
   options?: UseLocalDbSetOptions
 ) => void;
