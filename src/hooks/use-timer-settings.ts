@@ -7,7 +7,10 @@ import type {
 } from "../constants";
 import type { TimerDuration, TimerSettings } from "../types/timer";
 import { useLocalDb } from "../utils/localstorage";
-import { reportLocalDbCorruption } from "../utils/localstorage-telemetry";
+import {
+  handleLocalDbWriteFailed,
+  reportLocalDbCorruption,
+} from "../utils/localstorage-telemetry";
 
 /**
  * Allowed timer durations as a runtime set, kept in sync with the
@@ -65,11 +68,12 @@ export const useTimerSettings = (
     storageKey,
     DEFAULT_TIMER_SETTINGS,
     isTimerSettings,
-    reportLocalDbCorruption
+    reportLocalDbCorruption,
+    handleLocalDbWriteFailed
   );
 
   const setTimerEnabled = useCallback(
-    (enabled: boolean) => {
+    (enabled: boolean): void => {
       setTimerSettings((prev) => ({
         ...prev,
         enabled,
@@ -79,7 +83,7 @@ export const useTimerSettings = (
   );
 
   const setTimerDuration = useCallback(
-    (duration: TimerDuration) => {
+    (duration: TimerDuration): void => {
       setTimerSettings((prev) => ({
         ...prev,
         duration,

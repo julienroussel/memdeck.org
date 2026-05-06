@@ -9,13 +9,9 @@ import { StackLimitsControl } from "./stack-limits-control";
 
 type StackRangeBadgeProps = {
   stackKey: StackKey;
-  stackName: string;
 };
 
-export const StackRangeBadge = ({
-  stackKey,
-  stackName,
-}: StackRangeBadgeProps) => {
+export const StackRangeBadge = ({ stackKey }: StackRangeBadgeProps) => {
   const { t } = useTranslation();
   const [opened, { open, close }] = useDisclosure(false);
   const {
@@ -60,11 +56,7 @@ export const StackRangeBadge = ({
         title={t("stackLimits.label")}
       >
         <Stack gap="md">
-          <StackLimitsControl
-            limits={limits}
-            onLimitsChange={setLimits}
-            stackName={stackName}
-          />
+          <StackLimitsControl limits={limits} onLimitsChange={setLimits} />
           {rangeSize < MIN_SPOT_CHECK_RANGE && (
             <Text c="orange" role="status" size="xs">
               <IconAlertTriangle

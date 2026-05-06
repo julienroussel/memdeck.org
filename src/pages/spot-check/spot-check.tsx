@@ -21,7 +21,10 @@ import {
 } from "../../types/spot-check";
 import { cardItems } from "../../types/typeguards";
 import { useLocalDb } from "../../utils/localstorage";
-import { reportLocalDbCorruption } from "../../utils/localstorage-telemetry";
+import {
+  handleLocalDbWriteFailed,
+  reportLocalDbCorruption,
+} from "../../utils/localstorage-telemetry";
 import { SpotCheckSettingsContent } from "./spot-check-settings-content";
 import { useSpotCheckGame } from "./use-spot-check-game";
 
@@ -49,7 +52,8 @@ export const SpotCheck = () => {
     SPOT_CHECK_MODE_LSK,
     "missing",
     isSpotCheckMode,
-    reportLocalDbCorruption
+    reportLocalDbCorruption,
+    handleLocalDbWriteFailed
   );
 
   const { limits, rangeSize } = useStackLimits(stackKey);

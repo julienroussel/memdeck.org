@@ -2,20 +2,17 @@ import { Button, RangeSlider, Stack, Text } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DECK_SIZE, MIN_FLASHCARD_RANGE, RANGE_PRESETS } from "../constants";
-import { eventBus } from "../services/event-bus";
 import type { StackLimits } from "../types/stack-limits";
 import { createDeckPosition } from "../types/stacks";
 
 type StackLimitsControlProps = {
   limits: StackLimits;
   onLimitsChange: (limits: StackLimits) => void;
-  stackName: string;
 };
 
 export const StackLimitsControl = ({
   limits,
   onLimitsChange,
-  stackName,
 }: StackLimitsControlProps) => {
   const { t } = useTranslation();
 
@@ -33,36 +30,22 @@ export const StackLimitsControl = ({
 
   const handleSliderChangeEnd = useCallback(
     (value: [number, number]) => {
-      const newLimits: StackLimits = {
+      onLimitsChange({
         start: createDeckPosition(value[0]),
         end: createDeckPosition(value[1]),
-      };
-      onLimitsChange(newLimits);
-      eventBus.emit.STACK_LIMITS_CHANGED({
-        start: value[0],
-        end: value[1],
-        rangeSize: value[1] - value[0] + 1,
-        stackName,
       });
     },
-    [onLimitsChange, stackName]
+    [onLimitsChange]
   );
 
   const handlePresetClick = useCallback(
     (preset: number) => {
-      const newLimits: StackLimits = {
+      onLimitsChange({
         start: createDeckPosition(1),
         end: createDeckPosition(preset),
-      };
-      onLimitsChange(newLimits);
-      eventBus.emit.STACK_LIMITS_CHANGED({
-        start: 1,
-        end: preset,
-        rangeSize: preset,
-        stackName,
       });
     },
-    [onLimitsChange, stackName]
+    [onLimitsChange]
   );
 
   const description = sliderIsFull

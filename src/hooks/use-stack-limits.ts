@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { STACK_LIMITS_LSK } from "../constants";
 import { analytics } from "../services/analytics";
+import { eventBus } from "../services/event-bus";
 import {
   DEFAULT_STACK_LIMITS,
   getRangeSize,
@@ -11,9 +12,12 @@ import {
   type StackLimits,
   type StackLimitsRecord,
 } from "../types/stack-limits";
-import { createDeckPosition, type StackKey } from "../types/stacks";
+import { createDeckPosition, type StackKey, stacks } from "../types/stacks";
 import { probeStoredValue, useLocalDb } from "../utils/localstorage";
-import { reportLocalDbCorruption } from "../utils/localstorage-telemetry";
+import {
+  handleLocalDbWriteFailed,
+  reportLocalDbCorruption,
+} from "../utils/localstorage-telemetry";
 
 type UseStackLimitsResult = {
   limits: StackLimits;
@@ -37,7 +41,8 @@ export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
     STACK_LIMITS_LSK,
     {},
     isStackLimitsRecord,
-    reportLocalDbCorruption
+    reportLocalDbCorruption,
+    handleLocalDbWriteFailed
   );
 
   // Probe once on mount; if the stored blob is corrupt, lock writes for the
@@ -83,19 +88,36 @@ export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
   );
 
   const handleSetLimits = useCallback(
-    (newLimits: StackLimits) => {
+    (newLimits: StackLimits): void => {
       // Refuse to overwrite a corrupt blob — preserves any other stacks'
-      // ranges that may still be recoverable manually.
+      // ranges that may still be recoverable manually. The user has already
+      // been notified of the corruption via the mount-effect toast.
       if (corruptRef.current === true) {
         return;
       }
-      setRecord((prev) => ({
-        ...prev,
-        [stackKey]: {
-          start: newLimits.start,
-          end: newLimits.end,
-        },
-      }));
+      setRecord(
+        (prev) => ({
+          ...prev,
+          [stackKey]: {
+            start: newLimits.start,
+            end: newLimits.end,
+          },
+        }),
+        {
+          // Gate the analytics emit on a real persisted write so quota /
+          // ITP failures don't inflate "limits changed" counts. The user
+          // sees the failure toast via `handleLocalDbWriteFailed`; GA stays
+          // consistent with what actually reached storage.
+          onSuccess: () => {
+            eventBus.emit.STACK_LIMITS_CHANGED({
+              start: newLimits.start,
+              end: newLimits.end,
+              rangeSize: newLimits.end - newLimits.start + 1,
+              stackName: stacks[stackKey].name,
+            });
+          },
+        }
+      );
     },
     [stackKey, setRecord]
   );

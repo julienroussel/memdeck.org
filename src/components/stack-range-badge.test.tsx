@@ -15,13 +15,6 @@ vi.mock("../hooks/use-stack-limits", () => ({
   useStackLimits: vi.fn(),
 }));
 
-vi.mock("../services/event-bus", () => ({
-  eventBus: {
-    emit: { STACK_LIMITS_CHANGED: vi.fn() },
-    subscribe: {},
-  },
-}));
-
 const mockUseStackLimits = vi.mocked(useStackLimits);
 
 const fullDeckResult = {
@@ -58,7 +51,7 @@ describe("StackRangeBadge", () => {
   it("shows full-deck label when limits are default", () => {
     mockUseStackLimits.mockReturnValue(fullDeckResult);
 
-    render(<StackRangeBadge stackKey="mnemonica" stackName="Mnemonica" />);
+    render(<StackRangeBadge stackKey="mnemonica" />);
 
     const button = screen.getByRole("button", {
       name: `Stack range: ${DECK_SIZE} cards. Tap to adjust.`,
@@ -69,7 +62,7 @@ describe("StackRangeBadge", () => {
   it("shows partial range label when limits are custom", () => {
     mockUseStackLimits.mockReturnValue(partialResult);
 
-    render(<StackRangeBadge stackKey="mnemonica" stackName="Mnemonica" />);
+    render(<StackRangeBadge stackKey="mnemonica" />);
 
     const button = screen.getByRole("button", {
       name: "Stack range: positions 1 to 20. Tap to adjust.",
@@ -81,7 +74,7 @@ describe("StackRangeBadge", () => {
     const user = userEvent.setup();
     mockUseStackLimits.mockReturnValue(smallRangeResult);
 
-    render(<StackRangeBadge stackKey="mnemonica" stackName="Mnemonica" />);
+    render(<StackRangeBadge stackKey="mnemonica" />);
 
     await user.click(
       screen.getByRole("button", {
@@ -103,7 +96,7 @@ describe("StackRangeBadge", () => {
       rangeSize: MIN_SPOT_CHECK_RANGE,
     });
 
-    render(<StackRangeBadge stackKey="mnemonica" stackName="Mnemonica" />);
+    render(<StackRangeBadge stackKey="mnemonica" />);
 
     await user.click(
       screen.getByRole("button", {
@@ -126,7 +119,7 @@ describe("StackRangeBadge", () => {
     });
     const user = userEvent.setup();
 
-    render(<StackRangeBadge stackKey="mnemonica" stackName="Mnemonica" />);
+    render(<StackRangeBadge stackKey="mnemonica" />);
 
     await user.click(
       screen.getByRole("button", {

@@ -322,6 +322,10 @@
     "stackLimitsCorrupt": {
       "title": "Intervalli dello stack non caricati",
       "message": "I tuoi intervalli salvati per ogni stack non hanno superato la validazione. Le modifiche agli intervalli sono disabilitate per non sovrascriverli. Cancella i dati del browser per questo sito per ricominciare — riprovare non aiuterà."
+    },
+    "localDbWriteFailed": {
+      "title": "Modifiche non salvate",
+      "message": "Lo spazio di archiviazione del browser potrebbe essere pieno — le modifiche recenti non saranno mantenute dopo aver ricaricato la pagina."
     }
   },
   "stats": {

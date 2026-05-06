@@ -1,7 +1,10 @@
 import { SELECTED_STACK_LSK } from "../constants";
 import { type StackKey, type StackValue, stacks } from "../types/stacks";
 import { useLocalDb } from "../utils/localstorage";
-import { reportLocalDbCorruption } from "../utils/localstorage-telemetry";
+import {
+  handleLocalDbWriteFailed,
+  reportLocalDbCorruption,
+} from "../utils/localstorage-telemetry";
 
 export const isStackKey = (key: string): key is StackKey => key in stacks;
 
@@ -36,10 +39,11 @@ export const useSelectedStack = (): SelectedStackResult => {
     SELECTED_STACK_LSK,
     "",
     isStackKeyOrEmpty,
-    reportLocalDbCorruption
+    reportLocalDbCorruption,
+    handleLocalDbWriteFailed
   );
 
-  const setStackKey = (key: StackKey | "") => {
+  const setStackKey = (key: StackKey | ""): void => {
     setSelectedStackKey(key);
   };
 

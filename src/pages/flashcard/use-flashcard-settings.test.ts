@@ -90,18 +90,20 @@ describe("useFlashcardSettings", () => {
     expect(result.current.neighborDirection).toBe("random");
   });
 
-  it("calls useLocalDb with correct keys, defaults, and validator functions", () => {
+  it("calls useLocalDb with correct keys, defaults, validators, and write/corrupt callbacks", () => {
     expect(mockedUseLocalDb).toHaveBeenCalledTimes(2);
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
       FLASHCARD_OPTION_LSK,
       "bothmodes",
       isFlashcardMode,
+      expect.any(Function),
       expect.any(Function)
     );
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
       NEIGHBOR_DIRECTION_LSK,
       "random",
       isNeighborDirection,
+      expect.any(Function),
       expect.any(Function)
     );
   });
@@ -228,12 +230,12 @@ describe("useFlashcardSettings", () => {
         result.current.handleTimerEnabledChange(true);
       });
 
+      expect(mockSetTimerEnabled).toHaveBeenCalledWith(true);
       expect(mockTrackEvent).toHaveBeenCalledWith(
         "Settings",
         "Timer Enabled",
         "Flashcard"
       );
-      expect(mockSetTimerEnabled).toHaveBeenCalledWith(true);
     });
 
     it("tracks analytics event and disables timer", () => {
@@ -241,12 +243,12 @@ describe("useFlashcardSettings", () => {
         result.current.handleTimerEnabledChange(false);
       });
 
+      expect(mockSetTimerEnabled).toHaveBeenCalledWith(false);
       expect(mockTrackEvent).toHaveBeenCalledWith(
         "Settings",
         "Timer Disabled",
         "Flashcard"
       );
-      expect(mockSetTimerEnabled).toHaveBeenCalledWith(false);
     });
   });
 });

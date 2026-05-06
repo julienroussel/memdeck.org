@@ -5,11 +5,23 @@ import {
   DEFAULT_STACK_LIMITS,
   isStackLimitsRecord,
 } from "../types/stack-limits";
-import { createDeckPosition } from "../types/stacks";
+import { createDeckPosition, stacks } from "../types/stacks";
 import { useStackLimits } from "./use-stack-limits";
 
-const mockSetValue = vi.fn();
+// Mantine-mirroring setter: invoke `options.onSuccess` so the emit gating
+// in `useStackLimits` (which depends on a successful persisted write)
+// fires by default. Tests that need to simulate a write failure set
+// `mockSetValueSucceeds` to `false` before calling `setLimits`.
+let mockSetValueSucceeds = true;
+const mockSetValue = vi.fn(
+  (_next: unknown, options?: { onSuccess?: () => void }) => {
+    if (mockSetValueSucceeds) {
+      options?.onSuccess?.();
+    }
+  }
+);
 const mockProbeStoredValue = vi.fn();
+const mockEmitStackLimitsChanged = vi.fn();
 
 vi.mock("../utils/localstorage", () => ({
   useLocalDb: vi.fn((_, defaultValue) => [defaultValue, mockSetValue, vi.fn()]),
@@ -22,6 +34,16 @@ vi.mock("../services/analytics", () => ({
   },
 }));
 
+vi.mock("../services/event-bus", () => ({
+  eventBus: {
+    emit: {
+      STACK_LIMITS_CHANGED: (...args: unknown[]) =>
+        mockEmitStackLimitsChanged(...args),
+    },
+    subscribe: {},
+  },
+}));
+
 const { useLocalDb } = await import("../utils/localstorage");
 const mockedUseLocalDb = vi.mocked(useLocalDb);
 const { analytics } = await import("../services/analytics");
@@ -29,6 +51,7 @@ const mockedTrackError = vi.mocked(analytics.trackError);
 
 beforeEach(() => {
   mockProbeStoredValue.mockReturnValue({ status: "absent" });
+  mockSetValueSucceeds = true;
 });
 
 afterEach(() => {
@@ -108,13 +131,14 @@ describe("useStackLimits", () => {
     expect(updated).toEqual({ mnemonica: { start: 10, end: 30 } });
   });
 
-  it("passes isStackLimitsRecord as the validator to useLocalDb", () => {
+  it("passes isStackLimitsRecord as the validator and write/corrupt callbacks to useLocalDb", () => {
     renderHook(() => useStackLimits("mnemonica"));
 
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
       STACK_LIMITS_LSK,
       expect.anything(),
       isStackLimitsRecord,
+      expect.any(Function),
       expect.any(Function)
     );
   });
@@ -204,5 +228,78 @@ describe("useStackLimits", () => {
     renderHook(() => useStackLimits("mnemonica"));
 
     expect(mockedTrackError).not.toHaveBeenCalled();
+  });
+
+  // Parametrized over two stacks so a regression in the `stacks[stackKey].name`
+  // lookup (e.g. swapping the indexer with `stackKey` itself) can't survive by
+  // coincidentally matching the hardcoded literal.
+  it.each([
+    "mnemonica",
+    "aronson",
+  ] as const)("emits STACK_LIMITS_CHANGED with the correct payload when setLimits succeeds (%s)", (stackKey) => {
+    const { result } = renderHook(() => useStackLimits(stackKey));
+
+    result.current.setLimits({
+      start: createDeckPosition(5),
+      end: createDeckPosition(25),
+    });
+
+    expect(mockEmitStackLimitsChanged).toHaveBeenCalledTimes(1);
+    expect(mockEmitStackLimitsChanged).toHaveBeenCalledWith({
+      start: 5,
+      end: 25,
+      rangeSize: 21,
+      stackName: stacks[stackKey].name,
+    });
+  });
+
+  it("does not emit STACK_LIMITS_CHANGED when the corrupt-lock blocks the write", () => {
+    mockProbeStoredValue.mockReturnValue({
+      status: "corrupt",
+      raw: "garbage",
+    });
+
+    const { result } = renderHook(() => useStackLimits("mnemonica"));
+
+    result.current.setLimits({
+      start: createDeckPosition(5),
+      end: createDeckPosition(25),
+    });
+
+    expect(mockEmitStackLimitsChanged).not.toHaveBeenCalled();
+  });
+
+  it("does not emit STACK_LIMITS_CHANGED when the stored blob read errored", () => {
+    mockProbeStoredValue.mockReturnValue({
+      status: "read-error",
+      error: new Error("boom"),
+    });
+
+    const { result } = renderHook(() => useStackLimits("mnemonica"));
+
+    result.current.setLimits({
+      start: createDeckPosition(5),
+      end: createDeckPosition(25),
+    });
+
+    expect(mockEmitStackLimitsChanged).not.toHaveBeenCalled();
+  });
+
+  it("does not emit STACK_LIMITS_CHANGED when the wrapped setter's write fails", () => {
+    // Quota exceeded / Safari private mode / ITP eviction path: Mantine
+    // swallows the IO error and `useLocalDb` skips the onSuccess callback
+    // it received. The analytics emit must not fire — we shouldn't pretend
+    // the user's range change persisted.
+    mockSetValueSucceeds = false;
+
+    const { result } = renderHook(() => useStackLimits("mnemonica"));
+
+    result.current.setLimits({
+      start: createDeckPosition(5),
+      end: createDeckPosition(25),
+    });
+
+    expect(mockSetValue).toHaveBeenCalledTimes(1);
+    expect(mockEmitStackLimitsChanged).not.toHaveBeenCalled();
   });
 });

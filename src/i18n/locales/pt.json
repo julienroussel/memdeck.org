@@ -322,6 +322,10 @@
     "stackLimitsCorrupt": {
       "title": "Não foi possível carregar os intervalos do stack",
       "message": "Os teus intervalos guardados por stack não passaram na validação. As edições de intervalo estão desativadas para não os sobrescrever. Limpa o armazenamento do navegador para este site para começar de novo — tentar de novo não vai ajudar."
+    },
+    "localDbWriteFailed": {
+      "title": "Alterações não guardadas",
+      "message": "O armazenamento do navegador pode estar cheio — as alterações recentes não serão mantidas após recarregar a página."
     }
   },
   "stats": {
