@@ -1,6 +1,8 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures/test-setup";
 
+const STACK_RANGE_BADGE_PATTERN = /Stack range/;
+
 test.describe("Stack Limits", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
@@ -154,5 +156,37 @@ test.describe("Stack Limits", () => {
       name: "Stack range: positions 1 to 13. Tap to adjust.",
     });
     await expect(mnemonicaBadge).toContainText("1–13");
+  });
+
+  // Issue #639 regression: a corrupt `memdeck-app-stack-limits` blob used to
+  // be silently replaced with "{}" on mount because Mantine's
+  // `useLocalStorage` wrote the deserialize-fallback to disk during its mount
+  // effect. The fix replaces that hook with `useSyncExternalStore`, which
+  // never writes on mount. This test plants a typeguard-failing blob, reloads
+  // a page that mounts `useStackLimits`, and asserts the on-disk bytes are
+  // preserved byte-for-byte.
+  test("should preserve a corrupt stack-limits blob across mount (issue #639)", async ({
+    page,
+  }) => {
+    const corrupt = JSON.stringify("garbage-not-a-record");
+
+    await page.evaluate((value) => {
+      localStorage.setItem("memdeck-app-stack-limits", value);
+    }, corrupt);
+
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+
+    // The range badge mounts useStackLimits; if mount-time auto-write were
+    // still in place, the corrupt blob would now be "{}".
+    const badge = page.getByRole("button", {
+      name: STACK_RANGE_BADGE_PATTERN,
+    });
+    await expect(badge).toBeVisible();
+
+    const onDisk = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-stack-limits")
+    );
+    expect(onDisk).toBe(corrupt);
   });
 });
