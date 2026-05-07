@@ -115,6 +115,11 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
 
   const pendingFinalizationRef = useRef<ActiveSession | null>(null);
   const finalizedIdsRef = useRef<Set<string>>(new Set());
+  // Tracks session ids the auto-finalize effect has already requested
+  // finalization for, so unrelated status changes (e.g. a limits-merge
+  // re-render after the threshold has been crossed) don't re-fire. The
+  // persistence layer additionally dedupes via finalizedIdsRef.
+  const requestedFinalizationIdsRef = useRef<Set<string>>(new Set());
 
   // Tick counter used to force a re-render after a ref-only mutation
   // (e.g. queueing a session for finalization). The flush effect below
@@ -329,6 +334,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
       }
 
       finalizedIdsRef.current.clear();
+      requestedFinalizationIdsRef.current.clear();
 
       const baseSession: ActiveSessionBase = {
         id: crypto.randomUUID(),
@@ -383,8 +389,32 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
   const { recordCorrect, recordIncorrect, recordQuestionAdvanced } =
     useSessionRecording({
       setStatus,
-      requestFinalization,
     });
+
+  // Auto-finalize a structured session when its question target is reached.
+  // Driven by the COMMITTED status so increments queued by recordCorrect /
+  // recordIncorrect that ran in the same event handler as
+  // recordQuestionAdvanced are reflected in the persisted record. The dedupe
+  // ref keys on session.id so unrelated status changes (e.g. a limits-merge
+  // re-render) don't re-fire after the threshold has already been requested;
+  // the persistence layer additionally dedupes via finalizedIdsRef.
+  useEffect(() => {
+    if (status.phase !== "active") {
+      return;
+    }
+    const { session } = status;
+    if (session.config.type !== "structured") {
+      return;
+    }
+    if (session.questionsCompleted < session.config.totalQuestions) {
+      return;
+    }
+    if (requestedFinalizationIdsRef.current.has(session.id)) {
+      return;
+    }
+    requestedFinalizationIdsRef.current.add(session.id);
+    requestFinalization(session);
+  }, [status, requestFinalization]);
 
   const handleAnswer = useCallback(
     (outcome: AnswerOutcome) => {

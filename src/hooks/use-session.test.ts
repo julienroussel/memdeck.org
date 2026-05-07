@@ -408,18 +408,94 @@ describe("useSession hook", () => {
     expect(updated.activeSession?.questionsCompleted).toBe(9);
     expect(updated.status.phase).toBe("active");
 
-    // The 10th answer triggers auto-completion
+    // The 10th answer triggers auto-completion. Three rerender cycles are
+    // needed because the auto-finalize logic now lives in a useEffect on
+    // `status` rather than a synchronous side effect inside the
+    // recordQuestionAdvanced callback:
+    //   #1 commits the answer's setState updates and runs the auto-finalize
+    //      effect, which bumps flushTick. The flush effect's closure (from
+    //      this same render's call to useSession) captured flushTick at its
+    //      pre-bump value, so it cannot observe the new tick within the same
+    //      flushEffects() cycle.
+    //   #2 re-runs useSession with the bumped flushTick captured; the flush
+    //      effect now persists and calls setStatus({ phase: "summary" }).
+    //   #3 reads the summary phase from useSession's return.
     updated.handleAnswer({ correct: true, questionAdvanced: true });
-    // First re-render: the setState updater sets pendingFinalizationRef,
-    // then the effect flushes and calls setStatus to summary phase.
     updated = rerenderAndFlush();
-    // Second re-render: needed to read the state set by the effect.
+    updated = rerenderAndFlush();
     updated = rerenderAndFlush();
 
     expect(updated.status.phase).toBe("summary");
     expect(mockBuildSessionRecord).toHaveBeenCalled();
     expect(mockSaveSessionRecord).toHaveBeenCalled();
     expect(mockEventBusEmit.SESSION_COMPLETED).toHaveBeenCalled();
+  });
+
+  it("auto-finalize persists same-event sibling increments alongside the question advance", () => {
+    // The auto-finalize effect observes the COMMITTED status and passes it to
+    // requestFinalization, so increments produced earlier in the same event
+    // handler (recordCorrect's successes/streak bump from applyAnswerOutcome,
+    // session-phase.ts) reach the persisted record alongside the
+    // questionsCompleted bump. The mocked useState in this file applies
+    // updaters eagerly without batching, so this test pins the
+    // committed-status-passthrough contract — NOT the prev-vs-stale invariant
+    // (the recording hook's setStatus(prev => …) form is what guarantees
+    // that, covered under real React batching in
+    // use-session-recording.test.ts).
+    const result = initHook();
+    result.startSession({ type: "structured", totalQuestions: 1 });
+
+    let updated = rerenderAndFlush();
+
+    // The single answer triggers both:
+    //   - recordCorrect (successes/currentStreak/bestStreak ++)
+    //   - recordQuestionAdvanced (questionsCompleted ++ to 1, hits limit)
+    updated.handleAnswer({ correct: true, questionAdvanced: true });
+    updated = rerenderAndFlush();
+    updated = rerenderAndFlush();
+    updated = rerenderAndFlush();
+
+    expect(updated.status.phase).toBe("summary");
+    expect(mockBuildSessionRecord).toHaveBeenCalledOnce();
+    expect(mockBuildSessionRecord).toHaveBeenCalledWith(
+      expect.objectContaining({
+        questionsCompleted: 1,
+        successes: 1,
+        currentStreak: 1,
+        bestStreak: 1,
+      })
+    );
+  });
+
+  it("auto-finalize requests at most once per session id even if the threshold remains met across multiple renders", () => {
+    // Simulates a persistence failure so the phase stays "active" with
+    // questionsCompleted >= totalQuestions across multiple subsequent
+    // renders. The auto-finalize effect must short-circuit on its dedupe ref
+    // and not request a second finalization. The persistence-layer dedupe in
+    // finalizedIdsRef wouldn't help here because that ref is only populated
+    // on a successful write — the auto-finalize-layer ref is what holds the
+    // line on a failure.
+    mockFinalizeSession.mockReturnValueOnce({
+      ok: false,
+      reason: "write-failed",
+    });
+    const result = initHook();
+    result.startSession({ type: "structured", totalQuestions: 1 });
+
+    let updated = rerenderAndFlush();
+    updated.handleAnswer({ correct: true, questionAdvanced: true });
+    // Drive several rerenders past threshold; auto-finalize must only
+    // request finalize on the first one.
+    updated = rerenderAndFlush();
+    updated = rerenderAndFlush();
+    updated = rerenderAndFlush();
+    updated = rerenderAndFlush();
+
+    // Phase remained active because the write failed.
+    expect(updated.status.phase).toBe("active");
+    // Despite the threshold staying met across multiple renders,
+    // finalizeSession was attempted exactly once.
+    expect(mockFinalizeSession).toHaveBeenCalledOnce();
   });
 
   it("returns to idle when stopping an open session with fewer than 3 questions", () => {
@@ -487,7 +563,9 @@ describe("useSession hook", () => {
       updated.handleAnswer({ correct: true, questionAdvanced: true });
       updated = rerenderAndFlush();
     }
-    // Flush finalization effect + re-render to read summary state
+    // Two extra rerenders to drain the auto-finalize → flush → summary chain
+    // (see the comment in the auto-completes test above for the cycle).
+    updated = rerenderAndFlush();
     updated = rerenderAndFlush();
 
     expect(updated.status.phase).toBe("summary");
@@ -511,7 +589,9 @@ describe("useSession hook", () => {
       updated.handleAnswer({ correct: true, questionAdvanced: true });
       updated = rerenderAndFlush();
     }
-    // Flush finalization effect + re-render to read summary state
+    // Two extra rerenders to drain the auto-finalize → flush → summary chain
+    // (see the comment in the auto-completes test above for the cycle).
+    updated = rerenderAndFlush();
     updated = rerenderAndFlush();
 
     expect(updated.status.phase).toBe("summary");
