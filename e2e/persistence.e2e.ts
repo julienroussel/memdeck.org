@@ -234,11 +234,63 @@ test.describe("localStorage Persistence", () => {
       .inputValue();
     expect(selectedValue).toBe("");
 
-    // After reload, app re-initializes localStorage with default empty value
+    // After reload, the key stays absent until the user makes a selection.
+    // (Pre-#639, mounting useLocalDb auto-wrote the default value to disk —
+    // that side effect is gone; UI state still falls back to the default,
+    // but disk is left clean.)
     const clearedStack = await page.evaluate(() =>
       localStorage.getItem("memdeck-app-stack")
     );
-    expect(clearedStack).toBe('""'); // JSON stringified empty string
+    expect(clearedStack).toBeNull();
+  });
+
+  // Reset-on-write recovery contract for low-stakes single-value keys (see
+  // src/hooks/use-selected-stack.ts:34-37). A corrupt blob must not trap the
+  // user — the next normal interaction overwrites it. Distinct from the
+  // multi-record useStackLimits case (issue #639), where the consumer-level
+  // lock blocks writes to preserve other stacks' ranges.
+  test("should let the user recover from a corrupt single-value blob via normal interaction", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
+    // Plant a JSON-valid blob that fails the StackKey type guard.
+    await page.evaluate(() => {
+      localStorage.setItem(
+        "memdeck-app-stack",
+        JSON.stringify("not-a-real-stack")
+      );
+    });
+
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+
+    // The picker shows empty (default fallback) — no stack selected.
+    const stackPicker = page.locator("[data-testid='stack-picker']").first();
+    expect(await stackPicker.inputValue()).toBe("");
+
+    // Pin the invariant the fix guarantees: empty UI coexists with the
+    // corrupt blob still on disk. Distinguishes reset-on-write from a
+    // hypothetical mount-time clear regression — under the old Mantine
+    // behavior this assertion would have observed `'""'` (the
+    // deserialize-fallback that mount auto-wrote).
+    const beforePick = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-stack")
+    );
+    expect(beforePick).toBe(JSON.stringify("not-a-real-stack"));
+
+    // The user picks a real stack — the setter must overwrite the corrupt
+    // bytes (reset-on-write) so the selection persists.
+    await stackPicker.selectOption("aronson");
+    await page.waitForLoadState("networkidle");
+
+    expect(await stackPicker.inputValue()).toBe("aronson");
+
+    const onDisk = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-stack")
+    );
+    expect(onDisk).toBe(JSON.stringify("aronson"));
   });
 
   test("should not lose settings during rapid navigation", async ({ page }) => {
