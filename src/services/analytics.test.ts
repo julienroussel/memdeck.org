@@ -336,6 +336,63 @@ describe("analytics", () => {
         })
       );
     });
+
+    it("does not suppress subsequent listener errors when a microtask is never drained (page-unload regression)", () => {
+      // Capture queued callbacks instead of running them — simulates the
+      // page-unload scenario where the microtask queue never drains. Under
+      // the pre-fix latch, `isReportingListenerError` would stay true after
+      // the first throw and silently swallow every subsequent listener error
+      // for the document's lifetime; under the fix every throw must queue
+      // its own trackError microtask independently.
+      const captured: Array<() => void> = [];
+      const queueSpy = vi
+        .spyOn(globalThis, "queueMicrotask")
+        .mockImplementation((cb: () => void) => {
+          captured.push(cb);
+        });
+
+      try {
+        mockEvent.mockImplementationOnce(() => {
+          throw new Error("first-throw");
+        });
+        eventBus.emit.STACK_SELECTED({ stackName: "Mnemonica" });
+        expect(queueSpy).toHaveBeenCalledTimes(1);
+
+        mockEvent.mockImplementationOnce(() => {
+          throw new Error("second-throw");
+        });
+        eventBus.emit.STACK_SELECTED({ stackName: "Aronson" });
+        // Pre-fix this stays at 1 — the latch is still set. Post-fix it must
+        // be 2 because the latch reset is no longer gated on the microtask
+        // running.
+        expect(queueSpy).toHaveBeenCalledTimes(2);
+
+        // Drain the captured callbacks manually and verify each closed over
+        // the correct error — proves they aren't accidentally one queued
+        // callback fired twice with stale data.
+        captured[0]();
+        expect(mockEvent).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            category: "Error",
+            action: "Error",
+            label: "first-throw",
+          })
+        );
+        captured[1]();
+        expect(mockEvent).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            category: "Error",
+            action: "Error",
+            label: "second-throw",
+          })
+        );
+      } finally {
+        // The file's `afterEach` calls `vi.clearAllMocks()`, which clears
+        // call history but does NOT restore spies. Restoring explicitly
+        // keeps real `queueMicrotask` available for sibling tests.
+        queueSpy.mockRestore();
+      }
+    });
   });
 
   describe("initialize", () => {
