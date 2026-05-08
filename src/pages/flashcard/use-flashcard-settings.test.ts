@@ -1,6 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FLASHCARD_OPTION_LSK, NEIGHBOR_DIRECTION_LSK } from "../../constants";
+import { createGatedSetterMock } from "../../test-utils/mock-local-db-setter";
 import {
   type FlashcardMode,
   isFlashcardMode,
@@ -11,13 +12,21 @@ import {
 let currentMode: FlashcardMode = "bothmodes";
 let currentDirection: NeighborDirection = "random";
 
-const mockSetMode = vi.fn((value: FlashcardMode) => {
-  currentMode = value;
+// `mockSetValueSucceeds` gates all three setters together — flip to false
+// before a handler call to simulate a Mantine-swallowed quota-exceeded write.
+let mockSetValueSucceeds = true;
+const succeeds = () => mockSetValueSucceeds;
+
+const mockSetMode = createGatedSetterMock<FlashcardMode>(succeeds, (v) => {
+  currentMode = v;
 });
-const mockSetNeighborDirection = vi.fn((value: NeighborDirection) => {
-  currentDirection = value;
-});
-const mockSetTimerEnabled = vi.fn();
+const mockSetNeighborDirection = createGatedSetterMock<NeighborDirection>(
+  succeeds,
+  (v) => {
+    currentDirection = v;
+  }
+);
+const mockSetTimerEnabled = createGatedSetterMock<boolean>(succeeds);
 const mockSetTimerDuration = vi.fn();
 const mockTrackEvent = vi.fn();
 const mockEmitFlashcardModeChanged = vi.fn();
@@ -60,6 +69,7 @@ describe("useFlashcardSettings", () => {
   beforeEach(() => {
     currentMode = "bothmodes";
     currentDirection = "random";
+    mockSetValueSucceeds = true;
 
     // Cast intentional: mockImplementation cannot satisfy the generic useLocalDb<T> signature
     // for multiple T values. Argument matching by key avoids fragile call-order dependency.
@@ -129,7 +139,10 @@ describe("useFlashcardSettings", () => {
         result.current.handleModeChange("cardonly");
       });
 
-      expect(mockSetMode).toHaveBeenCalledWith("cardonly");
+      expect(mockSetMode).toHaveBeenCalledWith(
+        "cardonly",
+        expect.objectContaining({ onSuccess: expect.any(Function) })
+      );
       expect(mockEmitFlashcardModeChanged).toHaveBeenCalledWith({
         mode: "cardonly",
       });
@@ -140,7 +153,10 @@ describe("useFlashcardSettings", () => {
         result.current.handleModeChange("numberonly");
       });
 
-      expect(mockSetMode).toHaveBeenCalledWith("numberonly");
+      expect(mockSetMode).toHaveBeenCalledWith(
+        "numberonly",
+        expect.objectContaining({ onSuccess: expect.any(Function) })
+      );
       expect(mockEmitFlashcardModeChanged).toHaveBeenCalledWith({
         mode: "numberonly",
       });
@@ -151,7 +167,10 @@ describe("useFlashcardSettings", () => {
         result.current.handleModeChange("bothmodes");
       });
 
-      expect(mockSetMode).toHaveBeenCalledWith("bothmodes");
+      expect(mockSetMode).toHaveBeenCalledWith(
+        "bothmodes",
+        expect.objectContaining({ onSuccess: expect.any(Function) })
+      );
       expect(mockEmitFlashcardModeChanged).toHaveBeenCalledWith({
         mode: "bothmodes",
       });
@@ -162,7 +181,10 @@ describe("useFlashcardSettings", () => {
         result.current.handleModeChange("neighbor");
       });
 
-      expect(mockSetMode).toHaveBeenCalledWith("neighbor");
+      expect(mockSetMode).toHaveBeenCalledWith(
+        "neighbor",
+        expect.objectContaining({ onSuccess: expect.any(Function) })
+      );
       expect(mockEmitFlashcardModeChanged).toHaveBeenCalledWith({
         mode: "neighbor",
       });
@@ -177,6 +199,16 @@ describe("useFlashcardSettings", () => {
       expect(mockSetMode).not.toHaveBeenCalled();
       expect(mockEmitFlashcardModeChanged).not.toHaveBeenCalled();
     });
+
+    it("does not emit FLASHCARD_MODE_CHANGED when the wrapped setter's write fails", () => {
+      mockSetValueSucceeds = false;
+      act(() => {
+        result.current.handleModeChange("cardonly");
+      });
+      expect(mockSetMode).toHaveBeenCalledTimes(1);
+      expect(mockEmitFlashcardModeChanged).not.toHaveBeenCalled();
+      expect(currentMode).toBe("bothmodes");
+    });
   });
 
   describe("handleDirectionChange", () => {
@@ -185,7 +217,10 @@ describe("useFlashcardSettings", () => {
         result.current.handleDirectionChange("before");
       });
 
-      expect(mockSetNeighborDirection).toHaveBeenCalledWith("before");
+      expect(mockSetNeighborDirection).toHaveBeenCalledWith(
+        "before",
+        expect.objectContaining({ onSuccess: expect.any(Function) })
+      );
       expect(mockEmitNeighborDirectionChanged).toHaveBeenCalledWith({
         direction: "before",
       });
@@ -196,7 +231,10 @@ describe("useFlashcardSettings", () => {
         result.current.handleDirectionChange("after");
       });
 
-      expect(mockSetNeighborDirection).toHaveBeenCalledWith("after");
+      expect(mockSetNeighborDirection).toHaveBeenCalledWith(
+        "after",
+        expect.objectContaining({ onSuccess: expect.any(Function) })
+      );
       expect(mockEmitNeighborDirectionChanged).toHaveBeenCalledWith({
         direction: "after",
       });
@@ -207,7 +245,10 @@ describe("useFlashcardSettings", () => {
         result.current.handleDirectionChange("random");
       });
 
-      expect(mockSetNeighborDirection).toHaveBeenCalledWith("random");
+      expect(mockSetNeighborDirection).toHaveBeenCalledWith(
+        "random",
+        expect.objectContaining({ onSuccess: expect.any(Function) })
+      );
       expect(mockEmitNeighborDirectionChanged).toHaveBeenCalledWith({
         direction: "random",
       });
@@ -222,6 +263,16 @@ describe("useFlashcardSettings", () => {
       expect(mockSetNeighborDirection).not.toHaveBeenCalled();
       expect(mockEmitNeighborDirectionChanged).not.toHaveBeenCalled();
     });
+
+    it("does not emit NEIGHBOR_DIRECTION_CHANGED when the wrapped setter's write fails", () => {
+      mockSetValueSucceeds = false;
+      act(() => {
+        result.current.handleDirectionChange("before");
+      });
+      expect(mockSetNeighborDirection).toHaveBeenCalledTimes(1);
+      expect(mockEmitNeighborDirectionChanged).not.toHaveBeenCalled();
+      expect(currentDirection).toBe("random");
+    });
   });
 
   describe("handleTimerEnabledChange", () => {
@@ -230,7 +281,10 @@ describe("useFlashcardSettings", () => {
         result.current.handleTimerEnabledChange(true);
       });
 
-      expect(mockSetTimerEnabled).toHaveBeenCalledWith(true);
+      expect(mockSetTimerEnabled).toHaveBeenCalledWith(
+        true,
+        expect.objectContaining({ onSuccess: expect.any(Function) })
+      );
       expect(mockTrackEvent).toHaveBeenCalledWith(
         "Settings",
         "Timer Enabled",
@@ -243,12 +297,24 @@ describe("useFlashcardSettings", () => {
         result.current.handleTimerEnabledChange(false);
       });
 
-      expect(mockSetTimerEnabled).toHaveBeenCalledWith(false);
+      expect(mockSetTimerEnabled).toHaveBeenCalledWith(
+        false,
+        expect.objectContaining({ onSuccess: expect.any(Function) })
+      );
       expect(mockTrackEvent).toHaveBeenCalledWith(
         "Settings",
         "Timer Disabled",
         "Flashcard"
       );
+    });
+
+    it("does not track analytics when the wrapped setter's write fails", () => {
+      mockSetValueSucceeds = false;
+      act(() => {
+        result.current.handleTimerEnabledChange(true);
+      });
+      expect(mockSetTimerEnabled).toHaveBeenCalledTimes(1);
+      expect(mockTrackEvent).not.toHaveBeenCalled();
     });
   });
 });

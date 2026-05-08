@@ -6,27 +6,16 @@ import { RevealButton } from "../../components/reveal-button";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
 import { TrainingHeader } from "../../components/training-header";
-import { SPOT_CHECK_MODE_LSK } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
-import { useSpotCheckTimer } from "../../hooks/use-spot-check-timer";
 import { useStackLimits } from "../../hooks/use-stack-limits";
 import { analytics } from "../../services/analytics";
-import { eventBus } from "../../services/event-bus";
-import {
-  isSpotCheckMode,
-  type SpotCheckI18nKey,
-  type SpotCheckMode,
-} from "../../types/spot-check";
+import type { SpotCheckI18nKey, SpotCheckMode } from "../../types/spot-check";
 import { cardItems } from "../../types/typeguards";
-import { useLocalDb } from "../../utils/localstorage";
-import {
-  handleLocalDbWriteFailed,
-  reportLocalDbCorruption,
-} from "../../utils/localstorage-telemetry";
 import { SpotCheckSettingsContent } from "./spot-check-settings-content";
 import { useSpotCheckGame } from "./use-spot-check-game";
+import { useSpotCheckSettings } from "./use-spot-check-settings";
 
 const MODE_INSTRUCTION_LABELS = {
   missing: "spotCheck.identifyMissing",
@@ -48,13 +37,13 @@ export const SpotCheck = () => {
   });
   const { stackKey, stackOrder, stackName } = useRequiredStack();
 
-  const [mode, setMode] = useLocalDb<SpotCheckMode>(
-    SPOT_CHECK_MODE_LSK,
-    "missing",
-    isSpotCheckMode,
-    reportLocalDbCorruption,
-    handleLocalDbWriteFailed
-  );
+  const {
+    mode,
+    timerSettings,
+    setTimerDuration,
+    handleModeChange,
+    handleTimerEnabledChange,
+  } = useSpotCheckSettings();
 
   const { limits, rangeSize } = useStackLimits(stackKey);
 
@@ -75,17 +64,6 @@ export const SpotCheck = () => {
     stackLimits: limits,
   });
 
-  const handleModeChange = useCallback(
-    (value: SpotCheckMode) => {
-      setMode(value);
-      eventBus.emit.SPOT_CHECK_MODE_CHANGED({ mode: value });
-    },
-    [setMode]
-  );
-
-  const { timerSettings, setTimerEnabled, setTimerDuration } =
-    useSpotCheckTimer();
-
   const {
     score,
     puzzleCards,
@@ -96,18 +74,6 @@ export const SpotCheck = () => {
   } = useSpotCheckGame(stackOrder, stackName, mode, timerSettings, limits, {
     onAnswer: handleAnswer,
   });
-
-  const handleTimerEnabledChange = useCallback(
-    (enabled: boolean) => {
-      analytics.trackEvent(
-        "Settings",
-        `Timer ${enabled ? "Enabled" : "Disabled"}`,
-        "SpotCheck"
-      );
-      setTimerEnabled(enabled);
-    },
-    [setTimerEnabled]
-  );
 
   const handleRevealAnswer = useCallback(() => {
     analytics.trackFeatureUsed("Reveal Answer - Spot Check");

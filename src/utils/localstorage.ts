@@ -90,7 +90,7 @@ export const getStoredValue = <T>(
   return probe.status === "valid" ? probe.value : defaultValue;
 };
 
-type UseLocalDbSetOptions = { onSuccess?: () => void };
+export type UseLocalDbSetOptions = { onSuccess?: () => void };
 
 type UseLocalDbSetter<T> = (
   value: T | ((prevState: T) => T),

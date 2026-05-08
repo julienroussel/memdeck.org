@@ -51,8 +51,11 @@ export const useFlashcardSettings = (): UseFlashcardSettingsResult => {
       if (!isFlashcardMode(value)) {
         return;
       }
-      setMode(value);
-      eventBus.emit.FLASHCARD_MODE_CHANGED({ mode: value });
+      setMode(value, {
+        onSuccess: () => {
+          eventBus.emit.FLASHCARD_MODE_CHANGED({ mode: value });
+        },
+      });
     },
     [setMode]
   );
@@ -62,20 +65,26 @@ export const useFlashcardSettings = (): UseFlashcardSettingsResult => {
       if (!isNeighborDirection(value)) {
         return;
       }
-      setNeighborDirection(value);
-      eventBus.emit.NEIGHBOR_DIRECTION_CHANGED({ direction: value });
+      setNeighborDirection(value, {
+        onSuccess: () => {
+          eventBus.emit.NEIGHBOR_DIRECTION_CHANGED({ direction: value });
+        },
+      });
     },
     [setNeighborDirection]
   );
 
   const handleTimerEnabledChange = useCallback(
     (enabled: boolean) => {
-      analytics.trackEvent(
-        "Settings",
-        `Timer ${enabled ? "Enabled" : "Disabled"}`,
-        "Flashcard"
-      );
-      setTimerEnabled(enabled);
+      setTimerEnabled(enabled, {
+        onSuccess: () => {
+          analytics.trackEvent(
+            "Settings",
+            `Timer ${enabled ? "Enabled" : "Disabled"}`,
+            "Flashcard"
+          );
+        },
+      });
     },
     [setTimerEnabled]
   );
