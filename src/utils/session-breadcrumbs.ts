@@ -1,4 +1,4 @@
-import { LAST_SAVE_FAILED_LSK } from "../constants";
+import { LAST_SAVE_FAILED_LSK, LAST_SAVE_FAILED_SHOWN_SSK } from "../constants";
 import { analytics } from "../services/analytics";
 import { probeStoredValue } from "./localstorage";
 
@@ -144,6 +144,67 @@ export const clearLastSaveFailedBreadcrumb = (): void => {
       } catch {
         // intentionally empty
       }
+    }
+  }
+};
+
+/**
+ * sessionStorage backstop for the rare case where
+ * `clearLastSaveFailedBreadcrumb` cannot persist (both `removeItem` and the
+ * null-sentinel `setItem` fail). Without this, every fresh mount re-fires
+ * the "last save failed" notification (issue #629). sessionStorage is in a
+ * separate quota bucket from localStorage, so it tends to remain writable
+ * when localStorage is exhausted.
+ *
+ * Read failure defaults to `false` so a transient sessionStorage error
+ * surfaces the notification — a milder cost than silently swallowing the
+ * legitimate first-mount surface.
+ */
+export const hasLastSaveFailedNotificationBeenShown = (
+  failedAt: string
+): boolean => {
+  try {
+    return sessionStorage.getItem(LAST_SAVE_FAILED_SHOWN_SSK) === failedAt;
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn(
+        "[breadcrumbs] Failed to read last-save-failed-shown sentinel:",
+        error
+      );
+    }
+    try {
+      analytics.trackError(
+        error instanceof Error
+          ? error
+          : new Error(`sentinel-read-failed: ${String(error)}`),
+        "hasLastSaveFailedNotificationBeenShown"
+      );
+    } catch {
+      // intentionally empty
+    }
+    return false;
+  }
+};
+
+export const markLastSaveFailedNotificationShown = (failedAt: string): void => {
+  try {
+    sessionStorage.setItem(LAST_SAVE_FAILED_SHOWN_SSK, failedAt);
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn(
+        "[breadcrumbs] Failed to write last-save-failed-shown sentinel:",
+        error
+      );
+    }
+    try {
+      analytics.trackError(
+        error instanceof Error
+          ? error
+          : new Error(`sentinel-write-failed: ${String(error)}`),
+        "markLastSaveFailedNotificationShown"
+      );
+    } catch {
+      // intentionally empty
     }
   }
 };

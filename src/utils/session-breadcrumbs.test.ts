@@ -1,22 +1,32 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { LAST_SAVE_FAILED_LSK } from "../constants";
+import { LAST_SAVE_FAILED_LSK, LAST_SAVE_FAILED_SHOWN_SSK } from "../constants";
 import { analytics } from "../services/analytics";
 import { createMockLocalStorage } from "../test-utils/mock-local-storage";
 import {
   clearLastSaveFailedBreadcrumb,
+  hasLastSaveFailedNotificationBeenShown,
+  markLastSaveFailedNotificationShown,
   readLastSaveFailedBreadcrumb,
   writeLastSaveFailedBreadcrumb,
 } from "./session-breadcrumbs";
 
 const { storage, mockLocalStorage } = createMockLocalStorage();
+const { storage: sessionStore, mockLocalStorage: mockSessionStorage } =
+  createMockLocalStorage();
 
 Object.defineProperty(globalThis, "localStorage", {
   value: mockLocalStorage,
   writable: true,
 });
 
+Object.defineProperty(globalThis, "sessionStorage", {
+  value: mockSessionStorage,
+  writable: true,
+});
+
 beforeEach(() => {
   storage.clear();
+  sessionStore.clear();
   vi.clearAllMocks();
 });
 
@@ -251,5 +261,112 @@ describe("session-breadcrumbs", () => {
 
     mockLocalStorage.setItem = original;
     trackErrorSpy.mockRestore();
+  });
+
+  describe("hasLastSaveFailedNotificationBeenShown / markLastSaveFailedNotificationShown", () => {
+    const FAILED_AT = "2025-01-01T00:00:00.000Z";
+
+    it("returns false when no sentinel has been written", () => {
+      expect(hasLastSaveFailedNotificationBeenShown(FAILED_AT)).toBe(false);
+    });
+
+    it("returns true after marking the sentinel for the same failedAt", () => {
+      markLastSaveFailedNotificationShown(FAILED_AT);
+      expect(hasLastSaveFailedNotificationBeenShown(FAILED_AT)).toBe(true);
+    });
+
+    it("returns false for a different failedAt — a new breadcrumb naturally invalidates the prior sentinel", () => {
+      markLastSaveFailedNotificationShown(FAILED_AT);
+      expect(
+        hasLastSaveFailedNotificationBeenShown("2025-06-01T12:34:56.789Z")
+      ).toBe(false);
+    });
+
+    it("writes the failedAt string verbatim to the configured sessionStorage key", () => {
+      markLastSaveFailedNotificationShown(FAILED_AT);
+      expect(sessionStore.get(LAST_SAVE_FAILED_SHOWN_SSK)).toBe(FAILED_AT);
+    });
+
+    it("markLastSaveFailedNotificationShown does not throw when sessionStorage.setItem throws and reports analytics", () => {
+      const trackErrorSpy = vi
+        .spyOn(analytics, "trackError")
+        .mockImplementation(() => undefined);
+      const original = mockSessionStorage.setItem;
+      const failure = new DOMException("quota exceeded", "QuotaExceededError");
+      mockSessionStorage.setItem = vi.fn(() => {
+        throw failure;
+      });
+
+      expect(() =>
+        markLastSaveFailedNotificationShown(FAILED_AT)
+      ).not.toThrow();
+
+      expect(trackErrorSpy).toHaveBeenCalledWith(
+        failure,
+        "markLastSaveFailedNotificationShown"
+      );
+
+      mockSessionStorage.setItem = original;
+      trackErrorSpy.mockRestore();
+    });
+
+    it("hasLastSaveFailedNotificationBeenShown returns false and reports analytics when sessionStorage.getItem throws", () => {
+      const trackErrorSpy = vi
+        .spyOn(analytics, "trackError")
+        .mockImplementation(() => undefined);
+      const original = mockSessionStorage.getItem;
+      const failure = new Error("getItem blocked");
+      mockSessionStorage.getItem = vi.fn(() => {
+        throw failure;
+      });
+
+      expect(hasLastSaveFailedNotificationBeenShown(FAILED_AT)).toBe(false);
+      expect(trackErrorSpy).toHaveBeenCalledWith(
+        failure,
+        "hasLastSaveFailedNotificationBeenShown"
+      );
+
+      mockSessionStorage.getItem = original;
+      trackErrorSpy.mockRestore();
+    });
+
+    it("does not cascade when analytics.trackError itself throws on a sentinel write failure", () => {
+      const trackErrorSpy = vi
+        .spyOn(analytics, "trackError")
+        .mockImplementation(() => {
+          throw new Error("analytics broken");
+        });
+      const original = mockSessionStorage.setItem;
+      mockSessionStorage.setItem = vi.fn(() => {
+        throw new DOMException("quota exceeded", "QuotaExceededError");
+      });
+
+      expect(() =>
+        markLastSaveFailedNotificationShown(FAILED_AT)
+      ).not.toThrow();
+      // Setter threw, so nothing should have been persisted — guards against
+      // a regression where the catch block accidentally writes a partial value.
+      expect(sessionStore.get(LAST_SAVE_FAILED_SHOWN_SSK)).toBeUndefined();
+
+      mockSessionStorage.setItem = original;
+      trackErrorSpy.mockRestore();
+    });
+
+    it("does not cascade when analytics.trackError itself throws on a sentinel read failure", () => {
+      const trackErrorSpy = vi
+        .spyOn(analytics, "trackError")
+        .mockImplementation(() => {
+          throw new Error("analytics broken");
+        });
+      const original = mockSessionStorage.getItem;
+      mockSessionStorage.getItem = vi.fn(() => {
+        throw new Error("getItem blocked");
+      });
+
+      expect(hasLastSaveFailedNotificationBeenShown(FAILED_AT)).toBe(false);
+
+      mockSessionStorage.getItem = original;
+      trackErrorSpy.mockRestore();
+    });
   });
 });
