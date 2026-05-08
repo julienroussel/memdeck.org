@@ -5,6 +5,7 @@ import {
   DISTANCE_OPTION_LSK,
   DISTANCE_TIMER_LSK,
 } from "../../constants";
+import { createGatedSetterMock } from "../../test-utils/mock-local-db-setter";
 import {
   type DistanceConvention,
   type DistanceMode,
@@ -15,13 +16,21 @@ import {
 let currentMode: DistanceMode = "compute";
 let currentConvention: DistanceConvention = "cyclic";
 
-const mockSetMode = vi.fn((value: DistanceMode) => {
-  currentMode = value;
+// `mockSetValueSucceeds` gates all three setters together — flip to false
+// before a handler call to simulate a Mantine-swallowed quota-exceeded write.
+let mockSetValueSucceeds = true;
+const succeeds = () => mockSetValueSucceeds;
+
+const mockSetMode = createGatedSetterMock<DistanceMode>(succeeds, (v) => {
+  currentMode = v;
 });
-const mockSetConvention = vi.fn((value: DistanceConvention) => {
-  currentConvention = value;
-});
-const mockSetTimerEnabled = vi.fn();
+const mockSetConvention = createGatedSetterMock<DistanceConvention>(
+  succeeds,
+  (v) => {
+    currentConvention = v;
+  }
+);
+const mockSetTimerEnabled = createGatedSetterMock<boolean>(succeeds);
 const mockSetTimerDuration = vi.fn();
 const mockTrackEvent = vi.fn();
 const mockEmitDistanceModeChanged = vi.fn();
@@ -66,6 +75,7 @@ describe("useDistanceSettings", () => {
   beforeEach(() => {
     currentMode = "compute";
     currentConvention = "cyclic";
+    mockSetValueSucceeds = true;
 
     // Cast intentional: mockImplementation cannot satisfy generic useLocalDb<T> for multiple T.
     (mockedUseLocalDb.mockImplementation as (fn: unknown) => unknown)(
@@ -137,7 +147,10 @@ describe("useDistanceSettings", () => {
         act(() => {
           result.current.handleModeChange(value);
         });
-        expect(mockSetMode).toHaveBeenCalledWith(value);
+        expect(mockSetMode).toHaveBeenCalledWith(
+          value,
+          expect.objectContaining({ onSuccess: expect.any(Function) })
+        );
         expect(mockEmitDistanceModeChanged).toHaveBeenCalledWith({
           mode: value,
         });
@@ -146,6 +159,16 @@ describe("useDistanceSettings", () => {
     // Runtime input validation lives in DistanceSettingsContent, where the
     // SegmentedControl emits a raw string. By the time handleModeChange is
     // reached, the value is already narrowed to DistanceMode.
+
+    it("does not emit DISTANCE_MODE_CHANGED when the wrapped setter's write fails", () => {
+      mockSetValueSucceeds = false;
+      act(() => {
+        result.current.handleModeChange("apply");
+      });
+      expect(mockSetMode).toHaveBeenCalledTimes(1);
+      expect(mockEmitDistanceModeChanged).not.toHaveBeenCalled();
+      expect(currentMode).toBe("compute");
+    });
   });
 
   describe("handleConventionChange", () => {
@@ -154,13 +177,26 @@ describe("useDistanceSettings", () => {
         act(() => {
           result.current.handleConventionChange(value);
         });
-        expect(mockSetConvention).toHaveBeenCalledWith(value);
+        expect(mockSetConvention).toHaveBeenCalledWith(
+          value,
+          expect.objectContaining({ onSuccess: expect.any(Function) })
+        );
         expect(mockEmitDistanceConventionChanged).toHaveBeenCalledWith({
           convention: value,
         });
       });
     }
     // Runtime input validation lives in DistanceSettingsContent.
+
+    it("does not emit DISTANCE_CONVENTION_CHANGED when the wrapped setter's write fails", () => {
+      mockSetValueSucceeds = false;
+      act(() => {
+        result.current.handleConventionChange("signed");
+      });
+      expect(mockSetConvention).toHaveBeenCalledTimes(1);
+      expect(mockEmitDistanceConventionChanged).not.toHaveBeenCalled();
+      expect(currentConvention).toBe("cyclic");
+    });
   });
 
   describe("handleTimerEnabledChange", () => {
@@ -168,7 +204,10 @@ describe("useDistanceSettings", () => {
       act(() => {
         result.current.handleTimerEnabledChange(true);
       });
-      expect(mockSetTimerEnabled).toHaveBeenCalledWith(true);
+      expect(mockSetTimerEnabled).toHaveBeenCalledWith(
+        true,
+        expect.objectContaining({ onSuccess: expect.any(Function) })
+      );
       expect(mockTrackEvent).toHaveBeenCalledWith(
         "Settings",
         "Timer Enabled",
@@ -180,12 +219,24 @@ describe("useDistanceSettings", () => {
       act(() => {
         result.current.handleTimerEnabledChange(false);
       });
-      expect(mockSetTimerEnabled).toHaveBeenCalledWith(false);
+      expect(mockSetTimerEnabled).toHaveBeenCalledWith(
+        false,
+        expect.objectContaining({ onSuccess: expect.any(Function) })
+      );
       expect(mockTrackEvent).toHaveBeenCalledWith(
         "Settings",
         "Timer Disabled",
         "Distance"
       );
+    });
+
+    it("does not track analytics when the wrapped setter's write fails", () => {
+      mockSetValueSucceeds = false;
+      act(() => {
+        result.current.handleTimerEnabledChange(true);
+      });
+      expect(mockSetTimerEnabled).toHaveBeenCalledTimes(1);
+      expect(mockTrackEvent).not.toHaveBeenCalled();
     });
   });
 });

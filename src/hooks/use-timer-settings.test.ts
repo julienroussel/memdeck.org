@@ -123,11 +123,50 @@ describe("useTimerSettings", () => {
       const { setTimerEnabled } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerEnabled(true);
 
-      expect(mockSetSettings).toHaveBeenCalledWith(expect.any(Function));
-
       const updater = mockSetSettings.mock.calls[0][0];
       const result = updater({ enabled: false, duration: 15 });
       expect(result).toEqual({ enabled: true, duration: 15 });
+    });
+
+    it("runs the caller's onSuccess when the timer setting is persisted", () => {
+      const setSettingsSucceeding = vi.fn(
+        (_updater: unknown, opts?: { onSuccess?: () => void }) => {
+          opts?.onSuccess?.();
+        }
+      );
+      mockedUseLocalDb.mockReturnValue([
+        { enabled: false, duration: 15 },
+        setSettingsSucceeding,
+        vi.fn(),
+      ]);
+
+      const { setTimerEnabled } = useTimerSettings(FLASHCARD_TIMER_LSK);
+      const onSuccess = vi.fn();
+      setTimerEnabled(true, { onSuccess });
+
+      expect(onSuccess).toHaveBeenCalledTimes(1);
+    });
+
+    it("skips the caller's onSuccess when the persisted write is rejected", () => {
+      // Mirrors useLocalDb's "failed write" path: the setter receives the
+      // updater and options as usual but skips invoking onSuccess. A buggy
+      // useTimerSettings that called onSuccess synchronously (instead of
+      // forwarding it to the inner setter) would fail this test.
+      // Receives the updater + options like the real setter, but never
+      // invokes onSuccess (mirrors a Mantine-swallowed quota-exceeded write).
+      const setSettingsRejecting = vi.fn();
+      mockedUseLocalDb.mockReturnValue([
+        { enabled: false, duration: 15 },
+        setSettingsRejecting,
+        vi.fn(),
+      ]);
+
+      const { setTimerEnabled } = useTimerSettings(FLASHCARD_TIMER_LSK);
+      const onSuccess = vi.fn();
+      setTimerEnabled(true, { onSuccess });
+
+      expect(setSettingsRejecting).toHaveBeenCalledTimes(1);
+      expect(onSuccess).not.toHaveBeenCalled();
     });
 
     it("disables the timer", () => {

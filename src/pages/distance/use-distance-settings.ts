@@ -51,28 +51,37 @@ export const useDistanceSettings = (): UseDistanceSettingsResult => {
 
   const handleModeChange = useCallback(
     (value: DistanceMode) => {
-      setMode(value);
-      eventBus.emit.DISTANCE_MODE_CHANGED({ mode: value });
+      setMode(value, {
+        onSuccess: () => {
+          eventBus.emit.DISTANCE_MODE_CHANGED({ mode: value });
+        },
+      });
     },
     [setMode]
   );
 
   const handleConventionChange = useCallback(
     (value: DistanceConvention) => {
-      setConvention(value);
-      eventBus.emit.DISTANCE_CONVENTION_CHANGED({ convention: value });
+      setConvention(value, {
+        onSuccess: () => {
+          eventBus.emit.DISTANCE_CONVENTION_CHANGED({ convention: value });
+        },
+      });
     },
     [setConvention]
   );
 
   const handleTimerEnabledChange = useCallback(
     (enabled: boolean) => {
-      analytics.trackEvent(
-        "Settings",
-        `Timer ${enabled ? "Enabled" : "Disabled"}`,
-        "Distance"
-      );
-      setTimerEnabled(enabled);
+      setTimerEnabled(enabled, {
+        onSuccess: () => {
+          analytics.trackEvent(
+            "Settings",
+            `Timer ${enabled ? "Enabled" : "Disabled"}`,
+            "Distance"
+          );
+        },
+      });
     },
     [setTimerEnabled]
   );

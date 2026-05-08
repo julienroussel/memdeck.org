@@ -6,7 +6,7 @@ import type {
   SPOT_CHECK_TIMER_LSK,
 } from "../constants";
 import type { TimerDuration, TimerSettings } from "../types/timer";
-import { useLocalDb } from "../utils/localstorage";
+import { type UseLocalDbSetOptions, useLocalDb } from "../utils/localstorage";
 import {
   handleLocalDbWriteFailed,
   reportLocalDbCorruption,
@@ -41,7 +41,7 @@ export const isTimerSettings = (value: unknown): value is TimerSettings =>
 
 export type UseTimerSettingsResult = {
   timerSettings: TimerSettings;
-  setTimerEnabled: (enabled: boolean) => void;
+  setTimerEnabled: (enabled: boolean, options?: UseLocalDbSetOptions) => void;
   setTimerDuration: (duration: TimerDuration) => void;
 };
 
@@ -73,11 +73,14 @@ export const useTimerSettings = (
   );
 
   const setTimerEnabled = useCallback(
-    (enabled: boolean): void => {
-      setTimerSettings((prev) => ({
-        ...prev,
-        enabled,
-      }));
+    (enabled: boolean, options?: UseLocalDbSetOptions): void => {
+      setTimerSettings(
+        (prev) => ({
+          ...prev,
+          enabled,
+        }),
+        options
+      );
     },
     [setTimerSettings]
   );
