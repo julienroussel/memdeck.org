@@ -35,33 +35,29 @@ const formatSessionLabel = (
     : `${mode} (open)`;
 
 // Wrap a subscriber so an exception inside it surfaces through trackError
-// without recursing back into the event bus (which would risk a loop, since
-// analytics is itself an emitter via SESSION_COMPLETED etc.). Reporting
-// happens in a microtask so the throwing listener has fully unwound before
-// the report runs, and a module-level latch short-circuits re-entry if the
-// report path itself throws.
-let isReportingListenerError = false;
+// without aborting iteration over the remaining listeners (eventBus already
+// isolates throws — see event-bus.ts:58 — so the wrap is purely about
+// routing the error to telemetry).
+//
+// Reporting is deferred to a microtask so the throwing listener's stack
+// has fully unwound before re-entering analytics machinery. No re-entry
+// guard is needed: analytics.trackError calls only ReactGA.event/send
+// (no bus emits), and listeners on a single channel are iterated as peers
+// — never nested — so the throwing-listener stack is the only reachable
+// source of recursion, and it is already unwound by the time the
+// microtask runs.
 const safeListener =
   <T>(channel: string, fn: (payload: T) => void): ((payload: T) => void) =>
   (payload: T) => {
     try {
       fn(payload);
     } catch (error) {
-      if (isReportingListenerError) {
-        return;
-      }
-      isReportingListenerError = true;
-      try {
-        queueMicrotask(() => {
-          isReportingListenerError = false;
-          analytics.trackError(
-            error instanceof Error ? error : new Error(String(error)),
-            `eventBus listener:${channel}`
-          );
-        });
-      } catch {
-        isReportingListenerError = false;
-      }
+      queueMicrotask(() =>
+        analytics.trackError(
+          error instanceof Error ? error : new Error(String(error)),
+          `eventBus listener:${channel}`
+        )
+      );
     }
   };
 
