@@ -18,6 +18,8 @@ import type { StackLimits } from "../types/stack-limits";
 import type { StackKey } from "../types/stacks";
 import {
   clearLastSaveFailedBreadcrumb,
+  hasLastSaveFailedNotificationBeenShown,
+  markLastSaveFailedNotificationShown,
   readLastSaveFailedBreadcrumb,
 } from "../utils/session-breadcrumbs";
 import {
@@ -299,8 +301,13 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
 
   // On mount, surface a "last save failed" breadcrumb left by the
   // beforeunload/unmount auto-save path (which can't show notifications
-  // because it runs while the page is closing). The breadcrumb is cleared as
-  // soon as it's surfaced so it doesn't repeat across renders.
+  // because it runs while the page is closing). Two layers of idempotence:
+  //   1. lastSaveBreadcrumbCheckedRef — within-mount: prevents re-render
+  //      re-fire.
+  //   2. sessionStorage sentinel keyed on breadcrumb.failedAt — across
+  //      mounts in the same tab: backstop when clearLastSaveFailedBreadcrumb
+  //      cannot persist and the breadcrumb pins (issue #629). A new
+  //      breadcrumb with a different failedAt naturally invalidates it.
   const lastSaveBreadcrumbCheckedRef = useRef(false);
   useEffect(() => {
     if (lastSaveBreadcrumbCheckedRef.current) {
@@ -311,16 +318,25 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
     if (breadcrumb === null) {
       return;
     }
+    // Sentinel check before clear: in the stuck-breadcrumb scenario, every
+    // mount would otherwise re-enter the failing clear path and fire
+    // analytics.trackError on every reload. Skipping clear when the sentinel
+    // already matches is safe — clear was attempted at least once on the
+    // prior mount.
+    if (hasLastSaveFailedNotificationBeenShown(breadcrumb.failedAt)) {
+      return;
+    }
     clearLastSaveFailedBreadcrumb();
+    // Mark before show: a (defensive) notifications.show throw must not
+    // allow the notification to re-fire on the next mount. `tRef` keeps the
+    // latest translation available without putting `t` in the dep list
+    // (which would re-fire this on language change).
+    markLastSaveFailedNotificationShown(breadcrumb.failedAt);
     notifications.show({
       color: "yellow",
       title: tRef.current("errors.lastSaveFailed.title"),
       message: tRef.current("errors.lastSaveFailed.message"),
     });
-    // Mount-only intent: the latch ref above guarantees idempotence even if
-    // React re-runs this effect. `tRef` keeps the latest translation
-    // available without putting `t` in the dep list (which would re-fire
-    // this on language change).
   }, []);
 
   const startSession = useCallback(

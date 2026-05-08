@@ -57,6 +57,15 @@ export const CHUNK_RELOAD_SSK = "memdeck-chunk-reload:";
 /** sessionStorage key for tracking locale chunk reload attempts */
 export const LOCALE_RELOAD_SSK = "memdeck-locale-reload";
 
+/**
+ * sessionStorage key for the "last-save-failed notification has been shown"
+ * sentinel. Stores the breadcrumb's failedAt ISO string so a new breadcrumb
+ * (different timestamp) naturally invalidates the sentinel. Used by
+ * useSession to suppress the notification across mounts in the same tab
+ * when clearLastSaveFailedBreadcrumb cannot persist (issue #629).
+ */
+export const LAST_SAVE_FAILED_SHOWN_SSK = "memdeck-app-last-save-failed-shown";
+
 export const COMMIT_HASH_LSK = "memdeck-app-commit-hash";
 export const UPDATE_NOTIFIED_AT_LSK = "memdeck-app-update-notified-at";
 export const PWA_UPDATE_COOLDOWN_MS = 24 * 60 * 60 * 1000;

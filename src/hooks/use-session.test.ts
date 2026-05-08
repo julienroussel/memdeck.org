@@ -162,9 +162,15 @@ vi.mock("../services/analytics", () => ({
 
 const mockReadBreadcrumb = vi.fn();
 const mockClearBreadcrumb = vi.fn();
+const mockHasNotifShown = vi.fn();
+const mockMarkNotifShown = vi.fn();
 vi.mock("../utils/session-breadcrumbs", () => ({
   readLastSaveFailedBreadcrumb: () => mockReadBreadcrumb(),
   clearLastSaveFailedBreadcrumb: () => mockClearBreadcrumb(),
+  hasLastSaveFailedNotificationBeenShown: (failedAt: string) =>
+    mockHasNotifShown(failedAt),
+  markLastSaveFailedNotificationShown: (failedAt: string) =>
+    mockMarkNotifShown(failedAt),
   writeLastSaveFailedBreadcrumb: vi.fn(),
 }));
 
@@ -245,6 +251,13 @@ describe("useSession hook", () => {
     stateSlots = [];
     stateIndex = 0;
     uuidCounter = 0;
+
+    // Default the breadcrumb mocks to a "no prior failure" state so tests
+    // that don't care about the breadcrumb (the vast majority) don't crash
+    // when the mount effect dereferences `breadcrumb.failedAt`. The
+    // dedicated breadcrumb describe block overrides these per-test.
+    mockReadBreadcrumb.mockReturnValue(null);
+    mockHasNotifShown.mockReturnValue(false);
 
     vi.stubGlobal("crypto", {
       ...globalThis.crypto,
@@ -918,6 +931,13 @@ describe("useSession hook", () => {
   });
 
   describe("last-save-failed breadcrumb on mount", () => {
+    beforeEach(() => {
+      // Default: no prior sentinel, so the mount effect proceeds through the
+      // legacy clear-and-show path. Tests that exercise the sentinel-match
+      // branch override this with `mockHasNotifShown.mockReturnValueOnce(true)`.
+      mockHasNotifShown.mockReturnValue(false);
+    });
+
     it("surfaces a yellow notification and clears the breadcrumb when one was left by the prior session", () => {
       mockReadBreadcrumb.mockReturnValueOnce({
         reason: "write-failed",
@@ -948,7 +968,9 @@ describe("useSession hook", () => {
       // swallows internal errors) but storage still holds the breadcrumb,
       // so every subsequent `readLastSaveFailedBreadcrumb` returns the same
       // value. The session-scoped latch (lastSaveBreadcrumbCheckedRef) must
-      // prevent the notification from re-firing across re-renders.
+      // prevent the notification from re-firing across re-renders. The
+      // sessionStorage sentinel is the across-mount layer (covered by
+      // separate tests below); this one pins the within-mount latch.
       mockReadBreadcrumb.mockReturnValue({
         reason: "write-failed",
         failedAt: "2025-01-01T00:00:00.000Z",
@@ -970,6 +992,60 @@ describe("useSession hook", () => {
 
       mockReadBreadcrumb.mockReset();
       mockClearBreadcrumb.mockReset();
+      mockHasNotifShown.mockReset();
+      mockMarkNotifShown.mockReset();
+    });
+
+    it("suppresses the notification when the sentinel already matches the breadcrumb's failedAt (across-mount loop fix, issue #629)", () => {
+      mockReadBreadcrumb.mockReturnValueOnce({
+        reason: "write-failed",
+        failedAt: "2025-01-01T00:00:00.000Z",
+      });
+      mockHasNotifShown.mockReturnValueOnce(true);
+
+      initHook();
+
+      const lastSaveFailedShows = mockNotificationsShow.mock.calls.filter(
+        (call) => call[0]?.title === "errors.lastSaveFailed.title"
+      );
+      expect(lastSaveFailedShows).toHaveLength(0);
+      // Skipping clear when the sentinel already matches avoids re-firing
+      // analytics.trackError on every reload in the stuck-breadcrumb state.
+      expect(mockClearBreadcrumb).not.toHaveBeenCalled();
+      expect(mockMarkNotifShown).not.toHaveBeenCalled();
+    });
+
+    it("marks the sentinel with the breadcrumb's failedAt before showing on the first mount", () => {
+      const failedAt = "2025-01-01T00:00:00.000Z";
+      mockReadBreadcrumb.mockReturnValueOnce({
+        reason: "write-failed",
+        failedAt,
+      });
+      mockHasNotifShown.mockReturnValueOnce(false);
+
+      initHook();
+
+      expect(mockClearBreadcrumb).toHaveBeenCalledOnce();
+      expect(mockMarkNotifShown).toHaveBeenCalledWith(failedAt);
+      expect(mockNotificationsShow).toHaveBeenCalledWith(
+        expect.objectContaining({
+          color: "yellow",
+          title: "errors.lastSaveFailed.title",
+          message: "errors.lastSaveFailed.message",
+        })
+      );
+    });
+
+    it("queries the sentinel using the breadcrumb's failedAt — pins the keying contract", () => {
+      const failedAt = "2025-06-15T08:30:42.123Z";
+      mockReadBreadcrumb.mockReturnValueOnce({
+        reason: "serialize-failed",
+        failedAt,
+      });
+
+      initHook();
+
+      expect(mockHasNotifShown).toHaveBeenCalledWith(failedAt);
     });
   });
 
