@@ -6,7 +6,9 @@ Run the verification protocol from CLAUDE.md, in order, stopping at the first fa
 
 1. `pnpm run typecheck`
 2. `pnpm run lint`
-3. `pnpm run test`
+3. `pnpm run knip`
+4. `pnpm run fta`
+5. `pnpm run test:coverage`
 
 Report pass/fail per step. On failure, show the relevant output (not the full log) and stop.
 

@@ -24,11 +24,13 @@ Never sacrifice readability or testability for performance unless profiling prov
 
 1. `pnpm run typecheck`
 2. `pnpm run lint`
-3. `pnpm run test` — when you edited a `.ts/.tsx` file that has or warrants a colocated `.test.ts`.
-4. `pnpm run test:e2e` — when you changed routing, page chrome, or a user-facing flow. Otherwise skip; it's slow.
-5. `pnpm run build` — when you changed `vite.config.ts`, `scripts/**`, `index.html`, or anything under `public/`.
+3. `pnpm run knip` — catches unused exports, dependencies, and files. Runs in seconds.
+4. `pnpm run fta` — file-complexity check; CI fails on regressions.
+5. `pnpm run test:coverage` — runs the full unit suite **and** enforces the per-directory coverage ratchets in `vitest.config.ts`. Use this in place of `pnpm run test` for DoD.
+6. `pnpm run test:e2e` — when you changed routing, page chrome, or a user-facing flow. Otherwise skip; it's slow.
+7. `pnpm run build` — when you changed `vite.config.ts`, `scripts/**`, `index.html`, or anything under `public/`.
 
-A `/verify` slash command exists (`.claude/commands/verify.md`) that runs steps 1–3.
+A `/verify` slash command exists (`.claude/commands/verify.md`) that runs steps 1–5.
 
 ## Development Commands
 
@@ -63,8 +65,6 @@ pnpm run preview
 # Check file complexity
 pnpm run fta
 ```
-
-Run `pnpm run fta` after making significant changes to verify file complexity stays within acceptable thresholds.
 
 ## Code Architecture
 
@@ -152,7 +152,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Every new utility function and custom hook must have a colocated `.test.ts` file.**
 - **Test behavior and edge cases, not implementation details.** Tests should describe what the function does, not how.
 - **Use descriptive test names that read as specifications:** `it("returns the card at position N in the selected stack")` not `it("works correctly")`.
-- **Run `pnpm run test` before committing.**
+- **Run `pnpm run test:coverage` before committing** so the per-directory ratchets in `vitest.config.ts` are enforced.
 - **E2E tests** live in `e2e/` and use Playwright. Use them for user journey validation.
 - Don't use `.only` or `.skip` in committed code.
 - **Coverage has per-directory ratchets** (in `vitest.config.ts`): `src/hooks/**` requires lines ≥ 85%, `src/utils/**` ≥ 90%, `src/types/*.ts` ≥ 85%, `src/services/**` ≥ 90%. Global floor is lines ≥ 55%. `pnpm run test:coverage` enforces them; raise them over time, never lower without justification.
