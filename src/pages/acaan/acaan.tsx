@@ -63,18 +63,19 @@ export const Acaan = () => {
     dismissSummary,
   } = useSession({ mode: "acaan", stackKey, autoStart: true });
 
+  const { timerSettings, setTimerDuration, handleTimerEnabledChange } =
+    useAcaanSettings();
+
   const {
     scenario,
     score,
     timeRemaining,
-    timerEnabled,
     timerDuration,
     submitAnswer,
     revealAnswer,
-  } = useAcaanGame(stackOrder, stackName, { onAnswer: handleAnswer });
-
-  const { timerSettings, setTimerDuration, handleTimerEnabledChange } =
-    useAcaanSettings();
+  } = useAcaanGame(stackOrder, stackName, timerSettings, {
+    onAnswer: handleAnswer,
+  });
 
   const handleRevealAnswer = useCallback(() => {
     analytics.trackFeatureUsed("Reveal Answer - ACAAN");
@@ -129,7 +130,7 @@ export const Acaan = () => {
         </Grid.Col>
         <Grid.Col span={12}>
           <Space h="xl" />
-          {timerEnabled && (
+          {timerSettings.enabled && (
             <TimerDisplay
               timeRemaining={timeRemaining}
               timerDuration={timerDuration}
