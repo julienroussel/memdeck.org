@@ -20,10 +20,14 @@ Never sacrifice readability or testability for performance unless profiling prov
 - **Verify before declaring done.** After changes to `src/**` or `scripts/**`, run the Definition of Done below. A passing type-check alone is not sufficient once UI, routing, or tests are involved.
 - **If you can't actually run it, say so.** For UI changes you can't exercise in a browser, state that explicitly instead of claiming success. Type-checks and unit tests verify code correctness, not feature correctness.
 
+### Lint invocation
+
+When running the linter in this repo, ALWAYS invoke it as `rtk proxy pnpm run lint`, never `pnpm run lint`. The plain form is silently rewritten to `rtk lint` by the user-level RTK PreToolUse hook, which buffers Biome's full output for filtering and OOMs on full-repo runs in Claude sessions. `rtk proxy` keeps RTK's command tracking but skips the output filter and does not OOM. This applies to `/verify`, plan execution, and any ad-hoc invocation. The per-file `ultracite fix <path>` PostToolUse hook is unaffected and stays as-is.
+
 ### Definition of Done (run in order; stop at first failure)
 
 1. `pnpm run typecheck`
-2. `pnpm run lint`
+2. `rtk proxy pnpm run lint` (see "Lint invocation")
 3. `pnpm run knip` — catches unused exports, dependencies, and files. Runs in seconds.
 4. `pnpm run fta` — file-complexity check; CI fails on regressions.
 5. `pnpm run test:coverage` — runs the full unit suite **and** enforces the per-directory coverage ratchets in `vitest.config.ts`. Use this in place of `pnpm run test` for DoD.

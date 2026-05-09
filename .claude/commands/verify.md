@@ -5,7 +5,7 @@ description: Run the Definition of Done for memdeck.org
 Run the verification protocol from CLAUDE.md, in order, stopping at the first failure:
 
 1. `pnpm run typecheck`
-2. `pnpm run lint`
+2. `rtk proxy pnpm run lint` (NOT `pnpm run lint` — the plain form OOMs in Claude sessions due to RTK output buffering; see CLAUDE.md "Lint invocation")
 3. `pnpm run knip`
 4. `pnpm run fta`
 5. `pnpm run test:coverage`
