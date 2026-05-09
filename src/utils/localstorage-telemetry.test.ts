@@ -6,6 +6,7 @@ import {
   handleLocalDbWriteFailed,
   notifyLocalDbWriteFailed,
   reportLocalDbCorruption,
+  reportLocalDbNotifyFailed,
   reportLocalDbWriteFailed,
 } from "./localstorage-telemetry";
 
@@ -182,6 +183,52 @@ describe("notifyLocalDbWriteFailed", () => {
 
     const ids = showSpy.mock.calls.map((args) => args[0].id);
     expect(ids).toEqual(["local-db-write-failed-a", "local-db-write-failed-b"]);
+  });
+});
+
+describe("reportLocalDbNotifyFailed", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("renames the wrapper to LocalDbNotifyFailed and redacts an Error cause's message", () => {
+    const trackErrorSpy = vi
+      .spyOn(analytics, "trackError")
+      .mockImplementation(() => undefined);
+
+    const cause = new Error("notifications provider not mounted at /route");
+    reportLocalDbNotifyFailed("flashcard-mode", cause);
+
+    expect(trackErrorSpy).toHaveBeenCalledTimes(1);
+    const [errArg, contextArg] = trackErrorSpy.mock.calls[0] ?? [];
+    expect(errArg).toBeInstanceOf(Error);
+    expect(errArg?.name).toBe("LocalDbNotifyFailed");
+    expect(errArg?.message).toBe("type=Error name=Error");
+    expect(errArg?.message).not.toContain("provider");
+    expect(errArg?.message).not.toContain("/route");
+    expect(contextArg).toBe("key=flashcard-mode");
+  });
+
+  it("wraps a string cause by length only", () => {
+    const trackErrorSpy = vi
+      .spyOn(analytics, "trackError")
+      .mockImplementation(() => undefined);
+
+    reportLocalDbNotifyFailed("k", "boom");
+
+    const [errArg] = trackErrorSpy.mock.calls[0] ?? [];
+    expect(errArg?.message).toBe("type=string length=4");
+  });
+
+  it("wraps a non-Error, non-string cause by typeof", () => {
+    const trackErrorSpy = vi
+      .spyOn(analytics, "trackError")
+      .mockImplementation(() => undefined);
+
+    reportLocalDbNotifyFailed("k", { unexpected: "shape" });
+
+    const [errArg] = trackErrorSpy.mock.calls[0] ?? [];
+    expect(errArg?.message).toBe("type=object");
   });
 });
 

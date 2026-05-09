@@ -64,6 +64,24 @@ export const notifyLocalDbWriteFailed = (key: string): void => {
 };
 
 /**
+ * Surfaces a Mantine notification when `useLocalDb` detects a post-mount
+ * valid→corrupt transition — typically a cross-tab corrupt write. Mount-time
+ * corruption is intentionally not toasted here: consumers like
+ * `useStackLimits` show their own dedicated mount toast, and reset-on-write
+ * recovery for low-stakes single-value consumers stays silent. The actual
+ * dedup lives in `useLocalDb`'s `wasValidRef`; the id is belt-and-suspenders
+ * for racing shows on the same key.
+ */
+export const notifyLocalDbCorruption = (key: string): void => {
+  notifications.show({
+    id: `local-db-corrupt-${key}`,
+    color: "yellow",
+    title: i18next.t("errors.localDbCorrupt.title"),
+    message: i18next.t("errors.localDbCorrupt.message"),
+  });
+};
+
+/**
  * Combined `onWriteFailed` callback for `useLocalDb` — the canonical handler
  * consumers should pass. Reports the failure to analytics and surfaces a
  * Mantine notification so the user knows their change won't persist.
@@ -71,4 +89,27 @@ export const notifyLocalDbWriteFailed = (key: string): void => {
 export const handleLocalDbWriteFailed = (key: string, cause: unknown): void => {
   reportLocalDbWriteFailed(key, cause);
   notifyLocalDbWriteFailed(key);
+};
+
+/**
+ * Reports a `notifyLocalDbCorruption` failure (toast pipeline broken) to
+ * analytics. Without this breadcrumb, a regressed Mantine provider mount or a
+ * pre-i18n init throw would silently disable cross-tab corruption toasts in
+ * production with no signal — the data path keeps working, but the user never
+ * learns another tab wrote unreadable data.
+ */
+export const reportLocalDbNotifyFailed = (
+  key: string,
+  cause: unknown
+): void => {
+  let wrapped: Error;
+  if (cause instanceof Error) {
+    wrapped = new Error(`type=Error name=${cause.name}`);
+  } else if (typeof cause === "string") {
+    wrapped = new Error(`type=string length=${cause.length}`);
+  } else {
+    wrapped = new Error(`type=${typeof cause}`);
+  }
+  wrapped.name = "LocalDbNotifyFailed";
+  analytics.trackError(wrapped, `key=${key}`);
 };

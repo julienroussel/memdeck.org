@@ -330,6 +330,10 @@
     "localDbWriteFailed": {
       "title": "Modifications non enregistrées",
       "message": "Votre stockage navigateur est peut-être plein — les modifications récentes ne seront pas conservées après un rechargement."
+    },
+    "localDbCorrupt": {
+      "title": "Réglages désynchronisés",
+      "message": "Un autre onglet a écrit des données que celui-ci n'a pas pu lire. Vos modifications ici sont intactes."
     }
   },
   "stats": {

@@ -3,10 +3,23 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockReadLocalStorageValue = vi.fn();
 const mockUseLocalStorage = vi.fn();
+const mockNotifyLocalDbCorruption = vi.fn<(key: string) => void>();
+const mockReportLocalDbNotifyFailed =
+  vi.fn<(key: string, cause: unknown) => void>();
 
 vi.mock("@mantine/hooks", () => ({
   readLocalStorageValue: (args: unknown) => mockReadLocalStorageValue(args),
   useLocalStorage: (args: unknown) => mockUseLocalStorage(args),
+}));
+
+// Mock the telemetry module so cross-tab corruption tests can assert the
+// wrapper's notification + analytics calls without exercising real Mantine
+// `notifications`, i18next lookups, or GA. `localstorage.ts` only imports
+// `notifyLocalDbCorruption` and `reportLocalDbNotifyFailed` from this module,
+// so a full replacement is safe.
+vi.mock("./localstorage-telemetry", () => ({
+  notifyLocalDbCorruption: mockNotifyLocalDbCorruption,
+  reportLocalDbNotifyFailed: mockReportLocalDbNotifyFailed,
 }));
 
 const { getStoredValue, probeStoredValue, useLocalDb } = await import(
@@ -1018,6 +1031,598 @@ describe("useLocalDb", () => {
       });
 
       expect(result.current[0]).toBe("default");
+    });
+  });
+
+  // Issue #628 regression: when a cross-tab `storage` event delivers a value
+  // that fails JSON.parse / validate, the wrapper used to roll the rendered
+  // `value` (and the setter's `prev`) back to `defaultValue`, silently
+  // discarding the user's in-flight edits. The fix tracks the last-known-
+  // valid value in a ref and prefers it on corrupt/read-error probes.
+  describe("cross-tab corruption preserves in-memory state (issue #628)", () => {
+    type Rec = { a: number; b: number };
+    const isRec = (value: unknown): value is Rec =>
+      typeof value === "object" &&
+      value !== null &&
+      "a" in value &&
+      "b" in value &&
+      typeof value.a === "number" &&
+      typeof value.b === "number";
+
+    const fireCrossTabRaw = (key: string, bytes: string): void => {
+      window.localStorage.setItem(key, bytes);
+      window.dispatchEvent(
+        new StorageEvent("storage", {
+          key,
+          newValue: bytes,
+          storageArea: window.localStorage,
+        })
+      );
+    };
+
+    beforeEach(() => {
+      mockNotifyLocalDbCorruption.mockClear();
+      mockReportLocalDbNotifyFailed.mockClear();
+    });
+
+    it("preserves the in-memory value across a cross-tab corrupt write (read side)", () => {
+      window.localStorage.setItem("k", JSON.stringify("user-edit"));
+      const { result } = renderHook(() => useLocalDb("k", "default", isString));
+      expect(result.current[0]).toBe("user-edit");
+
+      act(() => {
+        fireCrossTabRaw("k", "{not valid json");
+      });
+
+      // Without the rollback fix this would be "default"; with it the user's
+      // last-known-valid in-memory state survives.
+      expect(result.current[0]).toBe("user-edit");
+    });
+
+    it("preserves in-memory state for a functional setter's `prev` after cross-tab corruption (write side)", () => {
+      const initial: Rec = { a: 1, b: 2 };
+      window.localStorage.setItem("rec", JSON.stringify(initial));
+
+      const { result } = renderHook(() =>
+        useLocalDb<Rec>("rec", { a: 0, b: 0 }, isRec)
+      );
+
+      act(() => {
+        fireCrossTabRaw("rec", "{not valid json");
+      });
+
+      act(() => {
+        result.current[1]((prev) => ({ ...prev, a: 99 }));
+      });
+
+      // Without the write-side fix `prev` would be the defaultValue
+      // { a: 0, b: 0 } and the persisted blob would be { a: 99, b: 0 } —
+      // silently dropping the user's `b: 2`. The fix uses the last valid
+      // in-memory state as `prev`, so `b: 2` survives.
+      const persisted: unknown = JSON.parse(
+        window.localStorage.getItem("rec") ?? "null"
+      );
+      expect(persisted).toEqual({ a: 99, b: 2 });
+    });
+
+    it("does not toast on a mount-time corrupt blob", () => {
+      window.localStorage.setItem("k", "{not valid json");
+
+      renderHook(() => useLocalDb("k", "default", isString));
+
+      expect(mockNotifyLocalDbCorruption).not.toHaveBeenCalled();
+    });
+
+    it("toasts once on a valid→corrupt cross-tab transition", () => {
+      window.localStorage.setItem("k", JSON.stringify("ok"));
+      renderHook(() => useLocalDb("k", "default", isString));
+
+      expect(mockNotifyLocalDbCorruption).not.toHaveBeenCalled();
+
+      act(() => {
+        fireCrossTabRaw("k", "{not valid json");
+      });
+
+      expect(mockNotifyLocalDbCorruption).toHaveBeenCalledTimes(1);
+      expect(mockNotifyLocalDbCorruption).toHaveBeenCalledWith("k");
+    });
+
+    it("does not re-toast on consecutive corrupt events without an intervening valid", () => {
+      window.localStorage.setItem("k", JSON.stringify("ok"));
+      renderHook(() => useLocalDb("k", "default", isString));
+
+      act(() => {
+        fireCrossTabRaw("k", "{bad-1");
+      });
+      act(() => {
+        fireCrossTabRaw("k", "{bad-2");
+      });
+      act(() => {
+        fireCrossTabRaw("k", "{bad-3");
+      });
+
+      expect(mockNotifyLocalDbCorruption).toHaveBeenCalledTimes(1);
+    });
+
+    it("re-toasts after a corrupt→valid→corrupt sequence", () => {
+      window.localStorage.setItem("k", JSON.stringify("ok"));
+      renderHook(() => useLocalDb("k", "default", isString));
+
+      act(() => {
+        fireCrossTabRaw("k", "{bad-1");
+      });
+      expect(mockNotifyLocalDbCorruption).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        fireCrossTabRaw("k", JSON.stringify("recovered"));
+      });
+      expect(mockNotifyLocalDbCorruption).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        fireCrossTabRaw("k", "{bad-2");
+      });
+      expect(mockNotifyLocalDbCorruption).toHaveBeenCalledTimes(2);
+    });
+
+    it("does not toast on an absent→corrupt sequence (cross-tab clear() then cross-tab corrupt write)", () => {
+      // After an `absent` probe (cross-tab clear), `wasValidRef` is reset to
+      // false, so the subsequent corrupt probe is treated as mount-like
+      // rather than a valid→corrupt transition. Pins the invariant: a
+      // future refactor that flipped `wasValidRef` to true on `absent`
+      // would start firing phantom toasts on clear-then-corrupt sequences.
+      window.localStorage.setItem("k", JSON.stringify("ok"));
+      renderHook(() => useLocalDb("k", "default", isString));
+
+      act(() => {
+        window.localStorage.removeItem("k");
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: null,
+            newValue: null,
+            storageArea: window.localStorage,
+          })
+        );
+      });
+      expect(mockNotifyLocalDbCorruption).not.toHaveBeenCalled();
+
+      act(() => {
+        fireCrossTabRaw("k", "{not valid json");
+      });
+      expect(mockNotifyLocalDbCorruption).not.toHaveBeenCalled();
+    });
+
+    it("does not toast on a cross-tab `clear()` (absent), and falls back to defaultValue", () => {
+      window.localStorage.setItem("k", JSON.stringify("user-edit"));
+      const { result } = renderHook(() => useLocalDb("k", "default", isString));
+      expect(result.current[0]).toBe("user-edit");
+
+      act(() => {
+        window.localStorage.removeItem("k");
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: null,
+            newValue: null,
+            storageArea: window.localStorage,
+          })
+        );
+      });
+
+      // `absent` keeps current semantics: a deliberate cross-tab clear is
+      // not corruption, so the value falls back to defaultValue and no
+      // toast fires.
+      expect(result.current[0]).toBe("default");
+      expect(mockNotifyLocalDbCorruption).not.toHaveBeenCalled();
+    });
+
+    it("still invokes `onCorrupt` on the valid→corrupt transition (telemetry semantics preserved)", () => {
+      window.localStorage.setItem("k", JSON.stringify("ok"));
+      const onCorrupt = vi.fn();
+      renderHook(() => useLocalDb("k", "default", isString, onCorrupt));
+      expect(onCorrupt).not.toHaveBeenCalled();
+
+      act(() => {
+        fireCrossTabRaw("k", "{bad");
+      });
+
+      expect(onCorrupt).toHaveBeenCalledTimes(1);
+      expect(onCorrupt).toHaveBeenCalledWith("k", "{bad");
+    });
+
+    it("does not surface the previous key's last-known-valid value when `key` changes to a corrupt blob (read side)", () => {
+      window.localStorage.setItem("key-a", JSON.stringify("from-a"));
+      window.localStorage.setItem("key-b", "{not valid json");
+
+      const { result, rerender } = renderHook(
+        ({ k }: { k: string }) => useLocalDb(k, "default", isString),
+        { initialProps: { k: "key-a" } }
+      );
+      expect(result.current[0]).toBe("from-a");
+
+      rerender({ k: "key-b" });
+
+      // Without the per-key guard, latestValidRef would still carry
+      // "from-a" and the corrupt key-b would surface it as if it were a
+      // valid key-b value. With the guard, the consumer sees `defaultValue`.
+      expect(result.current[0]).toBe("default");
+    });
+
+    it("does not fire the toast when `key` changes from a valid blob to a key whose blob is corrupt", () => {
+      window.localStorage.setItem("key-a", JSON.stringify("from-a"));
+      window.localStorage.setItem("key-b", "{not valid json");
+
+      const { rerender } = renderHook(
+        ({ k }: { k: string }) => useLocalDb(k, "default", isString),
+        { initialProps: { k: "key-a" } }
+      );
+      expect(mockNotifyLocalDbCorruption).not.toHaveBeenCalled();
+
+      rerender({ k: "key-b" });
+
+      // A `key` swap is not a valid→corrupt transition for the new key —
+      // the new key's first probe is mount-time corruption from its
+      // perspective, which is documented to stay silent.
+      expect(mockNotifyLocalDbCorruption).not.toHaveBeenCalled();
+    });
+
+    it("does not feed the previous key's last-known-valid value to a functional setter when the new key's blob is corrupt", () => {
+      const initial: Rec = { a: 1, b: 2 };
+      window.localStorage.setItem("key-a", JSON.stringify(initial));
+      window.localStorage.setItem("key-b", "{not valid json");
+
+      const { result, rerender } = renderHook(
+        ({ k }: { k: string }) => useLocalDb<Rec>(k, { a: 0, b: 0 }, isRec),
+        { initialProps: { k: "key-a" } }
+      );
+
+      rerender({ k: "key-b" });
+
+      act(() => {
+        result.current[1]((prev) => ({ ...prev, a: 99 }));
+      });
+
+      const persisted: unknown = JSON.parse(
+        window.localStorage.getItem("key-b") ?? "null"
+      );
+      // Without the per-key guard, `prev` would be { a: 1, b: 2 } from
+      // key-a and the persisted record would mix keys. With the guard,
+      // `prev` falls back to the consumer's `defaultValue`.
+      expect(persisted).toEqual({ a: 99, b: 0 });
+    });
+
+    it("preserves the in-memory value across a cross-tab read-error event (validator throws)", () => {
+      window.localStorage.setItem("k", JSON.stringify("user-edit"));
+      const validatorError = new TypeError("validator boom");
+      let throwOnNext = false;
+      // Validator throws ONLY on the cross-tab post-image so the initial
+      // mount produces a valid probe (otherwise latestValidRef never
+      // populates and the test only exercises the mount-time-corrupt path).
+      const validateMaybeThrows = (value: unknown): value is string => {
+        if (throwOnNext) {
+          throw validatorError;
+        }
+        return typeof value === "string";
+      };
+
+      const { result } = renderHook(() =>
+        useLocalDb("k", "default", validateMaybeThrows)
+      );
+      expect(result.current[0]).toBe("user-edit");
+
+      throwOnNext = true;
+      act(() => {
+        fireCrossTabRaw("k", JSON.stringify("post-image"));
+      });
+
+      // Read-error branch must preserve in-memory state, not roll back to
+      // `defaultValue`.
+      expect(result.current[0]).toBe("user-edit");
+    });
+
+    it("toasts on a valid→read-error cross-tab transition (validator throws)", () => {
+      window.localStorage.setItem("k", JSON.stringify("user-edit"));
+      let throwOnNext = false;
+      const validateMaybeThrows = (value: unknown): value is string => {
+        if (throwOnNext) {
+          throw new TypeError("validator boom");
+        }
+        return typeof value === "string";
+      };
+
+      renderHook(() => useLocalDb("k", "default", validateMaybeThrows));
+      expect(mockNotifyLocalDbCorruption).not.toHaveBeenCalled();
+
+      throwOnNext = true;
+      act(() => {
+        fireCrossTabRaw("k", JSON.stringify("post-image"));
+      });
+
+      expect(mockNotifyLocalDbCorruption).toHaveBeenCalledTimes(1);
+      expect(mockNotifyLocalDbCorruption).toHaveBeenCalledWith("k");
+    });
+
+    it("uses the latest in-memory value as `prev` for a functional setter when the setter's own re-read hits read-error", () => {
+      const initial: Rec = { a: 1, b: 2 };
+      window.localStorage.setItem("rec", JSON.stringify(initial));
+      let throwOnNext = false;
+      const validateMaybeThrows = (value: unknown): value is Rec => {
+        if (throwOnNext) {
+          throw new TypeError("validator boom");
+        }
+        return isRec(value);
+      };
+
+      const { result } = renderHook(() =>
+        useLocalDb<Rec>("rec", { a: 0, b: 0 }, validateMaybeThrows)
+      );
+
+      throwOnNext = true;
+      act(() => {
+        fireCrossTabRaw("rec", JSON.stringify({ a: "tampered" }));
+      });
+
+      // Keep `throwOnNext = true` through the setter so the setter's own
+      // `parseRawValue(readRawValue(key), validate)` re-read hits the
+      // read-error branch (validate throws) — NOT the corrupt branch
+      // (validate returns false). Without this discipline, a regression
+      // that dropped `read-error` from the setter's else-if would survive
+      // the suite. The read-error throw is caught inside `parseRawValue`
+      // and surfaces as `currentProbe.status === "read-error"`.
+      act(() => {
+        result.current[1]((prev) => ({ ...prev, a: 99 }));
+      });
+
+      const persisted: unknown = JSON.parse(
+        window.localStorage.getItem("rec") ?? "null"
+      );
+      expect(persisted).toEqual({ a: 99, b: 2 });
+    });
+
+    it("re-fires the toast on corrupt→valid→corrupt while `onCorrupt` stays once (asymmetry pin)", () => {
+      window.localStorage.setItem("k", JSON.stringify("ok"));
+      const onCorrupt = vi.fn();
+      renderHook(() => useLocalDb("k", "default", isString, onCorrupt));
+
+      act(() => {
+        fireCrossTabRaw("k", "{bad-1");
+      });
+      expect(mockNotifyLocalDbCorruption).toHaveBeenCalledTimes(1);
+      expect(onCorrupt).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        fireCrossTabRaw("k", JSON.stringify("recovered"));
+      });
+
+      act(() => {
+        fireCrossTabRaw("k", "{bad-2");
+      });
+
+      // Toast fires every fresh transition (UI signal must track each
+      // drift). `onCorrupt` is once-per-mount-key by design — telemetry
+      // intentionally does not repeat for the same session.
+      expect(mockNotifyLocalDbCorruption).toHaveBeenCalledTimes(2);
+      expect(onCorrupt).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not pollute `latestValidRef` with corrupt-probe data (valid → corrupt → valid')", () => {
+      // Cache-purity invariant: only `valid` probes may update
+      // `latestValidRef`. A regression where a corrupt probe overwrote the
+      // cache (e.g. with `{ has: true, value: probe.raw }`) would not be
+      // caught by the existing valid→corrupt tests because they assert the
+      // pre-corruption value. This test pins the invariant by interposing a
+      // valid' (different) value AFTER the corrupt event and asserting the
+      // in-memory state reflects valid', not the corrupt blob's parsed-but-
+      // invalid form.
+      window.localStorage.setItem("k", JSON.stringify("first-valid"));
+      const { result } = renderHook(() => useLocalDb("k", "default", isString));
+      expect(result.current[0]).toBe("first-valid");
+
+      act(() => {
+        fireCrossTabRaw("k", "{not valid json");
+      });
+      // Corrupt probe must not have overwritten the cache.
+      expect(result.current[0]).toBe("first-valid");
+
+      act(() => {
+        fireCrossTabRaw("k", JSON.stringify("second-valid"));
+      });
+      // After a fresh valid probe, the cache must update — and any
+      // subsequent corrupt event must fall back to `second-valid`, not
+      // `first-valid` (which would indicate the corrupt probe had silently
+      // pinned the cache to the wrong slot).
+      expect(result.current[0]).toBe("second-valid");
+
+      act(() => {
+        fireCrossTabRaw("k", "{another corrupt blob");
+      });
+      expect(result.current[0]).toBe("second-valid");
+    });
+
+    it("uses the most recent setter-written value (not the mount-time value) as `latestValid` after multiple writes", () => {
+      const initial: Rec = { a: 1, b: 2 };
+      window.localStorage.setItem("rec", JSON.stringify(initial));
+
+      const { result } = renderHook(() =>
+        useLocalDb<Rec>("rec", { a: 0, b: 0 }, isRec)
+      );
+
+      // Several user-driven valid writes after mount — `latestValidRef`
+      // must track the most recent, not the mount-time blob.
+      act(() => {
+        result.current[1]({ a: 10, b: 20 });
+      });
+      act(() => {
+        result.current[1]({ a: 100, b: 200 });
+      });
+
+      act(() => {
+        fireCrossTabRaw("rec", "{not valid json");
+      });
+
+      act(() => {
+        result.current[1]((prev) => ({ ...prev, a: 999 }));
+      });
+
+      const persisted: unknown = JSON.parse(
+        window.localStorage.getItem("rec") ?? "null"
+      );
+      // `prev` must be the LAST setter-written record, not the mount-time
+      // one — otherwise post-mount edits silently disappear under
+      // cross-tab corruption.
+      expect(persisted).toEqual({ a: 999, b: 200 });
+    });
+
+    it("preserves both peer subscribers' in-memory values when a cross-tab corrupt event fires", () => {
+      window.localStorage.setItem("k", JSON.stringify("seed"));
+
+      const { result } = renderHook(() => ({
+        a: useLocalDb("k", "default", isString),
+        b: useLocalDb("k", "default", isString),
+      }));
+      expect(result.current.a[0]).toBe("seed");
+      expect(result.current.b[0]).toBe("seed");
+
+      act(() => {
+        fireCrossTabRaw("k", "{not valid json");
+      });
+
+      // Each instance has its own `latestValidRef` — both should
+      // independently keep the last-known-valid value.
+      expect(result.current.a[0]).toBe("seed");
+      expect(result.current.b[0]).toBe("seed");
+      // Each instance fires its own toast call; Mantine's `id` field on
+      // the notification is what dedups at the UI layer (out of scope
+      // here). Pin the per-instance call-count contract.
+      expect(mockNotifyLocalDbCorruption).toHaveBeenCalledTimes(2);
+    });
+
+    it('does not toast on a cross-tab targeted removal (`event.key === "k"`, `newValue === null`)', () => {
+      window.localStorage.setItem("k", JSON.stringify("user-edit"));
+      const { result } = renderHook(() => useLocalDb("k", "default", isString));
+      expect(result.current[0]).toBe("user-edit");
+
+      act(() => {
+        window.localStorage.removeItem("k");
+        // Cross-tab targeted removal arrives with the specific key and a
+        // null newValue — distinct from `event.key === null` which fires
+        // on `localStorage.clear()`. Both must collapse to `absent` and
+        // stay silent on the toast surface.
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: "k",
+            newValue: null,
+            storageArea: window.localStorage,
+          })
+        );
+      });
+
+      expect(result.current[0]).toBe("default");
+      expect(mockNotifyLocalDbCorruption).not.toHaveBeenCalled();
+    });
+
+    it("clears `wasValid` BEFORE invoking `notifyLocalDbCorruption` so a throw doesn't pin re-toast on every subsequent probe", () => {
+      // Pins the ordering invariant in the toast effect: the ref must be
+      // assigned before the call, otherwise a throw inside
+      // `notifyLocalDbCorruption` (e.g. notifications provider not mounted
+      // during prerender or pre-i18n init) leaves `wasValidRef` true and
+      // causes every subsequent probe to re-attempt the toast.
+      // Suppress the catch block's DEV-only console.warn so the test output
+      // stays quiet — match the suppression pattern used elsewhere in this
+      // file for intentional throw paths.
+      const consoleWarnSpy = vi
+        .spyOn(console, "warn")
+        .mockImplementation(() => {
+          // Intentionally swallow the dev-only warn from the wrapper's catch.
+        });
+      try {
+        mockNotifyLocalDbCorruption.mockImplementationOnce(() => {
+          throw new Error("notifications provider not mounted");
+        });
+        window.localStorage.setItem("k", JSON.stringify("ok"));
+        renderHook(() => useLocalDb("k", "default", isString));
+
+        act(() => {
+          fireCrossTabRaw("k", "{bad-1");
+        });
+        // First fire: throws inside the call. With the ordering fix,
+        // `wasValidRef` was already cleared to `{ wasValid: false }` before
+        // the throw. Without the fix, it would still be true.
+        expect(mockNotifyLocalDbCorruption).toHaveBeenCalledTimes(1);
+
+        act(() => {
+          fireCrossTabRaw("k", "{bad-2");
+        });
+        // Second fire (different bytes → fresh probe → effect re-runs).
+        // With the ordering fix: wasValid=false → no toast call (count stays 1).
+        // Without the fix: wasValid still true (mock no longer throws this
+        // time) → toast call → count would be 2.
+        expect(mockNotifyLocalDbCorruption).toHaveBeenCalledTimes(1);
+        // Telemetry breadcrumb pinned: the catch block must report the
+        // toast-pipeline failure to analytics so a regressed Mantine
+        // provider doesn't silently disable corruption toasts in production.
+        expect(mockReportLocalDbNotifyFailed).toHaveBeenCalledTimes(1);
+        expect(mockReportLocalDbNotifyFailed).toHaveBeenCalledWith(
+          "k",
+          expect.any(Error)
+        );
+      } finally {
+        consoleWarnSpy.mockRestore();
+      }
+    });
+
+    it("does not fire the toast when `key` changes to a key whose blob triggers a read-error (validator throws)", () => {
+      // Symmetric to the corrupt-branch key-swap test above. Pins the
+      // per-key guard's read-error variant.
+      let throwForKey: string | null = null;
+      const validateMaybeThrows = (value: unknown): value is string => {
+        if (throwForKey !== null) {
+          throw new TypeError("validator boom");
+        }
+        return typeof value === "string";
+      };
+
+      window.localStorage.setItem("key-a", JSON.stringify("from-a"));
+      window.localStorage.setItem("key-b", JSON.stringify("from-b"));
+
+      const { rerender } = renderHook(
+        ({ k }: { k: string }) => useLocalDb(k, "default", validateMaybeThrows),
+        { initialProps: { k: "key-a" } }
+      );
+      expect(mockNotifyLocalDbCorruption).not.toHaveBeenCalled();
+
+      throwForKey = "key-b";
+      rerender({ k: "key-b" });
+
+      // First probe of key-b is read-error (validator throws). The per-key
+      // guard rejects the stale `wasValidRef.current.key === "key-a"`, so
+      // this looks like mount-time corruption for key-b, not a transition.
+      expect(mockNotifyLocalDbCorruption).not.toHaveBeenCalled();
+    });
+
+    it("preserves each peer subscriber's last-known-valid value independently when one peer wrote fresh state before a cross-tab corrupt event", () => {
+      window.localStorage.setItem("k", JSON.stringify("seed"));
+
+      const { result } = renderHook(() => ({
+        a: useLocalDb("k", "default", isString),
+        b: useLocalDb("k", "default", isString),
+      }));
+
+      // Peer A writes a fresh value via the setter; the same-tab custom
+      // event propagates to peer B, so both update their own
+      // `latestValidRef` to "fresh-from-a".
+      act(() => {
+        result.current.a[1]("fresh-from-a");
+      });
+      expect(result.current.a[0]).toBe("fresh-from-a");
+      expect(result.current.b[0]).toBe("fresh-from-a");
+
+      // Cross-tab corrupt event arrives — both peers' in-memory state
+      // must hold the post-write value, not the seed and not the default.
+      act(() => {
+        fireCrossTabRaw("k", "{not valid json");
+      });
+
+      expect(result.current.a[0]).toBe("fresh-from-a");
+      expect(result.current.b[0]).toBe("fresh-from-a");
     });
   });
 

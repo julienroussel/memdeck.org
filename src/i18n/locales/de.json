@@ -330,6 +330,10 @@
     "localDbWriteFailed": {
       "title": "Änderungen nicht gespeichert",
       "message": "Dein Browser-Speicher ist möglicherweise voll — letzte Änderungen bleiben nach einem Neuladen nicht erhalten."
+    },
+    "localDbCorrupt": {
+      "title": "Einstellungen nicht synchron",
+      "message": "Ein anderer Browser-Tab hat Daten gespeichert, die dieser Tab nicht lesen konnte. Deine Änderungen hier bleiben erhalten."
     }
   },
   "stats": {

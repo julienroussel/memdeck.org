@@ -330,6 +330,10 @@
     "localDbWriteFailed": {
       "title": "Modifiche non salvate",
       "message": "Lo spazio di archiviazione del browser potrebbe essere pieno — le modifiche recenti non saranno mantenute dopo aver ricaricato la pagina."
+    },
+    "localDbCorrupt": {
+      "title": "Impostazioni non sincronizzate",
+      "message": "Un'altra scheda ha scritto dati che questa scheda non è riuscita a leggere. Le tue modifiche qui sono al sicuro."
     }
   },
   "stats": {
