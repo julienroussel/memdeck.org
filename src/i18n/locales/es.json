@@ -330,6 +330,10 @@
     "localDbWriteFailed": {
       "title": "Cambios no guardados",
       "message": "El almacenamiento del navegador puede estar lleno — los cambios recientes no se mantendrán tras recargar la página."
+    },
+    "localDbCorrupt": {
+      "title": "Ajustes desincronizados",
+      "message": "Otra pestaña escribió datos que esta pestaña no pudo leer. Tus cambios aquí están a salvo."
     }
   },
   "stats": {

@@ -6,6 +6,10 @@ import {
   useRef,
   useSyncExternalStore,
 } from "react";
+import {
+  notifyLocalDbCorruption,
+  reportLocalDbNotifyFailed,
+} from "./localstorage-telemetry";
 
 /**
  * Result of probing a localStorage key: distinguishes "key absent" from "key
@@ -215,6 +219,20 @@ const dispatchKeyChange = (key: string): void => {
 // real value once `window` is present.
 const getServerSnapshot = (): null => null;
 
+// Latest-valid cache slot. `has: false` is the bootstrap sentinel before any
+// valid probe has been observed; once a valid probe arrives, the slot flips
+// to `has: true` carrying the value AND the key it belongs to. The key is
+// embedded so a `key` prop change clears the cache implicitly — readers
+// match against the current `key` and fall back to `defaultValue` when the
+// cached entry is stale (mirrors the per-key discipline of `reportedKeyRef`).
+type LatestValidSlot<T> = { has: false } | { has: true; key: string; value: T };
+
+// Previous-probe-validity cache. Same per-key embedding rationale as
+// `LatestValidSlot`: a `key` prop change must NOT make the new key's first
+// corrupt probe look like a valid→corrupt transition (which would fire the
+// post-mount Mantine toast for what is actually mount-time corruption).
+type WasValidSlot = { wasValid: false } | { wasValid: true; key: string };
+
 /**
  * A reactive wrapper around `localStorage` for JSON-serializable values.
  *
@@ -253,6 +271,16 @@ const getServerSnapshot = (): null => null;
  * tabs. Same-tab sync (multiple `useLocalDb` instances on the same key)
  * goes through a project-internal `memdeck-localstorage` `CustomEvent`
  * dispatched on every write.
+ *
+ * **Cross-tab corruption:** when a cross-tab `storage` event delivers a
+ * value that fails JSON.parse / validate, the consumer-facing `value` and
+ * the setter's `prev` (for functional updates) both fall back to the most
+ * recently-observed valid value rather than `defaultValue`. The on-disk
+ * blob is corrupt until the next write, but the user's in-memory state is
+ * preserved. A Mantine notification (`notifyLocalDbCorruption`) fires once
+ * per valid→corrupt transition so the user knows another tab wrote
+ * unreadable data — mount-time corruption stays silent here (consumers
+ * that care, e.g. `useStackLimits`, surface their own toast).
  */
 export const useLocalDb = <T>(
   key: string,
@@ -297,6 +325,20 @@ export const useLocalDb = <T>(
   // new-failure case still surfaces.
   const reportedWriteKeyRef = useRef<string | null>(null);
 
+  // Latest-valid cache for the rollback fix (issue #628). Updated in the
+  // value `useMemo` below; consulted by both the value computation and the
+  // setter when the on-disk probe is corrupt.
+  const latestValidRef = useRef<LatestValidSlot<T>>({ has: false });
+
+  // Tracks whether the previous probe was valid, so the transition-toast
+  // effect can fire a notification on the valid→corrupt edge specifically
+  // (and not on mount-time corruption, repeated corrupt events, or
+  // cross-tab `clear()` which surfaces as `absent`). The slot embeds the
+  // `key` it belongs to — without it, a `key` prop change would leave the
+  // boolean `true` from the previous key and the new key's first corrupt
+  // probe would falsely fire as a valid→corrupt transition.
+  const wasValidRef = useRef<WasValidSlot>({ wasValid: false });
+
   // Capture latest callbacks in refs so the setter / effect closures stay
   // stable regardless of whether the caller passes inline arrows.
   const onCorruptRef = useRef(onCorrupt);
@@ -331,10 +373,74 @@ export const useLocalDb = <T>(
     }
   }, [key, probe]);
 
-  const value = useMemo(
-    (): T => (probe.status === "valid" ? probe.value : defaultValue),
-    [probe, defaultValue]
-  );
+  // Cross-tab corruption surface: fires a Mantine toast on the valid→corrupt
+  // transition only. `wasValidRef` starts `{ wasValid: false }` so a
+  // mount-time corrupt probe stays silent; `absent` (cross-tab `clear()`)
+  // is excluded so a deliberate reset doesn't masquerade as corruption.
+  // After the toast fires, `wasValidRef` is `{ wasValid: false }` until the
+  // next valid probe — a streak of corrupt events doesn't re-toast, but a
+  // corrupt→valid→corrupt sequence does (correctly — that's a fresh
+  // transition). The `wasValid && key === ...` check rejects stale state
+  // from a previous `key` prop value (otherwise a key swap would falsely
+  // fire as a transition for the new key's mount-time probe).
+  //
+  // Asymmetry with `onCorrupt`: this toast effect re-fires on every
+  // valid→corrupt transition, but `onCorrupt` is once-per-mount-key (its
+  // `reportedKeyRef` latches and never resets on a valid probe). The
+  // asymmetry is intentional — telemetry shouldn't repeat for the same
+  // session, but UI feedback should track every fresh drift event.
+  useEffect(() => {
+    const wasValid =
+      wasValidRef.current.wasValid && wasValidRef.current.key === key;
+    const isValid = probe.status === "valid";
+    // Update the ref BEFORE invoking the toast so a throw inside
+    // `notifyLocalDbCorruption` (e.g. notifications provider not mounted
+    // during prerender or pre-i18n init) doesn't pin `wasValid` true and
+    // cause every subsequent probe to re-attempt the toast.
+    wasValidRef.current = isValid
+      ? { wasValid: true, key }
+      : { wasValid: false };
+    if (
+      wasValid &&
+      (probe.status === "corrupt" || probe.status === "read-error")
+    ) {
+      try {
+        notifyLocalDbCorruption(key);
+      } catch (notifyError) {
+        // Surface the toast-pipeline failure to analytics so a regressed
+        // Mantine provider mount or pre-i18n init throw doesn't silently
+        // disable corruption toasts in production. The data path keeps
+        // working (last-known-valid fallback runs above), but without this
+        // breadcrumb the UI signal would vanish with no telemetry trace.
+        reportLocalDbNotifyFailed(key, notifyError);
+        if (import.meta.env.DEV) {
+          console.warn(
+            `[localStorage] notifyLocalDbCorruption threw for key "${key}":`,
+            notifyError
+          );
+        }
+      }
+    }
+  }, [key, probe]);
+
+  const value = useMemo((): T => {
+    if (probe.status === "valid") {
+      latestValidRef.current = { has: true, key, value: probe.value };
+      return probe.value;
+    }
+    if (probe.status === "absent") {
+      return defaultValue;
+    }
+    // corrupt | read-error: prefer last-known-valid in-memory state so a
+    // cross-tab corrupt write doesn't roll back the user's in-flight edits
+    // to `defaultValue`. The cached entry must belong to the current `key`
+    // — otherwise a key swap would silently surface the previous key's
+    // value when the new key's stored blob is corrupt or invalid.
+    if (latestValidRef.current.has && latestValidRef.current.key === key) {
+      return latestValidRef.current.value;
+    }
+    return defaultValue;
+  }, [probe, defaultValue, key]);
 
   const handleWriteSuccess = useCallback(
     (onSuccess: (() => void) | undefined): void => {
@@ -387,9 +493,30 @@ export const useLocalDb = <T>(
       // wrapper-level corrupt-lock here: it would silently break recovery
       // for the single-value consumers without buying any new protection
       // for the multi-record ones.
+      //
+      // Cross-tab corruption rollback (issue #628): when the on-disk probe
+      // is corrupt/read-error, prefer `latestValidRef.current.value` as
+      // `prev` for functional updates so multi-field record consumers like
+      // `useTimerSettings` ({ enabled, duration }) don't drop the user's
+      // last-saved fields. `absent` keeps `defaultValue` semantics — a
+      // cross-tab `clear()` is a deliberate reset, not a corruption event.
+      // The cached entry must belong to the current `key`; otherwise a key
+      // swap would feed the previous key's value into a functional updater
+      // and persist a record that mixes both keys' state.
       const currentProbe = parseRawValue(readRawValue(key), validate);
-      const prev =
-        currentProbe.status === "valid" ? currentProbe.value : defaultValue;
+      let prev: T;
+      if (currentProbe.status === "valid") {
+        prev = currentProbe.value;
+      } else if (currentProbe.status === "absent") {
+        prev = defaultValue;
+      } else if (
+        latestValidRef.current.has &&
+        latestValidRef.current.key === key
+      ) {
+        prev = latestValidRef.current.value;
+      } else {
+        prev = defaultValue;
+      }
       const resolved =
         typeof next === "function"
           ? // `as` justified: typeof check cannot narrow `T | ((prev: T) => T)`

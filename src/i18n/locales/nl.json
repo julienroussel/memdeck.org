@@ -330,6 +330,10 @@
     "localDbWriteFailed": {
       "title": "Wijzigingen niet opgeslagen",
       "message": "Je browseropslag is misschien vol — recente wijzigingen gaan verloren na het herladen."
+    },
+    "localDbCorrupt": {
+      "title": "Instellingen niet meer synchroon",
+      "message": "Een ander tabblad schreef gegevens die dit tabblad niet kon lezen. Je wijzigingen hier zijn veilig."
     }
   },
   "stats": {

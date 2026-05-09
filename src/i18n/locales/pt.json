@@ -330,6 +330,10 @@
     "localDbWriteFailed": {
       "title": "Alterações não guardadas",
       "message": "O armazenamento do navegador pode estar cheio — as alterações recentes não serão mantidas após recarregar a página."
+    },
+    "localDbCorrupt": {
+      "title": "Definições dessincronizadas",
+      "message": "Outro separador escreveu dados que este separador não conseguiu ler. As tuas alterações aqui estão seguras."
     }
   },
   "stats": {

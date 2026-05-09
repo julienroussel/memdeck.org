@@ -362,6 +362,10 @@
     "localDbWriteFailed": {
       "title": "Couldn't save",
       "message": "Your browser storage may be full — recent changes won't persist after a refresh."
+    },
+    "localDbCorrupt": {
+      "title": "Settings out of sync",
+      "message": "Another tab wrote data this tab couldn't read. Your changes here are safe."
     }
   },
   "stats": {
