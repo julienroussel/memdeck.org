@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { createDeckPosition, type Stack } from "../../types/stacks";
 import { aronson } from "../../types/stacks/aronson";
 import { mnemonica } from "../../types/stacks/mnemonica";
+import type { TimerSettings } from "../../types/timer";
 import type { AcaanScenario } from "../../utils/acaan-scenario";
 import { calculateCutDepth } from "../../utils/acaan-scenario";
 import {
@@ -17,13 +18,6 @@ import { useAcaanGame } from "./use-acaan-game";
 
 vi.mock("@mantine/notifications", () => ({
   notifications: { show: vi.fn() },
-}));
-
-vi.mock("../../hooks/use-acaan-timer", () => ({
-  useAcaanTimer: () => ({
-    timerSettings: { enabled: false, duration: 15 },
-    setTimerSettings: vi.fn(),
-  }),
 }));
 
 vi.mock("../../hooks/use-game-timer", () => {
@@ -55,6 +49,8 @@ vi.mock("../../services/event-bus", () => ({
     emit: { ACAAN_ANSWER: vi.fn() },
   },
 }));
+
+const mockTimerSettings: TimerSettings = { enabled: false, duration: 15 };
 
 // Helper to create a test scenario
 const createTestScenario = (
@@ -536,7 +532,7 @@ describe("useAcaanGame hook", () => {
         await import("@mantine/notifications")
       );
       const { result } = renderHook(() =>
-        useAcaanGame(mnemonica.order, "Mnemonica")
+        useAcaanGame(mnemonica.order, "Mnemonica", mockTimerSettings)
       );
 
       const { cardPosition, targetPosition } = result.current.scenario;
@@ -559,7 +555,7 @@ describe("useAcaanGame hook", () => {
 
     it("increments fails count", () => {
       const { result } = renderHook(() =>
-        useAcaanGame(mnemonica.order, "Mnemonica")
+        useAcaanGame(mnemonica.order, "Mnemonica", mockTimerSettings)
       );
 
       expect(result.current.score.fails).toBe(0);
@@ -573,7 +569,7 @@ describe("useAcaanGame hook", () => {
 
     it("advances to a new scenario", () => {
       const { result } = renderHook(() =>
-        useAcaanGame(mnemonica.order, "Mnemonica")
+        useAcaanGame(mnemonica.order, "Mnemonica", mockTimerSettings)
       );
 
       const originalScenario = result.current.scenario;
@@ -588,7 +584,9 @@ describe("useAcaanGame hook", () => {
     it("calls onAnswer callback with correct: false and questionAdvanced: true", () => {
       const onAnswer = vi.fn();
       const { result } = renderHook(() =>
-        useAcaanGame(mnemonica.order, "Mnemonica", { onAnswer })
+        useAcaanGame(mnemonica.order, "Mnemonica", mockTimerSettings, {
+          onAnswer,
+        })
       );
 
       act(() => {
@@ -604,7 +602,7 @@ describe("useAcaanGame hook", () => {
     it("emits ACAAN_ANSWER event with correct: false", async () => {
       const { eventBus } = await import("../../services/event-bus");
       const { result } = renderHook(() =>
-        useAcaanGame(mnemonica.order, "Mnemonica")
+        useAcaanGame(mnemonica.order, "Mnemonica", mockTimerSettings)
       );
 
       act(() => {
@@ -622,7 +620,7 @@ describe("useAcaanGame hook", () => {
     it("emits ACAAN_ANSWER event with correct: true on correct answer", async () => {
       const { eventBus } = await import("../../services/event-bus");
       const { result } = renderHook(() =>
-        useAcaanGame(mnemonica.order, "Mnemonica")
+        useAcaanGame(mnemonica.order, "Mnemonica", mockTimerSettings)
       );
 
       const { cardPosition, targetPosition } = result.current.scenario;
@@ -641,7 +639,7 @@ describe("useAcaanGame hook", () => {
     it("emits ACAAN_ANSWER event with correct: false on wrong answer", async () => {
       const { eventBus } = await import("../../services/event-bus");
       const { result } = renderHook(() =>
-        useAcaanGame(mnemonica.order, "Mnemonica")
+        useAcaanGame(mnemonica.order, "Mnemonica", mockTimerSettings)
       );
 
       const { cardPosition, targetPosition } = result.current.scenario;
@@ -668,7 +666,9 @@ describe("useAcaanGame hook", () => {
         __getCapturedOnTimeout: () => (() => void) | undefined;
       };
 
-      renderHook(() => useAcaanGame(mnemonica.order, "Mnemonica"));
+      renderHook(() =>
+        useAcaanGame(mnemonica.order, "Mnemonica", mockTimerSettings)
+      );
 
       const onTimeout = gameTimerMock.__getCapturedOnTimeout();
       expect(onTimeout).toBeDefined();
@@ -696,7 +696,8 @@ describe("useAcaanGame hook", () => {
         name: "Mnemonica",
       };
       const { result, rerender } = renderHook(
-        ({ stack, name }: Props) => useAcaanGame(stack, name),
+        ({ stack, name }: Props) =>
+          useAcaanGame(stack, name, mockTimerSettings),
         { initialProps }
       );
 

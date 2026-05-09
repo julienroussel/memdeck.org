@@ -2,12 +2,12 @@ import { notifications } from "@mantine/notifications";
 import { useCallback, useReducer, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
-import { useAcaanTimer } from "../../hooks/use-acaan-timer";
 import { useGameTimer } from "../../hooks/use-game-timer";
 import { eventBus } from "../../services/event-bus";
 import type { GameScore } from "../../types/game";
 import type { AnswerOutcome } from "../../types/session";
 import type { Stack, StackValue } from "../../types/stacks";
+import type { TimerSettings } from "../../types/timer";
 import type { AcaanScenario } from "../../utils/acaan-scenario";
 import { generateAcaanScenario } from "../../utils/acaan-scenario";
 import {
@@ -27,7 +27,6 @@ type UseAcaanGameResult = {
   scenario: AcaanScenario;
   score: GameScore;
   timeRemaining: number;
-  timerEnabled: boolean;
   timerDuration: number;
   submitAnswer: (userAnswer: number) => void;
   revealAnswer: () => void;
@@ -36,10 +35,10 @@ type UseAcaanGameResult = {
 export const useAcaanGame = (
   stackOrder: Stack,
   stackName: StackValue["name"],
+  timerSettings: TimerSettings,
   options?: UseAcaanGameOptions
 ): UseAcaanGameResult => {
   const { t } = useTranslation();
-  const { timerSettings } = useAcaanTimer();
 
   // Refs let callbacks below read the latest stackOrder/stackName without
   // being re-created when those props change.
@@ -175,7 +174,6 @@ export const useAcaanGame = (
     scenario: state.scenario,
     score: { successes: state.successes, fails: state.fails },
     timeRemaining: state.timeRemaining,
-    timerEnabled: timerSettings.enabled,
     timerDuration: state.timerDuration,
     submitAnswer,
     revealAnswer,
