@@ -170,6 +170,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Use `const` by default**, `let` only when reassignment is needed, never `var`.
 - **Use `for...of`** over `.forEach()` and indexed `for` loops.
 - **Use optional chaining (`?.`) and nullish coalescing (`??`)** for safer property access.
+- **Prefer ES2022 built-ins.** Both `tsconfig.app.json` and `tsconfig.node.json` target ES2022. Use `Object.hasOwn(obj, key)` over `Object.prototype.hasOwnProperty.call(...)`, `arr.at(-1)` over `arr[arr.length - 1]`, `findLast` / `findLastIndex` over manual reverse-loops, and `new Error(msg, { cause })` for error chaining. Exception: `src/utils/localstorage-telemetry.ts` deliberately drops `cause` to keep V8's `JSON.parse` SyntaxError snippet out of analytics — see the file's lines 16–19 comment before refactoring it.
 
 ## Formatting & Linting
 

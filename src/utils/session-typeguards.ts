@@ -155,10 +155,7 @@ const FOREIGN_MODE_FIELDS = {
 // entirely OR explicitly `undefined`. An explicit `null` (or any other value)
 // is corrupt — a record carrying `"flashcardMode": null` on an acaan session
 // would otherwise pass this guard and reach reducers that don't expect it.
-const hasOwn = (obj: object, key: string): boolean => {
-  // biome-ignore lint/suspicious/noPrototypeBuiltins: project tsconfig targets ES2020 lib; Object.hasOwn requires ES2022.
-  return Object.prototype.hasOwnProperty.call(obj, key);
-};
+const hasOwn = (obj: object, key: string): boolean => Object.hasOwn(obj, key);
 
 const hasNoForeignModeFields = (
   value: Record<string, unknown>,
