@@ -806,8 +806,7 @@ describe("useSession hook", () => {
     expect(updated.status.phase).toBe("summary");
     // The persisted record should reflect the new limits, not the old ones.
     const calls = mockBuildSessionRecord.mock.calls;
-    // biome-ignore lint/style/useAtIndex: tsconfig.app lib is ES2020 — Array.prototype.at type is not available on mock.calls' inferred type
-    const finalizedSession = calls[calls.length - 1]?.[0];
+    const finalizedSession = calls.at(-1)?.[0];
     expect(finalizedSession?.stackLimits).toEqual(limitsB);
   });
 

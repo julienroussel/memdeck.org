@@ -10,7 +10,7 @@ export type SpellingEntry = {
 };
 
 export const getLetterCount = (name: string): number =>
-  name.split(" ").join("").length;
+  name.replaceAll(" ", "").length;
 
 export const getSpellingData = (
   stackOrder: Stack,
