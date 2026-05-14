@@ -8,6 +8,7 @@ import {
   reportLocalDbCorruption,
   reportLocalDbNotifyFailed,
   reportLocalDbWriteFailed,
+  reportSessionPersistenceFailed,
 } from "./localstorage-telemetry";
 
 // `as` justified: i18next.t has overloaded TFunction signatures; vi.fn's
@@ -147,6 +148,77 @@ describe("reportLocalDbWriteFailed", () => {
 
     const [errArg] = trackErrorSpy.mock.calls[0] ?? [];
     expect(errArg?.message).toBe("type=number");
+  });
+});
+
+describe("reportSessionPersistenceFailed", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  // write-failed / corrupt are genuine localStorage.setItem failures — they
+  // share the LocalDbWriteFailed GA `action` bucket with `useLocalDb`'s write
+  // path so "how often does a write fail" is a single, trustworthy query.
+  it("names write-failed under the shared LocalDbWriteFailed bucket", () => {
+    const trackErrorSpy = vi
+      .spyOn(analytics, "trackError")
+      .mockImplementation(() => undefined);
+
+    reportSessionPersistenceFailed("write-failed", "useSession:flush");
+
+    expect(trackErrorSpy).toHaveBeenCalledTimes(1);
+    const [errArg, contextArg] = trackErrorSpy.mock.calls[0] ?? [];
+    expect(errArg).toBeInstanceOf(Error);
+    expect(errArg?.name).toBe("LocalDbWriteFailed");
+    expect(errArg?.message).toBe("reason=write-failed");
+    expect(contextArg).toBe("useSession:flush");
+  });
+
+  it("names corrupt under the shared LocalDbWriteFailed bucket", () => {
+    const trackErrorSpy = vi
+      .spyOn(analytics, "trackError")
+      .mockImplementation(() => undefined);
+
+    reportSessionPersistenceFailed("corrupt", "useSessionAutoSave:cleanup");
+
+    const [errArg, contextArg] = trackErrorSpy.mock.calls[0] ?? [];
+    expect(errArg).toBeInstanceOf(Error);
+    expect(errArg?.name).toBe("LocalDbWriteFailed");
+    expect(errArg?.message).toBe("reason=corrupt");
+    expect(contextArg).toBe("useSessionAutoSave:cleanup");
+  });
+
+  // serialize-failed / corrupt-prior-state involved no failed write, so they
+  // get a distinct name rather than inflating the write-failure aggregate.
+  it("names serialize-failed under the distinct LocalDbPersistenceFailed bucket", () => {
+    const trackErrorSpy = vi
+      .spyOn(analytics, "trackError")
+      .mockImplementation(() => undefined);
+
+    reportSessionPersistenceFailed("serialize-failed", "useSession:flush");
+
+    const [errArg, contextArg] = trackErrorSpy.mock.calls[0] ?? [];
+    expect(errArg).toBeInstanceOf(Error);
+    expect(errArg?.name).toBe("LocalDbPersistenceFailed");
+    expect(errArg?.message).toBe("reason=serialize-failed");
+    expect(contextArg).toBe("useSession:flush");
+  });
+
+  it("names corrupt-prior-state under the distinct LocalDbPersistenceFailed bucket", () => {
+    const trackErrorSpy = vi
+      .spyOn(analytics, "trackError")
+      .mockImplementation(() => undefined);
+
+    reportSessionPersistenceFailed(
+      "corrupt-prior-state",
+      "useSessionAutoSave:beforeUnload"
+    );
+
+    const [errArg, contextArg] = trackErrorSpy.mock.calls[0] ?? [];
+    expect(errArg).toBeInstanceOf(Error);
+    expect(errArg?.name).toBe("LocalDbPersistenceFailed");
+    expect(errArg?.message).toBe("reason=corrupt-prior-state");
+    expect(contextArg).toBe("useSessionAutoSave:beforeUnload");
   });
 });
 
