@@ -7,9 +7,9 @@ import {
   useRef,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { analytics } from "../services/analytics";
 import type { ActiveSession, SessionPhase } from "../types/session";
 import type { StackKey } from "../types/stacks";
+import { reportSessionPersistenceFailed } from "../utils/localstorage-telemetry";
 import { writeLastSaveFailedBreadcrumb } from "../utils/session-breadcrumbs";
 import { meetsMinimumSaveThreshold } from "../utils/session-phase";
 import type { TryFinalizeSessionResult } from "./use-session";
@@ -86,8 +86,10 @@ export const useSessionAutoSave = ({
       const result = tryFinalizeSession(current.session);
       if (result.status === "write-failed") {
         writeLastSaveFailedBreadcrumb(result.reason);
-        analytics.trackError(
-          new Error(`Session save failed on unload (${result.reason})`),
+        // The :beforeUnload context distinguishes this from the :cleanup and
+        // useSession:flush call sites in GA — see reportSessionPersistenceFailed.
+        reportSessionPersistenceFailed(
+          result.reason,
           "useSessionAutoSave:beforeUnload"
         );
         if (import.meta.env.DEV) {
@@ -111,8 +113,8 @@ export const useSessionAutoSave = ({
       }
       const result = tryFinalizeSession(current.session);
       if (result.status === "write-failed") {
-        analytics.trackError(
-          new Error(`Session save failed on cleanup (${result.reason})`),
+        reportSessionPersistenceFailed(
+          result.reason,
           "useSessionAutoSave:cleanup"
         );
         const isUnrecoverable =

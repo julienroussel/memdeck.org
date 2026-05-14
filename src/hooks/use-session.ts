@@ -1,7 +1,6 @@
 import { notifications } from "@mantine/notifications";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { analytics } from "../services/analytics";
 import { eventBus } from "../services/event-bus";
 import type { DistanceConvention, DistanceMode } from "../types/distance";
 import type { FlashcardMode } from "../types/flashcard";
@@ -16,6 +15,7 @@ import type {
 import type { SpotCheckMode } from "../types/spot-check";
 import type { StackLimits } from "../types/stack-limits";
 import type { StackKey } from "../types/stacks";
+import { reportSessionPersistenceFailed } from "../utils/localstorage-telemetry";
 import {
   clearLastSaveFailedBreadcrumb,
   hasLastSaveFailedNotificationBeenShown,
@@ -23,7 +23,7 @@ import {
   readLastSaveFailedBreadcrumb,
 } from "../utils/session-breadcrumbs";
 import {
-  type FinalizeSessionResult,
+  type FinalizeFailureReason,
   finalizeSession,
 } from "../utils/session-persistence";
 import {
@@ -76,17 +76,15 @@ type UseSessionResult = {
  * (`write-failed`) so they can decide whether to surface the failure to
  * analytics or the user. `finalized` carries the computed summary on success.
  *
- * The `reason` on `write-failed` mirrors `FinalizeSessionResult.reason` so
- * callers can differentiate quota/serialization failures from a corrupt
- * on-disk state where the rollback also failed.
+ * The `reason` on `write-failed` is `FinalizeFailureReason` — the same union
+ * as `FinalizeSessionResult.reason` — so callers can differentiate
+ * quota/serialization failures from a corrupt on-disk state where the
+ * rollback also failed.
  */
 export type TryFinalizeSessionResult =
   | { status: "finalized"; summary: SessionSummary }
   | { status: "duplicate" }
-  | {
-      status: "write-failed";
-      reason: Extract<FinalizeSessionResult, { ok: false }>["reason"];
-    };
+  | { status: "write-failed"; reason: FinalizeFailureReason };
 
 export const useSession = (options: UseSessionOptions): UseSessionResult => {
   const { t } = useTranslation();
@@ -269,16 +267,15 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
     // Report every finalize failure to analytics so quota/serialize/corrupt
     // buckets are all observable in GA — the auto-save cleanup path reports
     // unconditionally, and asymmetry here was undercounting user-Stop quota
-    // failures. Distinct copy per reason still drives the user-facing message:
+    // failures. `reportSessionPersistenceFailed` names the GA exception so
+    // write failures aggregate with `useLocalDb`'s. Distinct copy per reason
+    // still drives the user-facing message:
     //  - corrupt / corrupt-prior-state: retry won't help; tell user to clear
     //    storage. Mark the session id as finalized so we don't re-show the
     //    notification on every Stop click.
     //  - serialize-failed / write-failed: keep phase: "active" so the user
     //    can retry Stop after clearing space.
-    analytics.trackError(
-      new Error(`Session finalize: ${result.reason}`),
-      "useSession:flush"
-    );
+    reportSessionPersistenceFailed(result.reason, "useSession:flush");
     const isUnrecoverable =
       result.reason === "corrupt" || result.reason === "corrupt-prior-state";
     if (isUnrecoverable) {

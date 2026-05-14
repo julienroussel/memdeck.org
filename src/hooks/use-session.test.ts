@@ -851,8 +851,14 @@ describe("useSession hook", () => {
       // Every finalize failure reports to analytics — the auto-save cleanup
       // path reports unconditionally and asymmetry here was undercounting
       // user-Stop quota failures in GA.
+      // write-failed shares the LocalDbWriteFailed GA bucket with useLocalDb's
+      // write path — see reportSessionPersistenceFailed. `name` IS the GA
+      // `action` dimension, so it's the discriminator the fix exists to set.
       expect(mockTrackError).toHaveBeenCalledWith(
-        expect.objectContaining({ message: "Session finalize: write-failed" }),
+        expect.objectContaining({
+          name: "LocalDbWriteFailed",
+          message: "reason=write-failed",
+        }),
         "useSession:flush"
       );
     });
@@ -873,8 +879,13 @@ describe("useSession hook", () => {
           message: "errors.sessionStorageCorrupt.message",
         })
       );
+      // corrupt = two failed writes (stats write + history rollback), so it
+      // also lands in the LocalDbWriteFailed bucket.
       expect(mockTrackError).toHaveBeenCalledWith(
-        expect.objectContaining({ message: "Session finalize: corrupt" }),
+        expect.objectContaining({
+          name: "LocalDbWriteFailed",
+          message: "reason=corrupt",
+        }),
         "useSession:flush"
       );
       // Phase stays active but the session id was added to finalizedIds so
@@ -898,9 +909,13 @@ describe("useSession hook", () => {
           title: "errors.sessionStorageCorrupt.title",
         })
       );
+      // corrupt-prior-state involved no failed write (we refused to overwrite),
+      // so it gets the distinct LocalDbPersistenceFailed name rather than
+      // inflating the write-failure bucket.
       expect(mockTrackError).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: "Session finalize: corrupt-prior-state",
+          name: "LocalDbPersistenceFailed",
+          message: "reason=corrupt-prior-state",
         }),
         "useSession:flush"
       );
@@ -920,9 +935,12 @@ describe("useSession hook", () => {
           title: "errors.sessionSaveFailed.title",
         })
       );
+      // serialize-failed is a JSON.stringify failure — no write was attempted,
+      // so it shares the LocalDbPersistenceFailed name, not LocalDbWriteFailed.
       expect(mockTrackError).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: "Session finalize: serialize-failed",
+          name: "LocalDbPersistenceFailed",
+          message: "reason=serialize-failed",
         }),
         "useSession:flush"
       );

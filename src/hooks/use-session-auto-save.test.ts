@@ -536,7 +536,11 @@ describe("useSessionAutoSave", () => {
       expect(analytics.trackError).toHaveBeenCalledOnce();
       const [error, context] = vi.mocked(analytics.trackError).mock.calls[0];
       expect(error).toBeInstanceOf(Error);
-      expect(error.message).toContain("write-failed");
+      // `name` IS GA's `action` dimension — the discriminator the consolidation
+      // exists to set. write-failed shares the LocalDbWriteFailed bucket with
+      // useLocalDb's write path.
+      expect(error.name).toBe("LocalDbWriteFailed");
+      expect(error.message).toBe("reason=write-failed");
       // Cleanup path on internal-navigation unmount uses the :cleanup context
       // so triage can split it from real beforeunload (page-close) failures.
       expect(context).toBe("useSessionAutoSave:cleanup");
@@ -561,7 +565,10 @@ describe("useSessionAutoSave", () => {
 
       expect(analytics.trackError).toHaveBeenCalledOnce();
       const [error] = vi.mocked(analytics.trackError).mock.calls[0];
-      expect(error.message).toContain("corrupt");
+      // corrupt = two failed writes (stats write + history rollback), so it
+      // also lands in the LocalDbWriteFailed bucket.
+      expect(error.name).toBe("LocalDbWriteFailed");
+      expect(error.message).toBe("reason=corrupt");
     });
 
     it("does NOT emit analytics.trackError when tryFinalizeSession returns duplicate", () => {
@@ -597,7 +604,7 @@ describe("useSessionAutoSave", () => {
       expect(analytics.trackError).not.toHaveBeenCalled();
     });
 
-    it("writes the last-save-failed breadcrumb on beforeunload when finalize returns write-failed", () => {
+    it("writes the breadcrumb and reports to GA on beforeunload when finalize returns write-failed", () => {
       // Real beforeunload (page closing) cannot show a notification — the
       // hook persists a breadcrumb so the next session start surfaces the
       // failure to the user.
@@ -623,6 +630,15 @@ describe("useSessionAutoSave", () => {
       expect(writeLastSaveFailedBreadcrumb).toHaveBeenCalledWith(
         "write-failed"
       );
+      // The :beforeUnload context string is the load-bearing GA discriminator
+      // that splits page-close failures from the :cleanup path. Assert it here
+      // so a regression that swaps/drops it on this branch fails a test — the
+      // :cleanup path asserts the symmetric thing in the observability suite.
+      expect(analytics.trackError).toHaveBeenCalledOnce();
+      const [error, context] = vi.mocked(analytics.trackError).mock.calls[0];
+      expect(error.name).toBe("LocalDbWriteFailed");
+      expect(error.message).toBe("reason=write-failed");
+      expect(context).toBe("useSessionAutoSave:beforeUnload");
     });
 
     it("does NOT write the last-save-failed breadcrumb on the React-cleanup path even on write-failed", () => {

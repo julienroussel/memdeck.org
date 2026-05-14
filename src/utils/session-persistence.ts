@@ -217,16 +217,21 @@ export const computeSessionSummary = (
  *   Callers should tell the user storage is corrupt and stop the auto-retry
  *   loop.
  */
+/**
+ * Why a `finalizeSession` call failed. Exported so the telemetry reporter
+ * (`reportSessionPersistenceFailed`) and `use-session.ts`'s
+ * `TryFinalizeSessionResult` share one definition instead of each re-deriving
+ * the reason union.
+ */
+export type FinalizeFailureReason =
+  | "write-failed"
+  | "serialize-failed"
+  | "corrupt"
+  | "corrupt-prior-state";
+
 export type FinalizeSessionResult =
   | { ok: true; summary: SessionSummary }
-  | {
-      ok: false;
-      reason:
-        | "write-failed"
-        | "serialize-failed"
-        | "corrupt"
-        | "corrupt-prior-state";
-    };
+  | { ok: false; reason: FinalizeFailureReason };
 
 /**
  * Finalizes an active session: persists it atomically and returns a summary.
