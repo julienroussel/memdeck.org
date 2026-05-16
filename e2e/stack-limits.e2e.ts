@@ -1,5 +1,18 @@
 import { expect } from "@playwright/test";
+import type { eventBus } from "../src/services/event-bus";
 import { test } from "./fixtures/test-setup";
+
+declare global {
+  interface Window {
+    __capturedStackLimitsChanges?: Array<{
+      start: number;
+      end: number;
+      rangeSize: number;
+      stackName: string;
+    }>;
+    __memdeckEventBus?: typeof eventBus;
+  }
+}
 
 const STACK_RANGE_BADGE_PATTERN = /Stack range/;
 
@@ -188,5 +201,118 @@ test.describe("Stack Limits", () => {
       localStorage.getItem("memdeck-app-stack-limits")
     );
     expect(onDisk).toBe(corrupt);
+  });
+});
+
+// These tests opt out of the parent describe's `beforeEach` because they
+// need to control the initial navigation themselves: test 1 must plant the
+// corrupt blob before useStackLimits mounts, and both tests load with
+// `?memdeck-e2e=1` so `window.__memdeckEventBus` is exposed (the
+// production gate lives in `src/main.tsx`).
+test.describe("Stack Limits — emit and corrupt-lock", () => {
+  test("should refuse to overwrite a corrupt stack-limits blob when a preset is clicked", async ({
+    page,
+  }) => {
+    const corrupt = JSON.stringify("garbage-not-a-record");
+
+    await page.addInitScript((value) => {
+      localStorage.setItem("memdeck-app-stack-limits", value);
+    }, corrupt);
+
+    await page.goto("/?memdeck-e2e=1");
+    await page.waitForLoadState("networkidle");
+
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("mnemonica");
+    await page.waitForLoadState("networkidle");
+
+    await page.waitForFunction(() => window.__memdeckEventBus !== undefined);
+    await page.evaluate(() => {
+      const bus = window.__memdeckEventBus;
+      if (!bus) {
+        throw new Error("__memdeckEventBus not exposed");
+      }
+      window.__capturedStackLimitsChanges = [];
+      bus.subscribe.STACK_LIMITS_CHANGED((payload) => {
+        window.__capturedStackLimitsChanges?.push(payload);
+      });
+    });
+
+    await page
+      .getByRole("button", { name: "Stack range: 52 cards. Tap to adjust." })
+      .click();
+    const limitsControl = page.locator("[data-testid='stack-limits-control']");
+    await limitsControl
+      .getByRole("button", { name: "Set range to first 13 cards" })
+      .click();
+    await page.keyboard.press("Escape");
+
+    const onDisk = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-stack-limits")
+    );
+    expect(onDisk).toBe(corrupt);
+
+    // The emit chain is synchronous today (setRecord → setItem → onSuccess);
+    // a brief settle catches a delayed emit if onSuccess ever wraps in a
+    // microtask, so the empty-captured assertion stays meaningful.
+    await page.waitForTimeout(100);
+    const captured = await page.evaluate(
+      () => window.__capturedStackLimitsChanges
+    );
+    expect(captured).toEqual([]);
+
+    const badge = page.getByRole("button", {
+      name: "Stack range: 52 cards. Tap to adjust.",
+    });
+    await expect(badge).toBeVisible();
+  });
+
+  test("should emit STACK_LIMITS_CHANGED with the correct payload when a preset succeeds", async ({
+    page,
+  }) => {
+    await page.goto("/?memdeck-e2e=1");
+    await page.waitForLoadState("networkidle");
+
+    await page
+      .locator("[data-testid='stack-picker']")
+      .first()
+      .selectOption("mnemonica");
+    await page.waitForLoadState("networkidle");
+
+    await page.waitForFunction(() => window.__memdeckEventBus !== undefined);
+    await page.evaluate(() => {
+      const bus = window.__memdeckEventBus;
+      if (!bus) {
+        throw new Error("__memdeckEventBus not exposed");
+      }
+      window.__capturedStackLimitsChanges = [];
+      bus.subscribe.STACK_LIMITS_CHANGED((payload) => {
+        window.__capturedStackLimitsChanges?.push(payload);
+      });
+    });
+
+    await page
+      .getByRole("button", { name: "Stack range: 52 cards. Tap to adjust." })
+      .click();
+    await page
+      .locator("[data-testid='stack-limits-control']")
+      .getByRole("button", { name: "Set range to first 13 cards" })
+      .click();
+
+    // Poll so the assertion retries if onSuccess ever becomes async — the
+    // emit chain is synchronous today, but `expect.poll` removes the latent
+    // race without changing semantics on the happy path.
+    await expect
+      .poll(() => page.evaluate(() => window.__capturedStackLimitsChanges))
+      .toEqual([
+        {
+          start: 1,
+          end: 13,
+          rangeSize: 13,
+          stackName: "Tamariz",
+        },
+      ]);
   });
 });

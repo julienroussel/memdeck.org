@@ -2,6 +2,17 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { languageReady } from "./i18n";
 import { Provider } from "./provider";
+import { eventBus } from "./services/event-bus";
+
+declare global {
+  interface Window {
+    __memdeckEventBus?: typeof eventBus;
+  }
+}
+
+if (new URLSearchParams(window.location.search).has("memdeck-e2e")) {
+  window.__memdeckEventBus = eventBus;
+}
 
 const rootElement = document.getElementById("root");
 
