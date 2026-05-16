@@ -3,7 +3,6 @@ import {
   Button,
   Center,
   createTheme,
-  localStorageColorSchemeManager,
   MantineProvider,
   Stack,
   Text,
@@ -17,6 +16,7 @@ import { FocusOnNavigate } from "./components/focus-on-navigate";
 import { LanguageLoadNotifier } from "./components/language-load-notifier";
 import { PwaUpdateNotifier } from "./components/pwa-update-notifier";
 import { analytics } from "./services/analytics";
+import { createColorSchemeManager } from "./utils/color-scheme-manager";
 
 const getSystemColorScheme = (): "light" | "dark" => {
   if (
@@ -30,9 +30,7 @@ const getSystemColorScheme = (): "light" | "dark" => {
 
 const systemColorScheme = getSystemColorScheme();
 
-const colorSchemeManager = localStorageColorSchemeManager({
-  key: "memdeck-app-color-scheme",
-});
+const colorSchemeManager = createColorSchemeManager("memdeck-app-color-scheme");
 
 const theme = createTheme({
   primaryColor: "blue",
