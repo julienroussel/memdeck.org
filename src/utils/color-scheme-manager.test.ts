@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { COLOR_SCHEME_LSK } from "../constants";
 
 const mockHandleLocalDbWriteFailed =
   vi.fn<(key: string, cause: unknown) => void>();
@@ -9,7 +10,7 @@ vi.mock("./localstorage-telemetry", () => ({
 
 const { createColorSchemeManager } = await import("./color-scheme-manager");
 
-const KEY = "memdeck-app-color-scheme";
+const KEY = COLOR_SCHEME_LSK;
 
 const quotaError = (): DOMException =>
   new DOMException("quota", "QuotaExceededError");

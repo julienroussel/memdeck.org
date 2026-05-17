@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { COLOR_SCHEME_LSK } from "../src/constants";
 import { test } from "./fixtures/test-setup";
 
 test.describe("localStorage Persistence", () => {
@@ -90,8 +91,9 @@ test.describe("localStorage Persistence", () => {
     }
 
     // Verify localStorage (color scheme is stored as plain string, not JSON stringified)
-    const savedScheme = await page.evaluate(() =>
-      localStorage.getItem("memdeck-app-color-scheme")
+    const savedScheme = await page.evaluate(
+      (key) => localStorage.getItem(key),
+      COLOR_SCHEME_LSK
     );
     expect(savedScheme).toBe("dark");
 
@@ -162,8 +164,9 @@ test.describe("localStorage Persistence", () => {
     expect(mode).toBe('"numberonly"');
 
     // Check theme (color scheme is stored as plain string)
-    const scheme = await page.evaluate(() =>
-      localStorage.getItem("memdeck-app-color-scheme")
+    const scheme = await page.evaluate(
+      (key) => localStorage.getItem(key),
+      COLOR_SCHEME_LSK
     );
     expect(scheme).toBe("dark");
   });
