@@ -15,6 +15,7 @@ import { App } from "./app";
 import { FocusOnNavigate } from "./components/focus-on-navigate";
 import { LanguageLoadNotifier } from "./components/language-load-notifier";
 import { PwaUpdateNotifier } from "./components/pwa-update-notifier";
+import { COLOR_SCHEME_LSK } from "./constants";
 import { analytics } from "./services/analytics";
 import { createColorSchemeManager } from "./utils/color-scheme-manager";
 
@@ -30,7 +31,7 @@ const getSystemColorScheme = (): "light" | "dark" => {
 
 const systemColorScheme = getSystemColorScheme();
 
-const colorSchemeManager = createColorSchemeManager("memdeck-app-color-scheme");
+const colorSchemeManager = createColorSchemeManager(COLOR_SCHEME_LSK);
 
 const theme = createTheme({
   primaryColor: "blue",

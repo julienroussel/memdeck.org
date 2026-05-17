@@ -1,5 +1,12 @@
 import { expect } from "@playwright/test";
+import { COLOR_SCHEME_LSK } from "../src/constants";
 import { test } from "./fixtures/test-setup";
+
+declare global {
+  interface Window {
+    __failColorSchemeWrites?: boolean;
+  }
+}
 
 test.describe("Theme & Color Scheme", () => {
   test.beforeEach(async ({ page }) => {
@@ -49,8 +56,9 @@ test.describe("Theme & Color Scheme", () => {
     await expect(themeSwitch).not.toBeChecked();
 
     // Check localStorage
-    const colorScheme = await page.evaluate(() =>
-      localStorage.getItem("memdeck-app-color-scheme")
+    const colorScheme = await page.evaluate(
+      (key) => localStorage.getItem(key),
+      COLOR_SCHEME_LSK
     );
 
     expect(colorScheme).toBe("dark");
@@ -191,5 +199,65 @@ test.describe("Theme & Color Scheme", () => {
     await expect(
       page.getByRole("heading", { name: "Master your memorized deck" })
     ).toBeVisible();
+  });
+});
+
+// Top-level describe (sibling, not nested) so the parent's `goto("/")`
+// beforeEach doesn't fire — the `setItem` shim must be installed via
+// `addInitScript` before any app code runs.
+test.describe("Theme & Color Scheme — write failure", () => {
+  test("should surface the localDbWriteFailed toast when the color-scheme write throws", async ({
+    page,
+  }) => {
+    await page.addInitScript((key) => {
+      // Pre-seed with the default value so the post-test assertion proves
+      // the failed write did NOT overwrite localStorage — without this,
+      // `getItem` would return null whether the shim threw or the write
+      // never happened at all.
+      window.localStorage.setItem(key, "light");
+      const originalSetItem = window.localStorage.setItem.bind(
+        window.localStorage
+      );
+      window.localStorage.setItem = function patchedSetItem(
+        k: string,
+        v: string
+      ) {
+        if (k === key && window.__failColorSchemeWrites === true) {
+          throw new DOMException("Quota exceeded", "QuotaExceededError");
+        }
+        originalSetItem(k, v);
+      };
+    }, COLOR_SCHEME_LSK);
+
+    await page.goto("/");
+    // Waiting on the switch to render proves React has committed, not just
+    // that the network is idle — `networkidle` would resolve before Mantine
+    // mounts and could let the shim arm during the render window.
+    const themeSwitchTrack = page.locator(".mantine-Switch-track").first();
+    await expect(themeSwitchTrack).toBeVisible();
+
+    // Arm the shim after mount so any mount-time Mantine writes can't trip
+    // the toast before the user-triggered toggle — keeps the assertion
+    // attributable to the click below.
+    await page.evaluate(() => {
+      window.__failColorSchemeWrites = true;
+    });
+
+    await themeSwitchTrack.click();
+
+    // Match the message body, which is unique to `errors.localDbWriteFailed`
+    // — using the title ("Couldn't save") as substring would also match the
+    // unrelated `errors.sessionSaveFailed` toast whose message starts with
+    // "Couldn't save your session…".
+    const notification = page
+      .getByRole("alert")
+      .filter({ hasText: "recent changes won't persist" });
+    await expect(notification).toBeVisible({ timeout: 2000 });
+
+    const stored = await page.evaluate(
+      (key) => window.localStorage.getItem(key),
+      COLOR_SCHEME_LSK
+    );
+    expect(stored).toBe("light");
   });
 });

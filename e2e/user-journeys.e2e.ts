@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { COLOR_SCHEME_LSK } from "../src/constants";
 import { test } from "./fixtures/test-setup";
 
 // URL patterns
@@ -213,8 +214,9 @@ test.describe("User Journeys", () => {
     }
 
     // Final state should be persisted (color scheme is stored as plain string)
-    const scheme = await page.evaluate(() =>
-      localStorage.getItem("memdeck-app-color-scheme")
+    const scheme = await page.evaluate(
+      (key) => localStorage.getItem(key),
+      COLOR_SCHEME_LSK
     );
 
     const expectedScheme = isLight ? "light" : "dark";
