@@ -35,9 +35,11 @@ export const useAllTimeStats = (): UseAllTimeStatsResult => {
     ALL_TIME_STATS_LSK,
     {},
     isAllTimeStats,
-    (key, error) => {
-      reportLocalDbCorruption(key, error);
-      setStatsStatus("corrupt");
+    {
+      onCorrupt: (key, error) => {
+        reportLocalDbCorruption(key, error);
+        setStatsStatus("corrupt");
+      },
     }
   );
 

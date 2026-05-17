@@ -39,8 +39,10 @@ export const useSelectedStack = (): SelectedStackResult => {
     SELECTED_STACK_LSK,
     "",
     isStackKeyOrEmpty,
-    reportLocalDbCorruption,
-    handleLocalDbWriteFailed
+    {
+      onCorrupt: reportLocalDbCorruption,
+      onWriteFailed: handleLocalDbWriteFailed,
+    }
   );
 
   const setStackKey = (key: StackKey | ""): void => {

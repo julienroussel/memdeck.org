@@ -42,8 +42,10 @@ export const Toolbox = () => {
     TOOLBOX_SECTIONS_LSK,
     [],
     isStringArray,
-    reportLocalDbCorruption,
-    handleLocalDbWriteFailed
+    {
+      onCorrupt: reportLocalDbCorruption,
+      onWriteFailed: handleLocalDbWriteFailed,
+    }
   );
 
   const openSectionsRef = useRef(openSections);

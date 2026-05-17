@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { FLASHCARD_TIMER_LSK } from "../constants";
+import {
+  handleLocalDbWriteFailed,
+  reportLocalDbCorruption,
+} from "../utils/localstorage-telemetry";
 import { isTimerSettings, useTimerSettings } from "./use-timer-settings";
 
 const mockSetSettings = vi.fn();
@@ -83,8 +87,10 @@ describe("useTimerSettings", () => {
       FLASHCARD_TIMER_LSK,
       expect.any(Object),
       expect.any(Function),
-      expect.any(Function),
-      expect.any(Function)
+      expect.objectContaining({
+        onCorrupt: reportLocalDbCorruption,
+        onWriteFailed: handleLocalDbWriteFailed,
+      })
     );
   });
 

@@ -24,8 +24,10 @@ export const useSpotCheckSettings = (): UseSpotCheckSettingsResult => {
     SPOT_CHECK_MODE_LSK,
     "missing",
     isSpotCheckMode,
-    reportLocalDbCorruption,
-    handleLocalDbWriteFailed
+    {
+      onCorrupt: reportLocalDbCorruption,
+      onWriteFailed: handleLocalDbWriteFailed,
+    }
   );
 
   const { timerSettings, setTimerEnabled, setTimerDuration } =

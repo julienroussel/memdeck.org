@@ -65,6 +65,9 @@ vi.mock("../../services/event-bus", () => ({
 
 const { useLocalDb } = await import("../../utils/localstorage");
 const mockedUseLocalDb = vi.mocked(useLocalDb);
+const { handleLocalDbWriteFailed, reportLocalDbCorruption } = await import(
+  "../../utils/localstorage-telemetry"
+);
 const { useTimerSettings } = await import("../../hooks/use-timer-settings");
 const mockedUseTimerSettings = vi.mocked(useTimerSettings);
 const { useDistanceSettings } = await import("./use-distance-settings");
@@ -111,15 +114,19 @@ describe("useDistanceSettings", () => {
       DISTANCE_OPTION_LSK,
       "compute",
       isDistanceMode,
-      expect.any(Function),
-      expect.any(Function)
+      expect.objectContaining({
+        onCorrupt: reportLocalDbCorruption,
+        onWriteFailed: handleLocalDbWriteFailed,
+      })
     );
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
       DISTANCE_CONVENTION_LSK,
       "cyclic",
       isDistanceConvention,
-      expect.any(Function),
-      expect.any(Function)
+      expect.objectContaining({
+        onCorrupt: reportLocalDbCorruption,
+        onWriteFailed: handleLocalDbWriteFailed,
+      })
     );
   });
 

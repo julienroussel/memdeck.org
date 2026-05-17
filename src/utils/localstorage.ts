@@ -96,6 +96,11 @@ export const getStoredValue = <T>(
 
 export type UseLocalDbSetOptions = { onSuccess?: () => void };
 
+export type UseLocalDbOptions = {
+  onCorrupt?: (key: string, error: unknown) => void;
+  onWriteFailed?: (key: string, error: unknown) => void;
+};
+
 type UseLocalDbSetter<T> = (
   value: T | ((prevState: T) => T),
   options?: UseLocalDbSetOptions
@@ -251,16 +256,16 @@ type WasValidSlot = { wasValid: false } | { wasValid: true; key: string };
  * consumers that cannot tolerate that (`useStackLimits`) gate the setter
  * at the consumer level (see `use-stack-limits.ts:50-58, 95`).
  *
- * Pass `onCorrupt` to be notified when the stored value exists but cannot
- * be validated (the type guard returned `false`, or the type guard itself
- * threw). Storage-layer read errors (Safari ITP, private mode) collapse
- * to "absent" — `onCorrupt` is NOT fired for those. Consumers that need
- * to distinguish "absent" from "read errored" call `probeStoredValue`
- * directly. Without `onCorrupt`, the hook silently falls back to
- * `defaultValue`.
+ * Pass `options.onCorrupt` to be notified when the stored value exists but
+ * cannot be validated (the type guard returned `false`, or the type guard
+ * itself threw). Storage-layer read errors (Safari ITP, private mode)
+ * collapse to "absent" — `onCorrupt` is NOT fired for those. Consumers
+ * that need to distinguish "absent" from "read errored" call
+ * `probeStoredValue` directly. Without `onCorrupt`, the hook silently
+ * falls back to `defaultValue`.
  *
- * Pass `onWriteFailed` to be notified when a write throws (quota exceeded,
- * Safari private mode, ITP eviction).
+ * Pass `options.onWriteFailed` to be notified when a write throws (quota
+ * exceeded, Safari private mode, ITP eviction).
  *
  * The returned setter accepts an optional `{ onSuccess }` so callers can
  * gate side effects (analytics emits, navigation) on a real persisted
@@ -286,8 +291,7 @@ export const useLocalDb = <T>(
   key: string,
   defaultValue: T,
   validate: (value: unknown) => value is T,
-  onCorrupt?: (key: string, error: unknown) => void,
-  onWriteFailed?: (key: string, error: unknown) => void
+  { onCorrupt, onWriteFailed }: UseLocalDbOptions = {}
 ): [T, UseLocalDbSetter<T>, () => void] => {
   // Subscribe + snapshot for `useSyncExternalStore`. `subscribe` re-attaches
   // listeners when `key` changes; `getSnapshot` returns the raw string so

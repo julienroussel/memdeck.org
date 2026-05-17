@@ -47,6 +47,9 @@ vi.mock("../../services/event-bus", () => ({
 
 const { useLocalDb } = await import("../../utils/localstorage");
 const mockedUseLocalDb = vi.mocked(useLocalDb);
+const { handleLocalDbWriteFailed, reportLocalDbCorruption } = await import(
+  "../../utils/localstorage-telemetry"
+);
 const { useSpotCheckSettings } = await import("./use-spot-check-settings");
 
 describe("useSpotCheckSettings", () => {
@@ -83,8 +86,10 @@ describe("useSpotCheckSettings", () => {
       SPOT_CHECK_MODE_LSK,
       "missing",
       isSpotCheckMode,
-      expect.any(Function),
-      expect.any(Function)
+      expect.objectContaining({
+        onCorrupt: reportLocalDbCorruption,
+        onWriteFailed: handleLocalDbWriteFailed,
+      })
     );
   });
 
