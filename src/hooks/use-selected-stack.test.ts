@@ -2,6 +2,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { SELECTED_STACK_LSK } from "../constants";
 import { stacks } from "../types/stacks";
 import {
+  handleLocalDbWriteFailed,
+  reportLocalDbCorruption,
+} from "../utils/localstorage-telemetry";
+import {
   isStackKey,
   useRequiredStack,
   useSelectedStack,
@@ -105,8 +109,10 @@ describe("useSelectedStack", () => {
       SELECTED_STACK_LSK,
       "",
       expect.any(Function),
-      expect.any(Function),
-      expect.any(Function)
+      expect.objectContaining({
+        onCorrupt: reportLocalDbCorruption,
+        onWriteFailed: handleLocalDbWriteFailed,
+      })
     );
   });
 

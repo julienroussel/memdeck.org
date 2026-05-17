@@ -25,14 +25,15 @@ describe("useSessionHistory historyStatus", () => {
   it("starts in 'ready' and flips to 'corrupt' while reporting telemetry when useLocalDb invokes onCorrupt", () => {
     let captured: OnCorrupt | undefined;
     mockedUseLocalDb.mockImplementation(
-      (_key, defaultValue, _validate, onCorrupt) => {
-        captured = onCorrupt;
+      (_key, defaultValue, _validate, options) => {
+        captured = options?.onCorrupt;
         return [defaultValue, vi.fn(), vi.fn()];
       }
     );
 
     const { result } = renderHook(() => useSessionHistory());
 
+    expect(captured).toBeTypeOf("function");
     expect(result.current.historyStatus).toBe("ready");
     expect(mockedReport).not.toHaveBeenCalled();
 

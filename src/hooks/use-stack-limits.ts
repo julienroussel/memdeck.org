@@ -41,8 +41,10 @@ export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
     STACK_LIMITS_LSK,
     {},
     isStackLimitsRecord,
-    reportLocalDbCorruption,
-    handleLocalDbWriteFailed
+    {
+      onCorrupt: reportLocalDbCorruption,
+      onWriteFailed: handleLocalDbWriteFailed,
+    }
   );
 
   // Probe once on mount; if the stored blob is corrupt, lock writes for the

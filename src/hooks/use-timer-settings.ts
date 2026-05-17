@@ -68,8 +68,10 @@ export const useTimerSettings = (
     storageKey,
     DEFAULT_TIMER_SETTINGS,
     isTimerSettings,
-    reportLocalDbCorruption,
-    handleLocalDbWriteFailed
+    {
+      onCorrupt: reportLocalDbCorruption,
+      onWriteFailed: handleLocalDbWriteFailed,
+    }
   );
 
   const setTimerEnabled = useCallback(

@@ -518,7 +518,7 @@ describe("useLocalDb", () => {
       const onCorrupt = vi.fn();
 
       const { result } = renderHook(() =>
-        useLocalDb("k", "default", isString, onCorrupt)
+        useLocalDb("k", "default", isString, { onCorrupt })
       );
 
       expect(result.current[0]).toBe("default");
@@ -609,7 +609,7 @@ describe("useLocalDb", () => {
       window.localStorage.setItem("k", JSON.stringify("ok"));
       const onCorrupt = vi.fn();
 
-      renderHook(() => useLocalDb("k", "default", isString, onCorrupt));
+      renderHook(() => useLocalDb("k", "default", isString, { onCorrupt }));
 
       expect(onCorrupt).not.toHaveBeenCalled();
     });
@@ -617,7 +617,7 @@ describe("useLocalDb", () => {
     it("does not invoke onCorrupt when the stored value is absent", () => {
       const onCorrupt = vi.fn();
 
-      renderHook(() => useLocalDb("k", "default", isString, onCorrupt));
+      renderHook(() => useLocalDb("k", "default", isString, { onCorrupt }));
 
       expect(onCorrupt).not.toHaveBeenCalled();
     });
@@ -626,7 +626,7 @@ describe("useLocalDb", () => {
       window.localStorage.setItem("k", JSON.stringify(123));
       const onCorrupt = vi.fn();
 
-      renderHook(() => useLocalDb("k", "default", isString, onCorrupt));
+      renderHook(() => useLocalDb("k", "default", isString, { onCorrupt }));
 
       expect(onCorrupt).toHaveBeenCalledTimes(1);
       expect(onCorrupt).toHaveBeenCalledWith("k", 123);
@@ -637,7 +637,7 @@ describe("useLocalDb", () => {
       window.localStorage.setItem("k", garbage);
       const onCorrupt = vi.fn();
 
-      renderHook(() => useLocalDb("k", "default", isString, onCorrupt));
+      renderHook(() => useLocalDb("k", "default", isString, { onCorrupt }));
 
       expect(onCorrupt).toHaveBeenCalledTimes(1);
       expect(onCorrupt).toHaveBeenCalledWith("k", garbage);
@@ -656,7 +656,7 @@ describe("useLocalDb", () => {
       const onCorrupt = vi.fn();
 
       const { rerender } = renderHook(() =>
-        useLocalDb("k", "default", isString, onCorrupt)
+        useLocalDb("k", "default", isString, { onCorrupt })
       );
       for (let i = 0; i < 20; i++) {
         rerender();
@@ -672,7 +672,8 @@ describe("useLocalDb", () => {
       const onCorrupt = vi.fn();
 
       const { rerender } = renderHook(
-        ({ k }: { k: string }) => useLocalDb(k, "default", isString, onCorrupt),
+        ({ k }: { k: string }) =>
+          useLocalDb(k, "default", isString, { onCorrupt }),
         { initialProps: { k: "key-a" } }
       );
 
@@ -694,7 +695,9 @@ describe("useLocalDb", () => {
       };
       const onCorrupt = vi.fn();
 
-      renderHook(() => useLocalDb("k", "default", validateThrows, onCorrupt));
+      renderHook(() =>
+        useLocalDb("k", "default", validateThrows, { onCorrupt })
+      );
 
       expect(onCorrupt).toHaveBeenCalledTimes(1);
       expect(onCorrupt).toHaveBeenCalledWith("k", validatorError);
@@ -794,7 +797,7 @@ describe("useLocalDb", () => {
       window.addEventListener("memdeck-localstorage", throwingListener);
       try {
         const { result } = renderHook(() =>
-          useLocalDb("k", "default", isString, undefined, onWriteFailed)
+          useLocalDb("k", "default", isString, { onWriteFailed })
         );
 
         expect(() =>
@@ -1217,7 +1220,7 @@ describe("useLocalDb", () => {
     it("still invokes `onCorrupt` on the valid→corrupt transition (telemetry semantics preserved)", () => {
       window.localStorage.setItem("k", JSON.stringify("ok"));
       const onCorrupt = vi.fn();
-      renderHook(() => useLocalDb("k", "default", isString, onCorrupt));
+      renderHook(() => useLocalDb("k", "default", isString, { onCorrupt }));
       expect(onCorrupt).not.toHaveBeenCalled();
 
       act(() => {
@@ -1380,7 +1383,7 @@ describe("useLocalDb", () => {
     it("re-fires the toast on corrupt→valid→corrupt while `onCorrupt` stays once (asymmetry pin)", () => {
       window.localStorage.setItem("k", JSON.stringify("ok"));
       const onCorrupt = vi.fn();
-      renderHook(() => useLocalDb("k", "default", isString, onCorrupt));
+      renderHook(() => useLocalDb("k", "default", isString, { onCorrupt }));
 
       act(() => {
         fireCrossTabRaw("k", "{bad-1");
@@ -1640,7 +1643,7 @@ describe("useLocalDb", () => {
       });
 
       const { result } = renderHook(() =>
-        useLocalDb("k", "default", isString, undefined, onWriteFailed)
+        useLocalDb("k", "default", isString, { onWriteFailed })
       );
 
       result.current[1]("next");
@@ -1656,7 +1659,7 @@ describe("useLocalDb", () => {
       });
 
       const { result } = renderHook(() =>
-        useLocalDb("k", "default", isString, undefined, onWriteFailed)
+        useLocalDb("k", "default", isString, { onWriteFailed })
       );
 
       result.current[1]("a");
@@ -1681,7 +1684,7 @@ describe("useLocalDb", () => {
         });
 
       const { result } = renderHook(() =>
-        useLocalDb("k", "default", isString, undefined, onWriteFailed)
+        useLocalDb("k", "default", isString, { onWriteFailed })
       );
 
       result.current[1]("a");
@@ -1699,7 +1702,7 @@ describe("useLocalDb", () => {
 
       const { result, rerender } = renderHook(
         ({ k }: { k: string }) =>
-          useLocalDb(k, "default", isString, undefined, onWriteFailed),
+          useLocalDb(k, "default", isString, { onWriteFailed }),
         { initialProps: { k: "key-a" } }
       );
 
@@ -1745,7 +1748,7 @@ describe("useLocalDb", () => {
       });
 
       const { result } = renderHook(() =>
-        useLocalDb("k", "default", isString, undefined, onWriteFailed)
+        useLocalDb("k", "default", isString, { onWriteFailed })
       );
 
       expect(() => result.current[1]("next")).not.toThrow();
@@ -1762,7 +1765,7 @@ describe("useLocalDb", () => {
       });
 
       const { result } = renderHook(() =>
-        useLocalDb("k", "default", isString, undefined, onWriteFailed)
+        useLocalDb("k", "default", isString, { onWriteFailed })
       );
 
       result.current[1]("next", { onSuccess });
@@ -1778,7 +1781,7 @@ describe("useLocalDb", () => {
       const onWriteFailed = vi.fn();
 
       const { result } = renderHook(() =>
-        useLocalDb("k", "default", isString, undefined, onWriteFailed)
+        useLocalDb("k", "default", isString, { onWriteFailed })
       );
 
       expect(() => result.current[1]("next", { onSuccess })).not.toThrow();

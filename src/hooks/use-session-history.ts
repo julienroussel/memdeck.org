@@ -24,9 +24,11 @@ export const useSessionHistory = (): UseSessionHistoryResult => {
     SESSION_HISTORY_LSK,
     [],
     isSessionRecordArray,
-    (key, error) => {
-      reportLocalDbCorruption(key, error);
-      setHistoryStatus("corrupt");
+    {
+      onCorrupt: (key, error) => {
+        reportLocalDbCorruption(key, error);
+        setHistoryStatus("corrupt");
+      },
     }
   );
 

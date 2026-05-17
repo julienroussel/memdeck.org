@@ -31,16 +31,20 @@ export const useFlashcardSettings = (): UseFlashcardSettingsResult => {
     FLASHCARD_OPTION_LSK,
     "bothmodes",
     isFlashcardMode,
-    reportLocalDbCorruption,
-    handleLocalDbWriteFailed
+    {
+      onCorrupt: reportLocalDbCorruption,
+      onWriteFailed: handleLocalDbWriteFailed,
+    }
   );
   const [neighborDirection, setNeighborDirection] =
     useLocalDb<NeighborDirection>(
       NEIGHBOR_DIRECTION_LSK,
       "random",
       isNeighborDirection,
-      reportLocalDbCorruption,
-      handleLocalDbWriteFailed
+      {
+        onCorrupt: reportLocalDbCorruption,
+        onWriteFailed: handleLocalDbWriteFailed,
+      }
     );
 
   const { timerSettings, setTimerEnabled, setTimerDuration } =

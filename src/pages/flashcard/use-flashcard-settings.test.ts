@@ -61,6 +61,9 @@ vi.mock("../../services/event-bus", () => ({
 
 const { useLocalDb } = await import("../../utils/localstorage");
 const mockedUseLocalDb = vi.mocked(useLocalDb);
+const { handleLocalDbWriteFailed, reportLocalDbCorruption } = await import(
+  "../../utils/localstorage-telemetry"
+);
 const { useFlashcardSettings } = await import("./use-flashcard-settings");
 
 describe("useFlashcardSettings", () => {
@@ -106,15 +109,19 @@ describe("useFlashcardSettings", () => {
       FLASHCARD_OPTION_LSK,
       "bothmodes",
       isFlashcardMode,
-      expect.any(Function),
-      expect.any(Function)
+      expect.objectContaining({
+        onCorrupt: reportLocalDbCorruption,
+        onWriteFailed: handleLocalDbWriteFailed,
+      })
     );
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
       NEIGHBOR_DIRECTION_LSK,
       "random",
       isNeighborDirection,
-      expect.any(Function),
-      expect.any(Function)
+      expect.objectContaining({
+        onCorrupt: reportLocalDbCorruption,
+        onWriteFailed: handleLocalDbWriteFailed,
+      })
     );
   });
 

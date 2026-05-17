@@ -6,6 +6,10 @@ import {
   isStackLimitsRecord,
 } from "../types/stack-limits";
 import { createDeckPosition, stacks } from "../types/stacks";
+import {
+  handleLocalDbWriteFailed,
+  reportLocalDbCorruption,
+} from "../utils/localstorage-telemetry";
 import { useStackLimits } from "./use-stack-limits";
 
 // Mantine-mirroring setter: invoke `options.onSuccess` so the emit gating
@@ -138,8 +142,10 @@ describe("useStackLimits", () => {
       STACK_LIMITS_LSK,
       expect.anything(),
       isStackLimitsRecord,
-      expect.any(Function),
-      expect.any(Function)
+      expect.objectContaining({
+        onCorrupt: reportLocalDbCorruption,
+        onWriteFailed: handleLocalDbWriteFailed,
+      })
     );
   });
 

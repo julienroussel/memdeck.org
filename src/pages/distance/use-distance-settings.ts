@@ -35,15 +35,19 @@ export const useDistanceSettings = (): UseDistanceSettingsResult => {
     DISTANCE_OPTION_LSK,
     "compute",
     isDistanceMode,
-    reportLocalDbCorruption,
-    handleLocalDbWriteFailed
+    {
+      onCorrupt: reportLocalDbCorruption,
+      onWriteFailed: handleLocalDbWriteFailed,
+    }
   );
   const [convention, setConvention] = useLocalDb<DistanceConvention>(
     DISTANCE_CONVENTION_LSK,
     "cyclic",
     isDistanceConvention,
-    reportLocalDbCorruption,
-    handleLocalDbWriteFailed
+    {
+      onCorrupt: reportLocalDbCorruption,
+      onWriteFailed: handleLocalDbWriteFailed,
+    }
   );
 
   const { timerSettings, setTimerEnabled, setTimerDuration } =
