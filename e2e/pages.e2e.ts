@@ -100,6 +100,25 @@ test.describe("Pages & Features", () => {
     }
   });
 
+  test("should have working llms.txt link in footer", async ({ page }) => {
+    const llmsLink = page.locator('a[href="/llms.txt"]').first();
+    await expect(llmsLink).toBeVisible();
+
+    const href = await llmsLink.getAttribute("href");
+    expect(href).toBe("/llms.txt");
+  });
+
+  test("should have working llms.txt link with noopener attribute", async ({
+    page,
+  }) => {
+    const llmsLink = page.locator('a[href="/llms.txt"]').first();
+
+    const rel = await llmsLink.getAttribute("rel");
+    if (rel) {
+      expect(rel).toContain("noopener");
+    }
+  });
+
   test("should navigate back to home when clicking logo", async ({ page }) => {
     // Navigate to a different page
     await page.locator("a:has-text('Resources')").first().click();

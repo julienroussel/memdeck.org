@@ -1,7 +1,7 @@
 import { Anchor, Divider, Group, Text, VisuallyHidden } from "@mantine/core";
 import { IconBrandGithub } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
-import { GITHUB_URL } from "../constants";
+import { GITHUB_URL, LLMS_TXT_PATH } from "../constants";
 import { useSelectedStack } from "../hooks/use-selected-stack";
 import { LanguagePicker } from "./language-picker";
 import { ResetButton } from "./reset-button";
@@ -51,6 +51,17 @@ export const NavFooter = () => {
           underline="hover"
         >
           <IconBrandGithub aria-hidden="true" size={16} />
+        </Anchor>
+        <Anchor
+          c="dimmed"
+          href={LLMS_TXT_PATH}
+          rel="noopener"
+          size="xs"
+          target="_blank"
+          underline="hover"
+        >
+          llms.txt
+          <VisuallyHidden> {t("navFooter.llmsTxtDescription")}</VisuallyHidden>
         </Anchor>
         <ShareButton />
         <Text c="dimmed" size="xs">

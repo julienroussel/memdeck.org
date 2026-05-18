@@ -61,6 +61,9 @@
     "toggleColorScheme": "Toggle color scheme",
     "languageAriaLabel": "Language"
   },
+  "navFooter": {
+    "llmsTxtDescription": "— LLM-friendly site summary (opens in new tab)"
+  },
   "home": {
     "pageTitle": "MemDeck — Master your memorized deck",
     "pageDescription": "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant, and Infinity.",

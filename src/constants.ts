@@ -1,4 +1,5 @@
 export const GITHUB_URL = "https://github.com/julienroussel/memdeck.org";
+export const LLMS_TXT_PATH = "/llms.txt";
 export const LINKTREE_URL = "https://linktr.ee/julien.roussel";
 export const MAGIC_LAB_URL = "https://themagiclab.app";
 export const SELECTED_STACK_LSK = "memdeck-app-stack";

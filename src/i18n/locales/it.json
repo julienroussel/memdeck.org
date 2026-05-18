@@ -61,6 +61,9 @@
     "toggleColorScheme": "Cambia il tema colore",
     "languageAriaLabel": "Lingua"
   },
+  "navFooter": {
+    "llmsTxtDescription": "— Riepilogo del sito per gli LLM (si apre in una nuova scheda)"
+  },
   "home": {
     "pageTitle": "MemDeck — Padroneggia il mazzo memorizzato",
     "pageDescription": "Strumento online gratuito per padroneggiare sistemi di mazzi memorizzati come Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant e Infinity.",

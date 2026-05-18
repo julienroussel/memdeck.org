@@ -61,6 +61,9 @@
     "toggleColorScheme": "Changer le thème de couleur",
     "languageAriaLabel": "Langue"
   },
+  "navFooter": {
+    "llmsTxtDescription": "— Résumé du site pour les LLM (s'ouvre dans un nouvel onglet)"
+  },
   "home": {
     "pageTitle": "MemDeck — Maîtrisez votre jeu mémorisé",
     "pageDescription": "Outil en ligne gratuit pour maîtriser les systèmes de jeu mémorisé comme Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant et Infinity.",
