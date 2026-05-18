@@ -61,6 +61,9 @@
     "toggleColorScheme": "Kleurthema wisselen",
     "languageAriaLabel": "Taal"
   },
+  "navFooter": {
+    "llmsTxtDescription": "— Sitesamenvatting voor LLM's (opent in een nieuw tabblad)"
+  },
   "home": {
     "pageTitle": "MemDeck — Beheers je gememoriseerde kaartspel",
     "pageDescription": "Gratis online tool voor het beheersen van gememoriseerde kaartsystemen zoals Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant en Infinity.",

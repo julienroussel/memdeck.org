@@ -61,6 +61,9 @@
     "toggleColorScheme": "Alternar esquema de cores",
     "languageAriaLabel": "Idioma"
   },
+  "navFooter": {
+    "llmsTxtDescription": "— Resumo do site para LLMs (abre em nova guia)"
+  },
   "home": {
     "pageTitle": "MemDeck — Domine o baralho memorizado",
     "pageDescription": "Ferramenta online gratuita para dominar sistemas de baralho memorizado como Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant e Infinity.",

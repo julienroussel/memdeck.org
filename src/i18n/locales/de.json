@@ -61,6 +61,9 @@
     "toggleColorScheme": "Farbschema wechseln",
     "languageAriaLabel": "Sprache"
   },
+  "navFooter": {
+    "llmsTxtDescription": "— Website-Zusammenfassung für LLMs (öffnet in neuem Tab)"
+  },
   "home": {
     "pageTitle": "MemDeck — Meistere dein memoriertes Kartendeck",
     "pageDescription": "Kostenloses Online-Tool zum Meistern von memorierten Kartensystemen wie Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant und Infinity.",
