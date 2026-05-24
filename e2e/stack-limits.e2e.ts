@@ -254,19 +254,19 @@ test.describe("Stack Limits — emit and corrupt-lock", () => {
     );
     expect(onDisk).toBe(corrupt);
 
-    // The emit chain is synchronous today (setRecord → setItem → onSuccess);
-    // a brief settle catches a delayed emit if onSuccess ever wraps in a
-    // microtask, so the empty-captured assertion stays meaningful.
-    await page.waitForTimeout(100);
-    const captured = await page.evaluate(
-      () => window.__capturedStackLimitsChanges
-    );
-    expect(captured).toEqual([]);
-
+    // Wait for the badge before checking the captured-emits array: the
+    // visibility assertion is a positive UI settle signal that lets
+    // Playwright drain any microtask the emit chain might use, replacing
+    // an arbitrary timeout-based wait with a deterministic one.
     const badge = page.getByRole("button", {
       name: "Stack range: 52 cards. Tap to adjust.",
     });
     await expect(badge).toBeVisible();
+
+    const captured = await page.evaluate(
+      () => window.__capturedStackLimitsChanges
+    );
+    expect(captured).toEqual([]);
   });
 
   test("should emit STACK_LIMITS_CHANGED with the correct payload when a preset succeeds", async ({

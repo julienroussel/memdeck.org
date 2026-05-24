@@ -111,3 +111,42 @@ export const ROUTES = {
   stats: "/stats/",
   about: "/about/",
 } as const satisfies Record<string, RoutePath>;
+
+/**
+ * PWA manifest shortcuts. URLs are constrained to `RoutePath` so they always
+ * end with `/` and avoid the 301-redirect that breaks the PWA install context
+ * (#582). `vite.config.ts` spreads this into `manifest.shortcuts`, and
+ * `src/pwa-shortcuts.test.ts` asserts every URL exists in `ROUTES`.
+ */
+export const PWA_SHORTCUTS = [
+  {
+    name: "Flashcard",
+    short_name: "Flashcard",
+    url: ROUTES.flashcard,
+    description: "Practice memorized deck with flashcard drills",
+  },
+  {
+    name: "ACAAN",
+    short_name: "ACAAN",
+    url: ROUTES.acaan,
+    description: "Any Card At Any Number calculator",
+  },
+  {
+    name: "Distance",
+    short_name: "Distance",
+    url: ROUTES.distance,
+    description:
+      "Practice distance numbers between cards in your memorized stack",
+  },
+  {
+    name: "Toolbox",
+    short_name: "Toolbox",
+    url: ROUTES.toolbox,
+    description: "Memorized deck utilities",
+  },
+] as const satisfies readonly {
+  name: string;
+  short_name: string;
+  url: RoutePath;
+  description: string;
+}[];

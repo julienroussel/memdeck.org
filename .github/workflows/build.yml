@@ -34,6 +34,8 @@ jobs:
         run: pnpm run knip
       - name: Lint
         run: pnpm run lint
+      - name: Check no waitForTimeout in e2e
+        run: pnpm run lint:e2e-no-wait
       - name: Typecheck
         run: pnpm run typecheck
       - name: Check file complexity
