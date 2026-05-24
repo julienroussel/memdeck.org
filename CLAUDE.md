@@ -31,10 +31,11 @@ When running the linter in this repo, ALWAYS invoke it as `rtk proxy pnpm run li
 3. `pnpm run knip` — catches unused exports, dependencies, and files. Runs in seconds.
 4. `pnpm run fta` — file-complexity check; CI fails on regressions.
 5. `pnpm run test:coverage` — runs the full unit suite **and** enforces the per-directory coverage ratchets in `vitest.config.ts`. Use this in place of `pnpm run test` for DoD.
-6. `pnpm run test:e2e` — when you changed routing, page chrome, or a user-facing flow. Otherwise skip; it's slow.
-7. `pnpm run build` — when you changed `vite.config.ts`, `scripts/**`, `index.html`, or anything under `public/`.
+6. `pnpm run lint:e2e-no-wait` — fails if any `waitForTimeout(` is reintroduced in `e2e/`. See `.claude/rules/pwa-and-lazy-loading.md` for the rationale.
+7. `pnpm run test:e2e` — when you changed routing, page chrome, or a user-facing flow. Otherwise skip; it's slow.
+8. `pnpm run build` — when you changed `vite.config.ts`, `scripts/**`, `index.html`, or anything under `public/`.
 
-A `/verify` slash command exists (`.claude/commands/verify.md`) that runs steps 1–5.
+A `/verify` slash command exists (`.claude/commands/verify.md`) that runs steps 1–6.
 
 ## Development Commands
 
@@ -190,6 +191,15 @@ This project uses **Ultracite** (a Biome preset) for formatting and linting.
 - **playwright.config.ts**: E2E test configuration
 - **.claude/review-baseline.json** and **.claude/audit-\*.json**: Snapshots from prior audit/review runs. Treat timestamps as authoritative — if older than ~2 weeks, re-run the relevant review or audit before citing their findings. Don't edit by hand.
 - **.claude/settings.json**: Claude Code hook config. The PostToolUse hook pipes tool-use JSON through `jq` to scope Ultracite formatting to the edited file. `jq` must be on `PATH` (install via `brew install jq` on macOS) — without it the hook fails silently and format-on-save stops working.
+
+## Path-Scoped Rules
+
+Topic-specific guidance lives in `.claude/rules/` and auto-attaches via `paths:` frontmatter when Claude opens matching files:
+
+- `localstorage-persistence.md` — patterns for any hook/util that persists to localStorage (`useLocalDb`, write-failure telemetry, corruption recovery).
+- `pwa-and-lazy-loading.md` — `lazyWithReload` discipline, stale-chunk recovery, locale switching, vite PWA build verification, manifest-shortcut/ROUTES parity.
+
+Each rule documents its trigger globs at the top.
 
 ## Memory for This Project
 

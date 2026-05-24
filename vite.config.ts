@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+const { PWA_SHORTCUTS } = await import("./src/constants.ts");
+
 const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
 
 const LOCALE_CHUNK_RE = /i18n\/locales\/(?!en)(\w+)\.json$/;
@@ -95,33 +97,7 @@ export default defineConfig({
           "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, and Particle.",
         theme_color: "#228be6",
         background_color: "#ffffff",
-        shortcuts: [
-          {
-            name: "Flashcard",
-            short_name: "Flashcard",
-            url: "/flashcard/",
-            description: "Practice memorized deck with flashcard drills",
-          },
-          {
-            name: "ACAAN",
-            short_name: "ACAAN",
-            url: "/acaan/",
-            description: "Any Card At Any Number calculator",
-          },
-          {
-            name: "Distance",
-            short_name: "Distance",
-            url: "/distance/",
-            description:
-              "Practice distance numbers between cards in your memorized stack",
-          },
-          {
-            name: "Toolbox",
-            short_name: "Toolbox",
-            url: "/toolbox/",
-            description: "Memorized deck utilities",
-          },
-        ],
+        shortcuts: [...PWA_SHORTCUTS],
         screenshots: [
           {
             src: "/screenshots/home-mobile.png",
