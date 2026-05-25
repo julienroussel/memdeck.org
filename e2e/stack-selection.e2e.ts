@@ -29,6 +29,8 @@ test.describe("Stack Selection", () => {
       "Redford Stack",
       "Particle System",
       "Elephant",
+      "Infinity",
+      "Intuitiva Santi",
     ];
 
     // Check that each option exists (options in closed select may not be "visible")

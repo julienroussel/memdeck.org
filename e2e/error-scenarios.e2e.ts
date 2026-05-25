@@ -462,6 +462,9 @@ test.describe("Error Scenarios - Edge Cases", () => {
       "aronson",
       "redford",
       "particle",
+      "elephant",
+      "infinity",
+      "intuitiva",
       "memorandum",
     ];
 
@@ -498,6 +501,9 @@ test.describe("Error Scenarios - Edge Cases", () => {
         "memorandum",
         "redford",
         "particle",
+        "elephant",
+        "infinity",
+        "intuitiva",
       ];
       const modes = ["flashcard", "acaan"];
       const largeArray = Array.from({ length: 1000 }).map((_, i) => {

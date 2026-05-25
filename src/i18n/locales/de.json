@@ -420,7 +420,7 @@
   "about": {
     "pageTitle": "Über",
     "pageDescription": "Kontaktinformationen und Links für das MemDeck-Projekt.",
-    "seoIntro": "MemDeck ist ein kostenloses, quelloffenes Trainingstool für Fans memorierter Kartendecks. Ob du Mnemonica, Aronson oder einen der sieben unterstützten Stacks lernst — MemDeck hilft dir, durch gezieltes Training sicheren Abruf aufzubauen.",
+    "seoIntro": "MemDeck ist ein kostenloses, quelloffenes Trainingstool für Fans memorierter Kartendecks. Ob du Mnemonica, Aronson oder einen der acht unterstützten Stacks lernst — MemDeck hilft dir, durch gezieltes Training sicheren Abruf aufzubauen.",
     "title": "Über",
     "intro": "MemDeck ist ein Nebenprojekt von Julien Roussel. Kontaktiere mich gerne über die folgenden Links.",
     "githubDescription": "Quellcode, Fehlermeldungen und Funktionswünsche",
@@ -435,7 +435,7 @@
     "gettingStarted": {
       "title": "Erste Schritte",
       "intro": "MemDeck ist ein Trainingstool für Zauberkünstler und Gedächtnisenthusiasten, die ein memoriertes Kartendeck meistern wollen. Es hilft dir, Kartenpositionen durch Flashcard-Übungen und Tools zu trainieren, damit du jede Karte an jeder Position abrufen kannst — sofort.",
-      "selectStack": "Um zu beginnen, wähle einen Stack über das Dropdown am unteren Rand der Seitenleiste. MemDeck unterstützt sieben memorierte Kartensysteme:",
+      "selectStack": "Um zu beginnen, wähle einen Stack über das Dropdown am unteren Rand der Seitenleiste. MemDeck unterstützt acht memorierte Kartensysteme:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
@@ -443,7 +443,8 @@
         "redford": "<bold>Redford Stack</bold> — Patrick Redford",
         "particle": "<bold>Particle System</bold> — Joshua Jay",
         "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret",
-        "infinity": "<bold>Infinity</bold> — Tim Conover"
+        "infinity": "<bold>Infinity</bold> — Tim Conover",
+        "intuitiva": "<bold>Intuitiva Santi</bold> — Magic Santi"
       },
       "alertTitle": "Wähle zuerst einen Stack",
       "alertDescription": "Die meisten Trainingstools erfordern einen ausgewählten Stack. Wähle einen aus, um Flashcard, ACAAN und den Werkzeugkasten freizuschalten.",

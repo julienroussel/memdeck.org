@@ -420,7 +420,7 @@
   "about": {
     "pageTitle": "Over",
     "pageDescription": "Contactgegevens en links voor het MemDeck-project.",
-    "seoIntro": "MemDeck is een gratis, open-source trainingstool voor liefhebbers van het gememoriseerde kaartspel. Of je nu Mnemonica, Aronson of een van de zeven ondersteunde stacks leert, MemDeck helpt je om zelfverzekerd geheugen op te bouwen door gerichte oefening.",
+    "seoIntro": "MemDeck is een gratis, open-source trainingstool voor liefhebbers van het gememoriseerde kaartspel. Of je nu Mnemonica, Aronson of een van de acht ondersteunde stacks leert, MemDeck helpt je om zelfverzekerd geheugen op te bouwen door gerichte oefening.",
     "title": "Over",
     "intro": "MemDeck is een hobbyproject van Julien Roussel. Neem gerust contact op via de links hieronder.",
     "githubDescription": "Broncode, bugrapporten en functieverzoeken",
@@ -435,7 +435,7 @@
     "gettingStarted": {
       "title": "Aan de slag",
       "intro": "MemDeck is een trainingstool voor goochelaars en geheugenliefhebbers die een gememoriseerd kaartspel willen beheersen. Het helpt je kaartposities te oefenen met flashcards en hulpmiddelen zodat je elke kaart op elke positie kunt herinneren — direct.",
-      "selectStack": "Om te beginnen, selecteer een stack in het keuzemenu onderaan de zijbalk. MemDeck ondersteunt zeven gememoriseerde kaartsystemen:",
+      "selectStack": "Om te beginnen, selecteer een stack in het keuzemenu onderaan de zijbalk. MemDeck ondersteunt acht gememoriseerde kaartsystemen:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
@@ -443,7 +443,8 @@
         "redford": "<bold>Redford Stack</bold> — Patrick Redford",
         "particle": "<bold>Particle System</bold> — Joshua Jay",
         "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret",
-        "infinity": "<bold>Infinity</bold> — Tim Conover"
+        "infinity": "<bold>Infinity</bold> — Tim Conover",
+        "intuitiva": "<bold>Intuitiva Santi</bold> — Magic Santi"
       },
       "alertTitle": "Selecteer eerst een stack",
       "alertDescription": "De meeste trainingstools vereisen een geselecteerde stack. Kies er een om Flashcard, ACAAN en Gereedschap te ontgrendelen.",

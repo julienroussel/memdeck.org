@@ -60,13 +60,17 @@ test.describe("Toolbox Page", () => {
   test("should render toolbox page for all available stack options", async ({
     page,
   }) => {
-    // Test with each stack type
+    // Eight stacks × full nav round-trip pushes past the default 30s timeout.
+    test.slow();
     const stacks = [
       "mnemonica",
       "aronson",
       "memorandum",
       "redford",
       "particle",
+      "elephant",
+      "infinity",
+      "intuitiva",
     ];
 
     for (const stack of stacks) {

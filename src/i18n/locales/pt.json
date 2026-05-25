@@ -420,7 +420,7 @@
   "about": {
     "pageTitle": "Sobre",
     "pageDescription": "Informações de contacto e links para o projeto MemDeck.",
-    "seoIntro": "MemDeck é uma ferramenta de treino gratuita e de código aberto para entusiastas do baralho memorizado. Quer esteja a aprender Mnemonica, Aronson ou qualquer um dos sete stacks suportados, o MemDeck ajuda-o a desenvolver uma memória confiante através de prática focada.",
+    "seoIntro": "MemDeck é uma ferramenta de treino gratuita e de código aberto para entusiastas do baralho memorizado. Quer esteja a aprender Mnemonica, Aronson ou qualquer um dos oito stacks suportados, o MemDeck ajuda-o a desenvolver uma memória confiante através de prática focada.",
     "title": "Sobre",
     "intro": "MemDeck é um projeto pessoal criado por Julien Roussel. Não hesite em contactar-me através dos links abaixo.",
     "githubDescription": "Código-fonte, relatórios de bugs e pedidos de funcionalidades",
@@ -435,7 +435,7 @@
     "gettingStarted": {
       "title": "Primeiros passos",
       "intro": "MemDeck é uma ferramenta de treino para mágicos e entusiastas de memória que querem dominar um baralho memorizado. Ajuda-o a praticar as posições das cartas através de flashcards e utilitários para recordar qualquer carta em qualquer posição — instantaneamente.",
-      "selectStack": "Para começar, selecione um stack no menu suspenso na parte inferior da barra lateral. O MemDeck suporta sete sistemas de baralho memorizado:",
+      "selectStack": "Para começar, selecione um stack no menu suspenso na parte inferior da barra lateral. O MemDeck suporta oito sistemas de baralho memorizado:",
       "stacks": {
         "tamariz": "<bold>Tamariz (Mnemonica)</bold> — Juan Tamariz",
         "aronson": "<bold>Aronson</bold> — Simon Aronson",
@@ -443,7 +443,8 @@
         "redford": "<bold>Redford Stack</bold> — Patrick Redford",
         "particle": "<bold>Particle System</bold> — Joshua Jay",
         "elephant": "<bold>Elephant</bold> — Pierre Boc & Yves Meret",
-        "infinity": "<bold>Infinity</bold> — Tim Conover"
+        "infinity": "<bold>Infinity</bold> — Tim Conover",
+        "intuitiva": "<bold>Intuitiva Santi</bold> — Magic Santi"
       },
       "alertTitle": "Escolha primeiro um stack",
       "alertDescription": "A maioria das ferramentas de treino requer um stack selecionado. Escolha um para desbloquear os modos Flashcard, ACAAN e Ferramentas.",

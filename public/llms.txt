@@ -33,6 +33,7 @@ A global per-stack setting lets users focus training on a specific range of posi
 - Particle System by Joshua Jay
 - Elephant by Pierre Boc & Yves Meret
 - Infinity by Tim Conover
+- Intuitiva Santi by Magic Santi
 
 ## Technical Details
 

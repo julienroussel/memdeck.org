@@ -82,6 +82,7 @@ Toggle themes freely. Your preference is saved across sessions.
 | Particle | Joshua Jay |
 | Elephant | Pierre Boc & Yves Meret |
 | Infinity | Tim Conover |
+| Intuitiva Santi | Magic Santi |
 
 ## Getting Started
 
