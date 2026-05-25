@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures/test-setup";
 
-const ENGLISH_SUIT_PATTERN = /Hearts|Spades|Clubs|Diamonds/;
+const FRENCH_SUIT_PATTERN = /Cœur|Pique|Trèfle|Carreau/;
 
 test.describe("Language & i18n", () => {
   test.beforeEach(async ({ page }) => {
@@ -161,9 +161,7 @@ test.describe("Language & i18n", () => {
     expect(await page.getAttribute("html", "lang")).toBe("de");
   });
 
-  test("should keep card names in English regardless of language", async ({
-    page,
-  }) => {
+  test("should translate card names in flashcard mode", async ({ page }) => {
     // Select a stack to enable flashcard mode
     await page
       .locator("[data-testid='stack-picker']")
@@ -190,11 +188,11 @@ test.describe("Language & i18n", () => {
       await startButton.click();
     }
 
-    // Card names should remain in English (visible in card image alt text)
-    const englishSuitCard = page.getByRole("img", {
-      name: ENGLISH_SUIT_PATTERN,
+    // Card names should be translated to French (visible in flashcard prompt image alt text)
+    const frenchSuitCard = page.getByRole("img", {
+      name: FRENCH_SUIT_PATTERN,
     });
-    await expect(englishSuitCard.first()).toBeVisible();
+    await expect(frenchSuitCard.first()).toBeVisible();
   });
 
   test("should translate navigation links", async ({ page }) => {
