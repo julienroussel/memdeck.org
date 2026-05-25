@@ -19,10 +19,10 @@ import { TimerSettingsControl } from "../../components/timer-settings-control";
 import { TrainingHeader } from "../../components/training-header";
 import { CARD_HEIGHT, CARD_WIDTH, SITE_URL } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
+import { useFormatCardName } from "../../hooks/use-format-card-name";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import { analytics } from "../../services/analytics";
-import { formatCardName } from "../../utils/card-formatting";
 import { useAcaanGame } from "./use-acaan-game";
 import { useAcaanSettings } from "./use-acaan-settings";
 import { useCutDepthInput } from "./use-cut-depth-input";
@@ -47,6 +47,7 @@ const breadcrumbSchema = {
 
 export const Acaan = () => {
   const { t } = useTranslation();
+  const formatCardName = useFormatCardName();
   useDocumentMeta({
     title: t("acaan.pageTitle"),
     description: t("acaan.pageDescription"),

@@ -2,6 +2,7 @@ import { notifications } from "@mantine/notifications";
 import { useCallback, useReducer, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
+import { useFormatCardName } from "../../hooks/use-format-card-name";
 import { useGameTimer } from "../../hooks/use-game-timer";
 import { eventBus } from "../../services/event-bus";
 import type { DistanceConvention, DistanceMode } from "../../types/distance";
@@ -14,7 +15,6 @@ import type {
   StackValue,
 } from "../../types/stacks";
 import type { TimerSettings } from "../../types/timer";
-import { formatCardName } from "../../utils/card-formatting";
 import { wrongAnswerNotification } from "../flashcard/utils";
 import {
   type AdvancePayload,
@@ -56,6 +56,7 @@ export const useDistanceGame = (
   options?: UseDistanceGameOptions
 ): UseDistanceGameResult => {
   const { t } = useTranslation();
+  const formatCardName = useFormatCardName();
 
   const onAnswerRef = useRef(options?.onAnswer);
   onAnswerRef.current = options?.onAnswer;
@@ -199,7 +200,7 @@ export const useDistanceGame = (
     dispatch({ type: "REVEAL_ANSWER", payload });
     eventBus.emit.DISTANCE_ANSWER({ correct: false, stackName });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
-  }, [stackName, generateNextRound, t]);
+  }, [stackName, generateNextRound, t, formatCardName]);
 
   return {
     score: { successes: state.successes, fails: state.fails },

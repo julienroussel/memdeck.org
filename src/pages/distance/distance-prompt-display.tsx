@@ -2,9 +2,9 @@ import { Center, Image, Text } from "@mantine/core";
 import { IconArrowRight } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import { CARD_HEIGHT, CARD_WIDTH } from "../../constants";
+import { useFormatCardName } from "../../hooks/use-format-card-name";
 import type { DistanceConvention } from "../../types/distance";
 import type { PlayingCardPosition } from "../../types/stacks";
-import { formatCardName } from "../../utils/card-formatting";
 
 type DistancePromptDisplayProps =
   | {
@@ -37,6 +37,7 @@ const wrapperStyle = {
 
 export const DistancePromptDisplay = (props: DistancePromptDisplayProps) => {
   const { t } = useTranslation();
+  const formatCardName = useFormatCardName();
 
   if (props.display === "compute") {
     const { promptCard, targetCard } = props;

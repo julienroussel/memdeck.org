@@ -24,6 +24,7 @@ export const filterStack = (
   return entries.filter(
     ({ position, card }) =>
       formatName(card).toLowerCase().includes(trimmed) ||
+      card.rank.toLowerCase().includes(trimmed) ||
       String(position).includes(trimmed)
   );
 };

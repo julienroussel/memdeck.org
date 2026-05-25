@@ -3,12 +3,12 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { TimerDisplay } from "../../components/timer-display";
+import { useFormatCardName } from "../../hooks/use-format-card-name";
 import type { DistanceConvention } from "../../types/distance";
 import type { PlayingCard } from "../../types/playingcard";
 import type { PlayingCardPosition } from "../../types/stacks";
 import type { TimerSettings } from "../../types/timer";
 import { cardItems, numberItems } from "../../types/typeguards";
-import { formatCardName } from "../../utils/card-formatting";
 import type { DistanceAnswer, DistanceRound } from "./distance-game-reducer";
 import { DistancePromptDisplay } from "./distance-prompt-display";
 
@@ -34,6 +34,7 @@ export const DistanceActiveRound = ({
   timerDuration,
 }: DistanceActiveRoundProps) => {
   const { t } = useTranslation();
+  const formatCardName = useFormatCardName();
   const [announcement, setAnnouncement] = useState<Announcement>({
     id: 0,
     text: "",
@@ -76,7 +77,7 @@ export const DistanceActiveRound = ({
       }
       submitAnswer({ kind: "apply", value });
     },
-    [submitAnswer, round, announce, t]
+    [submitAnswer, round, announce, t, formatCardName]
   );
 
   return (

@@ -10,9 +10,9 @@ import {
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CARD_ASPECT_RATIO } from "../../constants";
+import { useFormatCardName } from "../../hooks/use-format-card-name";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { applyFaro, type FaroType } from "./apply-faro";
-import { useFormatCardName } from "./use-format-card-name";
 
 const THUMBNAIL_WIDTH = 40;
 const THUMBNAIL_HEIGHT = Math.round(THUMBNAIL_WIDTH * CARD_ASPECT_RATIO);

@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import type { PlayingCard } from "../../types/playingcard";
+import type { PlayingCard } from "../types/playingcard";
 
 export const useFormatCardName = () => {
   const { t } = useTranslation();

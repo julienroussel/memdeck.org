@@ -4,8 +4,8 @@ import type { CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import { NumberCard } from "../../components/number-card";
 import { CARD_HEIGHT, CARD_WIDTH } from "../../constants";
+import { useFormatCardName } from "../../hooks/use-format-card-name";
 import type { PlayingCardPosition } from "../../types/stacks";
-import { formatCardName } from "../../utils/card-formatting";
 import type { ResolvedDirection } from "../../utils/neighbor";
 
 const CARD_VISIBLE_STYLE: CSSProperties = {
@@ -36,6 +36,7 @@ export const FlashcardCardDisplay = ({
   resolvedDirection,
 }: FlashcardCardDisplayProps) => {
   const { t } = useTranslation();
+  const formatCardName = useFormatCardName();
 
   return (
     <Center>

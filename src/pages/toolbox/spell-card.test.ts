@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stacks } from "../../types/stacks";
+import { TwoOfClubs } from "../../types/suits/clubs";
 import { formatCardName } from "../../utils/card-formatting";
 import { getLetterCount, getSpellingData } from "./spell-card";
 
@@ -19,7 +20,7 @@ describe("getLetterCount", () => {
   });
 
   it("counts correctly for short names", () => {
-    expect(getLetterCount("2 of Clubs")).toBe(8);
+    expect(getLetterCount("Two of Clubs")).toBe(10);
   });
 
   it("counts correctly for long names", () => {
@@ -106,5 +107,9 @@ describe("getSpellingData", () => {
       expect(entry.letterCount).toBe(2);
       expect(entry.landingCard).toBe(stackOrder[1]);
     }
+  });
+
+  it("counts spelled rank names (Two of Clubs = 10)", () => {
+    expect(getLetterCount(formatCardName(TwoOfClubs))).toBe(10);
   });
 });
