@@ -16,7 +16,10 @@
     "revealAriaLabel": "Revelar resposta",
     "moreColumnsOnWiderScreen": "Detalhes adicionais estão disponíveis em ecrãs mais largos.",
     "noStackSelected": "Escolha um stack na página inicial para começar.",
-    "goToHomepage": "Ir para a página inicial"
+    "goToHomepage": "Ir para a página inicial",
+    "opensInNewTab": "(abre em novo separador)",
+    "wrongAnswerTitle": "Resposta errada",
+    "wrongAnswerMessage": "Tente novamente!"
   },
   "cards": {
     "ranks": {
@@ -62,7 +65,7 @@
     "languageAriaLabel": "Idioma"
   },
   "navFooter": {
-    "llmsTxtDescription": "— Resumo do site para LLMs (abre em nova guia)"
+    "llmsTxtDescription": "— Resumo do site para LLMs (abre em novo separador)"
   },
   "home": {
     "pageTitle": "MemDeck — Domine o baralho memorizado",
@@ -271,6 +274,10 @@
     "correctAriaLabel": "Respostas corretas: {{count}}",
     "incorrectAriaLabel": "Respostas incorretas: {{count}}"
   },
+  "cardSpread": {
+    "ariaLabel": "Leque de cartas",
+    "selectPositionAriaLabel": "Selecionar a posição {{position}}"
+  },
   "numberCard": {
     "ariaLabel": "Posição {{number}}"
   },
@@ -312,23 +319,23 @@
     "languageLoadFailed": "Não foi possível carregar o idioma preferido. A usar inglês.",
     "sessionSaveFailed": {
       "title": "Falha ao guardar",
-      "message": "Não foi possível guardar a sessão — o armazenamento do navegador pode estar cheio. Liberta espaço e tenta Parar novamente."
+      "message": "Não foi possível guardar a sessão — o armazenamento do navegador pode estar cheio. Liberte espaço e tente Parar novamente."
     },
     "sessionStorageCorrupt": {
       "title": "Dados guardados parecem corrompidos",
-      "message": "O teu histórico ou estatísticas guardadas não passaram na validação, por isso recusámos sobrescrevê-los. Limpa o armazenamento do navegador para este site para começar de novo — tentar de novo não vai ajudar."
+      "message": "O seu histórico ou estatísticas guardadas não passaram na validação, por isso recusámos sobrescrevê-los. Limpe o armazenamento do navegador para este site para começar de novo — tentar de novo não vai ajudar."
     },
     "lastSaveFailed": {
       "title": "A sessão anterior não foi guardada",
-      "message": "A tua sessão anterior não pôde ser guardada — o armazenamento do navegador podia estar cheio. Foi descartada."
+      "message": "A sua sessão anterior não pôde ser guardada — o armazenamento do navegador podia estar cheio. Foi descartada."
     },
     "stackLimitsCorrupt": {
       "title": "Não foi possível carregar os intervalos do stack",
-      "message": "Os teus intervalos guardados por stack não passaram na validação. As edições de intervalo estão desativadas para não os sobrescrever. Limpa o armazenamento do navegador para este site para começar de novo — tentar de novo não vai ajudar."
+      "message": "Os seus intervalos guardados por stack não passaram na validação. As edições de intervalo estão desativadas para não os sobrescrever. Limpe o armazenamento do navegador para este site para começar de novo — tentar de novo não vai ajudar."
     },
     "sessionHistoryCorrupt": {
       "title": "Não foi possível carregar o histórico de treino",
-      "message": "Os teus dados de treino guardados neste dispositivo não passaram na validação. As sessões estão preservadas — limpa o armazenamento do navegador para este site para começar de novo."
+      "message": "Os seus dados de treino guardados neste dispositivo não passaram na validação. As sessões estão preservadas — limpe o armazenamento do navegador para este site para começar de novo."
     },
     "localDbWriteFailed": {
       "title": "Alterações não guardadas",
@@ -336,7 +343,7 @@
     },
     "localDbCorrupt": {
       "title": "Definições dessincronizadas",
-      "message": "Outro separador escreveu dados que este separador não conseguiu ler. As tuas alterações aqui estão seguras."
+      "message": "Outro separador escreveu dados que este separador não conseguiu ler. As suas alterações aqui estão seguras."
     }
   },
   "stats": {
@@ -408,7 +415,8 @@
       "sleightlyOutOfOrder": "Técnicas avançadas e efeitos com stack memorizado e integração de manipulação.",
       "particleSystem": "Um baralho memorizado moderno concebido para facilitar a memorização através de padrões e agrupamentos, com uma variedade de rotinas poderosas.",
       "conjuringArchive": "Conteúdos pesquisáveis de livros de magia — a secção «Stacked Deck Stuff» cataloga referências sobre o trabalho com baralhos memorizados."
-    }
+    },
+    "learnMoreAbout": "Saber mais sobre {{title}}"
   },
   "share": {
     "label": "Partilhar MemDeck",

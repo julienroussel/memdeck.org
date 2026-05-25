@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { type ROUTES, SITE_URL } from "../constants";
 
 /** Minimal structural constraint for JSON-LD data objects. */
 type JsonLdData = Record<string, unknown> & {
@@ -37,3 +38,31 @@ export const JsonLd = ({ data }: { data: JsonLdData }) => {
 
   return <div hidden ref={ref} />;
 };
+
+/**
+ * Builds a BreadcrumbList JSON-LD schema for a two-level "Home → <page>"
+ * breadcrumb. Centralizes the schema shape so per-page entries only carry
+ * the page name and its canonical route.
+ */
+export const buildBreadcrumbSchema = (
+  name: string,
+  route: (typeof ROUTES)[keyof typeof ROUTES]
+) =>
+  ({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: `${SITE_URL}/`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name,
+        item: `${SITE_URL}${route}`,
+      },
+    ],
+  }) as const;

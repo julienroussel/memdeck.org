@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
 import { useFormatCardName } from "../../hooks/use-format-card-name";
 import { useGameTimer } from "../../hooks/use-game-timer";
+import { analytics } from "../../services/analytics";
 import { eventBus } from "../../services/event-bus";
 import type { FlashcardMode, NeighborDirection } from "../../types/flashcard";
 import type { GameScore } from "../../types/game";
@@ -25,7 +26,7 @@ import {
   generateNewCardAndChoices,
   isCorrectAnswer,
 } from "./flashcard-game-reducer";
-import { getRandomDisplayMode, wrongAnswerNotification } from "./utils";
+import { buildWrongAnswerNotification, getRandomDisplayMode } from "./utils";
 
 // --- Hook ---
 
@@ -224,14 +225,14 @@ export const useFlashcardGame = (
         dispatch({ type: "CORRECT_ANSWER", payload });
         onAnswerRef.current?.({ correct: true, questionAdvanced: true });
       } else {
-        notifications.show(wrongAnswerNotification);
+        notifications.show(buildWrongAnswerNotification(t));
         dispatch({ type: "WRONG_ANSWER" });
         onAnswerRef.current?.({ correct: false, questionAdvanced: false });
       }
 
       eventBus.emit.FLASHCARD_ANSWER({ correct, stackName });
     },
-    [stackName, generateNextRound]
+    [stackName, generateNextRound, t]
   );
 
   const shouldShowCard =
@@ -261,6 +262,7 @@ export const useFlashcardGame = (
 
     const payload = generateNextRound();
     dispatch({ type: "REVEAL_ANSWER", payload });
+    analytics.trackFeatureUsed("Reveal Answer - Flashcard");
     eventBus.emit.FLASHCARD_ANSWER({ correct: false, stackName });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
   }, [stackName, generateNextRound, t, formatCardName]);

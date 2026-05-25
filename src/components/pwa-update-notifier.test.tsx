@@ -24,10 +24,21 @@ vi.mock("@mantine/notifications", () => ({
 }));
 
 const mockTrackFeatureUsed = vi.fn();
+const mockTrackError = vi.fn();
 vi.mock("../services/analytics", () => ({
   analytics: {
     trackFeatureUsed: (...args: unknown[]) => mockTrackFeatureUsed(...args),
+    trackError: (...args: unknown[]) => mockTrackError(...args),
   },
+}));
+
+const mockReportLocalDbCorruption = vi.fn();
+const mockHandleLocalDbWriteFailed = vi.fn();
+vi.mock("../utils/localstorage-telemetry", () => ({
+  reportLocalDbCorruption: (...args: unknown[]) =>
+    mockReportLocalDbCorruption(...args),
+  handleLocalDbWriteFailed: (...args: unknown[]) =>
+    mockHandleLocalDbWriteFailed(...args),
 }));
 
 const { mockLocalStorage } = createMockLocalStorage();
@@ -164,7 +175,6 @@ describe("PwaUpdateNotifier", () => {
     render(<PwaUpdateNotifier />);
 
     expect(vi.getTimerCount()).toBe(0);
-    vi.advanceTimersByTime(24 * 60 * 60 * 1000);
 
     vi.useRealTimers();
   });
@@ -217,5 +227,67 @@ describe("PwaUpdateNotifier", () => {
     expect(mockUpdate).not.toHaveBeenCalled();
 
     vi.useRealTimers();
+  });
+
+  it("tracks PwaUpdateCheckFailed analytics error when registration.update() rejects", async () => {
+    vi.useFakeTimers();
+    const mockUpdate = vi.fn(() => Promise.reject(new Error("network down")));
+    // Partial mock of browser ServiceWorkerRegistration API
+    const fakeRegistration = {
+      update: mockUpdate,
+    } as unknown as ServiceWorkerRegistration;
+
+    mockUseRegisterSW.mockImplementation((options?: RegisterSWOptions) => {
+      options?.onRegisteredSW?.("", fakeRegistration);
+      return {};
+    });
+
+    render(<PwaUpdateNotifier />);
+
+    await vi.advanceTimersByTimeAsync(24 * 60 * 60 * 1000);
+
+    expect(mockUpdate).toHaveBeenCalledOnce();
+    expect(mockTrackError).toHaveBeenCalledOnce();
+    expect(mockTrackError).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "PwaUpdateCheckFailed" })
+    );
+
+    vi.useRealTimers();
+  });
+
+  it("reports corruption when localStorage.getItem throws (Safari ITP)", () => {
+    const originalGetItem = mockLocalStorage.getItem;
+    mockLocalStorage.getItem = vi.fn(() => {
+      throw new Error("ITP");
+    });
+
+    try {
+      render(<PwaUpdateNotifier />);
+
+      expect(mockReportLocalDbCorruption).toHaveBeenCalledWith(
+        COMMIT_HASH_LSK,
+        expect.any(Error)
+      );
+    } finally {
+      mockLocalStorage.getItem = originalGetItem;
+    }
+  });
+
+  it("reports write failure when localStorage.setItem throws (quota exceeded)", () => {
+    const originalSetItem = mockLocalStorage.setItem;
+    mockLocalStorage.setItem = vi.fn(() => {
+      throw new Error("QuotaExceededError");
+    });
+
+    try {
+      render(<PwaUpdateNotifier />);
+
+      expect(mockHandleLocalDbWriteFailed).toHaveBeenCalledWith(
+        COMMIT_HASH_LSK,
+        expect.any(Error)
+      );
+    } finally {
+      mockLocalStorage.setItem = originalSetItem;
+    }
   });
 });

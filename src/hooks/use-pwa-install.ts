@@ -6,35 +6,35 @@ import {
   PWA_INSTALL_PERMANENTLY_DISMISSED_LSK,
   SESSION_HISTORY_LSK,
 } from "../constants";
+import { analytics } from "../services/analytics";
 import { isPwa } from "../utils/is-pwa";
+import { getStoredValue, useLocalDb } from "../utils/localstorage";
+import {
+  handleLocalDbWriteFailed,
+  reportLocalDbCorruption,
+} from "../utils/localstorage-telemetry";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 
+const isUnknownArray = (value: unknown): value is unknown[] =>
+  Array.isArray(value);
+
 const hasCompletedSession = (): boolean => {
-  const raw = localStorage.getItem(SESSION_HISTORY_LSK);
-  if (!raw) {
-    return false;
-  }
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0;
-  } catch {
-    return false;
-  }
+  const history = getStoredValue<unknown[]>(
+    SESSION_HISTORY_LSK,
+    [],
+    isUnknownArray
+  );
+  return history.length > 0;
 };
 
-const isDismissedWithinCooldown = (): boolean => {
-  const dismissedAt = localStorage.getItem(PWA_INSTALL_DISMISSED_AT_LSK);
-  if (!dismissedAt) {
-    return false;
-  }
-  return Date.now() - Number(dismissedAt) < PWA_INSTALL_COOLDOWN_MS;
-};
+const isNumber = (value: unknown): value is number =>
+  typeof value === "number" && Number.isFinite(value);
 
-const isPermanentlyDismissed = (): boolean =>
-  localStorage.getItem(PWA_INSTALL_PERMANENTLY_DISMISSED_LSK) === "true";
+const isBoolean = (value: unknown): value is boolean =>
+  typeof value === "boolean";
 
 type UsePwaInstallResult = {
   eligible: boolean;
@@ -47,6 +47,26 @@ export const usePwaInstall = (): UsePwaInstallResult => {
   const isMobile = useMediaQuery("(max-width: 48em)");
   const deferredPromptRef = useRef<BeforeInstallPromptEvent | null>(null);
   const [eligible, setEligible] = useState(false);
+
+  const [dismissedAt, setDismissedAt] = useLocalDb<number | null>(
+    PWA_INSTALL_DISMISSED_AT_LSK,
+    null,
+    (value): value is number | null => value === null || isNumber(value),
+    {
+      onCorrupt: reportLocalDbCorruption,
+      onWriteFailed: handleLocalDbWriteFailed,
+    }
+  );
+
+  const [permanentlyDismissed, setPermanentlyDismissed] = useLocalDb<boolean>(
+    PWA_INSTALL_PERMANENTLY_DISMISSED_LSK,
+    false,
+    isBoolean,
+    {
+      onCorrupt: reportLocalDbCorruption,
+      onWriteFailed: handleLocalDbWriteFailed,
+    }
+  );
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -65,35 +85,51 @@ export const usePwaInstall = (): UsePwaInstallResult => {
     if (!hasCompletedSession()) {
       return;
     }
-    if (isPermanentlyDismissed()) {
+    if (permanentlyDismissed) {
       return;
     }
-    if (isDismissedWithinCooldown()) {
+    if (
+      dismissedAt !== null &&
+      Date.now() - dismissedAt < PWA_INSTALL_COOLDOWN_MS
+    ) {
       return;
     }
     setEligible(true);
-  }, [runningAsPwa, isMobile]);
+  }, [runningAsPwa, isMobile, permanentlyDismissed, dismissedAt]);
 
   const install = useCallback((): boolean => {
-    if (deferredPromptRef.current) {
-      deferredPromptRef.current.prompt();
-      deferredPromptRef.current = null;
-      setEligible(false);
-      return true;
+    const event = deferredPromptRef.current;
+    if (!event) {
+      return false;
     }
-    return false;
+    deferredPromptRef.current = null;
+    setEligible(false);
+    // Handle rejection without changing the sync return signature: restore
+    // the ref + eligibility so the user can retry, and emit telemetry. The
+    // returned promise from prompt() is intentionally fire-and-forget after
+    // the catch handler — callers only care whether the native flow was
+    // *initiated* synchronously.
+    event.prompt().catch((error: unknown) => {
+      deferredPromptRef.current = event;
+      setEligible(true);
+      const wrapped =
+        error instanceof Error
+          ? new Error(error.message, { cause: error })
+          : new Error("unknown", { cause: error });
+      wrapped.name = "PwaInstallPromptRejected";
+      analytics.trackError(wrapped);
+    });
+    return true;
   }, []);
 
   const dismiss = useCallback(() => {
-    const wasDismissedBefore = localStorage.getItem(
-      PWA_INSTALL_DISMISSED_AT_LSK
-    );
+    const wasDismissedBefore = dismissedAt !== null;
     if (wasDismissedBefore) {
-      localStorage.setItem(PWA_INSTALL_PERMANENTLY_DISMISSED_LSK, "true");
+      setPermanentlyDismissed(true);
     }
-    localStorage.setItem(PWA_INSTALL_DISMISSED_AT_LSK, String(Date.now()));
+    setDismissedAt(Date.now());
     setEligible(false);
-  }, []);
+  }, [dismissedAt, setDismissedAt, setPermanentlyDismissed]);
 
   return { eligible, install, dismiss };
 };

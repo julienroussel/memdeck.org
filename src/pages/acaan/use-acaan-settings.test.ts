@@ -9,8 +9,8 @@ const mockSetTimerEnabled = createGatedSetterMock<boolean>(succeeds);
 const mockSetTimerDuration = vi.fn();
 const mockTrackEvent = vi.fn();
 
-vi.mock("../../hooks/use-acaan-timer", () => ({
-  useAcaanTimer: vi.fn(() => ({
+vi.mock("../../hooks/use-timer-settings", () => ({
+  useTimerSettings: vi.fn(() => ({
     timerSettings: { enabled: false, duration: 15 },
     setTimerEnabled: mockSetTimerEnabled,
     setTimerDuration: mockSetTimerDuration,
@@ -37,14 +37,14 @@ describe("useAcaanSettings", () => {
     vi.clearAllMocks();
   });
 
-  it("returns timer settings from useAcaanTimer", () => {
+  it("returns timer settings from useTimerSettings", () => {
     expect(result.current.timerSettings).toEqual({
       enabled: false,
       duration: 15,
     });
   });
 
-  it("delegates setTimerDuration to useAcaanTimer", () => {
+  it("delegates setTimerDuration to useTimerSettings", () => {
     act(() => {
       result.current.setTimerDuration(30);
     });

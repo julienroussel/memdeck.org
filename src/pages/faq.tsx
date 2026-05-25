@@ -3,8 +3,8 @@ import { IconHelpCircle } from "@tabler/icons-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
-import { JsonLd } from "../components/json-ld";
-import { ROUTES, SITE_URL } from "../constants";
+import { buildBreadcrumbSchema, JsonLd } from "../components/json-ld";
+import { ROUTES } from "../constants";
 import { useDocumentMeta } from "../hooks/use-document-meta";
 
 const FAQ_KEYS = [
@@ -55,23 +55,7 @@ export const Faq = () => {
   );
 
   const breadcrumbSchema = useMemo(
-    () => ({
-      "@context": "https://schema.org" as const,
-      "@type": "BreadcrumbList" as const,
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Home",
-          item: `${SITE_URL}/`,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: t("faq.title"),
-        },
-      ],
-    }),
+    () => buildBreadcrumbSchema(t("faq.title"), ROUTES.faq),
     [t]
   );
 

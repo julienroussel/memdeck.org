@@ -1,17 +1,17 @@
 import { Grid, Text } from "@mantine/core";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { ErrorBoundary } from "../../components/error-boundary";
-import { JsonLd } from "../../components/json-ld";
+import { buildBreadcrumbSchema, JsonLd } from "../../components/json-ld";
 import { RevealButton } from "../../components/reveal-button";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TrainingHeader } from "../../components/training-header";
-import { MIN_DISTANCE_RANGE, SITE_URL } from "../../constants";
+import { MIN_DISTANCE_RANGE, ROUTES } from "../../constants";
+import { useCardImagePreload } from "../../hooks/use-card-image-preload";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import { useStackLimits } from "../../hooks/use-stack-limits";
-import { analytics } from "../../services/analytics";
 import { DistanceActiveRound } from "./distance-active-round";
 import { DistanceRangeTooSmallAlert } from "./distance-range-too-small-alert";
 import { DistanceSettingsContent } from "./distance-settings-content";
@@ -24,23 +24,7 @@ const ACTIVE_MODE_KEYS = {
   both: "distance.activeModeBoth",
 } as const;
 
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: `${SITE_URL}/`,
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Distance",
-    },
-  ],
-};
+const breadcrumbSchema = buildBreadcrumbSchema("Distance", ROUTES.distance);
 
 export const Distance = () => {
   const { t } = useTranslation();
@@ -48,6 +32,7 @@ export const Distance = () => {
     title: t("distance.pageTitle"),
     description: t("distance.pageDescription"),
   });
+  useCardImagePreload();
 
   const { stackKey, stackOrder, stackName } = useRequiredStack();
 
@@ -118,11 +103,6 @@ export const Distance = () => {
     { onAnswer: handleAnswer }
   );
 
-  const handleRevealAnswer = useCallback(() => {
-    analytics.trackFeatureUsed("Reveal Answer - Distance");
-    revealAnswer();
-  }, [revealAnswer]);
-
   const activeModeLabel = t(ACTIVE_MODE_KEYS[mode]);
 
   return (
@@ -188,7 +168,7 @@ export const Distance = () => {
           />
         )}
         {status.phase !== "summary" && !rangeTooSmall && (
-          <RevealButton onReveal={handleRevealAnswer} />
+          <RevealButton onReveal={revealAnswer} />
         )}
       </div>
     </ErrorBoundary>

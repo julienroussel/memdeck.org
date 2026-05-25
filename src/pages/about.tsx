@@ -13,34 +13,13 @@ import {
 } from "@tabler/icons-react";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { JsonLd } from "../components/json-ld";
-import {
-  GITHUB_URL,
-  LINKTREE_URL,
-  MAGIC_LAB_URL,
-  SITE_URL,
-} from "../constants";
+import { buildBreadcrumbSchema, JsonLd } from "../components/json-ld";
+import { GITHUB_URL, LINKTREE_URL, MAGIC_LAB_URL, ROUTES } from "../constants";
 import { useDocumentMeta } from "../hooks/use-document-meta";
 import { analytics } from "../services/analytics";
 import { shareMemDeck } from "../utils/share";
 
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: `${SITE_URL}/`,
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "About",
-    },
-  ],
-};
+const breadcrumbSchema = buildBreadcrumbSchema("About", ROUTES.about);
 
 export const About = () => {
   const { t } = useTranslation();
@@ -67,7 +46,7 @@ export const About = () => {
       <Stack gap="sm">
         <Group gap="xs">
           <IconBrandGithub aria-hidden="true" size={20} stroke={1.5} />
-          <Anchor href={GITHUB_URL} rel="noopener" target="_blank">
+          <Anchor href={GITHUB_URL} rel="noopener noreferrer" target="_blank">
             GitHub
             <VisuallyHidden> (opens in new tab)</VisuallyHidden>
           </Anchor>
@@ -77,7 +56,11 @@ export const About = () => {
         </Group>
         <Group gap="xs">
           <IconExternalLink aria-hidden="true" size={20} stroke={1.5} />
-          <Anchor href={MAGIC_LAB_URL} rel="noopener" target="_blank">
+          <Anchor
+            href={MAGIC_LAB_URL}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             The Magic Lab
             <VisuallyHidden> (opens in new tab)</VisuallyHidden>
           </Anchor>
@@ -87,7 +70,7 @@ export const About = () => {
         </Group>
         <Group gap="xs">
           <IconExternalLink aria-hidden="true" size={20} stroke={1.5} />
-          <Anchor href={LINKTREE_URL} rel="noopener" target="_blank">
+          <Anchor href={LINKTREE_URL} rel="noopener noreferrer" target="_blank">
             Linktree
             <VisuallyHidden> (opens in new tab)</VisuallyHidden>
           </Anchor>

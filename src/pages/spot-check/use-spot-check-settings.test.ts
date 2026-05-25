@@ -23,8 +23,8 @@ vi.mock("../../utils/localstorage", () => ({
   useLocalDb: vi.fn(),
 }));
 
-vi.mock("../../hooks/use-spot-check-timer", () => ({
-  useSpotCheckTimer: vi.fn(() => ({
+vi.mock("../../hooks/use-timer-settings", () => ({
+  useTimerSettings: vi.fn(() => ({
     timerSettings: { enabled: false, duration: 15 },
     setTimerEnabled: mockSetTimerEnabled,
     setTimerDuration: mockSetTimerDuration,
@@ -93,14 +93,14 @@ describe("useSpotCheckSettings", () => {
     );
   });
 
-  it("returns timer settings from useSpotCheckTimer", () => {
+  it("returns timer settings from useTimerSettings", () => {
     expect(result.current.timerSettings).toEqual({
       enabled: false,
       duration: 15,
     });
   });
 
-  it("delegates setTimerDuration to useSpotCheckTimer", () => {
+  it("delegates setTimerDuration to useTimerSettings", () => {
     act(() => {
       result.current.setTimerDuration(30);
     });

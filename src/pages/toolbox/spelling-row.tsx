@@ -68,6 +68,7 @@ export const SpellingRow = ({
         className={ROW_CLICKABLE_STYLE}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
+        role="button"
         tabIndex={0}
       >
         <Table.Td>

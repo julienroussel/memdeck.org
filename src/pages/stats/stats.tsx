@@ -1,7 +1,7 @@
 import { Space, Stack, Text, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
-import { JsonLd } from "../../components/json-ld";
-import { SITE_URL } from "../../constants";
+import { buildBreadcrumbSchema, JsonLd } from "../../components/json-ld";
+import { ROUTES } from "../../constants";
 import { useAllTimeStats } from "../../hooks/use-all-time-stats";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useSessionHistory } from "../../hooks/use-session-history";
@@ -11,23 +11,7 @@ import { StatsCorruptionAlert } from "./stats-corruption-alert";
 import { StatsHistory } from "./stats-history";
 import { StatsOverview } from "./stats-overview";
 
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: `${SITE_URL}/`,
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Stats",
-    },
-  ],
-};
+const breadcrumbSchema = buildBreadcrumbSchema("Stats", ROUTES.stats);
 
 export const Stats = () => {
   const { t } = useTranslation();

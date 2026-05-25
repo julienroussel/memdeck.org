@@ -1,6 +1,7 @@
 import { Flex, Image } from "@mantine/core";
 import type { KeyboardEvent } from "react";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { SPREAD_CARD_HEIGHT, SPREAD_CARD_WIDTH } from "../../constants";
 import { useFormatCardName } from "../../hooks/use-format-card-name";
 import type {
@@ -25,6 +26,7 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
   } = props;
   const onCardClick = isCardsProps(props) ? props.onItemClick : undefined;
   const onNumberClick = isCardsProps(props) ? undefined : props.onItemClick;
+  const { t } = useTranslation();
   const formatCardName = useFormatCardName();
   const [offset, setOffset] = useState(0);
   const touchLastPositionRef = useRef(0);
@@ -134,6 +136,34 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
     [onNumberClick]
   );
 
+  const handleCardButtonClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const idx = Number(event.currentTarget.dataset.cardIndex);
+      if (items.type !== "cards") {
+        return;
+      }
+      const item = items.data[idx];
+      if (item !== undefined) {
+        handleCardItemClick(item, idx);
+      }
+    },
+    [items, handleCardItemClick]
+  );
+
+  const handleNumberButtonClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const idx = Number(event.currentTarget.dataset.numberIndex);
+      if (items.type !== "numbers") {
+        return;
+      }
+      const item = items.data[idx];
+      if (item !== undefined) {
+        handleNumberItemClick(item, idx);
+      }
+    },
+    [items, handleNumberItemClick]
+  );
+
   // Keys are position-based (not data-based) so that DOM buttons are reused
   // when switching between card and number items, preventing flicker.
   const renderedItems =
@@ -142,9 +172,10 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
           <button
             aria-label={formatCardName(item)}
             className="cardSpreadCard"
+            data-card-index={index}
             // biome-ignore lint/suspicious/noArrayIndexKey: Position-based keys prevent DOM flicker when switching card/number items
             key={`spread_${index}`}
-            onClick={() => handleCardItemClick(item, index)}
+            onClick={handleCardButtonClick}
             style={{
               cursor: hasCursor ? "pointer" : "default",
               ...cssVarCounterStyle(index, items.data.length / 2, offset),
@@ -161,11 +192,14 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
         ))
       : items.data.map((item, index) => (
           <button
-            aria-label={`Select position ${item}`}
+            aria-label={t("cardSpread.selectPositionAriaLabel", {
+              position: item,
+            })}
             className="cardSpreadCard"
+            data-number-index={index}
             // biome-ignore lint/suspicious/noArrayIndexKey: Position-based keys prevent DOM flicker when switching card/number items
             key={`spread_${index}`}
-            onClick={() => handleNumberItemClick(item, index)}
+            onClick={handleNumberButtonClick}
             style={{
               cursor: hasCursor ? "pointer" : "default",
               ...cssVarCounterStyle(index, items.data.length / 2, offset),
@@ -179,9 +213,7 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
   return (
     <Flex
       align="start"
-      aria-label={
-        canMove ? "Card spread - use arrow keys to navigate" : "Card spread"
-      }
+      aria-label={t("cardSpread.ariaLabel")}
       className="cardSpreadContainer"
       justify="center"
       mih={height}
@@ -190,7 +222,6 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
       onTouchMove={handleTouchMove}
       role="group"
       style={{ "--degree": `${degree}deg` }}
-      tabIndex={canMove ? 0 : undefined}
     >
       {renderedItems}
     </Flex>

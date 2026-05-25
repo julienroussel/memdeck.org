@@ -79,7 +79,7 @@ export const StatsHistory = ({ history }: StatsHistoryProps) => {
 
   return (
     <>
-      <Title order={3}>{t("stats.sessionHistory")}</Title>
+      <Title order={2}>{t("stats.sessionHistory")}</Title>
       <Text c="dimmed" hiddenFrom="sm" size="xs">
         {t("common.moreColumnsOnWiderScreen")}
       </Text>

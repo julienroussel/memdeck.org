@@ -1,6 +1,6 @@
 import { ActionIcon, Group, Paper, Text } from "@mantine/core";
 import { IconShare, IconX } from "@tabler/icons-react";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import {
   SHARE_NUDGE_DISMISSED_LSK,
@@ -8,7 +8,11 @@ import {
 } from "../constants";
 import { useAllTimeStats } from "../hooks/use-all-time-stats";
 import { analytics } from "../services/analytics";
-import { getStoredValue } from "../utils/localstorage";
+import { useLocalDb } from "../utils/localstorage";
+import {
+  handleLocalDbWriteFailed,
+  reportLocalDbCorruption,
+} from "../utils/localstorage-telemetry";
 import { shareMemDeck } from "../utils/share";
 
 const isBoolean = (value: unknown): value is boolean =>
@@ -17,17 +21,25 @@ const isBoolean = (value: unknown): value is boolean =>
 export const ShareNudge = () => {
   const { t } = useTranslation();
   const { getGlobalStats } = useAllTimeStats();
-  const [dismissed, setDismissed] = useState(() =>
-    getStoredValue(SHARE_NUDGE_DISMISSED_LSK, false, isBoolean)
+  const [dismissed, setDismissed] = useLocalDb<boolean>(
+    SHARE_NUDGE_DISMISSED_LSK,
+    false,
+    isBoolean,
+    {
+      onCorrupt: reportLocalDbCorruption,
+      onWriteFailed: handleLocalDbWriteFailed,
+    }
   );
 
   const globalStats = dismissed ? undefined : getGlobalStats();
 
   const handleDismiss = useCallback(() => {
-    setDismissed(true);
-    localStorage.setItem(SHARE_NUDGE_DISMISSED_LSK, JSON.stringify(true));
-    analytics.trackShareNudgeDismissed();
-  }, []);
+    setDismissed(true, {
+      onSuccess: () => {
+        analytics.trackShareNudgeDismissed();
+      },
+    });
+  }, [setDismissed]);
 
   const handleShare = useCallback(async () => {
     const result = await shareMemDeck(t("share.message"));

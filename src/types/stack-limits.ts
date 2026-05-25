@@ -28,7 +28,7 @@ export const isFullDeck = (limits: StackLimits): boolean =>
 /** Type guard for localStorage validation of stack limits records */
 export const isStackLimitsRecord = (
   value: unknown
-): value is Partial<Record<StackKey, { start: number; end: number }>> => {
+): value is StackLimitsRecord => {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     return false;
   }

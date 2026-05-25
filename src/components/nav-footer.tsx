@@ -46,7 +46,7 @@ export const NavFooter = () => {
           aria-label={t("header.githubAriaLabel")}
           c="dimmed"
           href={GITHUB_URL}
-          rel="noopener"
+          rel="noopener noreferrer"
           target="_blank"
           underline="hover"
         >
@@ -55,7 +55,7 @@ export const NavFooter = () => {
         <Anchor
           c="dimmed"
           href={LLMS_TXT_PATH}
-          rel="noopener"
+          rel="noopener noreferrer"
           size="xs"
           target="_blank"
           underline="hover"

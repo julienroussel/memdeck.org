@@ -85,7 +85,7 @@ export const AccuracyChart = ({ history }: AccuracyChartProps) => {
 
   return (
     <>
-      <Title order={3}>{t("stats.accuracyTrend")}</Title>
+      <Title order={2}>{t("stats.accuracyTrend")}</Title>
       <SegmentedControl
         aria-label={t("stats.filterByModeAriaLabel")}
         data={filterOptions}

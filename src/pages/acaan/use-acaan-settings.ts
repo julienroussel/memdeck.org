@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { useAcaanTimer } from "../../hooks/use-acaan-timer";
+import { ACAAN_TRAINER_TIMER_LSK } from "../../constants";
+import { useTimerSettings } from "../../hooks/use-timer-settings";
 import { analytics } from "../../services/analytics";
 import type { TimerDuration, TimerSettings } from "../../types/timer";
 
@@ -10,7 +11,9 @@ type UseAcaanSettingsResult = {
 };
 
 export const useAcaanSettings = (): UseAcaanSettingsResult => {
-  const { timerSettings, setTimerEnabled, setTimerDuration } = useAcaanTimer();
+  const { timerSettings, setTimerEnabled, setTimerDuration } = useTimerSettings(
+    ACAAN_TRAINER_TIMER_LSK
+  );
 
   const handleTimerEnabledChange = useCallback(
     (enabled: boolean) => {

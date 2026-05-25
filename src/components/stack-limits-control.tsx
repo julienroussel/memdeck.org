@@ -48,6 +48,14 @@ export const StackLimitsControl = ({
     [onLimitsChange]
   );
 
+  const handlePresetButtonClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const preset = Number(event.currentTarget.dataset.preset);
+      handlePresetClick(preset);
+    },
+    [handlePresetClick]
+  );
+
   const description = sliderIsFull
     ? t("stackLimits.fullDeck")
     : t("stackLimits.description", {
@@ -63,8 +71,9 @@ export const StackLimitsControl = ({
           <Button
             aria-label={t("stackLimits.presetAriaLabel", { count: preset })}
             aria-pressed={limits.start === 1 && limits.end === preset}
+            data-preset={preset}
             key={preset}
-            onClick={() => handlePresetClick(preset)}
+            onClick={handlePresetButtonClick}
             size="compact-xs"
             variant={
               limits.start === 1 && limits.end === preset ? "filled" : "light"

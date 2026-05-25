@@ -3,6 +3,7 @@ import { useCallback, useReducer, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
 import { useGameTimer } from "../../hooks/use-game-timer";
+import { analytics } from "../../services/analytics";
 import { eventBus } from "../../services/event-bus";
 import type { GameScore } from "../../types/game";
 import type { AnswerOutcome } from "../../types/session";
@@ -163,6 +164,7 @@ export const useAcaanGame = (
       type: "REVEAL_ANSWER",
       payload: { newScenario: generateAcaanScenario(stackOrderRef.current) },
     });
+    analytics.trackFeatureUsed("Reveal Answer - ACAAN");
     eventBus.emit.ACAAN_ANSWER({
       correct: false,
       stackName: stackNameRef.current,

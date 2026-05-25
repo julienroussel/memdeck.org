@@ -56,14 +56,21 @@ describe("lazyWithReload", () => {
       Promise.reject(new TypeError(errorMessage))
     );
 
+    // The recovery factory returns `new Promise<never>(() => {})` after
+    // triggering the reload, so it never resolves. Flush microtasks so the
+    // `.catch` runs, then race against a sentinel to assert "still pending"
+    // without coupling to a wall-clock timeout.
+    const factoryPromise = callFactory(result);
+    // Two awaits to drain the chained `.catch` microtask in lazyWithReload.
+    await Promise.resolve();
+    await Promise.resolve();
+    const pendingSentinel = Symbol("pending");
     const raceResult = await Promise.race([
-      callFactory(result).then(() => "resolved"),
-      new Promise<string>((resolve) =>
-        setTimeout(() => resolve("pending"), 50)
-      ),
+      factoryPromise.then(() => "resolved"),
+      Promise.resolve(pendingSentinel),
     ]);
 
-    expect(raceResult).toBe("pending");
+    expect(raceResult).toBe(pendingSentinel);
     expect(reloadMock).toHaveBeenCalledOnce();
     expect(sessionStorage.getItem(`${CHUNK_RELOAD_SSK}/flashcard`)).toBe("1");
   });
@@ -150,14 +157,19 @@ describe("lazyWithReload", () => {
       )
     );
 
+    // Same shape as the reload-success test above: the recovery path returns
+    // a never-resolving promise. Flush microtasks and race against a
+    // pending sentinel instead of a wall-clock setTimeout.
+    const factoryPromise = callFactory(result);
+    await Promise.resolve();
+    await Promise.resolve();
+    const pendingSentinel = Symbol("pending");
     const raceResult = await Promise.race([
-      callFactory(result).then(() => "resolved"),
-      new Promise<string>((resolve) =>
-        setTimeout(() => resolve("pending"), 50)
-      ),
+      factoryPromise.then(() => "resolved"),
+      Promise.resolve(pendingSentinel),
     ]);
 
-    expect(raceResult).toBe("pending");
+    expect(raceResult).toBe(pendingSentinel);
     expect(reloadMock).not.toHaveBeenCalled();
     expect(window.location.search).toBe("chunk-reloaded=1");
   });

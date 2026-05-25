@@ -43,7 +43,7 @@ const setHostname = (hostname: string) => {
   });
 };
 
-const { analytics } = await import("./analytics");
+const { analytics, scrubErrorMessage } = await import("./analytics");
 const { eventBus } = await import("./event-bus");
 
 describe("analytics", () => {
@@ -1047,6 +1047,37 @@ describe("analytics", () => {
         exFatal: false,
       });
     });
+
+    it("scrubs absolute paths from both label and exDescription", () => {
+      const error = new Error("Failed at /Users/julien/dev/app.js:42");
+
+      analytics.trackError(error);
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Error",
+        action: "Error",
+        label: "Failed at [path]",
+      });
+      expect(mockSend).toHaveBeenCalledWith({
+        hitType: "exception",
+        exDescription: "Error: Failed at [path]",
+        exFatal: false,
+      });
+    });
+
+    it("strips JSON.parse SyntaxError second-line snippets from exDescription", () => {
+      const error = new SyntaxError(
+        "Unexpected token x in JSON\nat position 5: {bad...}"
+      );
+
+      analytics.trackError(error);
+
+      expect(mockSend).toHaveBeenCalledWith({
+        hitType: "exception",
+        exDescription: "SyntaxError: Unexpected token x in JSON",
+        exFatal: false,
+      });
+    });
   });
 
   describe("when hostname is not production", () => {
@@ -1145,5 +1176,48 @@ describe("analytics", () => {
 
       expect(mockEvent).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe("scrubErrorMessage", () => {
+  it("strips the second line of a JSON.parse SyntaxError snippet", () => {
+    const input = "Unexpected token x in JSON\nat position 5: {bad...}";
+
+    expect(scrubErrorMessage(input)).toBe("Unexpected token x in JSON");
+  });
+
+  it("replaces absolute paths under /Users with [path]", () => {
+    const input = "Failed at /Users/julien/dev/app.js:42";
+
+    expect(scrubErrorMessage(input)).toBe("Failed at [path]");
+  });
+
+  it.each([
+    "/home",
+    "/var",
+    "/tmp",
+    "/private",
+    "/opt",
+    "/etc",
+    "/root",
+  ])("replaces absolute paths under %s with [path]", (prefix) => {
+    expect(scrubErrorMessage(`err at ${prefix}/x`)).toBe("err at [path]");
+  });
+
+  it("leaves benign error messages unchanged", () => {
+    expect(scrubErrorMessage("Failed to fetch")).toBe("Failed to fetch");
+  });
+
+  it("caps message at ERROR_LABEL_MAX_LENGTH (200 chars)", () => {
+    const input = "a".repeat(250);
+
+    const result = scrubErrorMessage(input);
+
+    expect(result).toHaveLength(200);
+    expect(result).toBe(input.slice(0, 200));
+  });
+
+  it("handles empty string without throwing", () => {
+    expect(scrubErrorMessage("")).toBe("");
   });
 });

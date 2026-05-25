@@ -151,6 +151,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Correct dependency arrays** in `useEffect`, `useMemo`, `useCallback`.
 - **Use semantic HTML and ARIA attributes** for accessibility. Prefer `<button>`, `<nav>`, etc. over divs with roles.
 - **Use position-based keys in `CardSpread`** (`spread_${index}`). Data-based keys (e.g., `card_${suit}_${rank}`) cause all DOM nodes to be destroyed and recreated when switching between card and number items, producing visible flicker.
+- **Memoize the `items` prop you pass to `CardSpread`.** Inline allocations like `<CardSpread items={cardItems(choices.map(...))} />` defeat the component's `React.memo` because the prop has fresh identity each render — and CardSpread re-renders 52 children on every parent tick. Wrap in `useMemo` keyed on the source data (`flashcard.tsx:102-109` is the canonical pattern). Verified across flashcard, distance, and spot-check consumers in the 2026-05-25 audit.
 
 ## Testing Standards
 
@@ -197,7 +198,8 @@ This project uses **Ultracite** (a Biome preset) for formatting and linting.
 Topic-specific guidance lives in `.claude/rules/` and auto-attaches via `paths:` frontmatter when Claude opens matching files:
 
 - `localstorage-persistence.md` — patterns for any hook/util that persists to localStorage (`useLocalDb`, write-failure telemetry, corruption recovery).
-- `pwa-and-lazy-loading.md` — `lazyWithReload` discipline, stale-chunk recovery, locale switching, vite PWA build verification, manifest-shortcut/ROUTES parity.
+- `pwa-and-lazy-loading.md` — `lazyWithReload` discipline, stale-chunk recovery, locale switching, vite PWA build verification, manifest-shortcut/ROUTES parity, `useCardImagePreload` on training routes.
+- `mantine-component-gotchas.md` — Mantine components whose props look semantic but only set data attributes (e.g., `NavLink active=` does NOT emit `aria-current="page"`).
 
 Each rule documents its trigger globs at the top.
 

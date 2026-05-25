@@ -1,26 +1,13 @@
+import { renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionRecord } from "../types/session";
 
 const mockSetValue = vi.fn();
 const mockRemoveValue = vi.fn();
 
-// Mock React hooks to allow testing without a React rendering context. The
-// useState stub returns [initial, noop] so the consumer hook's corruption-
-// state declaration doesn't throw — the corruption transition itself is
-// covered by use-session-history-corruption.test.ts via renderHook.
-vi.mock("react", async () => {
-  const actual = await vi.importActual<typeof import("react")>("react");
-  return {
-    ...actual,
-    useMemo: vi.fn((fn) => fn()),
-    useCallback: vi.fn((fn) => fn),
-    useState: vi.fn((initial) => [
-      typeof initial === "function" ? initial() : initial,
-      vi.fn(),
-    ]),
-  };
-});
-
+// We let real React drive `useState`, `useMemo`, and `useCallback` via
+// `renderHook`, so only collaborator mocks remain — the corruption transition
+// itself is covered by `use-session-history-corruption.test.ts`.
 vi.mock("../utils/localstorage", () => ({
   useLocalDb: vi.fn((_, defaultValue) => [
     defaultValue,
@@ -58,9 +45,9 @@ describe("useSessionHistory", () => {
   it("returns empty history when localStorage has no data", () => {
     mockedUseLocalDb.mockReturnValue([[], mockSetValue, mockRemoveValue]);
 
-    const result = useSessionHistory();
+    const { result } = renderHook(() => useSessionHistory());
 
-    expect(result.history).toEqual([]);
+    expect(result.current.history).toEqual([]);
   });
 
   it("returns all records in history", () => {
@@ -71,10 +58,10 @@ describe("useSessionHistory", () => {
     ];
     mockedUseLocalDb.mockReturnValue([records, mockSetValue, mockRemoveValue]);
 
-    const result = useSessionHistory();
+    const { result } = renderHook(() => useSessionHistory());
 
-    expect(result.history).toEqual(records);
-    expect(result.history).toHaveLength(3);
+    expect(result.current.history).toEqual(records);
+    expect(result.current.history).toHaveLength(3);
   });
 
   it("returns only flashcard sessions when filtering by flashcard mode", () => {
@@ -86,8 +73,8 @@ describe("useSessionHistory", () => {
     ];
     mockedUseLocalDb.mockReturnValue([records, mockSetValue, mockRemoveValue]);
 
-    const result = useSessionHistory();
-    const flashcardSessions = result.sessionsByMode("flashcard");
+    const { result } = renderHook(() => useSessionHistory());
+    const flashcardSessions = result.current.sessionsByMode("flashcard");
 
     expect(flashcardSessions).toHaveLength(2);
     expect(flashcardSessions[0].id).toBe("flashcard-1");
@@ -103,8 +90,8 @@ describe("useSessionHistory", () => {
     ];
     mockedUseLocalDb.mockReturnValue([records, mockSetValue, mockRemoveValue]);
 
-    const result = useSessionHistory();
-    const acaanSessions = result.sessionsByMode("acaan");
+    const { result } = renderHook(() => useSessionHistory());
+    const acaanSessions = result.current.sessionsByMode("acaan");
 
     expect(acaanSessions).toHaveLength(2);
     expect(acaanSessions[0].id).toBe("acaan-1");
@@ -120,8 +107,8 @@ describe("useSessionHistory", () => {
     ];
     mockedUseLocalDb.mockReturnValue([records, mockSetValue, mockRemoveValue]);
 
-    const result = useSessionHistory();
-    const mnemonicaSessions = result.sessionsByStack("mnemonica");
+    const { result } = renderHook(() => useSessionHistory());
+    const mnemonicaSessions = result.current.sessionsByStack("mnemonica");
 
     expect(mnemonicaSessions).toHaveLength(2);
     expect(mnemonicaSessions[0].id).toBe("mnemonica-1");
@@ -153,8 +140,11 @@ describe("useSessionHistory", () => {
     ];
     mockedUseLocalDb.mockReturnValue([records, mockSetValue, mockRemoveValue]);
 
-    const result = useSessionHistory();
-    const filtered = result.sessionsByModeAndStack("flashcard", "mnemonica");
+    const { result } = renderHook(() => useSessionHistory());
+    const filtered = result.current.sessionsByModeAndStack(
+      "flashcard",
+      "mnemonica"
+    );
 
     expect(filtered).toHaveLength(2);
     expect(filtered[0].id).toBe("flashcard-mnemonica-1");
@@ -168,8 +158,8 @@ describe("useSessionHistory", () => {
     ];
     mockedUseLocalDb.mockReturnValue([records, mockSetValue, mockRemoveValue]);
 
-    const result = useSessionHistory();
-    const acaanSessions = result.sessionsByMode("acaan");
+    const { result } = renderHook(() => useSessionHistory());
+    const acaanSessions = result.current.sessionsByMode("acaan");
 
     expect(acaanSessions).toEqual([]);
   });
@@ -181,8 +171,8 @@ describe("useSessionHistory", () => {
     ];
     mockedUseLocalDb.mockReturnValue([records, mockSetValue, mockRemoveValue]);
 
-    const result = useSessionHistory();
-    const aronsonSessions = result.sessionsByStack("aronson");
+    const { result } = renderHook(() => useSessionHistory());
+    const aronsonSessions = result.current.sessionsByStack("aronson");
 
     expect(aronsonSessions).toEqual([]);
   });
@@ -198,8 +188,11 @@ describe("useSessionHistory", () => {
     ];
     mockedUseLocalDb.mockReturnValue([records, mockSetValue, mockRemoveValue]);
 
-    const result = useSessionHistory();
-    const filtered = result.sessionsByModeAndStack("acaan", "mnemonica");
+    const { result } = renderHook(() => useSessionHistory());
+    const filtered = result.current.sessionsByModeAndStack(
+      "acaan",
+      "mnemonica"
+    );
 
     expect(filtered).toEqual([]);
   });
@@ -213,8 +206,8 @@ describe("useSessionHistory", () => {
     ];
     mockedUseLocalDb.mockReturnValue([records, mockSetValue, mockRemoveValue]);
 
-    const result = useSessionHistory();
-    const aronsonSessions = result.sessionsByStack("aronson");
+    const { result } = renderHook(() => useSessionHistory());
+    const aronsonSessions = result.current.sessionsByStack("aronson");
 
     expect(aronsonSessions).toHaveLength(2);
     expect(aronsonSessions.every((s) => s.stackKey === "aronson")).toBe(true);
@@ -230,8 +223,11 @@ describe("useSessionHistory", () => {
     ];
     mockedUseLocalDb.mockReturnValue([records, mockSetValue, mockRemoveValue]);
 
-    const result = useSessionHistory();
-    const filtered = result.sessionsByModeAndStack("flashcard", "mnemonica");
+    const { result } = renderHook(() => useSessionHistory());
+    const filtered = result.current.sessionsByModeAndStack(
+      "flashcard",
+      "mnemonica"
+    );
 
     expect(filtered.map((r) => r.id)).toEqual([
       "record-1",

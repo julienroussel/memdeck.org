@@ -1,8 +1,8 @@
 import { Space, Text, Title } from "@mantine/core";
 import { IconBook2 } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
-import { JsonLd } from "../../components/json-ld";
-import { SITE_URL } from "../../constants";
+import { buildBreadcrumbSchema, JsonLd } from "../../components/json-ld";
+import { ROUTES } from "../../constants";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { AcaanTraining } from "./acaan-training";
 import { DistanceTraining } from "./distance-training";
@@ -55,23 +55,7 @@ const howToSchema = {
   ],
 };
 
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: `${SITE_URL}/`,
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Guide",
-    },
-  ],
-};
+const breadcrumbSchema = buildBreadcrumbSchema("Guide", ROUTES.guide);
 
 export const Guide = () => {
   const { t } = useTranslation();

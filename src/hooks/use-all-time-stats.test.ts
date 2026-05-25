@@ -1,3 +1,4 @@
+import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AllTimeStats, AllTimeStatsEntry } from "../types/session";
 
@@ -12,24 +13,10 @@ const makeEntry = (
   ...overrides,
 });
 
-// Mock React hooks to allow testing without a React rendering context. The
-// useState stub returns [initial, noop] so the consumer hook's corruption-
-// state declaration doesn't throw — the corruption transition itself is
-// covered by use-all-time-stats-corruption.test.ts via renderHook.
-vi.mock("react", async () => {
-  const actual = await vi.importActual<typeof import("react")>("react");
-  return {
-    ...actual,
-    useMemo: (fn: () => unknown) => fn(),
-    useCallback: (fn: unknown) => fn,
-    useState: <T>(initial: T | (() => T)): [T, (next: T) => void] => [
-      typeof initial === "function" ? (initial as () => T)() : initial,
-      () => undefined,
-    ],
-  };
-});
-
-// Mock the useLocalDb hook to control returned data
+// Mock the useLocalDb hook to control returned data. We let real React drive
+// `useState`, `useMemo`, and `useCallback` via `renderHook`, so only
+// collaborator mocks remain — the corruption transition itself is covered
+// by `use-all-time-stats-corruption.test.ts`.
 vi.mock("../utils/localstorage", () => ({
   useLocalDb: vi.fn(),
 }));
@@ -50,17 +37,17 @@ describe("useAllTimeStats", () => {
     it("returns empty stats object", () => {
       mockedUseLocalDb.mockReturnValue([{}, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      expect(result.stats).toEqual({});
+      expect(result.current.stats).toEqual({});
     });
 
     it("getStats returns empty entry for any mode and stack", () => {
       mockedUseLocalDb.mockReturnValue([{}, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getStats("flashcard", "mnemonica");
+      const entry = result.current.getStats("flashcard", "mnemonica");
 
       expect(entry).toEqual(makeEntry());
     });
@@ -68,9 +55,9 @@ describe("useAllTimeStats", () => {
     it("getStatsByMode returns empty entry", () => {
       mockedUseLocalDb.mockReturnValue([{}, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getStatsByMode("flashcard");
+      const entry = result.current.getStatsByMode("flashcard");
 
       expect(entry).toEqual(makeEntry());
     });
@@ -78,9 +65,9 @@ describe("useAllTimeStats", () => {
     it("getStatsByStack returns empty entry", () => {
       mockedUseLocalDb.mockReturnValue([{}, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getStatsByStack("mnemonica");
+      const entry = result.current.getStatsByStack("mnemonica");
 
       expect(entry).toEqual(makeEntry());
     });
@@ -88,9 +75,9 @@ describe("useAllTimeStats", () => {
     it("getGlobalStats returns empty entry", () => {
       mockedUseLocalDb.mockReturnValue([{}, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getGlobalStats();
+      const entry = result.current.getGlobalStats();
 
       expect(entry).toEqual(makeEntry());
     });
@@ -124,9 +111,9 @@ describe("useAllTimeStats", () => {
 
       mockedUseLocalDb.mockReturnValue([stats, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getStats("flashcard", "mnemonica");
+      const entry = result.current.getStats("flashcard", "mnemonica");
 
       expect(entry).toEqual(stats["flashcard:mnemonica"]);
     });
@@ -138,9 +125,9 @@ describe("useAllTimeStats", () => {
 
       mockedUseLocalDb.mockReturnValue([stats, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getStats("acaan", "aronson");
+      const entry = result.current.getStats("acaan", "aronson");
 
       expect(entry).toEqual(makeEntry());
     });
@@ -174,9 +161,9 @@ describe("useAllTimeStats", () => {
 
       mockedUseLocalDb.mockReturnValue([stats, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getStatsByMode("flashcard");
+      const entry = result.current.getStatsByMode("flashcard");
 
       expect(entry).toEqual({
         totalSessions: 15,
@@ -194,9 +181,9 @@ describe("useAllTimeStats", () => {
 
       mockedUseLocalDb.mockReturnValue([stats, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getStatsByMode("acaan");
+      const entry = result.current.getStatsByMode("acaan");
 
       expect(entry).toEqual(makeEntry());
     });
@@ -219,9 +206,9 @@ describe("useAllTimeStats", () => {
 
       mockedUseLocalDb.mockReturnValue([stats, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getStatsByMode("flashcard");
+      const entry = result.current.getStatsByMode("flashcard");
 
       expect(entry.globalBestStreak).toBe(25);
       expect(entry.totalSessions).toBe(10);
@@ -256,9 +243,9 @@ describe("useAllTimeStats", () => {
 
       mockedUseLocalDb.mockReturnValue([stats, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getStatsByStack("mnemonica");
+      const entry = result.current.getStatsByStack("mnemonica");
 
       expect(entry).toEqual({
         totalSessions: 15,
@@ -276,9 +263,9 @@ describe("useAllTimeStats", () => {
 
       mockedUseLocalDb.mockReturnValue([stats, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getStatsByStack("aronson");
+      const entry = result.current.getStatsByStack("aronson");
 
       expect(entry).toEqual(makeEntry());
     });
@@ -297,9 +284,9 @@ describe("useAllTimeStats", () => {
 
       mockedUseLocalDb.mockReturnValue([stats, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getStatsByStack("mnemonica");
+      const entry = result.current.getStatsByStack("mnemonica");
 
       expect(entry.globalBestStreak).toBe(18);
       expect(entry.totalSessions).toBe(12);
@@ -341,9 +328,9 @@ describe("useAllTimeStats", () => {
 
       mockedUseLocalDb.mockReturnValue([stats, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getGlobalStats();
+      const entry = result.current.getGlobalStats();
 
       expect(entry).toEqual({
         totalSessions: 20,
@@ -357,9 +344,9 @@ describe("useAllTimeStats", () => {
     it("returns empty entry when no stats exist", () => {
       mockedUseLocalDb.mockReturnValue([{}, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getGlobalStats();
+      const entry = result.current.getGlobalStats();
 
       expect(entry).toEqual(makeEntry());
     });
@@ -369,9 +356,9 @@ describe("useAllTimeStats", () => {
     it("getStats returns empty entry for missing key", () => {
       mockedUseLocalDb.mockReturnValue([{}, vi.fn(), vi.fn()]);
 
-      const result = useAllTimeStats();
+      const { result } = renderHook(() => useAllTimeStats());
 
-      const entry = result.getStats("flashcard", "mnemonica");
+      const entry = result.current.getStats("flashcard", "mnemonica");
 
       expect(entry).toEqual(makeEntry());
     });

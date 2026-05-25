@@ -12,9 +12,29 @@ vi.mock("../hooks/use-all-time-stats", () => ({
   }),
 }));
 
-const mockGetStoredValue = vi.fn();
+// `useLocalDb` is mocked to invoke `options.onSuccess` synchronously so the
+// analytics callback wired through `handleDismiss` runs — mirrors the pattern
+// in `use-timer-settings.test.ts` (`setSettingsSucceeding`). Per-test
+// overrides via `mockReturnValueOnce` simulate the "previously dismissed"
+// branch.
+const mockSetDismissed = vi.fn(
+  (_value: unknown, opts?: { onSuccess?: () => void }) => {
+    opts?.onSuccess?.();
+  }
+);
 vi.mock("../utils/localstorage", () => ({
-  getStoredValue: (...args: unknown[]) => mockGetStoredValue(...args),
+  useLocalDb: vi.fn((_key, defaultValue: boolean) => [
+    defaultValue,
+    mockSetDismissed,
+    vi.fn(),
+  ]),
+}));
+const { useLocalDb } = await import("../utils/localstorage");
+const mockedUseLocalDb = vi.mocked(useLocalDb);
+
+vi.mock("../utils/localstorage-telemetry", () => ({
+  handleLocalDbWriteFailed: vi.fn(),
+  reportLocalDbCorruption: vi.fn(),
 }));
 
 const mockShareMemDeck = vi.fn();
@@ -40,27 +60,21 @@ const defaultStats = {
   bestAccuracy: 1,
 };
 
-const setItemMock = vi.fn();
-
 beforeEach(() => {
-  mockGetStoredValue.mockReset();
   mockGetGlobalStats.mockReset();
   mockShareMemDeck.mockReset();
   mockTrackShareClicked.mockReset();
   mockTrackShareNudgeDismissed.mockReset();
-  setItemMock.mockReset();
+  mockSetDismissed.mockClear();
+  // Reset the default `useLocalDb` mock implementation so per-test
+  // `mockReturnValueOnce` overrides apply to only one render.
+  mockedUseLocalDb.mockImplementation((_key, defaultValue) => [
+    defaultValue as boolean,
+    mockSetDismissed,
+    vi.fn(),
+  ]);
 
-  mockGetStoredValue.mockReturnValue(false);
   mockGetGlobalStats.mockReturnValue(defaultStats);
-
-  vi.stubGlobal("localStorage", {
-    getItem: vi.fn(),
-    setItem: setItemMock,
-    removeItem: vi.fn(),
-    clear: vi.fn(),
-    length: 0,
-    key: vi.fn(),
-  });
 });
 
 afterEach(() => {
@@ -86,13 +100,13 @@ describe("ShareNudge", () => {
   });
 
   it("renders nothing when previously dismissed via localStorage", () => {
-    mockGetStoredValue.mockReturnValue(true);
+    mockedUseLocalDb.mockReturnValueOnce([true, mockSetDismissed, vi.fn()]);
 
     render(<ShareNudge />);
     expect(screen.queryByText(NUDGE_TEXT)).not.toBeInTheDocument();
   });
 
-  it("hides the component and persists to localStorage when dismiss is clicked", async () => {
+  it("persists dismissal and tracks analytics when dismiss is clicked", async () => {
     const user = userEvent.setup();
     render(<ShareNudge />);
 
@@ -100,11 +114,9 @@ describe("ShareNudge", () => {
 
     await user.click(screen.getByRole("button", { name: "Dismiss" }));
 
-    expect(screen.queryByText(NUDGE_TEXT)).not.toBeInTheDocument();
-    expect(setItemMock).toHaveBeenCalledWith(
-      "memdeck-app-share-nudge-dismissed",
-      "true"
-    );
+    expect(mockSetDismissed).toHaveBeenCalledWith(true, {
+      onSuccess: expect.any(Function),
+    });
     expect(mockTrackShareNudgeDismissed).toHaveBeenCalledOnce();
   });
 
@@ -119,8 +131,10 @@ describe("ShareNudge", () => {
       expect(mockShareMemDeck).toHaveBeenCalledOnce();
     });
     expect(mockTrackShareClicked).toHaveBeenCalledWith("nudge", "failed");
+    expect(mockSetDismissed).toHaveBeenCalledWith(true, {
+      onSuccess: expect.any(Function),
+    });
     expect(mockTrackShareNudgeDismissed).toHaveBeenCalledOnce();
-    expect(screen.queryByText(NUDGE_TEXT)).not.toBeInTheDocument();
   });
 
   it("calls shareMemDeck, tracks analytics, then dismisses when share is clicked", async () => {
@@ -134,7 +148,9 @@ describe("ShareNudge", () => {
       expect(mockShareMemDeck).toHaveBeenCalledOnce();
     });
     expect(mockTrackShareClicked).toHaveBeenCalledWith("nudge", "shared");
+    expect(mockSetDismissed).toHaveBeenCalledWith(true, {
+      onSuccess: expect.any(Function),
+    });
     expect(mockTrackShareNudgeDismissed).toHaveBeenCalledOnce();
-    expect(screen.queryByText(NUDGE_TEXT)).not.toBeInTheDocument();
   });
 });

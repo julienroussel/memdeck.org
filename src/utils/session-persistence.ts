@@ -433,14 +433,16 @@ const persistSerialized = (serialized: SerializedPayloads): PersistResult => {
     localStorage.setItem(SESSION_HISTORY_LSK, serialized.prevHistoryStr);
   } catch (rollbackError) {
     // Very unlikely: writing back a smaller-or-equal payload should not
-    // exceed quota. Log so this is at least visible in production consoles.
+    // exceed quota. Log so this is at least visible in dev consoles.
     // GA reporting for the resulting `corrupt` state happens upstream in
     // use-session.ts (the flush effect) where the operational context is
     // known — keeping it here would cause double-counting (see C4).
-    console.error(
-      `[localStorage] Failed to roll back "${SESSION_HISTORY_LSK}":`,
-      rollbackError
-    );
+    if (import.meta.env.DEV) {
+      console.error(
+        `[localStorage] Failed to roll back "${SESSION_HISTORY_LSK}":`,
+        rollbackError
+      );
+    }
     return { ok: false, reason: "corrupt" };
   }
   return { ok: false, reason: "write-failed" };

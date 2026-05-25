@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { ROUTES, SITE_URL } from "../constants";
 import { render } from "../test-utils";
-import { JsonLd } from "./json-ld";
+import { buildBreadcrumbSchema, JsonLd } from "./json-ld";
 
 const testData = {
   "@context": "https://schema.org",
@@ -53,5 +54,34 @@ describe("JsonLd", () => {
       'script[type="application/ld+json"]'
     );
     expect(updatedScript?.textContent).toBe(JSON.stringify(updatedData));
+  });
+});
+
+describe("buildBreadcrumbSchema", () => {
+  it("returns a BreadcrumbList with Home as the first item", () => {
+    const schema = buildBreadcrumbSchema("Flashcard", ROUTES.flashcard);
+    expect(schema["@context"]).toBe("https://schema.org");
+    expect(schema["@type"]).toBe("BreadcrumbList");
+    expect(schema.itemListElement[0]).toEqual({
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: `${SITE_URL}/`,
+    });
+  });
+
+  it("uses the supplied name and route for the second item", () => {
+    const schema = buildBreadcrumbSchema("Flashcard", ROUTES.flashcard);
+    expect(schema.itemListElement[1]).toEqual({
+      "@type": "ListItem",
+      position: 2,
+      name: "Flashcard",
+      item: `${SITE_URL}${ROUTES.flashcard}`,
+    });
+  });
+
+  it("preserves the trailing slash on the route URL", () => {
+    const schema = buildBreadcrumbSchema("Stats", ROUTES.stats);
+    expect(schema.itemListElement[1].item).toBe(`${SITE_URL}/stats/`);
   });
 });

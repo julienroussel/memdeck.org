@@ -1,5 +1,5 @@
 import { Grid, Space } from "@mantine/core";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { TimerDisplay } from "../../components/timer-display";
@@ -80,6 +80,21 @@ export const DistanceActiveRound = ({
     [submitAnswer, round, announce, t, formatCardName]
   );
 
+  const numberChoices = useMemo(
+    () =>
+      numberItems(round.choices.kind === "numbers" ? round.choices.data : []),
+    [round.choices]
+  );
+  const cardChoices = useMemo(
+    () =>
+      cardItems(
+        round.choices.kind === "cards"
+          ? round.choices.data.map((c) => c.card)
+          : []
+      ),
+    [round.choices]
+  );
+
   return (
     <>
       <span aria-atomic="true" aria-live="polite" className="sr-only">
@@ -115,14 +130,14 @@ export const DistanceActiveRound = ({
           <CardSpread
             canMove={false}
             hasCursor={true}
-            items={numberItems(round.choices.data)}
+            items={numberChoices}
             onItemClick={handleNumberClick}
           />
         ) : (
           <CardSpread
             canMove={false}
             hasCursor={true}
-            items={cardItems(round.choices.data.map((c) => c.card))}
+            items={cardChoices}
             onItemClick={handleCardClick}
           />
         )}

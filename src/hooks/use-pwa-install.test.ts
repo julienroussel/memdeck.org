@@ -13,10 +13,27 @@ vi.mock("../utils/is-pwa", () => ({
   isPwa: () => mockIsPwa,
 }));
 
-let mockIsMobile: boolean | undefined = true;
-vi.mock("@mantine/hooks", () => ({
-  useMediaQuery: () => mockIsMobile,
+const mockTrackError = vi.fn();
+vi.mock("../services/analytics", () => ({
+  analytics: {
+    trackError: (...args: unknown[]) => mockTrackError(...args),
+  },
 }));
+
+let mockIsMobile: boolean | undefined = true;
+// Partial mock: only `useMediaQuery` is stubbed. Everything else
+// (including `readLocalStorageValue`, used by `getStoredValue` for the
+// SESSION_HISTORY_LSK read in `hasCompletedSession`) is forwarded to the
+// real `@mantine/hooks` so it works against the `vi.stubGlobal("localStorage", ...)`
+// mock declared below.
+vi.mock("@mantine/hooks", async () => {
+  const actual =
+    await vi.importActual<typeof import("@mantine/hooks")>("@mantine/hooks");
+  return {
+    ...actual,
+    useMediaQuery: () => mockIsMobile,
+  };
+});
 
 let mockIsPwa = false;
 
@@ -26,6 +43,7 @@ vi.stubGlobal("localStorage", mockLocalStorage);
 beforeEach(() => {
   vi.restoreAllMocks();
   vi.clearAllMocks();
+  mockTrackError.mockReset();
   mockLocalStorage.clear();
   mockIsPwa = false;
   mockIsMobile = true;
@@ -105,6 +123,62 @@ describe("usePwaInstall", () => {
       nativeUsed = result.current.install();
     });
     expect(nativeUsed).toBe(false);
+  });
+
+  it("install rejection re-enables eligibility and restores deferredPromptRef so a second install attempt can succeed", async () => {
+    withSession();
+    const { result } = renderHook(() => usePwaInstall());
+
+    const firstPrompt = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("User cancelled"))
+      .mockResolvedValueOnce(undefined);
+    const event = new Event("beforeinstallprompt", { cancelable: true });
+    Object.defineProperty(event, "prompt", { value: firstPrompt });
+    window.dispatchEvent(event);
+
+    let firstCall = false;
+    await act(async () => {
+      firstCall = result.current.install();
+      // Flush the rejected prompt() microtask so the catch handler runs.
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(firstCall).toBe(true);
+    expect(result.current.eligible).toBe(true);
+
+    let secondCall = false;
+    await act(async () => {
+      secondCall = result.current.install();
+      await Promise.resolve();
+    });
+    expect(secondCall).toBe(true);
+    expect(firstPrompt).toHaveBeenCalledTimes(2);
+    expect(result.current.eligible).toBe(false);
+  });
+
+  it("install rejection forwards a wrapped error with name PwaInstallPromptRejected to analytics.trackError", async () => {
+    withSession();
+    const { result } = renderHook(() => usePwaInstall());
+
+    const mockPrompt = vi.fn().mockRejectedValue(new Error("User cancelled"));
+    const event = new Event("beforeinstallprompt", { cancelable: true });
+    Object.defineProperty(event, "prompt", { value: mockPrompt });
+    window.dispatchEvent(event);
+
+    await act(async () => {
+      result.current.install();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(mockTrackError).toHaveBeenCalledOnce();
+    const reported = mockTrackError.mock.calls[0]?.[0];
+    if (!(reported instanceof Error)) {
+      throw new Error("Expected trackError to be called with an Error");
+    }
+    expect(reported.name).toBe("PwaInstallPromptRejected");
+    expect(reported.message).toBe("User cancelled");
   });
 
   it("dismiss stores timestamp in localStorage", () => {

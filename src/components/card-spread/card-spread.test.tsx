@@ -100,19 +100,16 @@ describe("CardSpread", () => {
   });
 
   describe("Accessibility and structure", () => {
-    it("renders a group container with an accessible label including keyboard hint when movable", () => {
+    it("renders a group container with an accessible label when movable", () => {
       const cards = [AceOfHearts, TwoOfHearts];
       render(<CardSpread items={cardItems(cards)} />);
 
       const group = screen.getByRole("group");
       expect(group).toBeInTheDocument();
-      expect(group).toHaveAttribute(
-        "aria-label",
-        "Card spread - use arrow keys to navigate"
-      );
+      expect(group).toHaveAttribute("aria-label", "Card spread");
     });
 
-    it("renders a group container with a plain accessible label when canMove is false", () => {
+    it("renders a group container with an accessible label when canMove is false", () => {
       const cards = [AceOfHearts, TwoOfHearts];
       render(<CardSpread canMove={false} items={cardItems(cards)} />);
 
@@ -128,20 +125,20 @@ describe("CardSpread", () => {
       expect(group).not.toHaveAttribute("tabIndex");
     });
 
-    it("when canMove=true, the container is focusable", () => {
+    it("when canMove=true, the container is a group landmark but not focusable", () => {
       const cards = [AceOfHearts, TwoOfHearts];
       render(<CardSpread canMove={true} items={cardItems(cards)} />);
 
       const group = screen.getByRole("group");
-      expect(group).toHaveAttribute("tabIndex", "0");
+      expect(group).not.toHaveAttribute("tabIndex");
     });
 
-    it("when canMove is not specified, the container is focusable by default", () => {
+    it("when canMove is not specified, the container is a group landmark but not focusable", () => {
       const cards = [AceOfHearts, TwoOfHearts];
       render(<CardSpread items={cardItems(cards)} />);
 
       const group = screen.getByRole("group");
-      expect(group).toHaveAttribute("tabIndex", "0");
+      expect(group).not.toHaveAttribute("tabIndex");
     });
   });
 

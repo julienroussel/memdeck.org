@@ -1,16 +1,16 @@
 import { Grid, Text } from "@mantine/core";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { JsonLd } from "../../components/json-ld";
+import { buildBreadcrumbSchema, JsonLd } from "../../components/json-ld";
 import { RevealButton } from "../../components/reveal-button";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TrainingHeader } from "../../components/training-header";
-import { SITE_URL } from "../../constants";
+import { ROUTES } from "../../constants";
+import { useCardImagePreload } from "../../hooks/use-card-image-preload";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import { useStackLimits } from "../../hooks/use-stack-limits";
-import { analytics } from "../../services/analytics";
 import { cardItems, numberItems } from "../../types/typeguards";
 import { getNeighborCard } from "../../utils/neighbor";
 import { FlashcardActiveRound } from "./flashcard-active-round";
@@ -18,23 +18,7 @@ import { FlashcardSettingsContent } from "./flashcard-settings-content";
 import { useFlashcardGame } from "./use-flashcard-game";
 import { useFlashcardSettings } from "./use-flashcard-settings";
 
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: `${SITE_URL}/`,
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Flashcard",
-    },
-  ],
-};
+const breadcrumbSchema = buildBreadcrumbSchema("Flashcard", ROUTES.flashcard);
 
 export const Flashcard = () => {
   const { t } = useTranslation();
@@ -42,6 +26,7 @@ export const Flashcard = () => {
     title: t("flashcard.pageTitle"),
     description: t("flashcard.pageDescription"),
   });
+  useCardImagePreload();
   const { stackKey, stackOrder, stackName } = useRequiredStack();
 
   const {
@@ -93,11 +78,6 @@ export const Flashcard = () => {
     limits,
     { onAnswer: handleAnswer }
   );
-
-  const handleRevealAnswer = useCallback(() => {
-    analytics.trackFeatureUsed("Reveal Answer - Flashcard");
-    revealAnswer();
-  }, [revealAnswer]);
 
   const numberChoices = useMemo(
     () => numberItems(choices.map((c) => c.index)),
@@ -181,9 +161,7 @@ export const Flashcard = () => {
           summary={status.summary}
         />
       )}
-      {status.phase !== "summary" && (
-        <RevealButton onReveal={handleRevealAnswer} />
-      )}
+      {status.phase !== "summary" && <RevealButton onReveal={revealAnswer} />}
     </div>
   );
 };

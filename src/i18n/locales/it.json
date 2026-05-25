@@ -16,7 +16,10 @@
     "revealAriaLabel": "Rivela la risposta",
     "moreColumnsOnWiderScreen": "Ulteriori dettagli sono disponibili su schermi più ampi.",
     "noStackSelected": "Scegli uno stack dalla home per iniziare.",
-    "goToHomepage": "Vai alla home"
+    "goToHomepage": "Vai alla home",
+    "opensInNewTab": "(si apre in una nuova scheda)",
+    "wrongAnswerTitle": "Risposta sbagliata",
+    "wrongAnswerMessage": "Riprova!"
   },
   "cards": {
     "ranks": {
@@ -271,6 +274,10 @@
     "correctAriaLabel": "Risposte corrette: {{count}}",
     "incorrectAriaLabel": "Risposte errate: {{count}}"
   },
+  "cardSpread": {
+    "ariaLabel": "Ventaglio di carte",
+    "selectPositionAriaLabel": "Seleziona la posizione {{position}}"
+  },
   "numberCard": {
     "ariaLabel": "Posizione {{number}}"
   },
@@ -408,7 +415,8 @@
       "sleightlyOutOfOrder": "Tecniche avanzate ed effetti con stack memorizzato e integrazione di manipolazione.",
       "particleSystem": "Un mazzo memorizzato moderno progettato per facilitare la memorizzazione tramite schemi e raggruppamenti, con una varietà di routine potenti.",
       "conjuringArchive": "Contenuti ricercabili di libri di magia — la sezione «Stacked Deck Stuff» cataloga riferimenti sul lavoro con mazzi memorizzati."
-    }
+    },
+    "learnMoreAbout": "Scopri di più su {{title}}"
   },
   "share": {
     "label": "Condividi MemDeck",

@@ -1,4 +1,5 @@
 import { ActionIcon, Tooltip } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { IconCheck, IconShare } from "@tabler/icons-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -25,6 +26,11 @@ export const ShareButton = ({ variant = "icon" }: ShareButtonProps) => {
       setShowCheck(true);
       clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => setShowCheck(false), 2000);
+    } else if (result === "failed") {
+      notifications.show({
+        color: "red",
+        message: t("errors.somethingWentWrong"),
+      });
     }
   }, [t]);
 

@@ -1,6 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { DECK_SIZE } from "../../constants";
+import type { useGameTimer } from "../../hooks/use-game-timer";
 import { DEFAULT_STACK_LIMITS } from "../../types/stack-limits";
 import { type Stack, stacks } from "../../types/stacks";
 import { useSpotCheckGame } from "./use-spot-check-game";
@@ -9,17 +10,19 @@ vi.mock("@mantine/notifications", () => ({
   notifications: { show: vi.fn() },
 }));
 
-let capturedTimerOptions: {
-  dispatch: (action: unknown) => void;
-  createTimeoutAction: () => unknown;
-  onTimeout?: () => void;
-} | null = null;
+let capturedTimerOptions: Parameters<typeof useGameTimer>[0] | null = null;
 
-vi.mock("../../hooks/use-game-timer", () => ({
-  useGameTimer: vi.fn((options: typeof capturedTimerOptions) => {
-    capturedTimerOptions = options;
-  }),
-}));
+vi.mock("../../hooks/use-game-timer", async () => {
+  const actual = await vi.importActual<
+    typeof import("../../hooks/use-game-timer")
+  >("../../hooks/use-game-timer");
+  return {
+    ...actual,
+    useGameTimer: vi.fn((options: typeof capturedTimerOptions) => {
+      capturedTimerOptions = options;
+    }),
+  };
+});
 
 vi.mock("../../services/event-bus", () => ({
   eventBus: {
@@ -224,170 +227,170 @@ describe("useSpotCheckGame", () => {
         questionAdvanced: false,
       });
     });
-  });
 
-  it("increments successes on correct answer for swapped mode", () => {
-    const onAnswer = vi.fn();
-    const { result } = renderHook(() =>
-      useSpotCheckGame(
-        testStack,
-        testStackName,
-        "swapped",
-        timerOff,
-        DEFAULT_STACK_LIMITS,
-        {
-          onAnswer,
-        }
-      )
-    );
+    it("increments successes on correct answer for swapped mode", () => {
+      const onAnswer = vi.fn();
+      const { result } = renderHook(() =>
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "swapped",
+          timerOff,
+          DEFAULT_STACK_LIMITS,
+          {
+            onAnswer,
+          }
+        )
+      );
 
-    const ps = result.current.puzzleState;
-    if (ps.mode !== "swapped") {
-      throw new Error("Expected swapped mode");
-    }
+      const ps = result.current.puzzleState;
+      if (ps.mode !== "swapped") {
+        throw new Error("Expected swapped mode");
+      }
 
-    // Either swapped card is correct — find the card at indexA in the original stack
-    const correctCard = testStack[ps.puzzle.indexA];
-    if (!correctCard) {
-      throw new Error("Expected card at indexA");
-    }
+      // Either swapped card is correct — find the card at indexA in the original stack
+      const correctCard = testStack[ps.puzzle.indexA];
+      if (!correctCard) {
+        throw new Error("Expected card at indexA");
+      }
 
-    // Find this card's position in the puzzle array
-    const puzzleIndex = result.current.puzzleCards.indexOf(correctCard);
+      // Find this card's position in the puzzle array
+      const puzzleIndex = result.current.puzzleCards.indexOf(correctCard);
 
-    act(() => {
-      result.current.submitAnswer(correctCard, puzzleIndex);
+      act(() => {
+        result.current.submitAnswer(correctCard, puzzleIndex);
+      });
+
+      expect(result.current.score.successes).toBe(1);
+      expect(onAnswer).toHaveBeenCalledWith({
+        correct: true,
+        questionAdvanced: true,
+      });
     });
 
-    expect(result.current.score.successes).toBe(1);
-    expect(onAnswer).toHaveBeenCalledWith({
-      correct: true,
-      questionAdvanced: true,
-    });
-  });
+    it("increments fails when tapping a non-swapped card in swapped mode", () => {
+      const onAnswer = vi.fn();
+      const { result } = renderHook(() =>
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "swapped",
+          timerOff,
+          DEFAULT_STACK_LIMITS,
+          {
+            onAnswer,
+          }
+        )
+      );
 
-  it("increments fails when tapping a non-swapped card in swapped mode", () => {
-    const onAnswer = vi.fn();
-    const { result } = renderHook(() =>
-      useSpotCheckGame(
-        testStack,
-        testStackName,
-        "swapped",
-        timerOff,
-        DEFAULT_STACK_LIMITS,
-        {
-          onAnswer,
-        }
-      )
-    );
+      const ps = result.current.puzzleState;
+      if (ps.mode !== "swapped") {
+        throw new Error("Expected swapped mode");
+      }
 
-    const ps = result.current.puzzleState;
-    if (ps.mode !== "swapped") {
-      throw new Error("Expected swapped mode");
-    }
+      const swappedCardA = testStack[ps.puzzle.indexA];
+      const swappedCardB = testStack[ps.puzzle.indexB];
 
-    const swappedCardA = testStack[ps.puzzle.indexA];
-    const swappedCardB = testStack[ps.puzzle.indexB];
+      // Find a card that is NOT one of the swapped cards
+      let wrongIndex = 0;
+      let wrongCard = result.current.puzzleCards[wrongIndex];
+      while (wrongCard === swappedCardA || wrongCard === swappedCardB) {
+        wrongIndex++;
+        wrongCard = result.current.puzzleCards[wrongIndex];
+      }
 
-    // Find a card that is NOT one of the swapped cards
-    let wrongIndex = 0;
-    let wrongCard = result.current.puzzleCards[wrongIndex];
-    while (wrongCard === swappedCardA || wrongCard === swappedCardB) {
-      wrongIndex++;
-      wrongCard = result.current.puzzleCards[wrongIndex];
-    }
+      if (!wrongCard) {
+        throw new Error("Expected a non-swapped card");
+      }
 
-    if (!wrongCard) {
-      throw new Error("Expected a non-swapped card");
-    }
+      act(() => {
+        result.current.submitAnswer(wrongCard, wrongIndex);
+      });
 
-    act(() => {
-      result.current.submitAnswer(wrongCard, wrongIndex);
-    });
-
-    expect(result.current.score.fails).toBe(1);
-    expect(onAnswer).toHaveBeenCalledWith({
-      correct: false,
-      questionAdvanced: false,
-    });
-  });
-
-  it("increments successes on correct answer for moved mode", () => {
-    const onAnswer = vi.fn();
-    const { result } = renderHook(() =>
-      useSpotCheckGame(
-        testStack,
-        testStackName,
-        "moved",
-        timerOff,
-        DEFAULT_STACK_LIMITS,
-        {
-          onAnswer,
-        }
-      )
-    );
-
-    const ps = result.current.puzzleState;
-    if (ps.mode !== "moved") {
-      throw new Error("Expected moved mode");
-    }
-
-    const correctCard = ps.puzzle.movedCard;
-    const puzzleIndex = ps.puzzle.newIndex;
-
-    act(() => {
-      result.current.submitAnswer(correctCard, puzzleIndex);
+      expect(result.current.score.fails).toBe(1);
+      expect(onAnswer).toHaveBeenCalledWith({
+        correct: false,
+        questionAdvanced: false,
+      });
     });
 
-    expect(result.current.score.successes).toBe(1);
-    expect(onAnswer).toHaveBeenCalledWith({
-      correct: true,
-      questionAdvanced: true,
-    });
-  });
+    it("increments successes on correct answer for moved mode", () => {
+      const onAnswer = vi.fn();
+      const { result } = renderHook(() =>
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "moved",
+          timerOff,
+          DEFAULT_STACK_LIMITS,
+          {
+            onAnswer,
+          }
+        )
+      );
 
-  it("increments fails when tapping a non-moved card in moved mode", () => {
-    const onAnswer = vi.fn();
-    const { result } = renderHook(() =>
-      useSpotCheckGame(
-        testStack,
-        testStackName,
-        "moved",
-        timerOff,
-        DEFAULT_STACK_LIMITS,
-        {
-          onAnswer,
-        }
-      )
-    );
+      const ps = result.current.puzzleState;
+      if (ps.mode !== "moved") {
+        throw new Error("Expected moved mode");
+      }
 
-    const ps = result.current.puzzleState;
-    if (ps.mode !== "moved") {
-      throw new Error("Expected moved mode");
-    }
+      const correctCard = ps.puzzle.movedCard;
+      const puzzleIndex = ps.puzzle.newIndex;
 
-    const movedCard = ps.puzzle.movedCard;
+      act(() => {
+        result.current.submitAnswer(correctCard, puzzleIndex);
+      });
 
-    // Find a card that is NOT the moved card
-    let wrongIndex = 0;
-    let wrongCard = result.current.puzzleCards[wrongIndex];
-    while (wrongCard === movedCard) {
-      wrongIndex++;
-      wrongCard = result.current.puzzleCards[wrongIndex];
-    }
-
-    if (!wrongCard) {
-      throw new Error("Expected a non-moved card");
-    }
-
-    act(() => {
-      result.current.submitAnswer(wrongCard, wrongIndex);
+      expect(result.current.score.successes).toBe(1);
+      expect(onAnswer).toHaveBeenCalledWith({
+        correct: true,
+        questionAdvanced: true,
+      });
     });
 
-    expect(result.current.score.fails).toBe(1);
-    expect(onAnswer).toHaveBeenCalledWith({
-      correct: false,
-      questionAdvanced: false,
+    it("increments fails when tapping a non-moved card in moved mode", () => {
+      const onAnswer = vi.fn();
+      const { result } = renderHook(() =>
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "moved",
+          timerOff,
+          DEFAULT_STACK_LIMITS,
+          {
+            onAnswer,
+          }
+        )
+      );
+
+      const ps = result.current.puzzleState;
+      if (ps.mode !== "moved") {
+        throw new Error("Expected moved mode");
+      }
+
+      const movedCard = ps.puzzle.movedCard;
+
+      // Find a card that is NOT the moved card
+      let wrongIndex = 0;
+      let wrongCard = result.current.puzzleCards[wrongIndex];
+      while (wrongCard === movedCard) {
+        wrongIndex++;
+        wrongCard = result.current.puzzleCards[wrongIndex];
+      }
+
+      if (!wrongCard) {
+        throw new Error("Expected a non-moved card");
+      }
+
+      act(() => {
+        result.current.submitAnswer(wrongCard, wrongIndex);
+      });
+
+      expect(result.current.score.fails).toBe(1);
+      expect(onAnswer).toHaveBeenCalledWith({
+        correct: false,
+        questionAdvanced: false,
+      });
     });
   });
 
@@ -415,6 +418,68 @@ describe("useSpotCheckGame", () => {
 
       expect(result.current.score.fails).toBe(1);
       expect(result.current.puzzleState).not.toBe(initialPuzzle);
+      expect(onAnswer).toHaveBeenCalledWith({
+        correct: false,
+        questionAdvanced: true,
+      });
+    });
+
+    it("revealAnswer in 'swapped' mode increments fails and advances to a new puzzle", () => {
+      const onAnswer = vi.fn();
+      const { result } = renderHook(() =>
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "swapped",
+          timerOff,
+          DEFAULT_STACK_LIMITS,
+          {
+            onAnswer,
+          }
+        )
+      );
+
+      const initialPuzzle = result.current.puzzleState;
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(result.current.score.fails).toBe(1);
+      expect(result.current.score.successes).toBe(0);
+      expect(result.current.puzzleState).not.toBe(initialPuzzle);
+      expect(result.current.puzzleState.mode).toBe("swapped");
+      expect(onAnswer).toHaveBeenCalledWith({
+        correct: false,
+        questionAdvanced: true,
+      });
+    });
+
+    it("revealAnswer in 'moved' mode increments fails and advances to a new puzzle", () => {
+      const onAnswer = vi.fn();
+      const { result } = renderHook(() =>
+        useSpotCheckGame(
+          testStack,
+          testStackName,
+          "moved",
+          timerOff,
+          DEFAULT_STACK_LIMITS,
+          {
+            onAnswer,
+          }
+        )
+      );
+
+      const initialPuzzle = result.current.puzzleState;
+
+      act(() => {
+        result.current.revealAnswer();
+      });
+
+      expect(result.current.score.fails).toBe(1);
+      expect(result.current.score.successes).toBe(0);
+      expect(result.current.puzzleState).not.toBe(initialPuzzle);
+      expect(result.current.puzzleState.mode).toBe("moved");
       expect(onAnswer).toHaveBeenCalledWith({
         correct: false,
         questionAdvanced: true,

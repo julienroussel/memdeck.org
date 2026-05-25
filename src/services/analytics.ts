@@ -145,6 +145,27 @@ const subscribeToEvents = () => {
   );
 };
 
+// Strips potentially-sensitive substrings from an error message before it is
+// forwarded to GA's `label` field. Conservative by design: only collapses
+// well-known leak patterns and caps the length — preserves the message body
+// when it does not match any pattern so existing taxonomies stay readable.
+const ABSOLUTE_PATH_RE = /\/(?:Users|home|var|tmp|private|opt|etc|root)\/\S+/g;
+const ERROR_LABEL_MAX_LENGTH = 200;
+
+export const scrubErrorMessage = (message: string): string => {
+  // Strip everything after the first newline. V8's JSON.parse SyntaxError
+  // appends a snippet of the unparsed input on a new line; this removes it
+  // wholesale without needing to enumerate every leak format.
+  const firstLine = message.split("\n", 1)[0] ?? "";
+  // Replace absolute filesystem paths with a marker so build-machine layouts
+  // and user home directories never reach GA.
+  const stripped = firstLine.replace(ABSOLUTE_PATH_RE, "[path]");
+  if (stripped.length <= ERROR_LABEL_MAX_LENGTH) {
+    return stripped;
+  }
+  return stripped.slice(0, ERROR_LABEL_MAX_LENGTH);
+};
+
 export const analytics = {
   initialize: () => {
     if (!isEnabled()) {
@@ -348,14 +369,21 @@ export const analytics = {
       return;
     }
     try {
+      // Defense-in-depth scrubbing applied to both the `label` and
+      // `exDescription` fields. Most callers (`localstorage-telemetry.ts`,
+      // `session-breadcrumbs.ts`) already construct controlled messages;
+      // this guards against future callers forwarding raw `Error.message`
+      // strings — V8 leaks JSON.parse snippets there, and stack traces /
+      // absolute paths leak environment info.
+      const scrubbedMessage = scrubErrorMessage(error.message);
       ReactGA.event({
         category: "Error",
         action: error.name,
-        label: error.message,
+        label: scrubbedMessage,
       });
       ReactGA.send({
         hitType: "exception",
-        exDescription: `${error.name}: ${error.message}${componentStack ? ` | ${componentStack.slice(0, 100)}` : ""}`,
+        exDescription: `${error.name}: ${scrubbedMessage}${componentStack ? ` | ${componentStack.slice(0, 100)}` : ""}`,
         exFatal: false,
       });
     } catch {
