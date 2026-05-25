@@ -221,10 +221,10 @@ test.describe("Toolbox Page", () => {
     // Click the first visible data row to expand it
     await spellingSection.locator("table tbody tr:visible").first().click();
 
-    // The first card in Mnemonica is "4 of Clubs"
+    // The first card in Mnemonica is "Four of Clubs" (ranks are now spelled out)
     // Verify the spelling detail section appears with breakdown title
     await expect(
-      spellingSection.getByText("Spelling breakdown: 4 of Clubs")
+      spellingSection.getByText("Spelling breakdown: Four of Clubs")
     ).toBeVisible();
 
     // The detail contains a nested table with "Letter" and "Card dealt" headers

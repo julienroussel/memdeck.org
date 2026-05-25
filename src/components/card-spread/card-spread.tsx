@@ -2,11 +2,11 @@ import { Flex, Image } from "@mantine/core";
 import type { KeyboardEvent } from "react";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { SPREAD_CARD_HEIGHT, SPREAD_CARD_WIDTH } from "../../constants";
+import { useFormatCardName } from "../../hooks/use-format-card-name";
 import type {
   CardSpreadCardsProps,
   CardSpreadProps,
 } from "../../types/typeguards";
-import { formatCardName } from "../../utils/card-formatting";
 import { cssVarCounterStyle } from "../../utils/style";
 import { NumberCard } from "../number-card";
 
@@ -25,6 +25,7 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
   } = props;
   const onCardClick = isCardsProps(props) ? props.onItemClick : undefined;
   const onNumberClick = isCardsProps(props) ? undefined : props.onItemClick;
+  const formatCardName = useFormatCardName();
   const [offset, setOffset] = useState(0);
   const touchLastPositionRef = useRef(0);
   const rafRef = useRef<number | null>(null);
@@ -151,7 +152,7 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
             type="button"
           >
             <Image
-              alt={formatCardName(item)}
+              alt=""
               h={SPREAD_CARD_HEIGHT}
               src={item.image}
               w={SPREAD_CARD_WIDTH}

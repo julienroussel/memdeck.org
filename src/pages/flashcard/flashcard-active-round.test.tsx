@@ -60,9 +60,9 @@ describe("FlashcardActiveRound", () => {
     expect(
       screen.getByRole("button", { name: "Select position 5" })
     ).toBeInTheDocument();
-    // Card-choice button labels (e.g. "3 of Clubs") must not appear here.
+    // Card-choice button labels (e.g. "Three of Clubs") must not appear here.
     expect(
-      screen.queryByRole("button", { name: "3 of Clubs" })
+      screen.queryByRole("button", { name: "Three of Clubs" })
     ).not.toBeInTheDocument();
   });
 
@@ -84,10 +84,10 @@ describe("FlashcardActiveRound", () => {
     );
 
     expect(
-      screen.getByRole("button", { name: "3 of Clubs" })
+      screen.getByRole("button", { name: "Three of Clubs" })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "5 of Spades" })
+      screen.getByRole("button", { name: "Five of Spades" })
     ).toBeInTheDocument();
     // Numeric choice buttons must not appear in neighbor mode.
     expect(
@@ -114,7 +114,7 @@ describe("FlashcardActiveRound", () => {
 
     // showNumberChoices is false here, so card choices render.
     expect(
-      screen.getByRole("button", { name: "3 of Clubs" })
+      screen.getByRole("button", { name: "Three of Clubs" })
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Select position 1" })

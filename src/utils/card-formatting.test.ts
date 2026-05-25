@@ -10,12 +10,12 @@ describe("formatCardName", () => {
     expect(formatCardName(AceOfHearts)).toBe("Ace of Hearts");
   });
 
-  it("formats number cards correctly", () => {
-    expect(formatCardName(SevenOfClubs)).toBe("7 of Clubs");
+  it("spells number cards (Seven, not 7)", () => {
+    expect(formatCardName(SevenOfClubs)).toBe("Seven of Clubs");
   });
 
-  it("formats 10 correctly", () => {
-    expect(formatCardName(TenOfDiamonds)).toBe("10 of Diamonds");
+  it("spells 10 as 'Ten'", () => {
+    expect(formatCardName(TenOfDiamonds)).toBe("Ten of Diamonds");
   });
 
   it("formats Jack correctly", () => {
@@ -30,7 +30,7 @@ describe("formatCardName", () => {
     expect(formatCardName(KingOfDiamonds)).toBe("King of Diamonds");
   });
 
-  it("capitalizes suit names", () => {
-    expect(formatCardName(TwoOfSpades)).toBe("2 of Spades");
+  it("spells 2 as 'Two'", () => {
+    expect(formatCardName(TwoOfSpades)).toBe("Two of Spades");
   });
 });

@@ -143,10 +143,7 @@ describe("DistanceActiveRound — apply round", () => {
       />
     );
 
-    // CardSpread labels its card buttons with formatCardName(card).
-    // Note: there are two buttons matching "2 of Hearts" — the spread button
-    // (aria-label) and the inner Image (alt). Use getByRole to disambiguate.
-    await user.click(screen.getByRole("button", { name: "2 of Hearts" }));
+    await user.click(screen.getByRole("button", { name: "Two of Hearts" }));
 
     expect(submitAnswer).toHaveBeenCalledWith({
       kind: "apply",

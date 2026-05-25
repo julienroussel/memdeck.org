@@ -19,8 +19,16 @@ describe("CardSpread", () => {
       render(<CardSpread items={cardItems(cards)} />);
 
       expect(screen.getByLabelText("Ace of Hearts")).toBeInTheDocument();
-      expect(screen.getByLabelText("2 of Hearts")).toBeInTheDocument();
-      expect(screen.getByLabelText("3 of Hearts")).toBeInTheDocument();
+      expect(screen.getByLabelText("Two of Hearts")).toBeInTheDocument();
+      expect(screen.getByLabelText("Three of Hearts")).toBeInTheDocument();
+    });
+
+    it("renders card images as decorative (empty alt) so the button label is not duplicated", () => {
+      const cards = [AceOfHearts, TwoOfHearts];
+      render(<CardSpread items={cardItems(cards)} />);
+
+      const image = screen.getByLabelText("Ace of Hearts").querySelector("img");
+      expect(image).toHaveAttribute("alt", "");
     });
 
     it("clicking a card item calls onItemClick with correct card and index", () => {
@@ -28,7 +36,7 @@ describe("CardSpread", () => {
       const handleClick = vi.fn();
       render(<CardSpread items={cardItems(cards)} onItemClick={handleClick} />);
 
-      const secondCard = screen.getByLabelText("2 of Hearts");
+      const secondCard = screen.getByLabelText("Two of Hearts");
       fireEvent.click(secondCard);
 
       expect(handleClick).toHaveBeenCalledOnce();
@@ -43,7 +51,7 @@ describe("CardSpread", () => {
       fireEvent.click(screen.getByLabelText("Ace of Hearts"));
       expect(handleClick).toHaveBeenCalledWith(AceOfHearts, 0);
 
-      fireEvent.click(screen.getByLabelText("3 of Hearts"));
+      fireEvent.click(screen.getByLabelText("Three of Hearts"));
       expect(handleClick).toHaveBeenCalledWith(ThreeOfHearts, 2);
 
       expect(handleClick).toHaveBeenCalledTimes(2);
@@ -323,7 +331,7 @@ describe("CardSpread", () => {
       fireEvent.click(firstCard);
 
       expect(firstCard).toBeInTheDocument();
-      expect(screen.getByLabelText("2 of Hearts")).toBeInTheDocument();
+      expect(screen.getByLabelText("Two of Hearts")).toBeInTheDocument();
     });
   });
 });

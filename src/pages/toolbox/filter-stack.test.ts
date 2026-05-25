@@ -40,11 +40,31 @@ describe("filterStack", () => {
     expect(results[0].position).toBe(42);
   });
 
-  it("matches full card name", () => {
-    const results = filterStack(stackOrder, "7 of clubs", formatCardName);
+  it("matches full spelled card name", () => {
+    const results = filterStack(stackOrder, "seven of clubs", formatCardName);
     expect(results).toHaveLength(1);
     expect(results[0].card.rank).toBe("7");
     expect(results[0].card.suit).toBe("clubs");
+  });
+
+  it("matches by raw rank digit (e.g., '7' finds all four sevens)", () => {
+    const results = filterStack(stackOrder, "7", formatCardName);
+    // Four sevens, plus any position numbers containing the digit '7'
+    // (positions 7, 17, 27, 37, 47 in a 52-card stack).
+    const sevenCards = results.filter((e) => e.card.rank === "7");
+    expect(sevenCards).toHaveLength(4);
+  });
+
+  it("matches by raw rank letter (e.g., 'q' finds all four queens)", () => {
+    const results = filterStack(stackOrder, "q", formatCardName);
+    const queens = results.filter((e) => e.card.rank === "Q");
+    expect(queens).toHaveLength(4);
+  });
+
+  it("matches by raw rank '10' (finds all four tens)", () => {
+    const results = filterStack(stackOrder, "10", formatCardName);
+    const tens = results.filter((e) => e.card.rank === "10");
+    expect(tens).toHaveLength(4);
   });
 
   it("returns empty array for no-match queries", () => {

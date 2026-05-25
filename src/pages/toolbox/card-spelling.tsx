@@ -2,12 +2,12 @@ import { Stack, Table, Text, TextInput, VisuallyHidden } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useFormatCardName } from "../../hooks/use-format-card-name";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useStackLimits } from "../../hooks/use-stack-limits";
 import { filterStack } from "./filter-stack";
 import { getSpellingData } from "./spell-card";
 import { SpellingRow } from "./spelling-row";
-import { useFormatCardName } from "./use-format-card-name";
 
 export const CardSpelling = () => {
   const { t } = useTranslation();

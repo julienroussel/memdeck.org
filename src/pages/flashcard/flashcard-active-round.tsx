@@ -3,9 +3,9 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { TimerDisplay } from "../../components/timer-display";
+import { useFormatCardName } from "../../hooks/use-format-card-name";
 import type { PlayingCard } from "../../types/playingcard";
 import type { PlayingCardPosition } from "../../types/stacks";
-import { formatCardName } from "../../utils/card-formatting";
 import type { ResolvedDirection } from "../../utils/neighbor";
 import { FlashcardCardDisplay } from "./flashcard-card-display";
 
@@ -46,6 +46,7 @@ export const FlashcardActiveRound = ({
   onSubmitAnswer,
 }: FlashcardActiveRoundProps) => {
   const { t } = useTranslation();
+  const formatCardName = useFormatCardName();
   const [announcement, setAnnouncement] = useState<Announcement>({
     id: 0,
     text: "",
@@ -86,7 +87,7 @@ export const FlashcardActiveRound = ({
       );
       onSubmitAnswer(value, index);
     },
-    [answerCard, announce, onSubmitAnswer, t]
+    [answerCard, announce, onSubmitAnswer, t, formatCardName]
   );
 
   return (
