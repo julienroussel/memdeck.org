@@ -15,6 +15,7 @@ const STACK_ITEMS = [
   { key: "particle", i18nKey: "guide.gettingStarted.stacks.particle" },
   { key: "elephant", i18nKey: "guide.gettingStarted.stacks.elephant" },
   { key: "infinity", i18nKey: "guide.gettingStarted.stacks.infinity" },
+  { key: "intuitiva", i18nKey: "guide.gettingStarted.stacks.intuitiva" },
 ] as const;
 
 export const GettingStarted = () => {

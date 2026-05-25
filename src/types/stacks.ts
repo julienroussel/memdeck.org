@@ -4,6 +4,7 @@ import type { StackLimits } from "./stack-limits";
 import { aronson } from "./stacks/aronson";
 import { elephant } from "./stacks/elephant";
 import { infinity } from "./stacks/infinity";
+import { intuitiva } from "./stacks/intuitiva";
 import { memorandum } from "./stacks/memorandum";
 import { mnemonica } from "./stacks/mnemonica";
 import { particle } from "./stacks/particle";
@@ -32,6 +33,7 @@ export const stacks = {
   particle,
   elephant,
   infinity,
+  intuitiva,
 } as const;
 
 export type StackKey = keyof typeof stacks;
