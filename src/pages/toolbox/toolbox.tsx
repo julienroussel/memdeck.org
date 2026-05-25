@@ -1,8 +1,9 @@
 import { Accordion, Group, Stack, Text, Title } from "@mantine/core";
 import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { JsonLd } from "../../components/json-ld";
-import { SITE_URL, TOOLBOX_SECTIONS_LSK } from "../../constants";
+import { buildBreadcrumbSchema, JsonLd } from "../../components/json-ld";
+import { ROUTES, TOOLBOX_SECTIONS_LSK } from "../../constants";
+import { useCardImagePreload } from "../../hooks/use-card-image-preload";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { analytics } from "../../services/analytics";
 import { useLocalDb } from "../../utils/localstorage";
@@ -18,23 +19,7 @@ import { StayStack } from "./stay-stack";
 const isStringArray = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every((v) => typeof v === "string");
 
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: `${SITE_URL}/`,
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Toolbox",
-    },
-  ],
-};
+const breadcrumbSchema = buildBreadcrumbSchema("Toolbox", ROUTES.toolbox);
 
 export const Toolbox = () => {
   const { t } = useTranslation();
@@ -74,6 +59,7 @@ export const Toolbox = () => {
     title: t("toolbox.pageTitle"),
     description: t("toolbox.pageDescription"),
   });
+  useCardImagePreload();
 
   return (
     <Stack gap="xl" p="md">

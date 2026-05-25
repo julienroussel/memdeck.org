@@ -24,13 +24,16 @@ export const LanguagePicker = memo(function LanguagePicker() {
     (event: React.ChangeEvent<HTMLSelectElement>) => {
       const value = event.currentTarget.value;
       if (isSupportedLanguage(value)) {
-        analytics.trackEvent("Settings", "Language Changed", value);
-        changeLanguage(value).catch(() => {
-          notifications.show({
-            color: "red",
-            message: t("errors.somethingWentWrong"),
+        changeLanguage(value)
+          .then(() => {
+            analytics.trackEvent("Settings", "Language Changed", value);
+          })
+          .catch(() => {
+            notifications.show({
+              color: "red",
+              message: t("errors.somethingWentWrong"),
+            });
           });
-        });
       }
     },
     [t]

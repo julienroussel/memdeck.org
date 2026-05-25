@@ -1,5 +1,5 @@
 import { Button, Group, Text } from "@mantine/core";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { SESSION_PRESETS, type SessionConfig } from "../types/session";
 
@@ -30,10 +30,21 @@ export const SessionStartControls = ({
     return presets;
   }, [effectiveRange]);
 
-  const handlePresetClick = (preset: number) => {
-    onStart({ type: "structured", totalQuestions: preset });
-    onAfterStart?.();
-  };
+  const handlePresetClick = useCallback(
+    (preset: number) => {
+      onStart({ type: "structured", totalQuestions: preset });
+      onAfterStart?.();
+    },
+    [onStart, onAfterStart]
+  );
+
+  const handlePresetButtonClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const preset = Number(event.currentTarget.dataset.preset);
+      handlePresetClick(preset);
+    },
+    [handlePresetClick]
+  );
 
   return (
     <Group align="center" gap="xs">
@@ -43,8 +54,9 @@ export const SessionStartControls = ({
       {visiblePresets.map((preset) => (
         <Button
           aria-label={t("session.startPresetAriaLabel", { count: preset })}
+          data-preset={preset}
           key={preset}
-          onClick={() => handlePresetClick(preset)}
+          onClick={handlePresetButtonClick}
           size="compact-sm"
           variant="light"
         >

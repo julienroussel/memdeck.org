@@ -16,6 +16,13 @@ vi.mock("../services/analytics", () => ({
   },
 }));
 
+const mockNotificationsShow = vi.fn();
+vi.mock("@mantine/notifications", () => ({
+  notifications: {
+    show: (...args: unknown[]) => mockNotificationsShow(...args),
+  },
+}));
+
 const getShareIcon = () => document.querySelector(".tabler-icon-share");
 
 const getCheckIcon = () => document.querySelector(".tabler-icon-check");
@@ -23,6 +30,7 @@ const getCheckIcon = () => document.querySelector(".tabler-icon-check");
 beforeEach(() => {
   mockShareMemDeck.mockReset();
   mockTrackShareClicked.mockReset();
+  mockNotificationsShow.mockReset();
   mockShareMemDeck.mockResolvedValue("shared");
 });
 
@@ -106,5 +114,38 @@ describe("ShareButton", () => {
 
     expect(getCheckIcon()).not.toBeInTheDocument();
     expect(getShareIcon()).toBeInTheDocument();
+  });
+
+  it("shows a red error notification when share fails", async () => {
+    mockShareMemDeck.mockResolvedValue("failed");
+    const user = userEvent.setup();
+    render(<ShareButton />);
+
+    await user.click(screen.getByRole("button", { name: "Share MemDeck" }));
+
+    await waitFor(() => {
+      expect(mockNotificationsShow).toHaveBeenCalledOnce();
+    });
+    // Assertion checks the rendered en translation. If the i18n key changes, update both
+    // this assertion and the locale file in lockstep — there's no compile-time link.
+    expect(mockNotificationsShow).toHaveBeenCalledWith(
+      expect.objectContaining({
+        color: "red",
+        message: "Something went wrong",
+      })
+    );
+  });
+
+  it("does not show an error notification when share succeeds", async () => {
+    mockShareMemDeck.mockResolvedValue("shared");
+    const user = userEvent.setup();
+    render(<ShareButton />);
+
+    await user.click(screen.getByRole("button", { name: "Share MemDeck" }));
+
+    await waitFor(() => {
+      expect(mockTrackShareClicked).toHaveBeenCalledWith("nav", "shared");
+    });
+    expect(mockNotificationsShow).not.toHaveBeenCalled();
   });
 });

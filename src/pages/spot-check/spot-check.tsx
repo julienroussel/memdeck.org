@@ -1,16 +1,16 @@
 import { Space, Stack, Text } from "@mantine/core";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { RevealButton } from "../../components/reveal-button";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
 import { TrainingHeader } from "../../components/training-header";
+import { useCardImagePreload } from "../../hooks/use-card-image-preload";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import { useStackLimits } from "../../hooks/use-stack-limits";
-import { analytics } from "../../services/analytics";
 import type { SpotCheckI18nKey, SpotCheckMode } from "../../types/spot-check";
 import { cardItems } from "../../types/typeguards";
 import { SpotCheckSettingsContent } from "./spot-check-settings-content";
@@ -35,6 +35,7 @@ export const SpotCheck = () => {
     title: t("spotCheck.pageTitle"),
     description: t("spotCheck.pageDescription"),
   });
+  useCardImagePreload();
   const { stackKey, stackOrder, stackName } = useRequiredStack();
 
   const {
@@ -74,11 +75,6 @@ export const SpotCheck = () => {
   } = useSpotCheckGame(stackOrder, stackName, mode, timerSettings, limits, {
     onAnswer: handleAnswer,
   });
-
-  const handleRevealAnswer = useCallback(() => {
-    analytics.trackFeatureUsed("Reveal Answer - Spot Check");
-    revealAnswer();
-  }, [revealAnswer]);
 
   const puzzleCardItems = useMemo(() => cardItems(puzzleCards), [puzzleCards]);
 
@@ -145,9 +141,7 @@ export const SpotCheck = () => {
           summary={status.summary}
         />
       )}
-      {status.phase === "active" && (
-        <RevealButton onReveal={handleRevealAnswer} />
-      )}
+      {status.phase === "active" && <RevealButton onReveal={revealAnswer} />}
     </div>
   );
 };

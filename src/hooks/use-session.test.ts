@@ -1,34 +1,38 @@
 /**
- * These tests exercise the full useSession hook by mocking React primitives
- * with a minimal state-machine simulation, following the same approach used
- * by use-session-history.test.ts and use-all-time-stats.test.ts.
+ * Integration tests for the `useSession` hook driven against real React via
+ * `@testing-library/react`. Only collaborators (persistence, analytics,
+ * notifications, breadcrumbs, i18n) are mocked; React's lifecycle (state,
+ * effects, refs, batching) is the genuine article.
  *
  * Pure function tests for deriveActiveSession, deriveIsStructuredSession,
  * and applyAnswerOutcome live in their colocated file session-phase.test.ts.
  */
+import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { DistanceConvention, DistanceMode } from "../types/distance";
 import type { ActiveSession } from "../types/session";
 import { DEFAULT_STACK_LIMITS, type StackLimits } from "../types/stack-limits";
 import { createDeckPosition, type StackKey } from "../types/stacks";
+// Imported via the `use-session` re-export — pins the public type surface of
+// the hook (status phase) as the contract these tests assert against.
 import type { SessionPhase } from "./use-session";
 
-// ---------------------------------------------------------------------------
-// React mock state — shared by the mocked useState/useRef/useEffect/useCallback
-// ---------------------------------------------------------------------------
+/**
+ * Narrowing helper for `status` reads in this file. Mirrors the `assertActive`
+ * pattern in `use-session-recording.test.ts`. Centralized so tests can assert
+ * on `status.session` without an `as` cast.
+ */
+function assertPhase<P extends SessionPhase["phase"]>(
+  status: SessionPhase,
+  phase: P
+): asserts status is Extract<SessionPhase, { phase: P }> {
+  if (status.phase !== phase) {
+    throw new Error(`expected phase "${phase}", got "${status.phase}"`);
+  }
+}
 
-let currentStatus: SessionPhase;
-let pendingEffects: Array<() => undefined | (() => void)>;
-let effectCleanups: Array<(() => void) | undefined>;
-let refStore: Array<{ current: unknown }>;
-let refIndex: number;
-// Slots for additional useState calls beyond the primary status state.
-// useSession uses a secondary useState for the flush-tick counter.
-let stateSlots: unknown[];
-let stateIndex: number;
-
 // ---------------------------------------------------------------------------
-// Mocks (must be declared before vi.mock calls since vi.mock is hoisted)
+// Collaborator mocks (vi.mock is hoisted above the dynamic imports below)
 // ---------------------------------------------------------------------------
 
 const mockBuildSessionRecord = vi.fn();
@@ -77,60 +81,6 @@ const mockFinalizeSession = vi.fn(
     return { ok: true, summary };
   }
 );
-
-vi.mock("react", async () => {
-  const actual = await vi.importActual<typeof import("react")>("react");
-  return {
-    ...actual,
-    useState: (initial: unknown) => {
-      // First useState call is the SessionPhase status. Subsequent calls
-      // (e.g. the flush-tick counter) use independent slots so that
-      // updating one doesn't clobber the other.
-      const slot = stateIndex;
-      stateIndex++;
-      if (slot === 0) {
-        if (currentStatus === undefined) {
-          currentStatus = initial as SessionPhase;
-        }
-        const setState = (valueOrUpdater: unknown) => {
-          if (typeof valueOrUpdater === "function") {
-            currentStatus = (
-              valueOrUpdater as (prev: SessionPhase) => SessionPhase
-            )(currentStatus);
-          } else {
-            currentStatus = valueOrUpdater as SessionPhase;
-          }
-        };
-        return [currentStatus, setState];
-      }
-      if (slot >= stateSlots.length) {
-        stateSlots.push(initial);
-      }
-      const setSlot = (valueOrUpdater: unknown) => {
-        if (typeof valueOrUpdater === "function") {
-          stateSlots[slot] = (valueOrUpdater as (prev: unknown) => unknown)(
-            stateSlots[slot]
-          );
-        } else {
-          stateSlots[slot] = valueOrUpdater;
-        }
-      };
-      return [stateSlots[slot], setSlot];
-    },
-    useRef: (initial: unknown) => {
-      if (refIndex >= refStore.length) {
-        refStore.push({ current: initial });
-      }
-      const ref = refStore[refIndex];
-      refIndex++;
-      return ref;
-    },
-    useCallback: (fn: unknown) => fn,
-    useEffect: (fn: () => undefined | (() => void)) => {
-      pendingEffects.push(fn);
-    },
-  };
-});
 
 vi.mock("../utils/session-persistence", async () => {
   const actual = await vi.importActual<
@@ -181,75 +131,22 @@ vi.mock("react-i18next", () => ({
 // Dynamic imports after mocks are wired up (vi.mock is hoisted above these)
 const { useSession } = await import("./use-session");
 
-// ---------------------------------------------------------------------------
-// useSession hook integration tests
-//
-// These tests exercise the full useSession hook by mocking React primitives
-// with a minimal state-machine simulation. The approach follows the same
-// pattern used by use-session-history.test.ts and use-all-time-stats.test.ts
-// (mocking React directly) but extends it to handle useState updaters and
-// useEffect flush cycles that useSession relies on.
-// ---------------------------------------------------------------------------
+type SessionRenderProps = {
+  mode?: "flashcard" | "acaan";
+  stackKey?: StackKey;
+  stackLimits?: StackLimits;
+};
+
+type DistanceRenderProps = {
+  distanceMode?: DistanceMode;
+  distanceConvention?: DistanceConvention;
+};
 
 describe("useSession hook", () => {
   let uuidCounter: number;
 
-  /**
-   * Flush all pending effects. Previous cleanups are NOT run here because
-   * the mock doesn't track dependency arrays. In real React, effects with
-   * stable deps (like the beforeunload effect) don't re-run their cleanup
-   * on re-render — only on unmount or when deps change. Running cleanups
-   * every cycle would cause the beforeunload handler to prematurely
-   * finalize the session (adding its ID to the dedup Set), which blocks
-   * the actual auto-completion or stop finalization.
-   */
-  const flushEffects = () => {
-    const effects = [...pendingEffects];
-    pendingEffects = [];
-    for (const effect of effects) {
-      const cleanup = effect();
-      effectCleanups.push(typeof cleanup === "function" ? cleanup : undefined);
-    }
-  };
-
-  /** Re-invoke the hook to collect new effects, then flush them */
-  const rerenderAndFlush = () => {
-    refIndex = 0;
-    stateIndex = 0;
-    pendingEffects = [];
-    // biome-ignore lint/correctness/useHookAtTopLevel: test simulation — not a real React render
-    const result = useSession({
-      mode: "flashcard",
-      stackKey: "mnemonica",
-    });
-    flushEffects();
-    return result;
-  };
-
-  /** Call the hook once and flush initial effects, returning the result */
-  const initHook = (
-    options: { mode?: "flashcard" | "acaan"; stackKey?: string } = {}
-  ) => {
-    refIndex = 0;
-    stateIndex = 0;
-    pendingEffects = [];
-    const result = useSession({
-      mode: options.mode ?? "flashcard",
-      stackKey: (options.stackKey ?? "mnemonica") as StackKey,
-    });
-    flushEffects();
-    return result;
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
-    currentStatus = undefined as unknown as SessionPhase;
-    pendingEffects = [];
-    effectCleanups = [];
-    refStore = [];
-    refIndex = 0;
-    stateSlots = [];
-    stateIndex = 0;
     uuidCounter = 0;
 
     // Default the breadcrumb mocks to a "no prior failure" state so tests
@@ -294,45 +191,42 @@ describe("useSession hook", () => {
       isNewGlobalBestStreak: false,
       previousAverageAccuracy: null,
     }));
-
-    // Mock window.addEventListener/removeEventListener for beforeunload
-    if (typeof globalThis.window === "undefined") {
-      (globalThis as Record<string, unknown>).window = {
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-      };
-    } else {
-      vi.spyOn(window, "addEventListener").mockImplementation(vi.fn());
-      vi.spyOn(window, "removeEventListener").mockImplementation(vi.fn());
-    }
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
   });
 
-  // --- Tests -------------------------------------------------------------
+  // -----------------------------------------------------------------------
+  // Phase transitions
+  // -----------------------------------------------------------------------
 
   it("starts in idle phase", () => {
-    const result = initHook();
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica" })
+    );
 
-    expect(result.status.phase).toBe("idle");
-    expect(result.activeSession).toBeNull();
-    expect(result.isStructuredSession).toBe(false);
+    expect(result.current.status.phase).toBe("idle");
+    expect(result.current.activeSession).toBeNull();
+    expect(result.current.isStructuredSession).toBe(false);
   });
 
   it("transitions from idle to active when startSession is called", () => {
-    const result = initHook();
-    result.startSession({ type: "open" });
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica" })
+    );
 
-    const updated = rerenderAndFlush();
+    act(() => {
+      result.current.startSession({ type: "open" });
+    });
 
-    expect(updated.status.phase).toBe("active");
-    expect(updated.activeSession).not.toBeNull();
-    expect(updated.activeSession?.id).toBe("test-uuid-1");
-    expect(updated.activeSession?.mode).toBe("flashcard");
-    expect(updated.activeSession?.stackKey).toBe("mnemonica");
-    expect(updated.activeSession?.config).toEqual({ type: "open" });
+    const { status } = result.current;
+    assertPhase(status, "active");
+    expect(status.session.id).toBe("test-uuid-1");
+    expect(status.session.mode).toBe("flashcard");
+    expect(status.session.stackKey).toBe("mnemonica");
+    expect(status.session.config).toEqual({ type: "open" });
+    expect(result.current.activeSession).not.toBeNull();
     expect(mockEventBusEmit.SESSION_STARTED).toHaveBeenCalledWith({
       mode: "flashcard",
       config: { type: "open" },
@@ -340,105 +234,112 @@ describe("useSession hook", () => {
   });
 
   it("increments successes and streak on a correct answer", () => {
-    const result = initHook();
-    result.startSession({ type: "open" });
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica" })
+    );
 
-    // First correct answer
-    let updated = rerenderAndFlush();
-    updated.handleAnswer({ correct: true, questionAdvanced: true });
+    act(() => {
+      result.current.startSession({ type: "open" });
+    });
+    act(() => {
+      result.current.handleAnswer({ correct: true, questionAdvanced: true });
+    });
 
-    updated = rerenderAndFlush();
-    expect(updated.activeSession?.successes).toBe(1);
-    expect(updated.activeSession?.currentStreak).toBe(1);
-    expect(updated.activeSession?.bestStreak).toBe(1);
-    expect(updated.activeSession?.questionsCompleted).toBe(1);
+    expect(result.current.activeSession?.successes).toBe(1);
+    expect(result.current.activeSession?.currentStreak).toBe(1);
+    expect(result.current.activeSession?.bestStreak).toBe(1);
+    expect(result.current.activeSession?.questionsCompleted).toBe(1);
 
-    // Second correct answer
-    updated.handleAnswer({ correct: true, questionAdvanced: true });
-    updated = rerenderAndFlush();
-    expect(updated.activeSession?.successes).toBe(2);
-    expect(updated.activeSession?.currentStreak).toBe(2);
-    expect(updated.activeSession?.bestStreak).toBe(2);
+    act(() => {
+      result.current.handleAnswer({ correct: true, questionAdvanced: true });
+    });
+
+    expect(result.current.activeSession?.successes).toBe(2);
+    expect(result.current.activeSession?.currentStreak).toBe(2);
+    expect(result.current.activeSession?.bestStreak).toBe(2);
   });
 
   it("increments fails and resets streak on an incorrect answer", () => {
-    const result = initHook();
-    result.startSession({ type: "open" });
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica" })
+    );
 
+    act(() => {
+      result.current.startSession({ type: "open" });
+    });
     // Build a streak first
-    let updated = rerenderAndFlush();
-    updated.handleAnswer({ correct: true, questionAdvanced: true });
-    updated = rerenderAndFlush();
-    updated.handleAnswer({ correct: true, questionAdvanced: true });
-    updated = rerenderAndFlush();
-
-    expect(updated.activeSession?.currentStreak).toBe(2);
-    expect(updated.activeSession?.bestStreak).toBe(2);
+    act(() => {
+      result.current.handleAnswer({ correct: true, questionAdvanced: true });
+    });
+    act(() => {
+      result.current.handleAnswer({ correct: true, questionAdvanced: true });
+    });
+    expect(result.current.activeSession?.currentStreak).toBe(2);
+    expect(result.current.activeSession?.bestStreak).toBe(2);
 
     // Incorrect answer resets current streak but preserves best streak
-    updated.handleAnswer({ correct: false, questionAdvanced: true });
-    updated = rerenderAndFlush();
+    act(() => {
+      result.current.handleAnswer({ correct: false, questionAdvanced: true });
+    });
 
-    expect(updated.activeSession?.fails).toBe(1);
-    expect(updated.activeSession?.currentStreak).toBe(0);
-    expect(updated.activeSession?.bestStreak).toBe(2);
+    expect(result.current.activeSession?.fails).toBe(1);
+    expect(result.current.activeSession?.currentStreak).toBe(0);
+    expect(result.current.activeSession?.bestStreak).toBe(2);
   });
 
-  it("increments questionsCompleted when questionAdvanced is true", () => {
-    const result = initHook();
-    result.startSession({ type: "open" });
+  it("increments questionsCompleted only when questionAdvanced is true", () => {
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica" })
+    );
 
-    let updated = rerenderAndFlush();
-
-    // Answer that advances the question
-    updated.handleAnswer({ correct: true, questionAdvanced: true });
-    updated = rerenderAndFlush();
-    expect(updated.activeSession?.questionsCompleted).toBe(1);
+    act(() => {
+      result.current.startSession({ type: "open" });
+    });
+    act(() => {
+      result.current.handleAnswer({ correct: true, questionAdvanced: true });
+    });
+    expect(result.current.activeSession?.questionsCompleted).toBe(1);
 
     // Answer that does NOT advance the question (e.g. partial answer)
-    updated.handleAnswer({ correct: false, questionAdvanced: false });
-    updated = rerenderAndFlush();
-    expect(updated.activeSession?.questionsCompleted).toBe(1);
+    act(() => {
+      result.current.handleAnswer({ correct: false, questionAdvanced: false });
+    });
+    expect(result.current.activeSession?.questionsCompleted).toBe(1);
 
     // Another advancing answer
-    updated.handleAnswer({ correct: true, questionAdvanced: true });
-    updated = rerenderAndFlush();
-    expect(updated.activeSession?.questionsCompleted).toBe(2);
+    act(() => {
+      result.current.handleAnswer({ correct: true, questionAdvanced: true });
+    });
+    expect(result.current.activeSession?.questionsCompleted).toBe(2);
   });
 
   it("auto-completes a structured session when totalQuestions is reached", () => {
-    const result = initHook();
-    result.startSession({ type: "structured", totalQuestions: 10 });
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica" })
+    );
 
-    let updated = rerenderAndFlush();
+    act(() => {
+      result.current.startSession({ type: "structured", totalQuestions: 10 });
+    });
 
     // Answer 9 questions (one short of completion)
     for (let i = 0; i < 9; i++) {
-      updated.handleAnswer({ correct: true, questionAdvanced: true });
-      updated = rerenderAndFlush();
+      act(() => {
+        result.current.handleAnswer({ correct: true, questionAdvanced: true });
+      });
     }
 
-    expect(updated.activeSession?.questionsCompleted).toBe(9);
-    expect(updated.status.phase).toBe("active");
+    expect(result.current.activeSession?.questionsCompleted).toBe(9);
+    expect(result.current.status.phase).toBe("active");
 
-    // The 10th answer triggers auto-completion. Three rerender cycles are
-    // needed because the auto-finalize logic now lives in a useEffect on
-    // `status` rather than a synchronous side effect inside the
-    // recordQuestionAdvanced callback:
-    //   #1 commits the answer's setState updates and runs the auto-finalize
-    //      effect, which bumps flushTick. The flush effect's closure (from
-    //      this same render's call to useSession) captured flushTick at its
-    //      pre-bump value, so it cannot observe the new tick within the same
-    //      flushEffects() cycle.
-    //   #2 re-runs useSession with the bumped flushTick captured; the flush
-    //      effect now persists and calls setStatus({ phase: "summary" }).
-    //   #3 reads the summary phase from useSession's return.
-    updated.handleAnswer({ correct: true, questionAdvanced: true });
-    updated = rerenderAndFlush();
-    updated = rerenderAndFlush();
-    updated = rerenderAndFlush();
+    // The 10th answer triggers auto-completion via the auto-finalize useEffect
+    // on `status` → flush effect drains the queue → setStatus({phase:"summary"}).
+    // Real React batching + act() flushes the entire effect chain in one go.
+    act(() => {
+      result.current.handleAnswer({ correct: true, questionAdvanced: true });
+    });
 
-    expect(updated.status.phase).toBe("summary");
+    expect(result.current.status.phase).toBe("summary");
     expect(mockBuildSessionRecord).toHaveBeenCalled();
     expect(mockSaveSessionRecord).toHaveBeenCalled();
     expect(mockEventBusEmit.SESSION_COMPLETED).toHaveBeenCalled();
@@ -449,26 +350,25 @@ describe("useSession hook", () => {
     // requestFinalization, so increments produced earlier in the same event
     // handler (recordCorrect's successes/streak bump from applyAnswerOutcome,
     // session-phase.ts) reach the persisted record alongside the
-    // questionsCompleted bump. The mocked useState in this file applies
-    // updaters eagerly without batching, so this test pins the
-    // committed-status-passthrough contract — NOT the prev-vs-stale invariant
-    // (the recording hook's setStatus(prev => …) form is what guarantees
-    // that, covered under real React batching in
-    // use-session-recording.test.ts).
-    const result = initHook();
-    result.startSession({ type: "structured", totalQuestions: 1 });
+    // questionsCompleted bump. Under real React batching, both updaters apply
+    // before the auto-finalize useEffect observes the new status, so the
+    // record built from `status.session` has both increments.
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica" })
+    );
 
-    let updated = rerenderAndFlush();
+    act(() => {
+      result.current.startSession({ type: "structured", totalQuestions: 1 });
+    });
 
     // The single answer triggers both:
     //   - recordCorrect (successes/currentStreak/bestStreak ++)
     //   - recordQuestionAdvanced (questionsCompleted ++ to 1, hits limit)
-    updated.handleAnswer({ correct: true, questionAdvanced: true });
-    updated = rerenderAndFlush();
-    updated = rerenderAndFlush();
-    updated = rerenderAndFlush();
+    act(() => {
+      result.current.handleAnswer({ correct: true, questionAdvanced: true });
+    });
 
-    expect(updated.status.phase).toBe("summary");
+    expect(result.current.status.phase).toBe("summary");
     expect(mockBuildSessionRecord).toHaveBeenCalledOnce();
     expect(mockBuildSessionRecord).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -492,72 +392,86 @@ describe("useSession hook", () => {
       ok: false,
       reason: "write-failed",
     });
-    const result = initHook();
-    result.startSession({ type: "structured", totalQuestions: 1 });
 
-    let updated = rerenderAndFlush();
-    updated.handleAnswer({ correct: true, questionAdvanced: true });
+    const { result, rerender } = renderHook(
+      (props: SessionRenderProps) =>
+        useSession({
+          mode: props.mode ?? "flashcard",
+          stackKey: props.stackKey ?? "mnemonica",
+        }),
+      { initialProps: {} as SessionRenderProps }
+    );
+
+    act(() => {
+      result.current.startSession({ type: "structured", totalQuestions: 1 });
+    });
+    act(() => {
+      result.current.handleAnswer({ correct: true, questionAdvanced: true });
+    });
     // Drive several rerenders past threshold; auto-finalize must only
     // request finalize on the first one.
-    updated = rerenderAndFlush();
-    updated = rerenderAndFlush();
-    updated = rerenderAndFlush();
-    updated = rerenderAndFlush();
+    rerender({});
+    rerender({});
+    rerender({});
+    rerender({});
 
     // Phase remained active because the write failed.
-    expect(updated.status.phase).toBe("active");
+    expect(result.current.status.phase).toBe("active");
     // Despite the threshold staying met across multiple renders,
     // finalizeSession was attempted exactly once.
     expect(mockFinalizeSession).toHaveBeenCalledOnce();
   });
 
   it("returns to idle when stopping an open session with fewer than 3 questions", () => {
-    const result = initHook();
-    result.startSession({ type: "open" });
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica" })
+    );
 
-    let updated = rerenderAndFlush();
-    expect(updated.status.phase).toBe("active");
+    act(() => {
+      result.current.startSession({ type: "open" });
+    });
 
     // Answer only 2 questions (below threshold of 3 for open sessions)
-    updated.handleAnswer({ correct: true, questionAdvanced: true });
-    updated = rerenderAndFlush();
-    updated.handleAnswer({ correct: true, questionAdvanced: true });
-    updated = rerenderAndFlush();
-
-    expect(updated.activeSession?.questionsCompleted).toBe(2);
+    act(() => {
+      result.current.handleAnswer({ correct: true, questionAdvanced: true });
+    });
+    act(() => {
+      result.current.handleAnswer({ correct: true, questionAdvanced: true });
+    });
+    expect(result.current.activeSession?.questionsCompleted).toBe(2);
 
     // Stop the session -- should discard and return to idle
-    updated.stopSession();
-    updated = rerenderAndFlush();
+    act(() => {
+      result.current.stopSession();
+    });
 
-    expect(updated.status.phase).toBe("idle");
+    expect(result.current.status.phase).toBe("idle");
     expect(mockBuildSessionRecord).not.toHaveBeenCalled();
     expect(mockSaveSessionRecord).not.toHaveBeenCalled();
   });
 
   it("persists and shows summary when stopping an open session with 3 or more questions", () => {
-    const result = initHook();
-    result.startSession({ type: "open" });
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica" })
+    );
 
-    let updated = rerenderAndFlush();
+    act(() => {
+      result.current.startSession({ type: "open" });
+    });
 
     // Answer 3 questions (meets minimum threshold for open sessions)
     for (let i = 0; i < 3; i++) {
-      updated.handleAnswer({ correct: true, questionAdvanced: true });
-      updated = rerenderAndFlush();
+      act(() => {
+        result.current.handleAnswer({ correct: true, questionAdvanced: true });
+      });
     }
+    expect(result.current.activeSession?.questionsCompleted).toBe(3);
 
-    expect(updated.activeSession?.questionsCompleted).toBe(3);
+    act(() => {
+      result.current.stopSession();
+    });
 
-    // Stop the session -- should finalize and show summary.
-    // First re-render: stopSession sets pendingFinalizationRef via the
-    // setState updater, then the effect flushes and calls setStatus.
-    updated.stopSession();
-    updated = rerenderAndFlush();
-    // Second re-render: needed to read the state set by the effect.
-    updated = rerenderAndFlush();
-
-    expect(updated.status.phase).toBe("summary");
+    expect(result.current.status.phase).toBe("summary");
     expect(mockBuildSessionRecord).toHaveBeenCalled();
     expect(mockSaveSessionRecord).toHaveBeenCalled();
     expect(mockComputeSessionSummary).toHaveBeenCalled();
@@ -566,126 +480,127 @@ describe("useSession hook", () => {
   });
 
   it("dismissSummary returns to idle from summary phase", () => {
-    const result = initHook();
-    result.startSession({ type: "structured", totalQuestions: 10 });
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica" })
+    );
 
-    let updated = rerenderAndFlush();
+    act(() => {
+      result.current.startSession({ type: "structured", totalQuestions: 10 });
+    });
 
     // Complete a structured session to reach summary phase
     for (let i = 0; i < 10; i++) {
-      updated.handleAnswer({ correct: true, questionAdvanced: true });
-      updated = rerenderAndFlush();
+      act(() => {
+        result.current.handleAnswer({ correct: true, questionAdvanced: true });
+      });
     }
-    // Two extra rerenders to drain the auto-finalize → flush → summary chain
-    // (see the comment in the auto-completes test above for the cycle).
-    updated = rerenderAndFlush();
-    updated = rerenderAndFlush();
 
-    expect(updated.status.phase).toBe("summary");
+    expect(result.current.status.phase).toBe("summary");
 
-    // Dismiss the summary
-    updated.dismissSummary();
-    updated = rerenderAndFlush();
+    act(() => {
+      result.current.dismissSummary();
+    });
 
-    expect(updated.status.phase).toBe("idle");
-    expect(updated.activeSession).toBeNull();
+    expect(result.current.status.phase).toBe("idle");
+    expect(result.current.activeSession).toBeNull();
   });
 
   it("startNewSession dismisses summary and starts a new session with the same config", () => {
-    const result = initHook();
-    result.startSession({ type: "structured", totalQuestions: 10 });
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica" })
+    );
 
-    let updated = rerenderAndFlush();
+    act(() => {
+      result.current.startSession({ type: "structured", totalQuestions: 10 });
+    });
 
     // Complete a structured session to reach summary phase
     for (let i = 0; i < 10; i++) {
-      updated.handleAnswer({ correct: true, questionAdvanced: true });
-      updated = rerenderAndFlush();
+      act(() => {
+        result.current.handleAnswer({ correct: true, questionAdvanced: true });
+      });
     }
-    // Two extra rerenders to drain the auto-finalize → flush → summary chain
-    // (see the comment in the auto-completes test above for the cycle).
-    updated = rerenderAndFlush();
-    updated = rerenderAndFlush();
 
-    expect(updated.status.phase).toBe("summary");
+    expect(result.current.status.phase).toBe("summary");
 
-    // Start a new session from the summary screen
-    updated.startNewSession();
-    updated = rerenderAndFlush();
+    act(() => {
+      result.current.startNewSession();
+    });
 
-    expect(updated.status.phase).toBe("active");
-    expect(updated.activeSession).not.toBeNull();
-    expect(updated.activeSession?.config).toEqual({
+    expect(result.current.status.phase).toBe("active");
+    expect(result.current.activeSession).not.toBeNull();
+    expect(result.current.activeSession?.config).toEqual({
       type: "structured",
       totalQuestions: 10,
     });
     // Should be a fresh session with zero counters
-    expect(updated.activeSession?.successes).toBe(0);
-    expect(updated.activeSession?.fails).toBe(0);
-    expect(updated.activeSession?.questionsCompleted).toBe(0);
+    expect(result.current.activeSession?.successes).toBe(0);
+    expect(result.current.activeSession?.fails).toBe(0);
+    expect(result.current.activeSession?.questionsCompleted).toBe(0);
   });
 
-  // --- Distance mode -----------------------------------------------------
-
-  /** Invoke useSession in distance mode and flush initial effects. Used for
-   *  both the initial render and subsequent re-invocations — the React state
-   *  mocks (`currentStatus`, `refStore`) carry state across calls. */
-  const renderDistance = (overrides?: {
-    distanceMode?: DistanceMode;
-    distanceConvention?: DistanceConvention;
-  }) => {
-    refIndex = 0;
-    stateIndex = 0;
-    pendingEffects = [];
-    const result = useSession({
-      mode: "distance",
-      stackKey: "mnemonica",
-      distanceMode: overrides?.distanceMode,
-      distanceConvention: overrides?.distanceConvention,
-    });
-    flushEffects();
-    return result;
-  };
+  // -----------------------------------------------------------------------
+  // Distance mode
+  // -----------------------------------------------------------------------
 
   it("starts a distance session with explicit distanceMode and distanceConvention", () => {
-    const result = renderDistance({
-      distanceMode: "compute",
-      distanceConvention: "signed",
-    });
-    result.startSession({ type: "open" });
+    const { result } = renderHook(
+      (props: DistanceRenderProps) =>
+        useSession({
+          mode: "distance",
+          stackKey: "mnemonica",
+          distanceMode: props.distanceMode,
+          distanceConvention: props.distanceConvention,
+        }),
+      {
+        initialProps: {
+          distanceMode: "compute" as DistanceMode,
+          distanceConvention: "signed" as DistanceConvention,
+        },
+      }
+    );
 
-    const updated = renderDistance({
-      distanceMode: "compute",
-      distanceConvention: "signed",
+    act(() => {
+      result.current.startSession({ type: "open" });
     });
 
-    expect(updated.status.phase).toBe("active");
-    expect(updated.activeSession?.mode).toBe("distance");
-    if (updated.activeSession?.mode === "distance") {
-      expect(updated.activeSession.distanceMode).toBe("compute");
-      expect(updated.activeSession.distanceConvention).toBe("signed");
+    expect(result.current.status.phase).toBe("active");
+    expect(result.current.activeSession?.mode).toBe("distance");
+    if (result.current.activeSession?.mode === "distance") {
+      expect(result.current.activeSession.distanceMode).toBe("compute");
+      expect(result.current.activeSession.distanceConvention).toBe("signed");
     }
   });
 
   it("falls back to default distanceMode and distanceConvention when undefined", () => {
-    const result = renderDistance();
-    result.startSession({ type: "open" });
+    const { result } = renderHook(() =>
+      useSession({ mode: "distance", stackKey: "mnemonica" })
+    );
 
-    const updated = renderDistance();
+    act(() => {
+      result.current.startSession({ type: "open" });
+    });
 
-    expect(updated.activeSession?.mode).toBe("distance");
-    if (updated.activeSession?.mode === "distance") {
-      expect(updated.activeSession.distanceMode).toBe("both");
-      expect(updated.activeSession.distanceConvention).toBe("cyclic");
+    expect(result.current.activeSession?.mode).toBe("distance");
+    if (result.current.activeSession?.mode === "distance") {
+      expect(result.current.activeSession.distanceMode).toBe("both");
+      expect(result.current.activeSession.distanceConvention).toBe("cyclic");
     }
   });
 
   it("emits SESSION_STARTED with mode 'distance'", () => {
-    const result = renderDistance({
-      distanceMode: "apply",
-      distanceConvention: "cyclic",
+    const { result } = renderHook(() =>
+      useSession({
+        mode: "distance",
+        stackKey: "mnemonica",
+        distanceMode: "apply",
+        distanceConvention: "cyclic",
+      })
+    );
+
+    act(() => {
+      result.current.startSession({ type: "structured", totalQuestions: 10 });
     });
-    result.startSession({ type: "structured", totalQuestions: 10 });
 
     expect(mockEventBusEmit.SESSION_STARTED).toHaveBeenCalledWith({
       mode: "distance",
@@ -693,22 +608,9 @@ describe("useSession hook", () => {
     });
   });
 
-  // --- Mid-session stackLimits re-snapshot --------------------------------
-
-  /** Invoke useSession with a specific stackLimits and flush effects. */
-  const renderWithLimits = (stackLimits: StackLimits) => {
-    refIndex = 0;
-    stateIndex = 0;
-    pendingEffects = [];
-    // biome-ignore lint/correctness/useHookAtTopLevel: test simulation — not a real React render
-    const result = useSession({
-      mode: "flashcard",
-      stackKey: "mnemonica",
-      stackLimits,
-    });
-    flushEffects();
-    return result;
-  };
+  // -----------------------------------------------------------------------
+  // Mid-session stackLimits re-snapshot
+  // -----------------------------------------------------------------------
 
   it("re-snapshots stackLimits in the active session when limits change mid-session", () => {
     const limitsA = DEFAULT_STACK_LIMITS;
@@ -717,18 +619,24 @@ describe("useSession hook", () => {
       end: createDeckPosition(20),
     };
 
-    const result = renderWithLimits(limitsA);
-    result.startSession({ type: "open" });
+    const { result, rerender } = renderHook(
+      ({ stackLimits }: { stackLimits: StackLimits }) =>
+        useSession({
+          mode: "flashcard",
+          stackKey: "mnemonica",
+          stackLimits,
+        }),
+      { initialProps: { stackLimits: limitsA } }
+    );
 
-    let updated = renderWithLimits(limitsA);
-    expect(updated.activeSession?.stackLimits).toEqual(limitsA);
+    act(() => {
+      result.current.startSession({ type: "open" });
+    });
+    expect(result.current.activeSession?.stackLimits).toEqual(limitsA);
 
-    // Change stackLimits — the re-snapshot effect calls setStatus during
-    // the flush, so a second render is needed to read the updated state
-    // (same pattern as auto-completion / stop-session tests above).
-    renderWithLimits(limitsB);
-    updated = renderWithLimits(limitsB);
-    expect(updated.activeSession?.stackLimits).toEqual(limitsB);
+    rerender({ stackLimits: limitsB });
+
+    expect(result.current.activeSession?.stackLimits).toEqual(limitsB);
   });
 
   it("does not re-snapshot when limits are structurally equal across renders", () => {
@@ -741,34 +649,52 @@ describe("useSession hook", () => {
       end: createDeckPosition(20),
     };
 
-    const result = renderWithLimits(limits);
-    result.startSession({ type: "open" });
+    const { result, rerender } = renderHook(
+      ({ stackLimits }: { stackLimits: StackLimits }) =>
+        useSession({
+          mode: "flashcard",
+          stackKey: "mnemonica",
+          stackLimits,
+        }),
+      { initialProps: { stackLimits: limits } }
+    );
 
-    let updated = renderWithLimits(limits);
-    const sessionBefore = updated.activeSession;
+    act(() => {
+      result.current.startSession({ type: "open" });
+    });
+    const sessionBefore = result.current.activeSession;
     expect(sessionBefore?.stackLimits).toEqual(limits);
 
     // Re-render with a DIFFERENT object identity but identical start/end.
     // The structural-equality early-return should prevent any setStatus.
-    updated = renderWithLimits(sameLimitsNewRef);
-    expect(updated.activeSession).toBe(sessionBefore);
+    rerender({ stackLimits: sameLimitsNewRef });
+
+    expect(result.current.activeSession).toBe(sessionBefore);
   });
 
   it("does not fire the re-snapshot effect while phase is idle", () => {
-    // Mount in idle (no startSession) and change limits — nothing should
-    // happen because the effect early-returns when phase !== "active".
     const limitsA = DEFAULT_STACK_LIMITS;
     const limitsB: StackLimits = {
       start: createDeckPosition(1),
       end: createDeckPosition(20),
     };
 
-    let updated = renderWithLimits(limitsA);
-    expect(updated.status.phase).toBe("idle");
+    const { result, rerender } = renderHook(
+      ({ stackLimits }: { stackLimits: StackLimits }) =>
+        useSession({
+          mode: "flashcard",
+          stackKey: "mnemonica",
+          stackLimits,
+        }),
+      { initialProps: { stackLimits: limitsA } }
+    );
 
-    updated = renderWithLimits(limitsB);
-    expect(updated.status.phase).toBe("idle");
-    expect(updated.activeSession).toBeNull();
+    expect(result.current.status.phase).toBe("idle");
+
+    rerender({ stackLimits: limitsB });
+
+    expect(result.current.status.phase).toBe("idle");
+    expect(result.current.activeSession).toBeNull();
   });
 
   it("patches a queued pendingFinalizationRef when limits change after stopSession", () => {
@@ -778,56 +704,65 @@ describe("useSession hook", () => {
       end: createDeckPosition(20),
     };
 
-    const result = renderWithLimits(limitsA);
-    result.startSession({ type: "open" });
+    const { result, rerender } = renderHook(
+      ({ stackLimits }: { stackLimits: StackLimits }) =>
+        useSession({
+          mode: "flashcard",
+          stackKey: "mnemonica",
+          stackLimits,
+        }),
+      { initialProps: { stackLimits: limitsA } }
+    );
 
-    let updated = renderWithLimits(limitsA);
+    act(() => {
+      result.current.startSession({ type: "open" });
+    });
 
     // Reach the auto-save threshold so stopSession will queue finalization
     // rather than just returning to idle.
     for (let i = 0; i < 3; i++) {
-      updated.handleAnswer({ correct: true, questionAdvanced: true });
-      updated = renderWithLimits(limitsA);
+      act(() => {
+        result.current.handleAnswer({ correct: true, questionAdvanced: true });
+      });
     }
 
-    // Stop now: stopSession sets pendingFinalizationRef but leaves
-    // phase === "active" until the flush effect runs.
-    updated.stopSession();
-    // Change limits BEFORE the next flush so the re-snapshot effect runs
-    // alongside the flush effect on the same render. The re-snapshot must
-    // patch pendingFinalizationRef, otherwise the persisted record
-    // captures the OLD limits.
-    renderWithLimits(limitsB);
-    // Two more renders: one to flush the finalization effect (which calls
-    // setStatus to summary), one to read the updated state.
-    renderWithLimits(limitsB);
-    updated = renderWithLimits(limitsB);
+    // Stop and change limits within the same act() so the re-snapshot effect
+    // patches the queued pendingFinalizationRef before the flush effect runs.
+    act(() => {
+      result.current.stopSession();
+      rerender({ stackLimits: limitsB });
+    });
 
-    expect(updated.status.phase).toBe("summary");
+    expect(result.current.status.phase).toBe("summary");
     // The persisted record should reflect the new limits, not the old ones.
     const calls = mockBuildSessionRecord.mock.calls;
     const finalizedSession = calls.at(-1)?.[0];
     expect(finalizedSession?.stackLimits).toEqual(limitsB);
   });
 
+  // -----------------------------------------------------------------------
+  // Flush effect — persistence failure surfacing
+  // -----------------------------------------------------------------------
+
   describe("flush effect — persistence failure surfacing", () => {
-    /**
-     * Drives a session through Stop and asserts `finalizeSession` returned the
-     * supplied failure shape, then re-renders so the flush effect runs.
-     */
-    const completeAndStop = (): ReturnType<typeof useSession> => {
-      let updated = rerenderAndFlush();
-      // Build at least 3 questions to clear meetsMinimumSaveThreshold.
+    /** Drive a session through Stop after answering 3 questions. */
+    const runStopFlow = (result: {
+      current: ReturnType<typeof useSession>;
+    }) => {
+      act(() => {
+        result.current.startSession({ type: "open" });
+      });
       for (let i = 0; i < 3; i++) {
-        updated.handleAnswer({ correct: true, questionAdvanced: true });
-        updated = rerenderAndFlush();
+        act(() => {
+          result.current.handleAnswer({
+            correct: true,
+            questionAdvanced: true,
+          });
+        });
       }
-      updated.stopSession();
-      // Two flushes: one to enqueue the finalization, one to run the flush
-      // effect that surfaces the failure.
-      updated = rerenderAndFlush();
-      updated = rerenderAndFlush();
-      return updated;
+      act(() => {
+        result.current.stopSession();
+      });
     };
 
     it("shows the generic save-failed notification and keeps phase active when finalize returns write-failed", () => {
@@ -835,9 +770,11 @@ describe("useSession hook", () => {
         ok: false,
         reason: "write-failed",
       });
-      const result = initHook();
-      result.startSession({ type: "open" });
-      const updated = completeAndStop();
+      const { result } = renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
+
+      runStopFlow(result);
 
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -847,7 +784,7 @@ describe("useSession hook", () => {
         })
       );
       // Phase stays active so the user can retry Stop after clearing storage.
-      expect(updated.status.phase).toBe("active");
+      expect(result.current.status.phase).toBe("active");
       // Every finalize failure reports to analytics — the auto-save cleanup
       // path reports unconditionally and asymmetry here was undercounting
       // user-Stop quota failures in GA.
@@ -868,9 +805,11 @@ describe("useSession hook", () => {
         ok: false,
         reason: "corrupt",
       });
-      const result = initHook();
-      result.startSession({ type: "open" });
-      const updated = completeAndStop();
+      const { result } = renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
+
+      runStopFlow(result);
 
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -891,7 +830,7 @@ describe("useSession hook", () => {
       // Phase stays active but the session id was added to finalizedIds so
       // a Stop retry doesn't re-show the notification — the user must clear
       // storage to recover.
-      expect(updated.status.phase).toBe("active");
+      expect(result.current.status.phase).toBe("active");
     });
 
     it("shows the corrupt-storage notification when finalize returns corrupt-prior-state (refused to overwrite)", () => {
@@ -899,9 +838,11 @@ describe("useSession hook", () => {
         ok: false,
         reason: "corrupt-prior-state",
       });
-      const result = initHook();
-      result.startSession({ type: "open" });
-      completeAndStop();
+      const { result } = renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
+
+      runStopFlow(result);
 
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -926,9 +867,11 @@ describe("useSession hook", () => {
         ok: false,
         reason: "serialize-failed",
       });
-      const result = initHook();
-      result.startSession({ type: "open" });
-      completeAndStop();
+      const { result } = renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
+
+      runStopFlow(result);
 
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -947,6 +890,10 @@ describe("useSession hook", () => {
     });
   });
 
+  // -----------------------------------------------------------------------
+  // last-save-failed breadcrumb on mount
+  // -----------------------------------------------------------------------
+
   describe("last-save-failed breadcrumb on mount", () => {
     beforeEach(() => {
       // Default: no prior sentinel, so the mount effect proceeds through the
@@ -960,7 +907,10 @@ describe("useSession hook", () => {
         reason: "write-failed",
         failedAt: "2025-01-01T00:00:00.000Z",
       });
-      initHook();
+
+      renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
 
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -974,7 +924,10 @@ describe("useSession hook", () => {
 
     it("does nothing when no breadcrumb is present", () => {
       mockReadBreadcrumb.mockReturnValueOnce(null);
-      initHook();
+
+      renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
 
       expect(mockNotificationsShow).not.toHaveBeenCalled();
       expect(mockClearBreadcrumb).not.toHaveBeenCalled();
@@ -996,21 +949,18 @@ describe("useSession hook", () => {
       // underlying storage write also failed — i.e. the breadcrumb remains.
       mockClearBreadcrumb.mockImplementation(() => undefined);
 
-      initHook();
+      const { rerender } = renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
       // Re-render multiple times: latch must keep the notification idempotent
       // even though the breadcrumb read keeps returning a value.
-      rerenderAndFlush();
-      rerenderAndFlush();
+      rerender();
+      rerender();
 
       const lastSaveFailedShows = mockNotificationsShow.mock.calls.filter(
         (call) => call[0]?.title === "errors.lastSaveFailed.title"
       );
       expect(lastSaveFailedShows).toHaveLength(1);
-
-      mockReadBreadcrumb.mockReset();
-      mockClearBreadcrumb.mockReset();
-      mockHasNotifShown.mockReset();
-      mockMarkNotifShown.mockReset();
     });
 
     it("suppresses the notification when the sentinel already matches the breadcrumb's failedAt (across-mount loop fix, issue #629)", () => {
@@ -1020,7 +970,9 @@ describe("useSession hook", () => {
       });
       mockHasNotifShown.mockReturnValueOnce(true);
 
-      initHook();
+      renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
 
       const lastSaveFailedShows = mockNotificationsShow.mock.calls.filter(
         (call) => call[0]?.title === "errors.lastSaveFailed.title"
@@ -1040,7 +992,9 @@ describe("useSession hook", () => {
       });
       mockHasNotifShown.mockReturnValueOnce(false);
 
-      initHook();
+      renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
 
       expect(mockClearBreadcrumb).toHaveBeenCalledOnce();
       expect(mockMarkNotifShown).toHaveBeenCalledWith(failedAt);
@@ -1060,11 +1014,17 @@ describe("useSession hook", () => {
         failedAt,
       });
 
-      initHook();
+      renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
 
       expect(mockHasNotifShown).toHaveBeenCalledWith(failedAt);
     });
   });
+
+  // -----------------------------------------------------------------------
+  // Flush effect — language-change isolation (M7)
+  // -----------------------------------------------------------------------
 
   describe("flush effect — language-change isolation (M7)", () => {
     it("does not re-finalize a completed session on a language change re-render", () => {
@@ -1075,22 +1035,30 @@ describe("useSession hook", () => {
       // language change would re-run the effect — pendingFinalizationRef is
       // cleared so it would no-op for the queue, but the test pins the
       // observable invariant: no extra finalize calls.
-      const result = initHook();
-      result.startSession({ type: "open" });
-      let updated = rerenderAndFlush();
+      const { result, rerender } = renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
+
+      act(() => {
+        result.current.startSession({ type: "open" });
+      });
       for (let i = 0; i < 3; i++) {
-        updated.handleAnswer({ correct: true, questionAdvanced: true });
-        updated = rerenderAndFlush();
+        act(() => {
+          result.current.handleAnswer({
+            correct: true,
+            questionAdvanced: true,
+          });
+        });
       }
-      updated.stopSession();
-      updated = rerenderAndFlush();
-      updated = rerenderAndFlush();
-      expect(updated.status.phase).toBe("summary");
+      act(() => {
+        result.current.stopSession();
+      });
+      expect(result.current.status.phase).toBe("summary");
       const finalizeCallsAfterStop = mockFinalizeSession.mock.calls.length;
 
       // Simulate a language-change re-render (additional rerenders).
-      rerenderAndFlush();
-      rerenderAndFlush();
+      rerender();
+      rerender();
 
       // No additional finalize calls — the dep-list fix means the flush
       // effect doesn't re-run on `t` identity changes, and the

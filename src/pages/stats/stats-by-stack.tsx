@@ -58,7 +58,7 @@ export const StatsByStack = () => {
 
   return (
     <>
-      <Title order={3}>{t("stats.byStack")}</Title>
+      <Title order={2}>{t("stats.byStack")}</Title>
       <Text c="dimmed" hiddenFrom="sm" size="xs">
         {t("common.moreColumnsOnWiderScreen")}
       </Text>

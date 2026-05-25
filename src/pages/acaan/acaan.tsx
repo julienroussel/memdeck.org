@@ -8,42 +8,25 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { JsonLd } from "../../components/json-ld";
+import { buildBreadcrumbSchema, JsonLd } from "../../components/json-ld";
 import { NumberCard } from "../../components/number-card";
 import { RevealButton } from "../../components/reveal-button";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
 import { TimerSettingsControl } from "../../components/timer-settings-control";
 import { TrainingHeader } from "../../components/training-header";
-import { CARD_HEIGHT, CARD_WIDTH, SITE_URL } from "../../constants";
+import { CARD_HEIGHT, CARD_WIDTH, ROUTES } from "../../constants";
+import { useCardImagePreload } from "../../hooks/use-card-image-preload";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useFormatCardName } from "../../hooks/use-format-card-name";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
-import { analytics } from "../../services/analytics";
 import { useAcaanGame } from "./use-acaan-game";
 import { useAcaanSettings } from "./use-acaan-settings";
 import { useCutDepthInput } from "./use-cut-depth-input";
 
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: `${SITE_URL}/`,
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "ACAAN",
-    },
-  ],
-};
+const breadcrumbSchema = buildBreadcrumbSchema("ACAAN", ROUTES.acaan);
 
 export const Acaan = () => {
   const { t } = useTranslation();
@@ -52,6 +35,7 @@ export const Acaan = () => {
     title: t("acaan.pageTitle"),
     description: t("acaan.pageDescription"),
   });
+  useCardImagePreload();
   const { stackKey, stackOrder, stackName } = useRequiredStack();
   const {
     status,
@@ -77,11 +61,6 @@ export const Acaan = () => {
   } = useAcaanGame(stackOrder, stackName, timerSettings, {
     onAnswer: handleAnswer,
   });
-
-  const handleRevealAnswer = useCallback(() => {
-    analytics.trackFeatureUsed("Reveal Answer - ACAAN");
-    revealAnswer();
-  }, [revealAnswer]);
 
   const {
     cutDepth,
@@ -188,9 +167,7 @@ export const Acaan = () => {
           summary={status.summary}
         />
       )}
-      {status.phase !== "summary" && (
-        <RevealButton onReveal={handleRevealAnswer} />
-      )}
+      {status.phase !== "summary" && <RevealButton onReveal={revealAnswer} />}
     </div>
   );
 };

@@ -127,6 +127,11 @@ vi.mock("../../components/reveal-button", () => ({
 }));
 vi.mock("../../components/json-ld", () => ({
   JsonLd: () => null,
+  buildBreadcrumbSchema: () => ({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [],
+  }),
 }));
 
 beforeEach(() => {

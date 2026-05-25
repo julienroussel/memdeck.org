@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
 import { useFormatCardName } from "../../hooks/use-format-card-name";
 import { useGameTimer } from "../../hooks/use-game-timer";
+import { analytics } from "../../services/analytics";
 import { eventBus } from "../../services/event-bus";
 import type { DistanceConvention, DistanceMode } from "../../types/distance";
 import type { GameScore } from "../../types/game";
@@ -15,7 +16,7 @@ import type {
   StackValue,
 } from "../../types/stacks";
 import type { TimerSettings } from "../../types/timer";
-import { wrongAnswerNotification } from "../flashcard/utils";
+import { buildWrongAnswerNotification } from "../flashcard/utils";
 import {
   type AdvancePayload,
   createInitialState,
@@ -172,14 +173,14 @@ export const useDistanceGame = (
         dispatch({ type: "CORRECT_ANSWER", payload });
         onAnswerRef.current?.({ correct: true, questionAdvanced: true });
       } else {
-        notifications.show(wrongAnswerNotification);
+        notifications.show(buildWrongAnswerNotification(t));
         dispatch({ type: "WRONG_ANSWER" });
         onAnswerRef.current?.({ correct: false, questionAdvanced: false });
       }
 
       eventBus.emit.DISTANCE_ANSWER({ correct, stackName });
     },
-    [stackName, generateNextRound]
+    [stackName, generateNextRound, t]
   );
 
   const revealAnswer = useCallback(() => {
@@ -198,6 +199,7 @@ export const useDistanceGame = (
 
     const payload = generateNextRound();
     dispatch({ type: "REVEAL_ANSWER", payload });
+    analytics.trackFeatureUsed("Reveal Answer - Distance");
     eventBus.emit.DISTANCE_ANSWER({ correct: false, stackName });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
   }, [stackName, generateNextRound, t, formatCardName]);

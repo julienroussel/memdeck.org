@@ -9,8 +9,31 @@ import {
   UPDATE_NOTIFIED_AT_LSK,
 } from "../constants";
 import { analytics } from "../services/analytics";
+import {
+  handleLocalDbWriteFailed,
+  reportLocalDbCorruption,
+} from "../utils/localstorage-telemetry";
 
 const UPDATE_INTERVAL_MS = 24 * 60 * 60 * 1000;
+
+const safeGetItem = (key: string): string | null => {
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    // Read failures (Safari ITP, private mode) are telemetry-only: surfacing
+    // the "write failed" toast on a read error would mislead the user.
+    reportLocalDbCorruption(key, error);
+    return null;
+  }
+};
+
+const safeSetItem = (key: string, value: string): void => {
+  try {
+    localStorage.setItem(key, value);
+  } catch (error) {
+    handleLocalDbWriteFailed(key, error);
+  }
+};
 
 /**
  * Silently auto-updates the service worker and shows a brief "Updated" toast
@@ -30,10 +53,19 @@ export const PwaUpdateNotifier = () => {
         if (intervalRef.current) {
           clearInterval(intervalRef.current);
         }
-        intervalRef.current = setInterval(
-          () => registration.update(),
-          UPDATE_INTERVAL_MS
-        );
+        intervalRef.current = setInterval(() => {
+          // `Promise.resolve` wraps so a non-Promise return (e.g. test mocks)
+          // doesn't throw on `.catch`. Production browsers always return a
+          // Promise per the ServiceWorkerRegistration spec.
+          Promise.resolve(registration.update()).catch((error: unknown) => {
+            const wrapped =
+              error instanceof Error
+                ? new Error(error.message, { cause: error })
+                : new Error("unknown", { cause: error });
+            wrapped.name = "PwaUpdateCheckFailed";
+            analytics.trackError(wrapped);
+          });
+        }, UPDATE_INTERVAL_MS);
       }
     },
   });
@@ -48,10 +80,10 @@ export const PwaUpdateNotifier = () => {
   );
 
   useEffect(() => {
-    const storedHash = localStorage.getItem(COMMIT_HASH_LSK);
+    const storedHash = safeGetItem(COMMIT_HASH_LSK);
 
     if (!storedHash) {
-      localStorage.setItem(COMMIT_HASH_LSK, __COMMIT_HASH__);
+      safeSetItem(COMMIT_HASH_LSK, __COMMIT_HASH__);
       return;
     }
 
@@ -59,9 +91,9 @@ export const PwaUpdateNotifier = () => {
       return;
     }
 
-    localStorage.setItem(COMMIT_HASH_LSK, __COMMIT_HASH__);
+    safeSetItem(COMMIT_HASH_LSK, __COMMIT_HASH__);
 
-    const lastNotified = localStorage.getItem(UPDATE_NOTIFIED_AT_LSK);
+    const lastNotified = safeGetItem(UPDATE_NOTIFIED_AT_LSK);
     if (lastNotified) {
       const elapsed = Date.now() - Number(lastNotified);
       if (elapsed < PWA_UPDATE_COOLDOWN_MS) {
@@ -69,7 +101,7 @@ export const PwaUpdateNotifier = () => {
       }
     }
 
-    localStorage.setItem(UPDATE_NOTIFIED_AT_LSK, String(Date.now()));
+    safeSetItem(UPDATE_NOTIFIED_AT_LSK, String(Date.now()));
     analytics.trackFeatureUsed("PWA Update Applied");
 
     notifications.show({

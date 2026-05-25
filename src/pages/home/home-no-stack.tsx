@@ -41,7 +41,7 @@ export const HomeNoStack = () => {
       </div>
 
       <div>
-        <Title order={3}>{t("home.featuresTitle")}</Title>
+        <Title order={2}>{t("home.featuresTitle")}</Title>
         <Space h="sm" />
         <SimpleGrid cols={{ base: 1, sm: 2 }}>
           {FEATURE_CARDS.map((feature) => (

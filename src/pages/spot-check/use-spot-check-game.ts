@@ -3,149 +3,23 @@ import { useCallback, useReducer, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
 import { useGameTimer } from "../../hooks/use-game-timer";
+import { analytics } from "../../services/analytics";
 import { eventBus } from "../../services/event-bus";
 import type { GameScore } from "../../types/game";
 import type { PlayingCard } from "../../types/playingcard";
 import type { AnswerOutcome } from "../../types/session";
 import type { SpotCheckMode } from "../../types/spot-check";
-import { isFullDeck, type StackLimits } from "../../types/stack-limits";
+import type { StackLimits } from "../../types/stack-limits";
 import type { Stack, StackValue } from "../../types/stacks";
 import type { TimerSettings } from "../../types/timer";
 import {
-  isSpotCheckAnswerCorrect,
-  moveCard,
-  type PuzzleState,
-  removeSingleCard,
-  swapTwoCards,
-} from "./utils";
-
-// --- State ---
-
-type GameState = {
-  successes: number;
-  fails: number;
-  puzzleState: PuzzleState;
-  timeRemaining: number;
-  timerDuration: number;
-};
-
-// --- Actions ---
-
-type AdvancePayload = {
-  newPuzzle: PuzzleState;
-};
-
-type GameAction =
-  | { type: "CORRECT_ANSWER"; payload: AdvancePayload }
-  | { type: "WRONG_ANSWER" }
-  | { type: "REVEAL_ANSWER"; payload: AdvancePayload }
-  | { type: "TIMEOUT"; payload: AdvancePayload }
-  | { type: "TICK" }
-  | { type: "RESET_TIMER"; payload: { duration: number } }
-  | {
-      type: "RESET_GAME";
-      payload: {
-        cards: readonly PlayingCard[];
-        timerDuration: number;
-        spotCheckMode: SpotCheckMode;
-      };
-    };
-
-// --- Reducer ---
-
-const gameReducer = (state: GameState, action: GameAction): GameState => {
-  switch (action.type) {
-    case "CORRECT_ANSWER":
-      return {
-        ...state,
-        successes: state.successes + 1,
-        puzzleState: action.payload.newPuzzle,
-        timeRemaining: state.timerDuration,
-      };
-    case "WRONG_ANSWER":
-      return {
-        ...state,
-        fails: state.fails + 1,
-      };
-    case "REVEAL_ANSWER":
-      return {
-        ...state,
-        fails: state.fails + 1,
-        puzzleState: action.payload.newPuzzle,
-        timeRemaining: state.timerDuration,
-      };
-    case "TIMEOUT":
-      return {
-        ...state,
-        fails: state.fails + 1,
-        puzzleState: action.payload.newPuzzle,
-        timeRemaining: state.timerDuration,
-      };
-    case "TICK":
-      return {
-        ...state,
-        timeRemaining: Math.max(0, state.timeRemaining - 1),
-      };
-    case "RESET_TIMER":
-      return {
-        ...state,
-        timeRemaining: action.payload.duration,
-        timerDuration: action.payload.duration,
-      };
-    case "RESET_GAME":
-      return createInitialState(
-        action.payload.cards,
-        action.payload.timerDuration,
-        action.payload.spotCheckMode
-      );
-    default: {
-      const _exhaustive: never = action;
-      throw new Error(`Unhandled action type: ${JSON.stringify(_exhaustive)}`);
-    }
-  }
-};
-
-// --- Helpers ---
-
-const getCardsForPuzzle = (
-  stackOrder: Stack,
-  limits: StackLimits
-): readonly PlayingCard[] => {
-  if (isFullDeck(limits)) {
-    return stackOrder;
-  }
-  return stackOrder.slice(limits.start - 1, limits.end);
-};
-
-const generatePuzzle = (
-  cards: readonly PlayingCard[],
-  mode: SpotCheckMode
-): PuzzleState => {
-  switch (mode) {
-    case "missing":
-      return { mode: "missing", puzzle: removeSingleCard(cards) };
-    case "swapped":
-      return { mode: "swapped", puzzle: swapTwoCards(cards) };
-    case "moved":
-      return { mode: "moved", puzzle: moveCard(cards) };
-    default: {
-      const _exhaustive: never = mode;
-      throw new Error(`Unknown spot check mode: ${_exhaustive}`);
-    }
-  }
-};
-
-const createInitialState = (
-  cards: readonly PlayingCard[],
-  timerDuration: number,
-  mode: SpotCheckMode
-): GameState => ({
-  successes: 0,
-  fails: 0,
-  puzzleState: generatePuzzle(cards, mode),
-  timeRemaining: timerDuration,
-  timerDuration,
-});
+  type AdvancePayload,
+  createInitialState,
+  gameReducer,
+  generatePuzzle,
+  getCardsForPuzzle,
+} from "./spot-check-game-reducer";
+import { isSpotCheckAnswerCorrect, type PuzzleState } from "./utils";
 
 // --- Hook ---
 
@@ -331,6 +205,7 @@ export const useSpotCheckGame = (
 
     const payload = generateNextRound();
     dispatch({ type: "REVEAL_ANSWER", payload });
+    analytics.trackFeatureUsed("Reveal Answer - Spot Check");
     eventBus.emit.SPOT_CHECK_ANSWER({ correct: false, stackName });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
   }, [stackName, generateNextRound, t]);

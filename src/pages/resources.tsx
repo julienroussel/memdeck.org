@@ -8,11 +8,12 @@ import {
   Text,
   ThemeIcon,
   Title,
+  VisuallyHidden,
 } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
 import { Trans, useTranslation } from "react-i18next";
-import { JsonLd } from "../components/json-ld";
-import { GITHUB_URL, SITE_URL } from "../constants";
+import { buildBreadcrumbSchema, JsonLd } from "../components/json-ld";
+import { GITHUB_URL, ROUTES } from "../constants";
 import { useDocumentMeta } from "../hooks/use-document-meta";
 import type en from "../i18n/locales/en.json";
 
@@ -85,7 +86,7 @@ const otherResources = [
   },
   {
     title: "Memorandum",
-    author: "Woody Arag\u00f3n",
+    author: "Woody Aragón",
     link: "https://www.vanishingincmagic.com/card-magic/memorandum/",
     descriptionKey: "resources.descriptions.memorandum",
   },
@@ -144,23 +145,7 @@ const itemListSchema = {
   })),
 };
 
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: `${SITE_URL}/`,
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Resources",
-    },
-  ],
-};
+const breadcrumbSchema = buildBreadcrumbSchema("Resources", ROUTES.resources);
 
 type ResourceCardProps = {
   resource: PrimaryResource;
@@ -171,7 +156,7 @@ const ResourceCard = ({ resource }: ResourceCardProps) => {
   return (
     <Card padding="lg" radius="md" shadow="sm" withBorder>
       <Group>
-        <Title order={3}>{resource.title}</Title>
+        <Title order={2}>{resource.title}</Title>
         <Badge color="blue" variant="light">
           {t(CATEGORY_LABELS[resource.category])}
         </Badge>
@@ -182,7 +167,13 @@ const ResourceCard = ({ resource }: ResourceCardProps) => {
       <Text c="dimmed" mb="md" size="sm">
         {t(resource.descriptionKey)}
       </Text>
-      <Anchor href={resource.link} rel="noopener" size="sm" target="_blank">
+      <Anchor
+        aria-label={`${t("resources.learnMoreAbout", { title: resource.title })} ${t("common.opensInNewTab")}`}
+        href={resource.link}
+        rel="noopener noreferrer"
+        size="sm"
+        target="_blank"
+      >
         {t("common.learnMore")}
       </Anchor>
     </Card>
@@ -197,8 +188,9 @@ const ResourceListItem = ({ resource }: ResourceListItemProps) => {
   const { t } = useTranslation();
   return (
     <List.Item>
-      <Anchor href={resource.link} rel="noopener" target="_blank">
+      <Anchor href={resource.link} rel="noopener noreferrer" target="_blank">
         {resource.title}
+        <VisuallyHidden> {t("common.opensInNewTab")}</VisuallyHidden>
       </Anchor>{" "}
       (
       <Text c="dimmed" fs="italic" size="sm" span>
@@ -229,7 +221,7 @@ export const Resources = () => {
             githubLink: (
               <Anchor
                 href={GITHUB_URL}
-                rel="noopener"
+                rel="noopener noreferrer"
                 target="_blank"
                 underline="never"
               />

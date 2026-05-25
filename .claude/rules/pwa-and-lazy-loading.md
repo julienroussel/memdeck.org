@@ -50,3 +50,7 @@ Updates are silent with a subtle toast (#513). The previous "prompt user to upda
 ## New lazy-loaded heavy modules
 
 Wrap in `lazyWithReload`, give them a `<Suspense>` boundary with `PageLoader` (or an inline fallback), and verify the chunk appears under `dist/assets/`. There is no per-route bundle-size budget — Lighthouse CI is the only enforced check, so plan ahead before lazy-loading anything heavy.
+
+## `useCardImagePreload` belongs on every training route entry
+
+The 52 card SVGs are idle-time prefetched by `useCardImagePreload` (`src/hooks/use-card-image-preload.ts`). PWA shortcuts launch directly into training routes (Flashcard, Spot Check, ACAAN, Distance, Toolbox) and skip `Home`, so the prefetch must be invoked from each training page entry — not only from `Home`. Pattern: call `useCardImagePreload()` near the top of the component, right after `useDocumentMeta(...)`. The hook is idempotent and idle-scheduled, so additional call sites are safe. Verified across all 5 training pages today; preserve this when adding a new training mode.

@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { LANGUAGE_LSK, LOCALE_RELOAD_SSK } from "../constants";
+import { analytics } from "../services/analytics";
 import { includes } from "../utils/includes";
 import { isStaleChunkError } from "../utils/stale-chunk";
 
@@ -135,7 +136,16 @@ function clearReloadGuard(): void {
   try {
     sessionStorage.removeItem(LOCALE_RELOAD_SSK);
   } catch {
-    // sessionStorage unavailable
+    // sessionStorage unavailable — report once so we can observe the rate of
+    // this fallback in GA. Wrapped in its own try/catch because telemetry
+    // MUST NOT break the recovery path.
+    try {
+      const wrapped = new Error("sessionStorage.removeItem failed");
+      wrapped.name = "ReloadGuardClearFailed";
+      analytics.trackError(wrapped);
+    } catch {
+      // never let telemetry break the recovery
+    }
   }
 }
 

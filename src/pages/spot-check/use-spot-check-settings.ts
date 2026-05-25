@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import { SPOT_CHECK_MODE_LSK } from "../../constants";
-import { useSpotCheckTimer } from "../../hooks/use-spot-check-timer";
+import { SPOT_CHECK_MODE_LSK, SPOT_CHECK_TIMER_LSK } from "../../constants";
+import { useTimerSettings } from "../../hooks/use-timer-settings";
 import { analytics } from "../../services/analytics";
 import { eventBus } from "../../services/event-bus";
 import { isSpotCheckMode, type SpotCheckMode } from "../../types/spot-check";
@@ -31,7 +31,7 @@ export const useSpotCheckSettings = (): UseSpotCheckSettingsResult => {
   );
 
   const { timerSettings, setTimerEnabled, setTimerDuration } =
-    useSpotCheckTimer();
+    useTimerSettings(SPOT_CHECK_TIMER_LSK);
 
   const handleModeChange = useCallback(
     (value: SpotCheckMode) => {

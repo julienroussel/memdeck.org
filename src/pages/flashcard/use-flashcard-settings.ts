@@ -1,6 +1,10 @@
 import { useCallback } from "react";
-import { FLASHCARD_OPTION_LSK, NEIGHBOR_DIRECTION_LSK } from "../../constants";
-import { useFlashcardTimer } from "../../hooks/use-flashcard-timer";
+import {
+  FLASHCARD_OPTION_LSK,
+  FLASHCARD_TIMER_LSK,
+  NEIGHBOR_DIRECTION_LSK,
+} from "../../constants";
+import { useTimerSettings } from "../../hooks/use-timer-settings";
 import { analytics } from "../../services/analytics";
 import { eventBus } from "../../services/event-bus";
 import {
@@ -48,7 +52,7 @@ export const useFlashcardSettings = (): UseFlashcardSettingsResult => {
     );
 
   const { timerSettings, setTimerEnabled, setTimerDuration } =
-    useFlashcardTimer();
+    useTimerSettings(FLASHCARD_TIMER_LSK);
 
   const handleModeChange = useCallback(
     (value: FlashcardMode) => {

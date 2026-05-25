@@ -16,7 +16,10 @@
     "revealAriaLabel": "Reveal answer",
     "moreColumnsOnWiderScreen": "Additional details are available on wider screens.",
     "noStackSelected": "Pick a stack on the homepage to get started.",
-    "goToHomepage": "Go to homepage"
+    "goToHomepage": "Go to homepage",
+    "opensInNewTab": "(opens in new tab)",
+    "wrongAnswerTitle": "Wrong answer",
+    "wrongAnswerMessage": "Try again!"
   },
   "cards": {
     "ranks": {
@@ -303,6 +306,10 @@
     "correctAriaLabel": "Correct answers: {{count}}",
     "incorrectAriaLabel": "Incorrect answers: {{count}}"
   },
+  "cardSpread": {
+    "ariaLabel": "Card spread",
+    "selectPositionAriaLabel": "Select position {{position}}"
+  },
   "numberCard": {
     "ariaLabel": "Position {{number}}"
   },
@@ -440,7 +447,8 @@
       "sleightlyOutOfOrder": "Advanced techniques and effects using a memorized stack with sleight-of-hand integrations.",
       "particleSystem": "A modern memorized deck designed for ease of memorization through patterns and groupings, with a variety of powerful routines.",
       "conjuringArchive": "Searchable magic book contents — the Stacked Deck Stuff section catalogues references to memorized deck work."
-    }
+    },
+    "learnMoreAbout": "Learn more about {{title}}"
   },
   "share": {
     "label": "Share MemDeck",

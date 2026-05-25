@@ -91,7 +91,6 @@ export const DistancePromptDisplay = (props: DistancePromptDisplayProps) => {
           w={CARD_WIDTH}
         />
         <div
-          aria-hidden="true"
           data-testid="distance-offset-badge"
           style={{
             display: "flex",

@@ -16,7 +16,10 @@
     "revealAriaLabel": "Révéler la réponse",
     "moreColumnsOnWiderScreen": "Des détails supplémentaires sont disponibles sur un écran plus large.",
     "noStackSelected": "Choisissez un stack sur la page d'accueil pour commencer.",
-    "goToHomepage": "Aller à l'accueil"
+    "goToHomepage": "Aller à l'accueil",
+    "opensInNewTab": "(s'ouvre dans un nouvel onglet)",
+    "wrongAnswerTitle": "Mauvaise réponse",
+    "wrongAnswerMessage": "Réessayez !"
   },
   "cards": {
     "ranks": {
@@ -271,6 +274,10 @@
     "correctAriaLabel": "Réponses correctes : {{count}}",
     "incorrectAriaLabel": "Réponses incorrectes : {{count}}"
   },
+  "cardSpread": {
+    "ariaLabel": "Éventail de cartes",
+    "selectPositionAriaLabel": "Sélectionner la position {{position}}"
+  },
   "numberCard": {
     "ariaLabel": "Position {{number}}"
   },
@@ -408,7 +415,8 @@
       "sleightlyOutOfOrder": "Techniques avancées et effets utilisant un stack mémorisé avec intégration de manipulation.",
       "particleSystem": "Un jeu mémorisé moderne conçu pour faciliter la mémorisation grâce à des schémas et des groupements, avec une variété de routines puissantes.",
       "conjuringArchive": "Contenus consultables de livres de magie — la section « Stacked Deck Stuff » répertorie les références sur le travail avec les jeux mémorisés."
-    }
+    },
+    "learnMoreAbout": "En savoir plus sur {{title}}"
   },
   "share": {
     "label": "Partager MemDeck",

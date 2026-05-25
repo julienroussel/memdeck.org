@@ -28,6 +28,7 @@ export const NavLinks = memo(function NavLinks({
     <>
       <NavLink
         active={location.pathname === ROUTES.home}
+        aria-current={location.pathname === ROUTES.home ? "page" : undefined}
         component={Link}
         label={t("nav.home")}
         leftSection={<IconHome2 size={16} stroke={1.5} />}
@@ -36,6 +37,7 @@ export const NavLinks = memo(function NavLinks({
       />
       <NavLink
         active={location.pathname === ROUTES.guide}
+        aria-current={location.pathname === ROUTES.guide ? "page" : undefined}
         component={Link}
         label={t("nav.guide")}
         leftSection={<IconBook2 size={16} stroke={1.5} />}
@@ -44,6 +46,9 @@ export const NavLinks = memo(function NavLinks({
       />
       <NavLink
         active={location.pathname === ROUTES.resources}
+        aria-current={
+          location.pathname === ROUTES.resources ? "page" : undefined
+        }
         component={Link}
         label={t("nav.resources")}
         leftSection={<IconExternalLink size={16} stroke={1.5} />}
@@ -52,6 +57,7 @@ export const NavLinks = memo(function NavLinks({
       />
       <NavLink
         active={location.pathname === ROUTES.stats}
+        aria-current={location.pathname === ROUTES.stats ? "page" : undefined}
         component={Link}
         label={t("nav.stats")}
         leftSection={<IconChartBar size={16} stroke={1.5} />}
@@ -67,6 +73,9 @@ export const NavLinks = memo(function NavLinks({
       >
         <NavLink
           active={location.pathname === ROUTES.flashcard}
+          aria-current={
+            location.pathname === ROUTES.flashcard ? "page" : undefined
+          }
           component={Link}
           label={t("nav.flashcard")}
           leftSection={<IconPlayCardStar size={16} stroke={1.5} />}
@@ -75,6 +84,9 @@ export const NavLinks = memo(function NavLinks({
         />
         <NavLink
           active={location.pathname === ROUTES.spotCheck}
+          aria-current={
+            location.pathname === ROUTES.spotCheck ? "page" : undefined
+          }
           component={Link}
           label={t("nav.spotCheck")}
           leftSection={<IconEyeSearch size={16} stroke={1.5} />}
@@ -83,6 +95,7 @@ export const NavLinks = memo(function NavLinks({
         />
         <NavLink
           active={location.pathname === ROUTES.acaan}
+          aria-current={location.pathname === ROUTES.acaan ? "page" : undefined}
           component={Link}
           label={t("nav.acaan")}
           leftSection={<IconNumber size={16} stroke={1.5} />}
@@ -91,6 +104,9 @@ export const NavLinks = memo(function NavLinks({
         />
         <NavLink
           active={location.pathname === ROUTES.distance}
+          aria-current={
+            location.pathname === ROUTES.distance ? "page" : undefined
+          }
           component={Link}
           label={t("nav.distance")}
           leftSection={<IconArrowsLeftRight size={16} stroke={1.5} />}
@@ -99,6 +115,9 @@ export const NavLinks = memo(function NavLinks({
         />
         <NavLink
           active={location.pathname === ROUTES.toolbox}
+          aria-current={
+            location.pathname === ROUTES.toolbox ? "page" : undefined
+          }
           component={Link}
           label={t("nav.toolbox")}
           leftSection={<IconTools size={16} stroke={1.5} />}
@@ -109,6 +128,7 @@ export const NavLinks = memo(function NavLinks({
 
       <NavLink
         active={location.pathname === ROUTES.about}
+        aria-current={location.pathname === ROUTES.about ? "page" : undefined}
         component={Link}
         label={t("nav.about")}
         leftSection={

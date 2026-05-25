@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { useSelectedStack } from "../../hooks/use-selected-stack";
+import type { StackKey } from "../../types/stacks";
 import { cardItems } from "../../types/typeguards";
 import { SectionHeading } from "./section-heading";
 
@@ -16,7 +17,7 @@ const STACK_ITEMS = [
   { key: "elephant", i18nKey: "guide.gettingStarted.stacks.elephant" },
   { key: "infinity", i18nKey: "guide.gettingStarted.stacks.infinity" },
   { key: "intuitiva", i18nKey: "guide.gettingStarted.stacks.intuitiva" },
-] as const;
+] as const satisfies readonly { key: StackKey; i18nKey: string }[];
 
 export const GettingStarted = () => {
   const { t } = useTranslation();
