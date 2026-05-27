@@ -40,7 +40,7 @@
     "prepare": "lefthook install"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.15",
+    "@biomejs/biome": "2.4.16",
     "@lhci/cli": "0.15.1",
     "@playwright/test": "1.60.0",
     "@testing-library/jest-dom": "6.9.1",
@@ -68,11 +68,11 @@
     "workbox-window": "7.4.1"
   },
   "dependencies": {
-    "@mantine/core": "9.2.1",
-    "@mantine/hooks": "9.2.1",
-    "@mantine/notifications": "9.2.1",
+    "@mantine/core": "9.2.2",
+    "@mantine/hooks": "9.2.2",
+    "@mantine/notifications": "9.2.2",
     "@tabler/icons-react": "3.44.0",
-    "i18next": "26.2.0",
+    "i18next": "26.3.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-error-boundary": "6.1.2",
