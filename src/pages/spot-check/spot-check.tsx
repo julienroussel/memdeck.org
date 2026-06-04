@@ -11,7 +11,15 @@ import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import { useStackLimits } from "../../hooks/use-stack-limits";
-import type { SpotCheckI18nKey, SpotCheckMode } from "../../types/spot-check";
+import {
+  tryHandler,
+  useSuggestionDeepLink,
+} from "../../hooks/use-suggestion-deep-link";
+import {
+  isSpotCheckMode,
+  type SpotCheckI18nKey,
+  type SpotCheckMode,
+} from "../../types/spot-check";
 import { cardItems } from "../../types/typeguards";
 import { SpotCheckSettingsContent } from "./spot-check-settings-content";
 import { useSpotCheckGame } from "./use-spot-check-game";
@@ -45,6 +53,11 @@ export const SpotCheck = () => {
     handleModeChange,
     handleTimerEnabledChange,
   } = useSpotCheckSettings();
+
+  useSuggestionDeepLink({
+    tryHandlers: [tryHandler(isSpotCheckMode, handleModeChange)],
+    onTimed: () => handleTimerEnabledChange(true),
+  });
 
   const { limits, rangeSize } = useStackLimits(stackKey);
 

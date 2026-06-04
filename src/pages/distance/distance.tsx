@@ -12,6 +12,11 @@ import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import { useStackLimits } from "../../hooks/use-stack-limits";
+import {
+  tryHandler,
+  useSuggestionDeepLink,
+} from "../../hooks/use-suggestion-deep-link";
+import { isDistanceConvention, isDistanceMode } from "../../types/distance";
 import { DistanceActiveRound } from "./distance-active-round";
 import { DistanceRangeTooSmallAlert } from "./distance-range-too-small-alert";
 import { DistanceSettingsContent } from "./distance-settings-content";
@@ -45,6 +50,14 @@ export const Distance = () => {
     handleConventionChange,
     handleTimerEnabledChange,
   } = useDistanceSettings();
+
+  useSuggestionDeepLink({
+    tryHandlers: [
+      tryHandler(isDistanceMode, handleModeChange),
+      tryHandler(isDistanceConvention, handleConventionChange),
+    ],
+    onTimed: () => handleTimerEnabledChange(true),
+  });
 
   const { limits, rangeSize } = useStackLimits(stackKey);
 

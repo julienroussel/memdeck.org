@@ -22,6 +22,7 @@ import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useFormatCardName } from "../../hooks/use-format-card-name";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
+import { useSuggestionDeepLink } from "../../hooks/use-suggestion-deep-link";
 import { useAcaanGame } from "./use-acaan-game";
 import { useAcaanSettings } from "./use-acaan-settings";
 import { useCutDepthInput } from "./use-cut-depth-input";
@@ -39,6 +40,10 @@ export const Acaan = () => {
   const { stackKey, stackOrder, stackName } = useRequiredStack();
   const { timerSettings, setTimerDuration, handleTimerEnabledChange } =
     useAcaanSettings();
+
+  useSuggestionDeepLink({
+    onTimed: () => handleTimerEnabledChange(true),
+  });
 
   const {
     status,

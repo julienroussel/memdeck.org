@@ -5,6 +5,9 @@ import { test } from "./fixtures/test-setup";
 const NEW_CHALLENGE_PATTERN = /new challenge/i;
 const NUMBERONLY_DEEP_LINK = /\/flashcard\/\?try=numberonly$/;
 const NEIGHBOR_DEEP_LINK = /\/flashcard\/\?try=neighbor$/;
+// The page strips the deep-link param on mount, so the landed URL is bare.
+const STRIPPED_FLASHCARD_URL = /\/flashcard\/$/;
+const STRIPPED_ACAAN_URL = /\/acaan\/$/;
 
 type Seed = {
   sessions: Record<string, unknown>[];
@@ -107,16 +110,24 @@ test.describe("Feature Discovery — Next Challenge card", () => {
     await expect(eyebrow).toHaveCount(0);
   });
 
-  test("Try it navigates to the deep-linked route", async ({ page }) => {
+  test("Try it lands in the suggested variant and strips the deep-link param", async ({
+    page,
+  }) => {
     await seedAndOpenHome(page, ALL_WHOLE_MODES_SEED);
 
     await expect(page.getByText(NEW_CHALLENGE_PATTERN)).toBeVisible();
-    await page.getByRole("link", { name: "Try it" }).click();
+    // The card's link carries the deep-link param...
+    const tryLink = page.getByRole("link", { name: "Try it" });
+    await expect(tryLink).toHaveAttribute("href", NUMBERONLY_DEEP_LINK);
+    await tryLink.click();
 
-    // The flashcard page does not consume `?try=` yet — accepting lands in the
-    // default mode. #696 will honor the param; this assertion should then also
-    // verify the suggested variant is preselected.
-    await expect(page).toHaveURL(NUMBERONLY_DEEP_LINK);
+    // ...but the flashcard page consumes `?try=numberonly` on mount: it applies
+    // the mode through the canonical setter (persisting it) and strips the param.
+    await expect(page).toHaveURL(STRIPPED_FLASHCARD_URL);
+    const persistedMode = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-flashcard-option")
+    );
+    expect(persistedMode).toBe(JSON.stringify("numberonly"));
   });
 
   test("accepting a suggestion retires it across a reload", async ({
@@ -128,7 +139,7 @@ test.describe("Feature Discovery — Next Challenge card", () => {
     const tryLink = page.getByRole("link", { name: "Try it" });
     await expect(tryLink).toHaveAttribute("href", NUMBERONLY_DEEP_LINK);
     await tryLink.click();
-    await expect(page).toHaveURL(NUMBERONLY_DEEP_LINK);
+    await expect(page).toHaveURL(STRIPPED_FLASHCARD_URL);
 
     // Return home with a full navigation — page.goto reloads the document and
     // re-hydrates from localStorage. If the accept write to
@@ -142,5 +153,24 @@ test.describe("Feature Discovery — Next Challenge card", () => {
       "href",
       NEIGHBOR_DEEP_LINK
     );
+  });
+
+  test("a ?timed=1 deep link enables the timer and strips the param", async ({
+    page,
+  }) => {
+    // No suggestion emits `?timed=` until #697, but the mode pages consume it
+    // now (ACAAN honors only `timed`). Hit the deep link directly to prove the
+    // wiring: the page enables its timer via the canonical setter (persisting
+    // it) and strips the param.
+    await page.addInitScript(() => {
+      localStorage.setItem("memdeck-app-stack", JSON.stringify("mnemonica"));
+    });
+    await page.goto("/acaan/?timed=1");
+
+    await expect(page).toHaveURL(STRIPPED_ACAAN_URL);
+    const persistedTimer = await page.evaluate(() =>
+      localStorage.getItem("memdeck-app-acaan-trainer-timer")
+    );
+    expect(persistedTimer).toContain('"enabled":true');
   });
 });
