@@ -61,11 +61,16 @@ const TIMED_ENABLED_VALUE = "1";
  * first — the same flicker `use-flashcard-game.ts` avoids with its synchronous
  * in-render reset. The prerender runs the real app in Playwright (not React
  * server rendering), so `useLayoutEffect` raises no SSR warning.
+ *
+ * @returns Whether a deep-link is still pending — `true` while its params are
+ * on the URL, before the layout effect strips them. Callers gate their session
+ * auto-start on this so the first (single-shot) auto-start captures the
+ * deep-linked config, not the page default (#704).
  */
 export const useSuggestionDeepLink = ({
   tryHandlers,
   onTimed,
-}: UseSuggestionDeepLinkOptions): void => {
+}: UseSuggestionDeepLinkOptions): boolean => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -107,4 +112,13 @@ export const useSuggestionDeepLink = ({
     // pathname is safe.
     navigate(pathname, { replace: true });
   }, [searchParams, navigate, pathname]);
+
+  // A deep-link is still "pending" while its params are on the URL — the layout
+  // effect above strips them once applied. Callers gate their session auto-start
+  // on this so the first (single-shot) auto-start captures the deep-linked
+  // config, not the page default. (#704)
+  return (
+    searchParams.get(TRY_PARAM) !== null ||
+    searchParams.get(TIMED_PARAM) !== null
+  );
 };

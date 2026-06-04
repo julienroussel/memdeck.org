@@ -41,7 +41,7 @@ export const Acaan = () => {
   const { timerSettings, setTimerDuration, handleTimerEnabledChange } =
     useAcaanSettings();
 
-  useSuggestionDeepLink({
+  const deepLinkPending = useSuggestionDeepLink({
     onTimed: () => handleTimerEnabledChange(true),
   });
 
@@ -57,7 +57,7 @@ export const Acaan = () => {
   } = useSession({
     mode: "acaan",
     stackKey,
-    autoStart: true,
+    autoStart: !deepLinkPending,
     timed: timerSettings.enabled,
   });
 
