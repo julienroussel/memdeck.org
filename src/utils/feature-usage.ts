@@ -12,7 +12,9 @@ import type { SpotCheckMode } from "../types/spot-check";
  * Derive which training modes and sub-variants a user has tried from their
  * completed-session history. Pure; scans the history once. Optional per-mode
  * fields are guarded against `undefined` on old records (pre-#694 and any
- * record persisted before a sub-variant existed).
+ * record persisted before a sub-variant existed). `timedModes` flags a mode
+ * once it has a session with `timed === true`; `undefined`/`false` count as
+ * not-timed, so pre-#694 records never falsely mark a mode timed (#697).
  */
 export const deriveFeatureUsage = (history: SessionRecord[]): UsageFlags => {
   // Explicit `Record<…>` annotations (not `satisfies`) so the fields widen to
@@ -44,6 +46,12 @@ export const deriveFeatureUsage = (history: SessionRecord[]): UsageFlags => {
     cyclic: false,
     signed: false,
   };
+  const timedModes: Record<TrainingMode, boolean> = {
+    flashcard: false,
+    acaan: false,
+    spotcheck: false,
+    distance: false,
+  };
   const counts: Record<TrainingMode, number> = {
     flashcard: 0,
     acaan: 0,
@@ -53,6 +61,9 @@ export const deriveFeatureUsage = (history: SessionRecord[]): UsageFlags => {
 
   for (const record of history) {
     modes[record.mode] = true;
+    if (record.timed === true) {
+      timedModes[record.mode] = true;
+    }
     counts[record.mode] += 1;
     switch (record.mode) {
       case "flashcard":
@@ -96,6 +107,7 @@ export const deriveFeatureUsage = (history: SessionRecord[]): UsageFlags => {
     spotCheckModes,
     distanceModes,
     distanceConventions,
+    timedModes,
     mostUsedMode,
   };
 };

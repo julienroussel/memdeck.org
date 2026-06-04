@@ -219,10 +219,10 @@ test.describe("Feature Discovery — Next Challenge card", () => {
   test("a ?timed=1 deep link enables the timer and strips the param", async ({
     page,
   }) => {
-    // No suggestion emits `?timed=` until #697, but the mode pages consume it
-    // now (ACAAN honors only `timed`). Hit the deep link directly to prove the
-    // wiring: the page enables its timer via the canonical setter (persisting
-    // it) and strips the param.
+    // A timed suggestion now emits `?timed=` (#697); the mode pages consume it
+    // (ACAAN honors only `timed`). Hit the deep link directly to prove the
+    // wiring in isolation: the page enables its timer via the canonical setter
+    // (persisting it) and strips the param.
     await page.addInitScript(() => {
       localStorage.setItem("memdeck-app-stack", JSON.stringify("mnemonica"));
     });

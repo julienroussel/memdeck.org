@@ -12,7 +12,11 @@
     "spotCheckSwappedTitle": "Dos cartas intercambian posiciones — ¿detectas el cambio?",
     "spotCheckMovedTitle": "Una carta se desliza a un nuevo lugar — encuéntrala.",
     "distanceApplyTitle": "Una carta y una diferencia: nombra la carta de destino.",
-    "distanceSignedTitle": "Practica las diferencias con signo, hacia adelante y atrás."
+    "distanceSignedTitle": "Practica las diferencias con signo, hacia adelante y atrás.",
+    "flashcardTimedTitle": "Ya conoces las cartas — ahora vence al reloj.",
+    "spotCheckTimedTitle": "Ya detectas la carta fuera de lugar — ahora vence al reloj.",
+    "distanceTimedTitle": "Ya dominas las diferencias — ahora vence al reloj.",
+    "acaanTimedTitle": "Ya haces el ACAAN — ahora vence al reloj."
   },
   "common": {
     "comingSoon": "Próximamente...",
@@ -527,7 +531,7 @@
       "free": "Gratis para siempre — sin suscripción."
     },
     "tips": {
-      "discovery": "Tras unas sesiones, la página de inicio muestra una tarjeta «Nuevo reto» — un modo o variante que aún no has probado, a partir de tu propio historial de entrenamiento.",
+      "discovery": "Tras unas sesiones, la página de inicio muestra una tarjeta «Nuevo reto» — un modo, variante o reto contrarreloj que aún no has probado, a partir de tu propio historial de entrenamiento.",
       "title": "Consejos",
       "dataLocal": "Todos tus datos permanecen en tu navegador — nada se envía a un servidor.",
       "darkMode": "Alterna entre modo oscuro y claro usando el icono en la cabecera.",

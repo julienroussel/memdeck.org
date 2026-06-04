@@ -2,6 +2,7 @@ import {
   IconArrowsRightLeft,
   IconCards,
   IconEyeSearch,
+  IconStopwatch,
   IconTarget,
 } from "@tabler/icons-react";
 import { ROUTES } from "../constants";
@@ -11,7 +12,7 @@ import type { FeatureSuggestion } from "../types/discovery";
  * Ordered catalog of discoverable features. Whole modes (priority 1) outrank
  * sub-variants (priority 2); within a priority, earlier entries win ties. The
  * hook applies a per-user boost so variants of the most-used mode surface first.
- * Mode + variant items only; "try a timed session" items arrive in #697.
+ * Timed-session items (priority 3) sit below mode + variant items (#697).
  */
 export const SUGGESTION_CATALOG: readonly FeatureSuggestion[] = [
   // Untried whole modes — no deepLink, the card just navigates to the mode.
@@ -111,6 +112,52 @@ export const SUGGESTION_CATALOG: readonly FeatureSuggestion[] = [
     deepLink: { param: "try", value: "signed" },
     icon: IconArrowsRightLeft,
     i18n: { titleKey: "discovery.distanceSignedTitle" },
+  },
+  // "Try a timed session" — applicable once a mode has been drilled untimed,
+  // self-resolving when the user completes a real timed session (#697).
+  {
+    id: "flashcard-timed",
+    mode: "flashcard",
+    isUsed: (u) => u.timedModes.flashcard,
+    isApplicable: (u) => u.modes.flashcard && !u.timedModes.flashcard,
+    priority: 3,
+    route: ROUTES.flashcard,
+    deepLink: { param: "timed", value: "1" },
+    icon: IconStopwatch,
+    i18n: { titleKey: "discovery.flashcardTimedTitle" },
+  },
+  {
+    id: "spotcheck-timed",
+    mode: "spotcheck",
+    isUsed: (u) => u.timedModes.spotcheck,
+    isApplicable: (u) => u.modes.spotcheck && !u.timedModes.spotcheck,
+    priority: 3,
+    route: ROUTES.spotCheck,
+    deepLink: { param: "timed", value: "1" },
+    icon: IconStopwatch,
+    i18n: { titleKey: "discovery.spotCheckTimedTitle" },
+  },
+  {
+    id: "distance-timed",
+    mode: "distance",
+    isUsed: (u) => u.timedModes.distance,
+    isApplicable: (u) => u.modes.distance && !u.timedModes.distance,
+    priority: 3,
+    route: ROUTES.distance,
+    deepLink: { param: "timed", value: "1" },
+    icon: IconStopwatch,
+    i18n: { titleKey: "discovery.distanceTimedTitle" },
+  },
+  {
+    id: "acaan-timed",
+    mode: "acaan",
+    isUsed: (u) => u.timedModes.acaan,
+    isApplicable: (u) => u.modes.acaan && !u.timedModes.acaan,
+    priority: 3,
+    route: ROUTES.acaan,
+    deepLink: { param: "timed", value: "1" },
+    icon: IconStopwatch,
+    i18n: { titleKey: "discovery.acaanTimedTitle" },
   },
 ];
 

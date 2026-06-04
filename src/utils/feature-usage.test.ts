@@ -24,34 +24,44 @@ const base = (id: string): BaseFields => ({
 
 const flashcard = (
   id: string,
-  flashcardMode?: FlashcardMode
+  flashcardMode?: FlashcardMode,
+  timed?: boolean
 ): SessionRecord => ({
   ...base(id),
   mode: "flashcard",
   flashcardMode,
+  timed,
 });
 
 const spotcheck = (
   id: string,
-  spotCheckMode?: SpotCheckMode
+  spotCheckMode?: SpotCheckMode,
+  timed?: boolean
 ): SessionRecord => ({
   ...base(id),
   mode: "spotcheck",
   spotCheckMode,
+  timed,
 });
 
 const distance = (
   id: string,
   distanceMode?: DistanceMode,
-  distanceConvention?: DistanceConvention
+  distanceConvention?: DistanceConvention,
+  timed?: boolean
 ): SessionRecord => ({
   ...base(id),
   mode: "distance",
   distanceMode,
   distanceConvention,
+  timed,
 });
 
-const acaan = (id: string): SessionRecord => ({ ...base(id), mode: "acaan" });
+const acaan = (id: string, timed?: boolean): SessionRecord => ({
+  ...base(id),
+  mode: "acaan",
+  timed,
+});
 
 describe("deriveFeatureUsage", () => {
   it("returns all-false flags and null mostUsedMode for empty history", () => {
@@ -75,6 +85,9 @@ describe("deriveFeatureUsage", () => {
     expect(
       Object.values(usage.distanceConventions).every((v) => v === false)
     ).toBe(true);
+    expect(Object.values(usage.timedModes).every((v) => v === false)).toBe(
+      true
+    );
     expect(usage.mostUsedMode).toBeNull();
   });
 
@@ -173,5 +186,43 @@ describe("deriveFeatureUsage", () => {
     ]);
 
     expect(usage.mostUsedMode).toBe("flashcard");
+  });
+
+  it("flags timedModes for a mode completed with the timer on", () => {
+    const usage = deriveFeatureUsage([flashcard("1", "numberonly", true)]);
+
+    expect(usage.timedModes.flashcard).toBe(true);
+    // A timed flashcard session says nothing about the other modes.
+    expect(usage.timedModes.spotcheck).toBe(false);
+    expect(usage.timedModes.distance).toBe(false);
+    expect(usage.timedModes.acaan).toBe(false);
+  });
+
+  it("leaves timedModes false for a mode drilled only untimed", () => {
+    const usage = deriveFeatureUsage([flashcard("1", "numberonly", false)]);
+
+    expect(usage.modes.flashcard).toBe(true);
+    expect(usage.timedModes.flashcard).toBe(false);
+  });
+
+  it("treats a missing timed flag on old records as not timed", () => {
+    // Pre-#694 records have no `timed` field (undefined) — they must never
+    // count as a timed session, or the timed suggestion would wrongly retire.
+    const usage = deriveFeatureUsage([flashcard("1", "numberonly")]);
+
+    expect(usage.timedModes.flashcard).toBe(false);
+  });
+
+  it("flags timedModes independently per mode", () => {
+    const usage = deriveFeatureUsage([
+      spotcheck("1", "missing", true),
+      distance("2", "compute", "cyclic", false),
+      acaan("3", true),
+    ]);
+
+    expect(usage.timedModes.spotcheck).toBe(true);
+    expect(usage.timedModes.distance).toBe(false);
+    expect(usage.timedModes.acaan).toBe(true);
+    expect(usage.timedModes.flashcard).toBe(false);
   });
 });

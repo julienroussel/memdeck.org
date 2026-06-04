@@ -12,7 +12,11 @@
     "spotCheckSwappedTitle": "Due carte si scambiano di posto — sai cogliere lo scambio?",
     "spotCheckMovedTitle": "Una carta scivola in un nuovo punto — trovala.",
     "distanceApplyTitle": "Una carta e uno scarto: nomina la carta d'arrivo.",
-    "distanceSignedTitle": "Allena gli scarti con segno, in avanti e indietro."
+    "distanceSignedTitle": "Allena gli scarti con segno, in avanti e indietro.",
+    "flashcardTimedTitle": "Conosci le carte — ora corri contro il tempo.",
+    "spotCheckTimedTitle": "Scovi la carta fuori posto — ora corri contro il tempo.",
+    "distanceTimedTitle": "Padroneggi gli scarti — ora corri contro il tempo.",
+    "acaanTimedTitle": "Sai fare l'ACAAN — ora corri contro il tempo."
   },
   "common": {
     "comingSoon": "Prossimamente...",
@@ -527,7 +531,7 @@
       "free": "Gratuito per sempre — nessun abbonamento richiesto."
     },
     "tips": {
-      "discovery": "Dopo qualche sessione, la pagina principale mostra una scheda «Nuova sfida» — una modalità o variante che non hai ancora provata, in base alla tua cronologia di allenamento.",
+      "discovery": "Dopo qualche sessione, la pagina principale mostra una scheda «Nuova sfida» — una modalità, variante o sfida a tempo che non hai ancora provata, in base alla tua cronologia di allenamento.",
       "title": "Consigli",
       "dataLocal": "Tutti i tuoi dati restano nel tuo browser — nulla viene inviato a un server.",
       "darkMode": "Alterna tra modalità scura e chiara usando l'icona nella barra in alto.",

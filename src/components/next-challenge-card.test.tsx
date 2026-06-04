@@ -48,7 +48,7 @@ beforeEach(() => {
     accept: mockAccept,
     dismiss: mockDismiss,
     exploredCount: 2,
-    totalCount: 9,
+    totalCount: 13,
   };
 });
 
@@ -66,7 +66,7 @@ describe("NextChallengeCard", () => {
 
     expect(screen.getByText(EYEBROW)).toBeInTheDocument();
     expect(screen.getByText(TITLE)).toBeInTheDocument();
-    expect(screen.getByText("2 of 9 explored")).toBeInTheDocument();
+    expect(screen.getByText("2 of 13 explored")).toBeInTheDocument();
   });
 
   it("exposes the card as a region landmark labelled by the eyebrow", () => {

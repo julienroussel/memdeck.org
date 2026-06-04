@@ -12,7 +12,11 @@
     "spotCheckSwappedTitle": "Twee kaarten wisselen van plek — zie jij de wissel?",
     "spotCheckMovedTitle": "Eén kaart schuift naar een nieuwe plek — vind hem.",
     "distanceApplyTitle": "Een kaart en een verschil: noem de doelkaart.",
-    "distanceSignedTitle": "Oefen de kortste verschillen met teken, voor- en achterwaarts."
+    "distanceSignedTitle": "Oefen de kortste verschillen met teken, voor- en achterwaarts.",
+    "flashcardTimedTitle": "Je kent de kaarten — versla nu de klok.",
+    "spotCheckTimedTitle": "Je spot de afwijking — versla nu de klok.",
+    "distanceTimedTitle": "Je beheerst de verschillen — versla nu de klok.",
+    "acaanTimedTitle": "Je draait ACAAN — versla nu de klok."
   },
   "common": {
     "comingSoon": "Binnenkort beschikbaar...",
@@ -527,7 +531,7 @@
       "free": "Voor altijd gratis — geen abonnement nodig."
     },
     "tips": {
-      "discovery": "Na een paar sessies toont de startpagina een \"Nieuwe uitdaging\"-kaart — een modus of variant die je nog niet hebt geprobeerd, op basis van je eigen trainingsgeschiedenis.",
+      "discovery": "Na een paar sessies toont de startpagina een \"Nieuwe uitdaging\"-kaart — een modus, variant of uitdaging op tijd die je nog niet hebt geprobeerd, op basis van je eigen trainingsgeschiedenis.",
       "title": "Tips",
       "dataLocal": "Al je gegevens blijven in je browser — er wordt niets naar een server gestuurd.",
       "darkMode": "Wissel tussen donkere en lichte modus met het pictogram in de header.",
