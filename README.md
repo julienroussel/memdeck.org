@@ -51,6 +51,10 @@ Browse any stack with a draggable, touch-friendly spread. Supports mouse, touch 
 
 Track your training history with accuracy stats, best streaks, and per-mode breakdowns.
 
+### Guided Discovery
+
+Once you've logged a few sessions, MemDeck surfaces a "New challenge" card on the home page — pointing you to a mode or variant you haven't tried yet, picked from your own training history. One calm suggestion at a time, personalized to what you train most, and easy to dismiss.
+
 ### Resources
 
 Curated reading list of memorized deck books and PDFs to deepen your knowledge.

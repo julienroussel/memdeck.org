@@ -88,6 +88,15 @@ export const SHARE_NUDGE_DISMISSED_LSK = "memdeck-app-share-nudge-dismissed";
 /** Minimum number of completed sessions before showing the share nudge */
 export const SHARE_NUDGE_MIN_SESSIONS = 5;
 
+/** localStorage key for the feature-discovery state (dismissed ids + snooze) */
+export const FEATURE_DISCOVERY_LSK = "memdeck-app-feature-discovery";
+
+/** Minimum completed sessions before any discovery suggestion is shown */
+export const DISCOVERY_MIN_SESSIONS = 3;
+
+/** How many further sessions a dismissed suggestion snoozes the whole surface */
+export const DISCOVERY_SNOOZE_SESSIONS = 2;
+
 export const STACK_LIMITS_LSK = "memdeck-app-stack-limits";
 export const MIN_FLASHCARD_RANGE = 6;
 export const MIN_SPOT_CHECK_RANGE = 10;
@@ -95,7 +104,7 @@ export const MIN_DISTANCE_RANGE = 6;
 export const RANGE_PRESETS = [13, 26, 39, 52] as const;
 
 /** Canonical route format — leading + trailing slash, so consumers (sitemap, internal links) never trip a 301 redirect. */
-type RoutePath = "/" | `/${string}/`;
+export type RoutePath = "/" | `/${string}/`;
 
 /** All route paths used by the app — shared between routes.tsx and the pre-render script */
 export const ROUTES = {

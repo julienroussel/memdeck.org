@@ -10,6 +10,7 @@ import {
 import { useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { NextChallengeCard } from "../../components/next-challenge-card";
 import { ShareNudge } from "../../components/share-nudge";
 import { StatDisplay } from "../../components/stat-display";
 import { ROUTES } from "../../constants";
@@ -149,6 +150,7 @@ export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
       </div>
 
       <ShareNudge />
+      <NextChallengeCard surface="home" />
     </Stack>
   );
 };

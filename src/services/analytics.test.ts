@@ -962,6 +962,42 @@ describe("analytics", () => {
     });
   });
 
+  describe("trackFeatureSuggestionShown", () => {
+    it("sends suggestion shown event with id and surface", () => {
+      analytics.trackFeatureSuggestionShown("mode-spotcheck", "home");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Feature Discovery",
+        action: "Suggestion Shown",
+        label: "mode-spotcheck:home",
+      });
+    });
+  });
+
+  describe("trackFeatureSuggestionAccepted", () => {
+    it("sends suggestion accepted event with id and surface", () => {
+      analytics.trackFeatureSuggestionAccepted("distance-signed", "summary");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Feature Discovery",
+        action: "Suggestion Accepted",
+        label: "distance-signed:summary",
+      });
+    });
+  });
+
+  describe("trackFeatureSuggestionDismissed", () => {
+    it("sends suggestion dismissed event with id and surface", () => {
+      analytics.trackFeatureSuggestionDismissed("flashcard-neighbor", "stats");
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        category: "Feature Discovery",
+        action: "Suggestion Dismissed",
+        label: "flashcard-neighbor:stats",
+      });
+    });
+  });
+
   describe("trackError", () => {
     it("sends error event with error name and message", () => {
       const error = new TypeError("Cannot read property 'foo' of undefined");
@@ -1173,6 +1209,24 @@ describe("analytics", () => {
 
     it("does not track share nudge dismissed", () => {
       analytics.trackShareNudgeDismissed();
+
+      expect(mockEvent).not.toHaveBeenCalled();
+    });
+
+    it("does not track feature suggestion shown", () => {
+      analytics.trackFeatureSuggestionShown("mode-spotcheck", "home");
+
+      expect(mockEvent).not.toHaveBeenCalled();
+    });
+
+    it("does not track feature suggestion accepted", () => {
+      analytics.trackFeatureSuggestionAccepted("mode-spotcheck", "home");
+
+      expect(mockEvent).not.toHaveBeenCalled();
+    });
+
+    it("does not track feature suggestion dismissed", () => {
+      analytics.trackFeatureSuggestionDismissed("mode-spotcheck", "home");
 
       expect(mockEvent).not.toHaveBeenCalled();
     });

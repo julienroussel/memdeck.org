@@ -2,10 +2,7 @@ import { ActionIcon, Group, Paper, Text } from "@mantine/core";
 import { IconShare, IconX } from "@tabler/icons-react";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  SHARE_NUDGE_DISMISSED_LSK,
-  SHARE_NUDGE_MIN_SESSIONS,
-} from "../constants";
+import { SHARE_NUDGE_DISMISSED_LSK } from "../constants";
 import { useAllTimeStats } from "../hooks/use-all-time-stats";
 import { analytics } from "../services/analytics";
 import { useLocalDb } from "../utils/localstorage";
@@ -14,6 +11,7 @@ import {
   reportLocalDbCorruption,
 } from "../utils/localstorage-telemetry";
 import { shareMemDeck } from "../utils/share";
+import { isShareNudgePending } from "../utils/share-nudge-eligibility";
 
 const isBoolean = (value: unknown): value is boolean =>
   typeof value === "boolean";
@@ -48,9 +46,7 @@ export const ShareNudge = () => {
   }, [handleDismiss, t]);
 
   if (
-    dismissed ||
-    !globalStats ||
-    globalStats.totalSessions < SHARE_NUDGE_MIN_SESSIONS
+    !(globalStats && isShareNudgePending(dismissed, globalStats.totalSessions))
   ) {
     return null;
   }

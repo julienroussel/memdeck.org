@@ -1,5 +1,6 @@
 import { ReactGAImplementation } from "react-ga4";
 import { type Metric, onCLS, onINP, onLCP } from "web-vitals";
+import type { DiscoverySurface } from "../types/discovery";
 import type { DistanceConvention, DistanceMode } from "../types/distance";
 import type { FlashcardMode, NeighborDirection } from "../types/flashcard";
 import type { SessionConfig, TrainingMode } from "../types/session";
@@ -358,6 +359,39 @@ export const analytics = {
     ReactGA.event({
       category: "Share",
       action: "Nudge Dismissed",
+    });
+  },
+
+  trackFeatureSuggestionShown: (id: string, surface: DiscoverySurface) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "Feature Discovery",
+      action: "Suggestion Shown",
+      label: `${id}:${surface}`,
+    });
+  },
+
+  trackFeatureSuggestionAccepted: (id: string, surface: DiscoverySurface) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "Feature Discovery",
+      action: "Suggestion Accepted",
+      label: `${id}:${surface}`,
+    });
+  },
+
+  trackFeatureSuggestionDismissed: (id: string, surface: DiscoverySurface) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      category: "Feature Discovery",
+      action: "Suggestion Dismissed",
+      label: `${id}:${surface}`,
     });
   },
 

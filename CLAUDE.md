@@ -113,6 +113,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Distance Number** (`src/pages/distance/`): Drill the offset between two cards in the stack — the math behind Pit Hartling's Quartets routines (*In Order to Amaze*). Two sub-modes (compute, apply) and two conventions (cyclic 1..N-1, signed shortest). Respects stack range; needs at least 6 cards in range
 - **Toolbox** (`src/pages/toolbox/`): Collection of memorized deck utilities
 - **Stats** (`src/pages/stats/`): Session history, accuracy statistics, and best streak tracking
+- **Guided Discovery** (`src/hooks/use-feature-discovery.ts`, `src/components/next-challenge-card.tsx`): Nudges users toward untried modes and sub-variants, deduced from their own session history (`deriveFeatureUsage`). Surfaces one dismissible "New challenge" card at a time on the home page — earned after ≥3 sessions, personalized to the most-used mode, retire-on-accept, retire-and-snooze-the-surface-on-dismiss, and silent while the share nudge is pending. Engine lives in `src/utils/{feature-usage,suggestion-catalog,discovery-typeguards}.ts`; the catalog covers untried whole modes and sub-variants (timed suggestions and the post-session/Stats surfaces are tracked in epic #693)
 - **Guide** (`src/pages/guide/`): Getting started and training instructions. Includes `HowTo` and `BreadcrumbList` JSON-LD schemas
 - **FAQ** (`src/pages/faq.tsx`): Frequently asked questions about memorized decks, targeting LLM search discoverability. Includes `FAQPage` and `BreadcrumbList` JSON-LD schemas
 - **Resources** (`src/pages/resources.tsx`): Curated reading list of memorized deck books and PDFs. Includes `ItemList`/`Book` and `BreadcrumbList` JSON-LD schemas
@@ -219,7 +220,7 @@ The user-level auto-memory system handles most of the work. For memdeck.org spec
 
 ## Constants
 
-Application constants are defined in `src/constants.ts`, including localStorage keys (suffixed `_LSK`), card dimensions, and site metadata.
+Application constants are defined in `src/constants.ts`, including localStorage keys (suffixed `_LSK`), card dimensions, and site metadata. The Feature Discovery system persists its dismissed-suggestion ids and snooze gate under `FEATURE_DISCOVERY_LSK`.
 
 ## Copy & Tone Guidelines
 

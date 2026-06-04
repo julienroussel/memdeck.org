@@ -1,4 +1,19 @@
 {
+  "discovery": {
+    "eyebrow": "Nieuwe uitdaging",
+    "cta": "Proberen",
+    "progress": "{{explored}} van {{total}} verkend",
+    "dismiss": "Sluiten",
+    "spotCheckTitle": "Inspecteer een uitgespreid spel en spot de verkeerd geplaatste kaart.",
+    "distanceTitle": "Oefen de verschillen tussen kaarten — de wiskunde achter de Quartets.",
+    "acaanTitle": "Any Card At Any Number — beheers de berekening op commando.",
+    "flashcardNumberOnlyTitle": "Noem kaarten alleen op positie — zonder de voorkant.",
+    "flashcardNeighborTitle": "Noem de kaart vlak voor of na de getoonde.",
+    "spotCheckSwappedTitle": "Twee kaarten wisselen van plek — zie jij de wissel?",
+    "spotCheckMovedTitle": "Eén kaart schuift naar een nieuwe plek — vind hem.",
+    "distanceApplyTitle": "Een kaart en een verschil: noem de doelkaart.",
+    "distanceSignedTitle": "Oefen de kortste verschillen met teken, voor- en achterwaarts."
+  },
   "common": {
     "comingSoon": "Binnenkort beschikbaar...",
     "learnMore": "Meer informatie",
@@ -512,6 +527,7 @@
       "free": "Voor altijd gratis — geen abonnement nodig."
     },
     "tips": {
+      "discovery": "Na een paar sessies toont de startpagina een \"Nieuwe uitdaging\"-kaart — een modus of variant die je nog niet hebt geprobeerd, op basis van je eigen trainingsgeschiedenis.",
       "title": "Tips",
       "dataLocal": "Al je gegevens blijven in je browser — er wordt niets naar een server gestuurd.",
       "darkMode": "Wissel tussen donkere en lichte modus met het pictogram in de header.",
