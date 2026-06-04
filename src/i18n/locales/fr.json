@@ -12,7 +12,11 @@
     "spotCheckSwappedTitle": "Deux cartes échangent leur place — saurez-vous repérer l'échange ?",
     "spotCheckMovedTitle": "Une carte glisse à un nouvel emplacement — trouvez-la.",
     "distanceApplyTitle": "Une carte et un écart : nommez la carte d'arrivée.",
-    "distanceSignedTitle": "Travaillez les écarts signés, en avant comme en arrière."
+    "distanceSignedTitle": "Travaillez les écarts signés, en avant comme en arrière.",
+    "flashcardTimedTitle": "Vous connaissez les cartes — battez le chrono.",
+    "spotCheckTimedTitle": "Vous repérez la carte mal placée — battez le chrono.",
+    "distanceTimedTitle": "Vous maîtrisez les écarts — battez le chrono.",
+    "acaanTimedTitle": "Vous savez faire l'ACAAN — battez le chrono."
   },
   "common": {
     "comingSoon": "Bientôt disponible...",
@@ -527,7 +531,7 @@
       "free": "Gratuit pour toujours — aucun abonnement requis."
     },
     "tips": {
-      "discovery": "Après quelques sessions, la page d'accueil affiche une carte « Nouveau défi » — un mode ou une variante que vous n'avez pas encore essayé, d'après votre propre historique d'entraînement.",
+      "discovery": "Après quelques sessions, la page d'accueil affiche une carte « Nouveau défi » — un mode, une variante ou un défi chronométré que vous n'avez pas encore essayé, d'après votre propre historique d'entraînement.",
       "title": "Conseils",
       "dataLocal": "Toutes vos données restent dans votre navigateur — rien n'est envoyé à un serveur.",
       "darkMode": "Basculez entre le mode sombre et le mode clair avec l'icône dans l'en-tête.",

@@ -12,7 +12,11 @@
     "spotCheckSwappedTitle": "Two cards trade places — can you catch the swap?",
     "spotCheckMovedTitle": "One card slips to a new spot — find it.",
     "distanceApplyTitle": "Given a card and an offset, name where you land.",
-    "distanceSignedTitle": "Train shortest-path offsets, forward and back."
+    "distanceSignedTitle": "Train shortest-path offsets, forward and back.",
+    "flashcardTimedTitle": "You know the cards — now beat the clock.",
+    "spotCheckTimedTitle": "You can spot the slip — now beat the clock.",
+    "distanceTimedTitle": "You know the offsets — now beat the clock.",
+    "acaanTimedTitle": "You can run ACAAN — now beat the clock."
   },
   "common": {
     "comingSoon": "Coming soon...",
@@ -570,7 +574,7 @@
     },
     "tips": {
       "title": "Tips",
-      "discovery": "After a few sessions, the homepage shows a \"New challenge\" card — a mode or variant you haven't tried yet, drawn from your own training history.",
+      "discovery": "After a few sessions, the homepage shows a \"New challenge\" card — a mode, variant, or timed challenge you haven't tried yet, drawn from your own training history.",
       "dataLocal": "All your data stays in your browser — nothing is sent to a server.",
       "darkMode": "Toggle between dark and light mode using the icon in the header.",
       "gearIcon": "In training modes, tap the gear icon to adjust mode and timer settings, or the target icon to start a session.",

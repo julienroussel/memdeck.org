@@ -154,6 +154,30 @@ describe("useFeatureDiscovery", () => {
     expect(result.current.nextSuggestion?.id).toBe("distance-apply");
   });
 
+  it("surfaces a timed suggestion once whole modes and variants are exhausted", () => {
+    // Every whole mode and every sub-variant tried, all untimed: the only
+    // candidates left are the priority-3 timed items. flashcard is most-used
+    // (the flashcard/spotcheck tie breaks to TRAINING_MODES order), so its
+    // timed nudge surfaces first.
+    mockHistory = [
+      flashcard("1", "numberonly"),
+      flashcard("2", "neighbor"),
+      spotcheck("3", "swapped"),
+      spotcheck("4", "moved"),
+      {
+        ...base("5"),
+        mode: "distance",
+        distanceMode: "apply",
+        distanceConvention: "signed",
+      },
+      acaan("6"),
+    ];
+
+    const { result } = renderHook(() => useFeatureDiscovery());
+
+    expect(result.current.nextSuggestion?.id).toBe("flashcard-timed");
+  });
+
   it("suppresses suggestions while snoozed and resumes afterward", () => {
     discoveryState = { dismissed: [], snoozedUntil: 6 };
     const snoozed = renderHook(() => useFeatureDiscovery());
@@ -202,6 +226,10 @@ describe("useFeatureDiscovery", () => {
         "spotcheck-moved",
         "distance-apply",
         "distance-signed",
+        "flashcard-timed",
+        "spotcheck-timed",
+        "distance-timed",
+        "acaan-timed",
       ],
       snoozedUntil: 0,
     };
@@ -332,7 +360,8 @@ describe("useFeatureDiscovery", () => {
     const { result } = renderHook(() => useFeatureDiscovery());
 
     // Used catalog items: mode-spotcheck, flashcard-neighbor, spotcheck-swapped.
+    // Both seeded sessions are untimed, so no timed item counts as explored.
     expect(result.current.exploredCount).toBe(3);
-    expect(result.current.totalCount).toBe(9);
+    expect(result.current.totalCount).toBe(13);
   });
 });

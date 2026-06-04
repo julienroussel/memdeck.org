@@ -12,7 +12,11 @@
     "spotCheckSwappedTitle": "Zwei Karten tauschen den Platz — erkennst du den Tausch?",
     "spotCheckMovedTitle": "Eine Karte rutscht an eine neue Stelle — finde sie.",
     "distanceApplyTitle": "Eine Karte und eine Distanz — nenne die Zielkarte.",
-    "distanceSignedTitle": "Übe vorzeichenbehaftete Distanzen, vorwärts und rückwärts."
+    "distanceSignedTitle": "Übe vorzeichenbehaftete Distanzen, vorwärts und rückwärts.",
+    "flashcardTimedTitle": "Du kennst die Karten — jetzt gegen die Uhr.",
+    "spotCheckTimedTitle": "Du erkennst die falsch platzierte Karte — jetzt gegen die Uhr.",
+    "distanceTimedTitle": "Du kennst die Distanzen — jetzt gegen die Uhr.",
+    "acaanTimedTitle": "Du beherrschst ACAAN — jetzt gegen die Uhr."
   },
   "common": {
     "comingSoon": "Demnächst verfügbar...",
@@ -527,7 +531,7 @@
       "free": "Für immer kostenlos — kein Abo erforderlich."
     },
     "tips": {
-      "discovery": "Nach ein paar Sitzungen zeigt die Startseite eine „Neue Herausforderung“-Karte — einen Modus oder eine Variante, die du noch nicht ausprobiert hast, basierend auf deinem eigenen Trainingsverlauf.",
+      "discovery": "Nach ein paar Sitzungen zeigt die Startseite eine „Neue Herausforderung“-Karte — einen Modus, eine Variante oder eine Herausforderung auf Zeit, die du noch nicht ausprobiert hast, basierend auf deinem eigenen Trainingsverlauf.",
       "title": "Tipps",
       "dataLocal": "Alle deine Daten bleiben in deinem Browser — nichts wird an einen Server gesendet.",
       "darkMode": "Wechsle zwischen dunklem und hellem Modus mit dem Symbol in der Kopfzeile.",

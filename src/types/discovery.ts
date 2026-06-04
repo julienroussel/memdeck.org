@@ -11,8 +11,8 @@ export type DiscoverySurface = "home" | "summary" | "stats";
 
 /**
  * Which training modes and sub-variants a user has already tried, derived from
- * their session history. One boolean per mode and per sub-variant, plus the
- * most-used mode for personalizing suggestion priority.
+ * their session history. One boolean per mode and per sub-variant, a per-mode
+ * timed flag, plus the most-used mode for personalizing suggestion priority.
  */
 export type UsageFlags = {
   modes: Record<TrainingMode, boolean>;
@@ -20,6 +20,8 @@ export type UsageFlags = {
   spotCheckModes: Record<SpotCheckMode, boolean>;
   distanceModes: Record<DistanceMode, boolean>;
   distanceConventions: Record<DistanceConvention, boolean>;
+  /** Per mode: true once the user has completed a *timed* session of it (#697). */
+  timedModes: Record<TrainingMode, boolean>;
   /** Most-used mode by completed-session count, or null when there is no history. */
   mostUsedMode: TrainingMode | null;
 };
