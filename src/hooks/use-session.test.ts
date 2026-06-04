@@ -233,6 +233,34 @@ describe("useSession hook", () => {
     });
   });
 
+  it("captures timed=true from options onto the active session", () => {
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica", timed: true })
+    );
+
+    act(() => {
+      result.current.startSession({ type: "open" });
+    });
+
+    const { status } = result.current;
+    assertPhase(status, "active");
+    expect(status.session.timed).toBe(true);
+  });
+
+  it("defaults timed to false when the option is omitted", () => {
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica" })
+    );
+
+    act(() => {
+      result.current.startSession({ type: "open" });
+    });
+
+    const { status } = result.current;
+    assertPhase(status, "active");
+    expect(status.session.timed).toBe(false);
+  });
+
   it("increments successes and streak on a correct answer", () => {
     const { result } = renderHook(() =>
       useSession({ mode: "flashcard", stackKey: "mnemonica" })

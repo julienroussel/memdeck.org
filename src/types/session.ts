@@ -34,6 +34,7 @@ export type ActiveSessionBase = {
   currentStreak: number;
   bestStreak: number;
   stackLimits?: StackLimits;
+  timed: boolean;
 };
 
 /** Runtime state of an active session */
@@ -65,6 +66,7 @@ type SessionRecordBase = {
   // Spelled out explicitly so adding a field to the runtime StackLimits type doesn't
   // silently widen the persisted shape.
   stackLimits?: { start: number; end: number };
+  timed?: boolean;
 };
 
 /** Persisted session record (immutable snapshot) */

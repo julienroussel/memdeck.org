@@ -56,6 +56,7 @@ export const Flashcard = () => {
     flashcardMode: mode,
     autoStart: true,
     stackLimits: limits,
+    timed: timerSettings.enabled,
   });
 
   const {

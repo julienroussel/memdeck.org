@@ -118,6 +118,18 @@ describe("buildSessionRecord", () => {
     expect(record.stackLimits).toBeUndefined();
   });
 
+  it("propagates timed=true from the active session", () => {
+    const session = makeSession({ timed: true });
+    const record = buildSessionRecord(session);
+    expect(record.timed).toBe(true);
+  });
+
+  it("propagates timed=false from the active session", () => {
+    const session = makeSession({ timed: false });
+    const record = buildSessionRecord(session);
+    expect(record.timed).toBe(false);
+  });
+
   it("returns a spotcheck record with the selected spot check mode", () => {
     const session = makeSession({
       mode: "spotcheck",

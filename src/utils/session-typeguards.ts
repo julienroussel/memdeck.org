@@ -57,6 +57,13 @@ const isOptionalStackLimits = (value: object): boolean => {
   );
 };
 
+/** Validates that `value.timed` is either absent/undefined or a boolean.
+ * Returns boolean (not a type guard) because the outer `isSessionRecord` handles full narrowing. */
+const isOptionalTimed = (value: object): boolean =>
+  !("timed" in value) ||
+  value.timed === undefined ||
+  typeof value.timed === "boolean";
+
 const isSessionConfig = (value: unknown): value is SessionConfig => {
   if (typeof value !== "object" || value === null) {
     return false;
@@ -120,6 +127,9 @@ export const isSessionRecord = (value: unknown): value is SessionRecord => {
     return false;
   }
   if (!isOptionalStackLimits(value)) {
+    return false;
+  }
+  if (!isOptionalTimed(value)) {
     return false;
   }
   // System boundary: value has been validated structurally above (all required

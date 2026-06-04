@@ -37,6 +37,9 @@ export const Acaan = () => {
   });
   useCardImagePreload();
   const { stackKey, stackOrder, stackName } = useRequiredStack();
+  const { timerSettings, setTimerDuration, handleTimerEnabledChange } =
+    useAcaanSettings();
+
   const {
     status,
     startSession,
@@ -46,10 +49,12 @@ export const Acaan = () => {
     activeSession,
     stopSession,
     dismissSummary,
-  } = useSession({ mode: "acaan", stackKey, autoStart: true });
-
-  const { timerSettings, setTimerDuration, handleTimerEnabledChange } =
-    useAcaanSettings();
+  } = useSession({
+    mode: "acaan",
+    stackKey,
+    autoStart: true,
+    timed: timerSettings.enabled,
+  });
 
   const {
     scenario,
