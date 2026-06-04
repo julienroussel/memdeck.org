@@ -54,7 +54,7 @@ export const SpotCheck = () => {
     handleTimerEnabledChange,
   } = useSpotCheckSettings();
 
-  useSuggestionDeepLink({
+  const deepLinkPending = useSuggestionDeepLink({
     tryHandlers: [tryHandler(isSpotCheckMode, handleModeChange)],
     onTimed: () => handleTimerEnabledChange(true),
   });
@@ -74,7 +74,7 @@ export const SpotCheck = () => {
     mode: "spotcheck",
     stackKey,
     spotCheckMode: mode,
-    autoStart: true,
+    autoStart: !deepLinkPending,
     stackLimits: limits,
     timed: timerSettings.enabled,
   });

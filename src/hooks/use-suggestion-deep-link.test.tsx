@@ -13,8 +13,20 @@ const isBanana = (value: unknown): value is "banana" => value === "banana";
 
 type Options = Parameters<typeof useSuggestionDeepLink>[0];
 
-function DeepLinkProbe({ options, goTo }: { options: Options; goTo?: string }) {
-  useSuggestionDeepLink(options);
+function DeepLinkProbe({
+  options,
+  goTo,
+  onPending,
+}: {
+  options: Options;
+  goTo?: string;
+  onPending?: (pending: boolean) => void;
+}) {
+  const pending = useSuggestionDeepLink(options);
+  // Record every render's value so a test can observe the transient `true`
+  // (present while the param is on the URL) before the layout effect strips it
+  // and the value settles to `false`.
+  onPending?.(pending);
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
   return (
@@ -36,18 +48,33 @@ function DeepLinkProbe({ options, goTo }: { options: Options; goTo?: string }) {
 // co-mounted child is missed because the Router hasn't subscribed yet. Using a
 // real router (not a mocked navigate) lets the tests assert the actual URL
 // strip and exercise the appliedRef latch via a real effect re-run.
-function DeferredMount({ options, goTo }: { options: Options; goTo?: string }) {
+function DeferredMount({
+  options,
+  goTo,
+  onPending,
+}: {
+  options: Options;
+  goTo?: string;
+  onPending?: (pending: boolean) => void;
+}) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
-  return mounted ? <DeepLinkProbe goTo={goTo} options={options} /> : null;
+  return mounted ? (
+    <DeepLinkProbe goTo={goTo} onPending={onPending} options={options} />
+  ) : null;
 }
 
-function renderDeepLink(initialEntry: string, options: Options, goTo?: string) {
+function renderDeepLink(
+  initialEntry: string,
+  options: Options,
+  goTo?: string,
+  onPending?: (pending: boolean) => void
+) {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
-      <DeferredMount goTo={goTo} options={options} />
+      <DeferredMount goTo={goTo} onPending={onPending} options={options} />
     </MemoryRouter>
   );
 }
@@ -170,5 +197,50 @@ describe("useSuggestionDeepLink", () => {
     );
     expect(apply).toHaveBeenCalledTimes(1);
     expect(apply).not.toHaveBeenCalledWith("banana");
+  });
+
+  // The `pending` return is the contract the mode pages gate their session
+  // auto-start on (`autoStart: !pending`), so the single-shot auto-start fires
+  // only after the deep-link config has settled — capturing the deep-linked
+  // mode/timed in the persisted SessionRecord rather than the page default
+  // (#704).
+  it("reports pending=true while a try param is on the URL, then false once stripped", async () => {
+    const pendings: boolean[] = [];
+    const record = (pending: boolean) => pendings.push(pending);
+    renderDeepLink(
+      "/flashcard/?try=apple",
+      { tryHandlers: [tryHandler(isFruit, vi.fn())] },
+      undefined,
+      record
+    );
+
+    await waitFor(() => expect(currentLocation()).toBe("/flashcard/"));
+    expect(pendings[0]).toBe(true);
+    expect(pendings.at(-1)).toBe(false);
+  });
+
+  it("reports pending=true for a ?timed=1 link, then false once stripped", async () => {
+    const pendings: boolean[] = [];
+    const record = (pending: boolean) => pendings.push(pending);
+    renderDeepLink("/acaan/?timed=1", { onTimed: vi.fn() }, undefined, record);
+
+    await waitFor(() => expect(currentLocation()).toBe("/acaan/"));
+    expect(pendings[0]).toBe(true);
+    expect(pendings.at(-1)).toBe(false);
+  });
+
+  it("reports pending=false throughout when no deep-link params are present", async () => {
+    const pendings: boolean[] = [];
+    const record = (pending: boolean) => pendings.push(pending);
+    renderDeepLink(
+      "/flashcard/",
+      { tryHandlers: [tryHandler(isFruit, vi.fn())] },
+      undefined,
+      record
+    );
+
+    await screen.findByTestId("loc");
+    expect(pendings.length).toBeGreaterThan(0);
+    expect(pendings.every((pending) => pending === false)).toBe(true);
   });
 });

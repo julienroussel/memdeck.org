@@ -51,7 +51,7 @@ export const Distance = () => {
     handleTimerEnabledChange,
   } = useDistanceSettings();
 
-  useSuggestionDeepLink({
+  const deepLinkPending = useSuggestionDeepLink({
     tryHandlers: [
       tryHandler(isDistanceMode, handleModeChange),
       tryHandler(isDistanceConvention, handleConventionChange),
@@ -75,7 +75,7 @@ export const Distance = () => {
     stackKey,
     distanceMode: mode,
     distanceConvention: convention,
-    autoStart: true,
+    autoStart: !deepLinkPending,
     stackLimits: limits,
     timed: timerSettings.enabled,
   });

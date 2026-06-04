@@ -44,7 +44,7 @@ export const Flashcard = () => {
     handleTimerEnabledChange,
   } = useFlashcardSettings();
 
-  useSuggestionDeepLink({
+  const deepLinkPending = useSuggestionDeepLink({
     tryHandlers: [tryHandler(isFlashcardMode, handleModeChange)],
     onTimed: () => handleTimerEnabledChange(true),
   });
@@ -64,7 +64,7 @@ export const Flashcard = () => {
     mode: "flashcard",
     stackKey,
     flashcardMode: mode,
-    autoStart: true,
+    autoStart: !deepLinkPending,
     stackLimits: limits,
     timed: timerSettings.enabled,
   });
