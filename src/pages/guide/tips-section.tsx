@@ -19,6 +19,7 @@ export const TipsSection = () => {
         <List.Item>{t("guide.tips.darkMode")}</List.Item>
         <List.Item>{t("guide.tips.gearIcon")}</List.Item>
         <List.Item>{t("guide.tips.switchStacks")}</List.Item>
+        <List.Item>{t("guide.tips.discovery")}</List.Item>
         <List.Item>{t("guide.tips.pwa")}</List.Item>
         <List.Item>{t("guide.tips.language")}</List.Item>
         <List.Item>{t("guide.tips.share")}</List.Item>

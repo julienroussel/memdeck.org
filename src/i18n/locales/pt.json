@@ -1,4 +1,19 @@
 {
+  "discovery": {
+    "eyebrow": "Novo desafio",
+    "cta": "Experimentar",
+    "progress": "{{explored}} de {{total}} explorados",
+    "dismiss": "Fechar",
+    "spotCheckTitle": "Inspecione um baralho estendido e detete a carta fora do lugar.",
+    "distanceTitle": "Treine os deslocamentos entre cartas — a matemática por trás das Quartets.",
+    "acaanTitle": "Any Card At Any Number — treine o cálculo a frio.",
+    "flashcardNumberOnlyTitle": "Recorde as cartas apenas pela posição — sem ver a face.",
+    "flashcardNeighborTitle": "Diga a carta logo antes ou depois da mostrada.",
+    "spotCheckSwappedTitle": "Duas cartas trocam de lugar — consegue detetar a troca?",
+    "spotCheckMovedTitle": "Uma carta desliza para um novo lugar — encontre-a.",
+    "distanceApplyTitle": "Uma carta e um deslocamento — diga a carta de chegada.",
+    "distanceSignedTitle": "Treine os deslocamentos com sinal, para a frente e para trás."
+  },
   "common": {
     "comingSoon": "Em breve...",
     "learnMore": "Saber mais",
@@ -512,6 +527,7 @@
       "free": "Gratuito para sempre — sem subscrição."
     },
     "tips": {
+      "discovery": "Após algumas sessões, a página inicial mostra um cartão «Novo desafio» — um modo ou variante que ainda não experimentou, a partir do seu próprio histórico de treino.",
       "title": "Dicas",
       "dataLocal": "Todos os seus dados ficam no seu navegador — nada é enviado para um servidor.",
       "darkMode": "Alterne entre modo escuro e claro usando o ícone no cabeçalho.",

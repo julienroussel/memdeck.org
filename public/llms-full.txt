@@ -2,7 +2,7 @@
 
 > MemDeck is a free, open-source memorized deck trainer for magicians and memory enthusiasts. It helps users master famous memorized deck systems through flashcard exercises, spot checks, ACAAN practice, and deck utilities. Available as a PWA that works offline, in 7 languages, with no account required.
 
-Last updated: 2026-04-05
+Last updated: 2026-06-04
 
 ## What Is a Memorized Deck?
 
@@ -85,6 +85,10 @@ A collection of memorized deck utilities:
 - Track accuracy trends over time
 - All-time aggregated statistics per mode and stack combination
 - Data stored locally - never leaves your device
+
+### Guided Discovery (New challenge)
+
+A calm, history-driven discovery system that nudges users toward training modes and sub-variants they haven't tried yet. After at least three completed sessions, the home page surfaces a single dismissible "New challenge" card, deduced entirely from the user's own session history (no server involved). It suggests untried whole modes (Spot Check, Distance Number, ACAAN) and untried sub-variants (Flashcard number-only or neighbor, Spot Check swapped or moved, Distance apply or signed), prioritizing a variant of the user's most-used mode. Accepting or dismissing a suggestion retires it permanently; dismissing also snoozes the surface for a couple of sessions. Only one card shows at a time — it never appears during a drill and yields to the share prompt. (Timed-session suggestions are not part of this system yet; they are planned separately.)
 
 ### Guide
 

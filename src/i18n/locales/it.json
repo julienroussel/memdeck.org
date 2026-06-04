@@ -1,4 +1,19 @@
 {
+  "discovery": {
+    "eyebrow": "Nuova sfida",
+    "cta": "Prova",
+    "progress": "{{explored}} di {{total}} esplorate",
+    "dismiss": "Chiudi",
+    "spotCheckTitle": "Ispeziona un mazzo steso e individua la carta fuori posto.",
+    "distanceTitle": "Allena gli scarti tra le carte — la matematica dietro i Quartets.",
+    "acaanTitle": "Any Card At Any Number — padroneggia il calcolo a freddo.",
+    "flashcardNumberOnlyTitle": "Ricorda le carte dalla sola posizione — senza vedere la faccia.",
+    "flashcardNeighborTitle": "Nomina la carta appena prima o dopo quella mostrata.",
+    "spotCheckSwappedTitle": "Due carte si scambiano di posto — sai cogliere lo scambio?",
+    "spotCheckMovedTitle": "Una carta scivola in un nuovo punto — trovala.",
+    "distanceApplyTitle": "Una carta e uno scarto: nomina la carta d'arrivo.",
+    "distanceSignedTitle": "Allena gli scarti con segno, in avanti e indietro."
+  },
   "common": {
     "comingSoon": "Prossimamente...",
     "learnMore": "Scopri di più",
@@ -512,6 +527,7 @@
       "free": "Gratuito per sempre — nessun abbonamento richiesto."
     },
     "tips": {
+      "discovery": "Dopo qualche sessione, la pagina principale mostra una scheda «Nuova sfida» — una modalità o variante che non hai ancora provata, in base alla tua cronologia di allenamento.",
       "title": "Consigli",
       "dataLocal": "Tutti i tuoi dati restano nel tuo browser — nulla viene inviato a un server.",
       "darkMode": "Alterna tra modalità scura e chiara usando l'icona nella barra in alto.",

@@ -1,4 +1,19 @@
 {
+  "discovery": {
+    "eyebrow": "New challenge",
+    "cta": "Try it",
+    "progress": "{{explored}} of {{total}} explored",
+    "dismiss": "Dismiss",
+    "spotCheckTitle": "Inspect a spread and catch the card that's out of place.",
+    "distanceTitle": "Drill the offsets between cards — the math behind Quartets.",
+    "acaanTitle": "Any Card At Any Number — drill the calculation cold.",
+    "flashcardNumberOnlyTitle": "Recall cards from position alone — no face to lean on.",
+    "flashcardNeighborTitle": "Name the card just before or after the one shown.",
+    "spotCheckSwappedTitle": "Two cards trade places — can you catch the swap?",
+    "spotCheckMovedTitle": "One card slips to a new spot — find it.",
+    "distanceApplyTitle": "Given a card and an offset, name where you land.",
+    "distanceSignedTitle": "Train shortest-path offsets, forward and back."
+  },
   "common": {
     "comingSoon": "Coming soon...",
     "learnMore": "Learn more",
@@ -555,6 +570,7 @@
     },
     "tips": {
       "title": "Tips",
+      "discovery": "After a few sessions, the homepage shows a \"New challenge\" card — a mode or variant you haven't tried yet, drawn from your own training history.",
       "dataLocal": "All your data stays in your browser — nothing is sent to a server.",
       "darkMode": "Toggle between dark and light mode using the icon in the header.",
       "gearIcon": "In training modes, tap the gear icon to adjust mode and timer settings, or the target icon to start a session.",
