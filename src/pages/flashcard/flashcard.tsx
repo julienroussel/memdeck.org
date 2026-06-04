@@ -11,6 +11,11 @@ import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
 import { useStackLimits } from "../../hooks/use-stack-limits";
+import {
+  tryHandler,
+  useSuggestionDeepLink,
+} from "../../hooks/use-suggestion-deep-link";
+import { isFlashcardMode } from "../../types/flashcard";
 import { cardItems, numberItems } from "../../types/typeguards";
 import { getNeighborCard } from "../../utils/neighbor";
 import { FlashcardActiveRound } from "./flashcard-active-round";
@@ -38,6 +43,11 @@ export const Flashcard = () => {
     handleDirectionChange,
     handleTimerEnabledChange,
   } = useFlashcardSettings();
+
+  useSuggestionDeepLink({
+    tryHandlers: [tryHandler(isFlashcardMode, handleModeChange)],
+    onTimed: () => handleTimerEnabledChange(true),
+  });
 
   const { limits, rangeSize } = useStackLimits(stackKey);
 
