@@ -201,6 +201,30 @@ describe("isSessionRecord", () => {
     };
     expect(isSessionRecord(record)).toBe(false);
   });
+
+  it("returns true when timed is true", () => {
+    expect(isSessionRecord(makeRecord({ timed: true }))).toBe(true);
+  });
+
+  it("returns true when timed is false", () => {
+    expect(isSessionRecord(makeRecord({ timed: false }))).toBe(true);
+  });
+
+  it("returns true when timed is absent (legacy record)", () => {
+    const record = makeRecord();
+    expect("timed" in record).toBe(false);
+    expect(isSessionRecord(record)).toBe(true);
+  });
+
+  it("returns true when timed is explicitly undefined", () => {
+    const record = { ...makeRecord(), timed: undefined };
+    expect(isSessionRecord(record)).toBe(true);
+  });
+
+  it("returns false when timed is not a boolean", () => {
+    const record = { ...makeRecord(), timed: "yes" };
+    expect(isSessionRecord(record)).toBe(false);
+  });
 });
 
 describe("isSessionRecordArray", () => {

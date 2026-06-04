@@ -42,6 +42,7 @@ export const makeActiveSession = (
     questionsCompleted: 0,
     currentStreak: 0,
     bestStreak: 0,
+    timed: false,
     ...overrides,
   }) as ActiveSession;
 

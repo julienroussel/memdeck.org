@@ -41,6 +41,7 @@ type UseSessionOptionsBase = {
   stackKey: StackKey;
   autoStart?: boolean;
   stackLimits?: StackLimits;
+  timed?: boolean;
 };
 
 type UseSessionOptions =
@@ -97,7 +98,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
   // list mount-only). Mirrors the pattern in use-session-auto-save.ts.
   const tRef = useRef(t);
   tRef.current = t;
-  const { mode, stackKey, autoStart = false } = options;
+  const { mode, stackKey, autoStart = false, timed = false } = options;
   const stackLimits = options.stackLimits;
   const stackLimitsRef = useRef(stackLimits);
   stackLimitsRef.current = stackLimits;
@@ -360,6 +361,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
         currentStreak: 0,
         bestStreak: 0,
         stackLimits: stackLimitsRef.current,
+        timed,
       };
 
       let session: ActiveSession;
@@ -395,6 +397,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
       spotCheckMode,
       distanceMode,
       distanceConvention,
+      timed,
       tryFinalizeSession,
     ] // stackLimits removed, accessed via ref
   );

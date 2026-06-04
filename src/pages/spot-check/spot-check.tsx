@@ -63,6 +63,7 @@ export const SpotCheck = () => {
     spotCheckMode: mode,
     autoStart: true,
     stackLimits: limits,
+    timed: timerSettings.enabled,
   });
 
   const {

@@ -37,6 +37,7 @@ export const buildSessionRecord = (session: ActiveSession): SessionRecord => {
     accuracy: calculateAccuracy(session.successes, session.fails),
     bestStreak: session.bestStreak,
     stackLimits: session.stackLimits,
+    timed: session.timed,
   };
 
   switch (session.mode) {

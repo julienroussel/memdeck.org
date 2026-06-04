@@ -64,6 +64,7 @@ export const Distance = () => {
     distanceConvention: convention,
     autoStart: true,
     stackLimits: limits,
+    timed: timerSettings.enabled,
   });
 
   const rangeTooSmall = rangeSize < MIN_DISTANCE_RANGE;
