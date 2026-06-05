@@ -49,7 +49,7 @@ Browse any stack with a draggable, touch-friendly spread. Supports mouse, touch 
 
 ### Stats & Session Tracking
 
-Track your training history with accuracy stats, best streaks, and per-mode breakdowns.
+Track your training history with accuracy stats, best streaks, and per-mode breakdowns. An Exploration view maps which modes and variants you've tried, with one tap to try anything you've missed.
 
 ### Guided Discovery
 

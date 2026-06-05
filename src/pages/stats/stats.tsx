@@ -8,6 +8,7 @@ import { useSessionHistory } from "../../hooks/use-session-history";
 import { AccuracyChart } from "./accuracy-chart";
 import { StatsByStack } from "./stats-by-stack";
 import { StatsCorruptionAlert } from "./stats-corruption-alert";
+import { StatsExploration } from "./stats-exploration";
 import { StatsHistory } from "./stats-history";
 import { StatsOverview } from "./stats-overview";
 
@@ -53,6 +54,8 @@ export const Stats = () => {
           <AccuracyChart history={history} />
           <Space h="sm" />
           <StatsByStack />
+          <Space h="sm" />
+          <StatsExploration history={history} />
           <Space h="sm" />
           <StatsHistory history={history} />
         </>

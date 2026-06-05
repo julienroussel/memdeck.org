@@ -17,6 +17,8 @@ const STACK_PATTERN = /stack/i;
 const SCORE_PATTERN = /score/i;
 const SHOW_MORE_PATTERN = /show more/i;
 const NO_FILTER_MATCH_PATTERN = /no.*match|no sessions|no data/i;
+const EXPLORED_COUNT_PATTERN = /of 13 explored/i;
+const NEIGHBOR_PITCH_PATTERN = /before or after/i;
 
 test.describe("Statistics Page", () => {
   type SessionSeed = {
@@ -168,6 +170,37 @@ test.describe("Statistics Page", () => {
     await expect(page.locator("text=10").first()).toBeVisible(); // Total questions
     await expect(page.locator("text=80%").first()).toBeVisible(); // Accuracy
     await expect(page.locator("text=5").first()).toBeVisible(); // Best streak
+  });
+
+  test("should display the exploration progress view with deep-linked untried items", async ({
+    page,
+  }) => {
+    await seedAndNavigate(
+      page,
+      [
+        makeSession({
+          id: "exploration-session-1",
+          flashcardMode: "numberonly",
+        }),
+      ],
+      { "flashcard:mnemonica": makeStats() }
+    );
+
+    // Section renders inside the hasData block, with the progress hint.
+    await expect(
+      page.getByRole("heading", { name: "Exploration" })
+    ).toBeVisible();
+    await expect(page.getByText(EXPLORED_COUNT_PATTERN)).toBeVisible();
+
+    // An untried sub-variant is a tappable row that deep-links into the variant.
+    const tryNeighbor = page.getByRole("link", {
+      name: NEIGHBOR_PITCH_PATTERN,
+    });
+    await expect(tryNeighbor).toBeVisible();
+    await expect(tryNeighbor).toHaveAttribute(
+      "href",
+      "/flashcard/?try=neighbor"
+    );
   });
 
   test("should display accuracy chart with filter controls", async ({
