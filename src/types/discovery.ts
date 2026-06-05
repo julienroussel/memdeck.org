@@ -40,7 +40,7 @@ export type FeatureSuggestion = {
   /** Lower sorts first. Whole modes outrank variants. */
   priority: number;
   route: RoutePath;
-  /** Preselect param the page will honor from #696; until then it lands in the default mode. */
+  /** Preselect param the target page honors on mount via `useSuggestionDeepLink` — applied through the page's own guard + setter, then stripped. */
   deepLink?: { param: "try" | "timed"; value: string };
   icon: Icon;
   i18n: { titleKey: ParseKeys; ctaKey?: ParseKeys };
