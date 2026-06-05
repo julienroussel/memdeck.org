@@ -6,11 +6,11 @@ import {
   SimpleGrid,
   Stack,
   Text,
-  Title,
 } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import type { SessionSummary } from "../types/session";
 import { formatDuration, toAccuracyPercent } from "../utils/session-formatting";
+import { SessionSummarySuggestion } from "./session-summary-suggestion";
 import { StatDisplay } from "./stat-display";
 
 type SessionSummaryModalProps = {
@@ -40,7 +40,11 @@ export const SessionSummaryModal = ({
       centered
       onClose={onDismiss}
       opened={true}
-      title={<Title order={3}>{t("session.complete")}</Title>}
+      title={
+        <Text fw={700} fz="h3" span>
+          {t("session.complete")}
+        </Text>
+      }
     >
       <Stack gap="md">
         <Text c="dimmed" fw={500} size="lg" ta="center">
@@ -88,6 +92,8 @@ export const SessionSummaryModal = ({
             </Badge>
           </Group>
         )}
+
+        <SessionSummarySuggestion onClose={onDismiss} record={record} />
 
         <Group justify="center" mt="md">
           <Button onClick={onNewSession}>{t("common.newSession")}</Button>

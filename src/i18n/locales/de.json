@@ -1,6 +1,7 @@
 {
   "discovery": {
     "eyebrow": "Neue Herausforderung",
+    "summaryEyebrow": "Bereit für die nächste Herausforderung?",
     "cta": "Ausprobieren",
     "progress": "{{explored}} von {{total}} erkundet",
     "dismiss": "Schließen",

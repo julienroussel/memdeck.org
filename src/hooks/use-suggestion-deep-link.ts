@@ -48,9 +48,12 @@ const TIMED_PARAM = "timed";
 const TIMED_ENABLED_VALUE = "1";
 
 /**
- * Consumes Feature Discovery deep-link params once per mount, so a "Try it" tap
- * lands the user already in the suggested mode/variant instead of the page's
- * default. Reads `?try=` / `?timed=` from the URL, applies each through the
+ * Consumes Feature Discovery deep-link params once per param appearance, so a
+ * "Try it" tap lands the user already in the suggested mode/variant instead of
+ * the page's default. "Once per appearance" (not once per mount): the latch
+ * resets when the params clear, so the post-session "Try it" (#698) can re-apply
+ * on a page it already arrived at via a deep-link. Reads `?try=` / `?timed=`
+ * from the URL, applies each through the
  * page's own guard + existing setter (so the canonical localStorage write and
  * eventBus emit fire), then strips the params with a replace navigation so a
  * refresh or shared link doesn't re-trigger the preselect.
@@ -77,8 +80,8 @@ export const useSuggestionDeepLink = ({
 
   // Latest-ref pattern (as in use-flashcard-game.ts): callers pass fresh inline
   // handlers each render, so reading them through refs keeps the effect's
-  // dependency list to the router values only. Application is still bounded to
-  // once per mount by appliedRef.
+  // dependency list to the router values only. Application is bounded to once
+  // per param appearance by appliedRef, which resets when the params clear.
   const tryHandlersRef = useRef(tryHandlers);
   tryHandlersRef.current = tryHandlers;
   const onTimedRef = useRef(onTimed);
@@ -86,12 +89,19 @@ export const useSuggestionDeepLink = ({
   const appliedRef = useRef(false);
 
   useLayoutEffect(() => {
-    if (appliedRef.current) {
-      return;
-    }
     const tryValue = searchParams.get(TRY_PARAM);
     const timedValue = searchParams.get(TIMED_PARAM);
     if (tryValue === null && timedValue === null) {
+      // Nothing to consume. Clear the latch so a *later* param-bearing
+      // navigation on the same mount re-applies — the post-session "Try it"
+      // (#698) adds a fresh ?try=/?timed= to the page's own route after the page
+      // may itself have arrived via a home-card deep-link. A successful apply
+      // always strips the params to a bare pathname, so reaching here means the
+      // previous deep-link (if any) is fully resolved.
+      appliedRef.current = false;
+      return;
+    }
+    if (appliedRef.current) {
       return;
     }
     appliedRef.current = true;

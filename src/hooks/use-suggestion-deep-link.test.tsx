@@ -175,7 +175,7 @@ describe("useSuggestionDeepLink", () => {
     expect(onTimed).not.toHaveBeenCalled();
   });
 
-  it("applies once and does not re-fire on a later param-bearing navigation (appliedRef latch)", async () => {
+  it("re-applies a later param-bearing navigation once the prior param was stripped (once-per-appearance)", async () => {
     const apply = vi.fn();
     renderDeepLink(
       "/flashcard/?try=apple",
@@ -183,20 +183,21 @@ describe("useSuggestionDeepLink", () => {
       "/flashcard/?try=banana"
     );
 
-    // First mount: applies "apple" and strips the param.
+    // First mount: applies "apple" and strips the param. Stripping returns the
+    // URL to a bare pathname, which clears the appliedRef latch.
+    await waitFor(() => expect(apply).toHaveBeenNthCalledWith(1, "apple"));
     await waitFor(() => expect(currentLocation()).toBe("/flashcard/"));
-    expect(apply).toHaveBeenCalledTimes(1);
 
-    // Navigate again to a param-bearing URL on the SAME mount. The effect
-    // re-runs, but appliedRef has latched, so it early-returns before applying
-    // or stripping: "banana" is neither applied nor stripped. Without the
-    // guard, "apple" + "banana" would both apply and the URL would re-strip.
+    // Navigate to a second param-bearing URL on the SAME mount — this is the
+    // post-session "Try it" flow (#698) on a page that itself arrived via a
+    // deep-link. The latch reset lets "banana" apply and strip too. We assert on
+    // the 2nd apply call because the URL is already "/flashcard/" from the first
+    // strip, so a location check alone can't distinguish "re-applied" from
+    // "ignored".
     await userEvent.click(screen.getByRole("button", { name: "go" }));
-    await waitFor(() =>
-      expect(currentLocation()).toBe("/flashcard/?try=banana")
-    );
-    expect(apply).toHaveBeenCalledTimes(1);
-    expect(apply).not.toHaveBeenCalledWith("banana");
+    await waitFor(() => expect(apply).toHaveBeenNthCalledWith(2, "banana"));
+    expect(apply).toHaveBeenCalledTimes(2);
+    await waitFor(() => expect(currentLocation()).toBe("/flashcard/"));
   });
 
   // The `pending` return is the contract the mode pages gate their session

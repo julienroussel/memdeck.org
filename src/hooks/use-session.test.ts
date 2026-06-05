@@ -8,14 +8,18 @@
  * and applyAnswerOutcome live in their colocated file session-phase.test.ts.
  */
 import { act, renderHook } from "@testing-library/react";
+import { createElement, type ReactNode, StrictMode } from "react";
+import { MemoryRouter, useNavigate } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { DistanceConvention, DistanceMode } from "../types/distance";
+import { isFlashcardMode } from "../types/flashcard";
 import type { ActiveSession } from "../types/session";
 import { DEFAULT_STACK_LIMITS, type StackLimits } from "../types/stack-limits";
 import { createDeckPosition, type StackKey } from "../types/stacks";
 // Imported via the `use-session` re-export — pins the public type surface of
 // the hook (status phase) as the contract these tests assert against.
 import type { SessionPhase } from "./use-session";
+import { tryHandler, useSuggestionDeepLink } from "./use-suggestion-deep-link";
 
 /**
  * Narrowing helper for `status` reads in this file. Mirrors the `assertActive`
@@ -231,6 +235,121 @@ describe("useSession hook", () => {
       mode: "flashcard",
       config: { type: "open" },
     });
+  });
+
+  it("auto-starts an open session on mount when autoStart is true", () => {
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica", autoStart: true })
+    );
+
+    const { status } = result.current;
+    assertPhase(status, "active");
+    expect(status.session.config).toEqual({ type: "open" });
+  });
+
+  it("does not auto-start when autoStart is false", () => {
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica", autoStart: false })
+    );
+
+    expect(result.current.status.phase).toBe("idle");
+  });
+
+  it("auto-starts when autoStart flips false to true (deep-link consumed on an already-mounted page)", () => {
+    // The post-session "Try it" (#698): the page is already mounted, the user
+    // dismisses the summary (back to idle), then a fresh ?try= arrives
+    // (autoStart false while pending) and is stripped (autoStart true). The flip
+    // must start a session in the now-preselected variant — initialMountRef has
+    // long since been consumed, so it alone would never re-fire.
+    const { result, rerender } = renderHook(
+      ({ autoStart }: { autoStart: boolean }) =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica", autoStart }),
+      { initialProps: { autoStart: false } }
+    );
+    expect(result.current.status.phase).toBe("idle");
+
+    rerender({ autoStart: true });
+
+    assertPhase(result.current.status, "active");
+  });
+
+  it("does not auto-restart after Stop returns to idle (autoStart unchanged is not a re-arm)", () => {
+    const { result } = renderHook(() =>
+      useSession({ mode: "flashcard", stackKey: "mnemonica", autoStart: true })
+    );
+    assertPhase(result.current.status, "active");
+
+    // Stop an open session with fewer than 3 questions: discards and returns to
+    // idle. autoStart stays true, but with no false→true flip the session must
+    // NOT auto-restart — otherwise Stop would be unusable on an auto-start page.
+    act(() => {
+      result.current.stopSession();
+    });
+
+    expect(result.current.status.phase).toBe("idle");
+  });
+
+  it("re-arms auto-start across the real deep-link cascade (summary 'Try it', #698)", () => {
+    // The rerender test above flushes effects between renders, which can mask the
+    // production timing: the summary "Try it" batches the idle transition
+    // (dismiss) AND the ?try= navigation into ONE commit (autoStart → false),
+    // then useSuggestionDeepLink's layout effect strips the param (autoStart →
+    // true) before paint. `justArmed` only fires if React flushes the
+    // autoStart=false commit's passive effect before the strip's re-render. This
+    // composes the REAL useSession + useSuggestionDeepLink (exactly as a mode
+    // page wires them) and drives the whole cascade inside a SINGLE act() — one
+    // user click — so React's real effect ordering, not the test harness,
+    // decides the outcome.
+    const noop = () => {
+      // Mode application itself is covered in use-suggestion-deep-link.test.tsx;
+      // here we only assert the autoStart edge restarts the session.
+    };
+    // StrictMode mirrors main.tsx (the app's real root) so the effect
+    // double-invoke is exercised, not just assumed: the re-arm must stay
+    // idempotent even though the auto-start effect has no cleanup and runs twice
+    // on mount under StrictMode.
+    const wrapper = ({ children }: { children: ReactNode }) =>
+      createElement(
+        StrictMode,
+        null,
+        createElement(
+          MemoryRouter,
+          { initialEntries: ["/flashcard/"] },
+          children
+        )
+      );
+
+    const { result } = renderHook(
+      () => {
+        const navigate = useNavigate();
+        const deepLinkPending = useSuggestionDeepLink({
+          tryHandlers: [tryHandler(isFlashcardMode, noop)],
+        });
+        const sessionApi = useSession({
+          mode: "flashcard",
+          stackKey: "mnemonica",
+          autoStart: !deepLinkPending,
+        });
+        return { navigate, sessionApi };
+      },
+      { wrapper }
+    );
+
+    // Mount auto-starts (autoStart true, no params on the URL).
+    assertPhase(result.current.sessionApi.status, "active");
+    const firstId = result.current.sessionApi.status.session.id;
+
+    // One click: stop the current session (→ idle; < 3 questions is discarded)
+    // AND navigate to the same-page deep link — exactly handleTryIt's batched
+    // dismiss + Link navigation.
+    act(() => {
+      result.current.sessionApi.stopSession();
+      result.current.navigate("/flashcard/?try=neighbor");
+    });
+
+    // The autoStart false→true edge must have started a *new* open session.
+    assertPhase(result.current.sessionApi.status, "active");
+    expect(result.current.sessionApi.status.session.id).not.toBe(firstId);
   });
 
   it("captures timed=true from options onto the active session", () => {

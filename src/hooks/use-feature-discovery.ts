@@ -11,6 +11,7 @@ import type {
   FeatureDiscoveryState,
   FeatureSuggestion,
 } from "../types/discovery";
+import type { SessionRecord } from "../types/session";
 import { isFeatureDiscoveryState } from "../utils/discovery-typeguards";
 import { deriveFeatureUsage } from "../utils/feature-usage";
 import { useLocalDb } from "../utils/localstorage";
@@ -47,7 +48,29 @@ export type UseFeatureDiscoveryResult = {
   totalCount: number;
 };
 
-export const useFeatureDiscovery = (): UseFeatureDiscoveryResult => {
+export type UseFeatureDiscoveryOptions = {
+  /**
+   * The just-finished session, for the post-session ("summary") surface. Two
+   * effects:
+   *  1. Folds the record into usage so the variant the user *just* completed
+   *     counts. This surface mounts at phase "summary" — after `finalizeSession`
+   *     wrote history and `setStatus` re-rendered — and `useLocalDb`'s
+   *     `getSnapshot` re-reads localStorage every render, so `useSessionHistory`
+   *     here *already* includes this record. Folding it in is therefore a
+   *     belt-and-suspenders guarantee (deduped by id) that the just-finished
+   *     variant is counted regardless of snapshot timing — not a fix for a stale
+   *     read.
+   *  2. Restricts suggestions to this record's mode, keeping the prompt
+   *     "same-mode" ("nailed that — ready for X?"). This is the load-bearing
+   *     effect: the just-played mode isn't otherwise available to the hook.
+   */
+  completedRecord?: SessionRecord;
+};
+
+export const useFeatureDiscovery = (
+  options: UseFeatureDiscoveryOptions = {}
+): UseFeatureDiscoveryResult => {
+  const { completedRecord } = options;
   const { history } = useSessionHistory();
   const { getGlobalStats } = useAllTimeStats();
   const { totalSessions } = getGlobalStats();
@@ -71,7 +94,18 @@ export const useFeatureDiscovery = (): UseFeatureDiscoveryResult => {
     { onCorrupt: reportLocalDbCorruption }
   );
 
-  const usage = useMemo(() => deriveFeatureUsage(history), [history]);
+  const usage = useMemo(
+    () =>
+      deriveFeatureUsage(
+        completedRecord
+          ? [
+              completedRecord,
+              ...history.filter((record) => record.id !== completedRecord.id),
+            ]
+          : history
+      ),
+    [history, completedRecord]
+  );
 
   const exploredCount = useMemo(
     () =>
@@ -85,6 +119,14 @@ export const useFeatureDiscovery = (): UseFeatureDiscoveryResult => {
     if (isShareNudgePending(shareDismissed, totalSessions)) {
       return null;
     }
+    // `totalSessions` (and the snooze gate below) read the all-time-stats
+    // snapshot, which on the post-session "summary" surface reflects the
+    // *post-completion* count: this surface mounts at phase "summary" (after
+    // finalizeSession wrote all-time-stats), and `useLocalDb`'s `getSnapshot`
+    // re-reads localStorage on that re-render — so the just-finished session is
+    // already counted here. The gates therefore act on the up-to-date count (a
+    // freshly earned 3rd session opens the prompt immediately, not one session
+    // later). Don't add a +1 — the count is already current.
     if (totalSessions < DISCOVERY_MIN_SESSIONS) {
       return null;
     }
@@ -96,7 +138,10 @@ export const useFeatureDiscovery = (): UseFeatureDiscoveryResult => {
       (suggestion) =>
         suggestion.isApplicable(usage) &&
         !suggestion.isUsed(usage) &&
-        !state.dismissed.includes(suggestion.id)
+        !state.dismissed.includes(suggestion.id) &&
+        // Same-mode only on the post-session surface (the "ready for X?" prompt
+        // continues the mode just played); unrestricted everywhere else.
+        (completedRecord ? suggestion.mode === completedRecord.mode : true)
     );
 
     // Untried whole modes → untried variants of the most-used mode → others.
@@ -113,7 +158,7 @@ export const useFeatureDiscovery = (): UseFeatureDiscoveryResult => {
       return SUGGESTION_CATALOG.indexOf(a) - SUGGESTION_CATALOG.indexOf(b);
     });
     return sorted[0] ?? null;
-  }, [shareDismissed, totalSessions, state, usage]);
+  }, [shareDismissed, totalSessions, state, usage, completedRecord]);
 
   const accept = useCallback(
     (id: string, surface: DiscoverySurface): void => {

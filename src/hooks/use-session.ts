@@ -471,13 +471,29 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
     startSession(config);
   }, [dismissSummary, startSession]);
 
-  // Auto-starting an open session means training is tracked from the moment the user
-  // visits the page. Sessions with fewer than 3 questions are discarded (see
-  // meetsMinimumSaveThreshold), so brief visits don't pollute history.
+  // Auto-starting an open session means training is tracked from the moment the
+  // user visits the page. Sessions with fewer than 3 questions are discarded
+  // (see meetsMinimumSaveThreshold), so brief visits don't pollute history.
+  //
+  // Two triggers, both gated on idle:
+  //  1. Initial mount with autoStart already true — the common case (a direct
+  //     visit, or a deep-link stripped before this effect first ran).
+  //  2. autoStart flipping false → true. Callers pass `autoStart:
+  //     !deepLinkPending`, so this fires exactly when a `?try=`/`?timed=`
+  //     deep-link is consumed on an already-mounted page — the post-session
+  //     "Try it" (#698), which re-navigates to the same page the user just
+  //     finished a session on. The single-shot `initialMountRef` alone would
+  //     never re-fire there, leaving the preselected variant idle.
+  // A plain Stop or summary dismiss returns to idle WITHOUT changing autoStart,
+  // so neither is a re-arm signal — they must not auto-restart a session.
   const initialMountRef = useRef(true);
+  const prevAutoStartRef = useRef(autoStart);
   useEffect(() => {
-    if (autoStart && initialMountRef.current && status.phase === "idle") {
-      initialMountRef.current = false;
+    const justArmed = autoStart && !prevAutoStartRef.current;
+    prevAutoStartRef.current = autoStart;
+    const isInitialMount = initialMountRef.current;
+    initialMountRef.current = false;
+    if (autoStart && status.phase === "idle" && (isInitialMount || justArmed)) {
       startSession({ type: "open" });
     }
   }, [autoStart, status.phase, startSession]);
