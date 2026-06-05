@@ -84,6 +84,7 @@ A collection of memorized deck utilities:
 - Filter by training mode and stack
 - Track accuracy trends over time
 - All-time aggregated statistics per mode and stack combination
+- Exploration view: a progress map of modes and variants you've tried, with one-tap deep-links to try the rest
 - Data stored locally - never leaves your device
 
 ### Guided Discovery (New challenge)
