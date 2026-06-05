@@ -1,6 +1,7 @@
 {
   "discovery": {
     "eyebrow": "Nieuwe uitdaging",
+    "summaryEyebrow": "Klaar voor je volgende uitdaging?",
     "cta": "Proberen",
     "progress": "{{explored}} van {{total}} verkend",
     "dismiss": "Sluiten",

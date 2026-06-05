@@ -251,6 +251,55 @@ describe("useFeatureDiscovery", () => {
     expect(result.current.nextSuggestion?.id).toBe("mode-spotcheck");
   });
 
+  it("restricts to the completed record's mode on the post-session surface", () => {
+    // Default history is flashcard-only, so the unrestricted pick is the untried
+    // whole mode "mode-spotcheck" (priority 1). With a completed flashcard
+    // record, the summary surface must instead surface a *flashcard* variant.
+    const { result } = renderHook(() =>
+      useFeatureDiscovery({ completedRecord: flashcard("done", "cardonly") })
+    );
+
+    expect(result.current.nextSuggestion?.id).toBe("flashcard-numberonly");
+  });
+
+  it("does not re-suggest the variant just completed (fresh usage via completedRecord)", () => {
+    // The user just finished their first *number-only* session. The same-tab
+    // history snapshot hasn't recorded it yet, so without folding the completed
+    // record into usage the summary would re-suggest "flashcard-numberonly" —
+    // exactly what they just did (it outranks the other flashcard variants by
+    // catalog order). completedRecord must mark it used so the next variant wins.
+    mockHistory = [flashcard("1", "cardonly")];
+
+    const { result } = renderHook(() =>
+      useFeatureDiscovery({ completedRecord: flashcard("done", "numberonly") })
+    );
+
+    expect(result.current.nextSuggestion?.id).not.toBe("flashcard-numberonly");
+    expect(result.current.nextSuggestion?.id).toBe("flashcard-neighbor");
+  });
+
+  it("suggests the timed nudge for a completed mode with no sub-variants (ACAAN)", () => {
+    // ACAAN has no sub-variants, so after an untimed ACAAN session the only
+    // same-mode candidate left is its timed nudge.
+    const { result } = renderHook(() =>
+      useFeatureDiscovery({ completedRecord: acaan("done") })
+    );
+
+    expect(result.current.nextSuggestion?.id).toBe("acaan-timed");
+  });
+
+  it("returns null when the completed mode has no remaining same-mode suggestion", () => {
+    // A timed ACAAN session exhausts ACAAN's same-mode catalog (whole mode used,
+    // timed used), so the post-session surface shows nothing.
+    const { result } = renderHook(() =>
+      useFeatureDiscovery({
+        completedRecord: { ...acaan("done"), timed: true },
+      })
+    );
+
+    expect(result.current.nextSuggestion).toBeNull();
+  });
+
   it("does not duplicate an already-retired id when accepting again", () => {
     const { result } = renderHook(() => useFeatureDiscovery());
 

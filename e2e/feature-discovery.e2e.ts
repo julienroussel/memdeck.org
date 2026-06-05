@@ -3,6 +3,11 @@ import { expect } from "@playwright/test";
 import { test } from "./fixtures/test-setup";
 
 const NEW_CHALLENGE_PATTERN = /new challenge/i;
+// Structured-session controls (the only UI path to the summary modal).
+const START_A_SESSION_PATTERN = /start a session/i;
+const START_PRESET_PATTERN = /start \d+ question session/i;
+const PROGRESS_ZERO_PATTERN = /progress: 0\/\d+/i;
+const PROGRESS_ONE_PATTERN = /progress: 1\/\d+/i;
 const NUMBERONLY_DEEP_LINK = /\/flashcard\/\?try=numberonly$/;
 const NEIGHBOR_DEEP_LINK = /\/flashcard\/\?try=neighbor$/;
 // The page strips the deep-link param on mount, so the landed URL is bare.
@@ -52,11 +57,11 @@ const ALL_WHOLE_MODES_SEED: Seed = {
 };
 
 // Seed a selected stack + session history + an all-time-stats total before the
-// app mounts, then open home. The app reads these via useSyncExternalStore on
-// mount, so the seeded stack flips home to the with-stack view. The init script
-// re-runs on every full navigation/reload but leaves the discovery state
+// app mounts. The app reads these via useSyncExternalStore on mount, so the
+// seeded stack flips pages to the with-stack view. The init script re-runs on
+// every full navigation/reload but leaves the discovery state
 // (FEATURE_DISCOVERY_LSK) untouched, so accept/dismiss writes survive a reload.
-async function seedAndOpenHome(page: Page, seed: Seed) {
+async function seedDiscoveryState(page: Page, seed: Seed) {
   await page.addInitScript((data: Seed) => {
     localStorage.setItem("memdeck-app-stack", JSON.stringify("mnemonica"));
     localStorage.setItem(
@@ -76,6 +81,11 @@ async function seedAndOpenHome(page: Page, seed: Seed) {
       })
     );
   }, seed);
+}
+
+// Seed discovery state, then open the Next Challenge (home) surface.
+async function seedAndOpenHome(page: Page, seed: Seed) {
+  await seedDiscoveryState(page, seed);
   await page.goto("/");
 }
 
@@ -334,5 +344,93 @@ test.describe("Feature Discovery — Next Challenge card", () => {
     const record = await latestSessionRecord(page);
     expect(record).not.toBeNull();
     expect(record?.flashcardMode).toBe("cardonly");
+  });
+});
+
+test.describe("Feature Discovery — post-session summary surface (#698)", () => {
+  const SUMMARY_EYEBROW = "Ready for your next challenge?";
+  // Seed 3 prior sessions. The summary surface gates on the all-time-stats total;
+  // whether that snapshot reflects the pre-completion count (3) or the
+  // post-completion count (4 — useLocalDb's getSnapshot re-reads localStorage on
+  // the re-render finalizeSession triggers), both land in
+  // [DISCOVERY_MIN_SESSIONS (3), SHARE_NUDGE_MIN (5)): the suggestion is eligible
+  // and the share nudge stays dormant either way. Seeding 4 is NOT robust — the
+  // post-completion read (5) trips the share nudge and suppresses the suggestion.
+  const SUMMARY_SEED: Seed = {
+    sessions: [0, 1, 2].map((index) =>
+      session(`seed-${index}`, { mode: "flashcard", flashcardMode: "cardonly" })
+    ),
+    totalSessions: 3,
+  };
+
+  test("summary 'Try it' preselects the variant AND auto-starts a new session on the same page", async ({
+    page,
+  }) => {
+    await seedDiscoveryState(page, SUMMARY_SEED);
+    await page.goto("/flashcard/");
+
+    // Reach the summary modal — the only UI path is a structured session that
+    // finalizes. Start one and Stop after a single question (structured sessions
+    // persist at questionsCompleted > 0), which transitions to the summary phase.
+    await page.getByRole("button", { name: START_A_SESSION_PATTERN }).click();
+    await page
+      .getByRole("button", { name: START_PRESET_PATTERN })
+      .first()
+      .click();
+    // Confirm the structured session is active before answering (its banner
+    // shows "0/N").
+    await expect(page.getByLabel(PROGRESS_ZERO_PATTERN)).toBeVisible();
+    await page.getByRole("button", { name: "Reveal answer" }).click();
+    // Wait for the answer to commit before stopping: stopSession reads the
+    // committed status synchronously, so clicking Stop before "1/N" lands would
+    // see questionsCompleted = 0 and discard the session instead of summarizing.
+    await expect(page.getByLabel(PROGRESS_ONE_PATTERN)).toBeVisible();
+    await page.getByRole("button", { name: "Stop" }).click();
+
+    // Confirm the summary modal opened.
+    await expect(page.getByText("Session Complete")).toBeVisible();
+
+    // The post-session suggestion renders inside the modal, restricted to the
+    // just-played mode (flashcard). A same-mode sub-variant (priority 2) outranks
+    // the timed nudge (priority 3), so the CTA always carries a ?try= variant.
+    await expect(page.getByText(SUMMARY_EYEBROW)).toBeVisible();
+    const tryLink = page.getByRole("link", { name: "Try it" });
+    const href = await tryLink.getAttribute("href");
+    expect(href).toBeTruthy();
+    const variant = new URL(href ?? "", "http://localhost").searchParams.get(
+      "try"
+    );
+    expect(variant).toBeTruthy();
+
+    await tryLink.click();
+
+    // The deep link lands on the SAME already-mounted page and is stripped...
+    await expect(page).toHaveURL(STRIPPED_FLASHCARD_URL);
+
+    // ...and — the #698 fix under test — a NEW open session auto-starts in the
+    // preselected variant. Without the autoStart re-arm, the page would sit idle
+    // here and these Reveals would record nothing (handleAnswer no-ops off an
+    // active session). completeQuestionsThenLeave finalizes it on unmount.
+    await completeQuestionsThenLeave(page, 4, "Flashcard");
+
+    // The latest persisted record proves both halves: it is an *open* session
+    // (a fresh auto-start, not the structured one above) recorded under the
+    // *preselected* variant.
+    await expect
+      .poll(() =>
+        page.evaluate<string | null, string>((key) => {
+          const raw = localStorage.getItem(key);
+          if (raw === null) {
+            return null;
+          }
+          const parsed = JSON.parse(raw);
+          const latest =
+            Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : null;
+          return latest
+            ? `${latest.config?.type}:${latest.flashcardMode ?? ""}`
+            : null;
+        }, SESSION_HISTORY_KEY)
+      )
+      .toBe(`open:${variant}`);
   });
 });
