@@ -119,6 +119,7 @@ export const ROUTES = {
   toolbox: "/toolbox/",
   stats: "/stats/",
   about: "/about/",
+  whatsNew: "/whats-new/",
 } as const satisfies Record<string, RoutePath>;
 
 /**

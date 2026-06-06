@@ -633,5 +633,15 @@
     "movingToNext": "A passar para a próxima ronda.",
     "answerCorrect": "Correto",
     "answerIncorrect": "Errado, a resposta era {{answer}}"
+  },
+  "whatsNew": {
+    "pageTitle": "Novidades",
+    "pageDescription": "As atualizações mais recentes do MemDeck — novos stacks, funcionalidades e correções, as mais recentes primeiro.",
+    "title": "Novidades",
+    "intro": "Atualizações recentes do MemDeck — novos stacks, funcionalidades de treino e correções. As mais recentes primeiro.",
+    "typeStack": "Novo stack",
+    "typeFeature": "Funcionalidade",
+    "typeFix": "Correção",
+    "badgeNew": "Novo"
   }
 }

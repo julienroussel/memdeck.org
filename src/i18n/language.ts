@@ -13,7 +13,7 @@ export const SUPPORTED_LANGUAGES = [
   "nl",
   "pt",
 ] as const;
-type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
+export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 
 export const LANGUAGE_LABELS = {
   en: "English",

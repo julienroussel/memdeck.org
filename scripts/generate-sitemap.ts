@@ -22,6 +22,7 @@ const ROUTE_PRIORITIES: Record<RoutePath, string> = {
   "/toolbox/": "0.5",
   "/stats/": "0.3",
   "/about/": "0.3",
+  "/whats-new/": "0.6",
 };
 
 /**
@@ -41,6 +42,7 @@ const getLastModified = (routePath: RoutePath): string => {
     "/toolbox/": "src/pages/toolbox",
     "/stats/": "src/pages/stats",
     "/about/": "src/pages/about.tsx",
+    "/whats-new/": "src/data/whats-new.ts",
   };
 
   const source = sourceMap[routePath];
