@@ -21,7 +21,8 @@ type RoutesUsed =
   | "distance"
   | "toolbox"
   | "stats"
-  | "about";
+  | "about"
+  | "whatsNew";
 
 type AssertRoutesExhaustive = [
   Exclude<keyof typeof ROUTES, RoutesUsed>,

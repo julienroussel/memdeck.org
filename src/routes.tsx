@@ -44,6 +44,9 @@ const Stats = lazyWithReload(() =>
 const About = lazyWithReload(() =>
   import("./pages/about").then((m) => ({ default: m.About }))
 );
+const WhatsNew = lazyWithReload(() =>
+  import("./pages/whats-new/whats-new").then((m) => ({ default: m.WhatsNew }))
+);
 const PageLoader = () => (
   <Center h="100%">
     <Loader size="lg" />
@@ -153,6 +156,14 @@ export const Routes = () => (
         </LazyRoute>
       }
       path={ROUTES.about}
+    />
+    <RouterRoute
+      element={
+        <LazyRoute>
+          <WhatsNew />
+        </LazyRoute>
+      }
+      path={ROUTES.whatsNew}
     />
     <RouterRoute element={<Navigate replace to={ROUTES.home} />} path="*" />
   </RouterRoutes>

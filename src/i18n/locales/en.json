@@ -633,5 +633,15 @@
     "thumbEndLabel": "End position",
     "badgeFullAriaLabel": "Stack range: {{count}} cards. Tap to adjust.",
     "badgePartialAriaLabel": "Stack range: positions {{start}} to {{end}}. Tap to adjust."
+  },
+  "whatsNew": {
+    "pageTitle": "What's New",
+    "pageDescription": "The latest MemDeck updates — new stacks, features, and fixes, newest first.",
+    "title": "What's New",
+    "intro": "Recent updates to MemDeck — new stacks, training features, and fixes. Newest first.",
+    "typeStack": "New stack",
+    "typeFeature": "Feature",
+    "typeFix": "Fix",
+    "badgeNew": "New"
   }
 }

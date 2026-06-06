@@ -99,7 +99,8 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Pages**: Self-contained in `src/pages/` — each training mode is its own page. Stack-dependent pages are wrapped in `RequireStack`
 - **Components**: Reusable UI in `src/components/` (e.g., `CardSpread`, `StackPicker`, `NumberCard`, `ShareButton`, `ShareNudge`, `NavFooter`, `JsonLd`)
 - **Hooks**: Custom hooks in `src/hooks/` (e.g., `useSelectedStack`, `usePwaInstall`, `useDocumentMeta`)
-- **Utils**: Pure utility functions in `src/utils/` (e.g., `card-selection`, `card-formatting`, `localstorage`, `share`, `is-pwa`)
+- **Utils**: Pure utility functions in `src/utils/` (e.g., `card-selection`, `card-formatting`, `format-release-date`, `localstorage`, `share`, `is-pwa`)
+- **Data**: Typed content modules in `src/data/` (e.g., `whats-new.ts` — the curated changelog; all 7 languages enforced at compile time via `Record<SupportedLanguage, string>`)
 - **Services**: `src/services/analytics.ts` — Google Analytics 4 integration with event tracking. Only initialized when `window.location.hostname === "memdeck.org"` — local dev, preview deployments, and e2e runs are **silent** (no GA events fired). Don't treat "GA didn't log locally" as a bug. Tracks flashcard/spot-check/ACAAN/distance answers, session completions, share actions, web vitals, and errors
 - **i18n**: `src/i18n/` — 7 languages (en, fr, es, de, it, nl, pt) using `react-i18next`. Locale files are lazy-loaded as separate chunks. Type-safe keys derived from the English locale
 - **State**: Primarily local component state with localStorage persistence
@@ -118,6 +119,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **FAQ** (`src/pages/faq.tsx`): Frequently asked questions about memorized decks, targeting LLM search discoverability. Includes `FAQPage` and `BreadcrumbList` JSON-LD schemas
 - **Resources** (`src/pages/resources.tsx`): Curated reading list of memorized deck books and PDFs. Includes `ItemList`/`Book` and `BreadcrumbList` JSON-LD schemas
 - **About** (`src/pages/about.tsx`): Project info and links
+- **What's New** (`src/pages/whats-new/`): Curated, translated changelog at `/whats-new/` — entries newest-first, each with a localized type badge (`stack`/`feature`/`fix`) and its release date+time rendered in the viewer's locale and local timezone (`<time>` + `src/utils/format-release-date.ts`). Entries live in `src/data/whats-new.ts` (all 7 languages enforced at compile time). Includes a `BreadcrumbList` JSON-LD schema. Foundational for the What's New epic (#717) — siblings add the nav "New" badge (#713), a gated PWA toast (#714), a draft helper (#715), and llms-full.txt injection (#716)
 
 ### PWA & SEO
 

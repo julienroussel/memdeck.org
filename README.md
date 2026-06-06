@@ -59,6 +59,10 @@ Once you've logged a few sessions, MemDeck surfaces a "New challenge" card on th
 
 Curated reading list of memorized deck books and PDFs to deepen your knowledge.
 
+### What's New
+
+A curated changelog at `/whats-new/` — recent updates (new stacks, features, and fixes), newest first, translated into all 7 languages. Each release shows its date and time in your local timezone.
+
 ### Install as App
 
 MemDeck is a Progressive Web App — install it on your phone or desktop for offline access. Silent auto-updates keep you on the latest version.

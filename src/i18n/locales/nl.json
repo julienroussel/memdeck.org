@@ -633,5 +633,15 @@
     "movingToNext": "Door naar de volgende ronde.",
     "answerCorrect": "Goed",
     "answerIncorrect": "Fout, het antwoord was {{answer}}"
+  },
+  "whatsNew": {
+    "pageTitle": "Wat is er nieuw",
+    "pageDescription": "De nieuwste MemDeck-updates — nieuwe stacks, functies en verbeteringen, nieuwste eerst.",
+    "title": "Wat is er nieuw",
+    "intro": "Recente updates voor MemDeck — nieuwe stacks, oefenfuncties en verbeteringen. Nieuwste eerst.",
+    "typeStack": "Nieuwe stack",
+    "typeFeature": "Functie",
+    "typeFix": "Verbetering",
+    "badgeNew": "Nieuw"
   }
 }

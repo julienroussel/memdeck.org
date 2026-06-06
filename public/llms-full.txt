@@ -118,6 +118,10 @@ Curated collection of books and resources for memorized deck study:
 - "Particle System" by Joshua Jay - The Particle stack system designed for ease of memorization.
 - Conjuring Archive by Denis Behr - Online database of magic literature, including memorized deck references.
 
+### What's New
+
+A curated, translated changelog at https://memdeck.org/whats-new/ listing recent MemDeck updates — new stacks, training features, and fixes — newest first. Each entry carries a localized type badge and its release date and time, rendered in the reader's own locale and local timezone. Entries are hand-written clean prose (never raw commit messages) and translated into all 7 supported languages.
+
 ## Supported Stacks
 
 MemDeck supports eight memorized deck systems:
