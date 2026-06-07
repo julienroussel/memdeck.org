@@ -71,7 +71,12 @@ export const LAST_SAVE_FAILED_SHOWN_SSK = "memdeck-app-last-save-failed-shown";
 export const COMMIT_HASH_LSK = "memdeck-app-commit-hash";
 export const UPDATE_NOTIFIED_AT_LSK = "memdeck-app-update-notified-at";
 export const PWA_UPDATE_COOLDOWN_MS = 24 * 60 * 60 * 1000;
-export const PWA_UPDATE_TOAST_TIMEOUT = 5000;
+/**
+ * Toast visible duration. 10s (not 5s) so keyboard and screen-reader users have
+ * time to reach the toast's "See What's New" link before it auto-closes — Mantine
+ * pauses autoClose on hover but not on focus.
+ */
+export const PWA_UPDATE_TOAST_TIMEOUT = 10_000;
 
 export const PWA_INSTALL_DISMISSED_AT_LSK =
   "memdeck-app-pwa-install-dismissed-at";
@@ -81,6 +86,14 @@ export const PWA_INSTALL_COOLDOWN_MS = 30 * 24 * 60 * 60 * 1000;
 
 /** localStorage key for the newest What's New entry id the user has seen (nav badge) */
 export const WHATS_NEW_LAST_SEEN_LSK = "memdeck-app-whats-new-last-seen";
+
+/**
+ * localStorage key for the newest What's New entry id announced via the PWA update toast.
+ * Distinct from WHATS_NEW_LAST_SEEN_LSK (nav badge) so each entry is toast-announced at most
+ * once, regardless of later dependency-bump / noise deploys.
+ */
+export const WHATS_NEW_LAST_ANNOUNCED_LSK =
+  "memdeck-app-whats-new-last-announced";
 
 export const SITE_NAME = "MemDeck";
 export const SITE_URL = "https://memdeck.org";

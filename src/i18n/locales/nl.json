@@ -337,7 +337,8 @@
   },
   "pwaUpdate": {
     "title": "Bijgewerkt",
-    "message": "MemDeck is bijgewerkt."
+    "message": "MemDeck is bijgewerkt.",
+    "seeWhatsNew": "Bekijk wat er nieuw is"
   },
   "errors": {
     "somethingWentWrong": "Er is iets misgegaan",

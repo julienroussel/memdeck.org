@@ -337,7 +337,8 @@
   },
   "pwaUpdate": {
     "title": "Atualizado",
-    "message": "O MemDeck foi atualizado."
+    "message": "O MemDeck foi atualizado.",
+    "seeWhatsNew": "Ver novidades"
   },
   "errors": {
     "somethingWentWrong": "Algo correu mal",
