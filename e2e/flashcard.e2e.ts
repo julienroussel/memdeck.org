@@ -27,7 +27,7 @@ test.describe("Flashcard Training", () => {
 
     // Verify score badges are displayed (thumbs up/down icons with numbers)
     // Score is shown as badges with "0" text initially
-    const scoreBadges = page.locator(".mantine-Badge-root");
+    const scoreBadges = page.locator("main .mantine-Badge-root");
     await expect(scoreBadges).toHaveCount(2);
 
     // Both badges should show 0 initially
@@ -105,7 +105,7 @@ test.describe("Flashcard Training", () => {
     await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
 
     // Get initial score from badges
-    const scoreBadges = page.locator(".mantine-Badge-root");
+    const scoreBadges = page.locator("main .mantine-Badge-root");
     const initialSuccess = await scoreBadges.first().textContent();
     const initialFails = await scoreBadges.last().textContent();
 
@@ -134,7 +134,7 @@ test.describe("Flashcard Training", () => {
     page,
   }) => {
     // Verify initial score badges show 0
-    const scoreBadges = page.locator(".mantine-Badge-root");
+    const scoreBadges = page.locator("main .mantine-Badge-root");
     await expect(scoreBadges.first()).toContainText("0");
 
     // Make multiple selections to increase score
@@ -406,7 +406,7 @@ test.describe("Flashcard Training", () => {
     await expect(page.getByRole("img", { name: "Card after" })).toHaveCount(0);
 
     // Score should be reset to 0/0
-    const scoreBadges = page.locator(".mantine-Badge-root");
+    const scoreBadges = page.locator("main .mantine-Badge-root");
     await expect(scoreBadges.first()).toContainText("0");
     await expect(scoreBadges.last()).toContainText("0");
 
@@ -436,7 +436,7 @@ test.describe("Flashcard Training", () => {
     await page.locator(".cardSpreadCard").last().click({ force: true });
 
     // Score should be non-zero
-    const scoreBadges = page.locator(".mantine-Badge-root");
+    const scoreBadges = page.locator("main .mantine-Badge-root");
     await expect(async () => {
       const successText = await scoreBadges.first().textContent();
       const failsText = await scoreBadges.last().textContent();
@@ -477,7 +477,7 @@ test.describe("Flashcard Training", () => {
     await page.waitForLoadState("networkidle");
 
     // Page should load correctly with score badges and flashcard content
-    const scoreBadges = page.locator(".mantine-Badge-root");
+    const scoreBadges = page.locator("main .mantine-Badge-root");
     await expect(scoreBadges).toHaveCount(2);
 
     // Flashcard title should be visible (use heading role to be specific)

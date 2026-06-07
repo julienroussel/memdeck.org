@@ -69,6 +69,8 @@
     "name": "{{rank}} de {{suit}}"
   },
   "nav": {
+    "whatsNew": "Novedades",
+    "whatsNewUnseen": "Actualizaciones sin ver",
     "home": "Inicio",
     "guide": "Guía",
     "resources": "Recursos",

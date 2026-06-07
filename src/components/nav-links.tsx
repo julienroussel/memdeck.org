@@ -1,4 +1,4 @@
-import { NavLink } from "@mantine/core";
+import { Badge, NavLink, VisuallyHidden } from "@mantine/core";
 import {
   IconArrowsLeftRight,
   IconBook2,
@@ -9,12 +9,14 @@ import {
   IconInfoCircle,
   IconNumber,
   IconPlayCardStar,
+  IconSparkles,
   IconTools,
 } from "@tabler/icons-react";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
 import { ROUTES } from "../constants";
+import { useUnseenWhatsNew } from "../hooks/use-unseen-whats-new";
 
 export const NavLinks = memo(function NavLinks({
   onClick,
@@ -23,6 +25,7 @@ export const NavLinks = memo(function NavLinks({
 }) {
   const location = useLocation();
   const { t } = useTranslation();
+  const { hasUnseen } = useUnseenWhatsNew();
 
   return (
     <>
@@ -63,6 +66,27 @@ export const NavLinks = memo(function NavLinks({
         leftSection={<IconChartBar size={16} stroke={1.5} />}
         onClick={onClick}
         to={ROUTES.stats}
+      />
+      <NavLink
+        active={location.pathname === ROUTES.whatsNew}
+        aria-current={
+          location.pathname === ROUTES.whatsNew ? "page" : undefined
+        }
+        component={Link}
+        label={t("nav.whatsNew")}
+        leftSection={<IconSparkles aria-hidden="true" size={16} stroke={1.5} />}
+        onClick={onClick}
+        rightSection={
+          hasUnseen ? (
+            <>
+              <Badge aria-hidden="true" size="xs" variant="filled">
+                {t("whatsNew.badgeNew")}
+              </Badge>
+              <VisuallyHidden>{t("nav.whatsNewUnseen")}</VisuallyHidden>
+            </>
+          ) : undefined
+        }
+        to={ROUTES.whatsNew}
       />
 
       <NavLink

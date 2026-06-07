@@ -69,6 +69,8 @@
     "name": "{{rank}} van {{suit}}"
   },
   "nav": {
+    "whatsNew": "Wat is er nieuw",
+    "whatsNewUnseen": "Ongelezen updates",
     "home": "Home",
     "guide": "Gids",
     "resources": "Bronnen",
