@@ -1,21 +1,28 @@
 import { Stack, Text, Title } from "@mantine/core";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { buildBreadcrumbSchema, JsonLd } from "../../components/json-ld";
 import { ROUTES } from "../../constants";
 import { WHATS_NEW_ENTRIES } from "../../data/whats-new";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
+import { useUnseenWhatsNew } from "../../hooks/use-unseen-whats-new";
 import { isSupportedLanguage } from "../../i18n/language";
 import { WhatsNewEntryCard } from "./whats-new-entry-card";
 
 export const WhatsNew = () => {
   const { t, i18n } = useTranslation();
   const lang = isSupportedLanguage(i18n.language) ? i18n.language : "en";
+  const { markLatestSeen } = useUnseenWhatsNew();
 
   useDocumentMeta({
     title: t("whatsNew.pageTitle"),
     description: t("whatsNew.pageDescription"),
   });
+
+  // Opening the page clears the nav "New" badge (marks the newest id seen).
+  useEffect(() => {
+    markLatestSeen();
+  }, [markLatestSeen]);
 
   const breadcrumbSchema = useMemo(
     () => buildBreadcrumbSchema(t("whatsNew.title"), ROUTES.whatsNew),

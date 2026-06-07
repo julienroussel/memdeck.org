@@ -45,4 +45,32 @@ test.describe("What's New page", () => {
     });
     expect(hasHorizontalOverflow).toBe(false);
   });
+
+  test("nav 'New' badge shows on a fresh profile and clears after opening the page", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
+    const whatsNewNav = page
+      .locator("#main-nav")
+      .getByRole("link", { name: WHATS_NEW_HEADING });
+    await expect(whatsNewNav).toBeVisible();
+    // Visible "New" badge (UX) ...
+    await expect(whatsNewNav.getByText("New", { exact: true })).toBeVisible();
+    // ... and the screen-reader-only label (the a11y acceptance gate).
+    await expect(whatsNewNav.getByText("Unseen updates")).toBeAttached();
+
+    await whatsNewNav.click();
+    await expect(page).toHaveURL(WHATS_NEW_URL_PATTERN);
+
+    // Cleared live in the persistent navbar — no reload (same-tab dispatch).
+    const navAfter = page
+      .locator("#main-nav")
+      .getByRole("link", { name: WHATS_NEW_HEADING });
+    await expect(navAfter.getByText("New", { exact: true })).toHaveCount(0);
+    await expect(
+      page.locator("#main-nav").getByText("Unseen updates")
+    ).toHaveCount(0);
+  });
 });

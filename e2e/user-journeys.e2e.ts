@@ -68,7 +68,7 @@ test.describe("User Journeys", () => {
       page.getByRole("heading", { name: "Flashcard" })
     ).toBeVisible();
     // Score is shown as badges, verify they exist
-    const scoreBadges = page.locator(".mantine-Badge-root");
+    const scoreBadges = page.locator("main .mantine-Badge-root");
     await expect(scoreBadges).toHaveCount(2);
 
     // User practices by clicking answers
@@ -146,7 +146,7 @@ test.describe("User Journeys", () => {
     await page.waitForLoadState("networkidle");
 
     // Flashcard page should load with score badges
-    const scoreBadges = page.locator(".mantine-Badge-root");
+    const scoreBadges = page.locator("main .mantine-Badge-root");
     await expect(scoreBadges).toHaveCount(2);
     await expect(
       page.getByRole("heading", { name: "Flashcard" })
@@ -278,7 +278,7 @@ test.describe("User Journeys", () => {
     expect(itemCount).toBeGreaterThan(0);
 
     // Score badges should be visible
-    const scoreBadges = page.locator(".mantine-Badge-root");
+    const scoreBadges = page.locator("main .mantine-Badge-root");
     await expect(scoreBadges).toHaveCount(2);
   });
 

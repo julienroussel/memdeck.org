@@ -79,6 +79,9 @@ export const PWA_INSTALL_PERMANENTLY_DISMISSED_LSK =
   "memdeck-app-pwa-install-permanently-dismissed";
 export const PWA_INSTALL_COOLDOWN_MS = 30 * 24 * 60 * 60 * 1000;
 
+/** localStorage key for the newest What's New entry id the user has seen (nav badge) */
+export const WHATS_NEW_LAST_SEEN_LSK = "memdeck-app-whats-new-last-seen";
+
 export const SITE_NAME = "MemDeck";
 export const SITE_URL = "https://memdeck.org";
 
