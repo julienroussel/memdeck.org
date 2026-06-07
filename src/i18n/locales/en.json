@@ -369,7 +369,8 @@
   },
   "pwaUpdate": {
     "title": "Updated",
-    "message": "MemDeck has been updated."
+    "message": "MemDeck has been updated.",
+    "seeWhatsNew": "See What's New"
   },
   "errors": {
     "somethingWentWrong": "Something went wrong",

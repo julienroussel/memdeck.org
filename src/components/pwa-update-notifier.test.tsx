@@ -1,5 +1,6 @@
 import { notifications } from "@mantine/notifications";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { RegisterSWOptions } from "vite-plugin-pwa/types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -7,11 +8,22 @@ import {
   PWA_UPDATE_COOLDOWN_MS,
   PWA_UPDATE_TOAST_TIMEOUT,
   UPDATE_NOTIFIED_AT_LSK,
+  WHATS_NEW_LAST_ANNOUNCED_LSK,
 } from "../constants";
+import { WHATS_NEW_ENTRIES } from "../data/whats-new";
+import { render as renderWithProviders } from "../test-utils";
 import { createMockLocalStorage } from "../test-utils/mock-local-storage";
 import { PwaUpdateNotifier } from "./pwa-update-notifier";
 
 vi.stubGlobal("__COMMIT_HASH__", "abc1234");
+
+// The gating tests use the real data module's newest entry id. Narrow here so
+// the assumption (the changelog is non-empty) is explicit and typed.
+const latestEntry = WHATS_NEW_ENTRIES[0];
+if (!latestEntry) {
+  throw new Error("WHATS_NEW_ENTRIES must be non-empty for these tests");
+}
+const latestEntryId = latestEntry.id;
 
 const mockUseRegisterSW = vi.fn((_options?: RegisterSWOptions) => ({}));
 
@@ -20,7 +32,7 @@ vi.mock("virtual:pwa-register/react", () => ({
 }));
 
 vi.mock("@mantine/notifications", () => ({
-  notifications: { show: vi.fn() },
+  notifications: { show: vi.fn(), hide: vi.fn() },
 }));
 
 const mockTrackFeatureUsed = vi.fn();
@@ -69,17 +81,17 @@ describe("PwaUpdateNotifier", () => {
     expect(notifications.show).not.toHaveBeenCalled();
   });
 
-  it("shows a teal auto-closing toast when hash differs and cooldown expired", () => {
+  it("shows a teal auto-closing toast when hash differs and a new entry is unannounced", () => {
     mockLocalStorage.setItem(COMMIT_HASH_LSK, "old_hash");
     render(<PwaUpdateNotifier />);
 
     expect(notifications.show).toHaveBeenCalledOnce();
     expect(notifications.show).toHaveBeenCalledWith(
       expect.objectContaining({
+        id: "pwa-update",
         color: "teal",
         autoClose: PWA_UPDATE_TOAST_TIMEOUT,
         title: "Updated",
-        message: "MemDeck has been updated.",
         withCloseButton: true,
       })
     );
@@ -130,6 +142,61 @@ describe("PwaUpdateNotifier", () => {
     render(<PwaUpdateNotifier />);
 
     expect(mockTrackFeatureUsed).toHaveBeenCalledWith("PWA Update Applied");
+  });
+
+  it("is silent when the latest entry was already announced (noise deploy)", () => {
+    mockLocalStorage.setItem(COMMIT_HASH_LSK, "old_hash");
+    mockLocalStorage.setItem(WHATS_NEW_LAST_ANNOUNCED_LSK, latestEntryId);
+
+    render(<PwaUpdateNotifier />);
+
+    expect(notifications.show).not.toHaveBeenCalled();
+  });
+
+  it("still tracks telemetry when the toast is gated silent", () => {
+    mockLocalStorage.setItem(COMMIT_HASH_LSK, "old_hash");
+    mockLocalStorage.setItem(WHATS_NEW_LAST_ANNOUNCED_LSK, latestEntryId);
+
+    render(<PwaUpdateNotifier />);
+
+    expect(mockTrackFeatureUsed).toHaveBeenCalledWith("PWA Update Applied");
+    expect(notifications.show).not.toHaveBeenCalled();
+  });
+
+  it("records the announced entry id when the toast shows", () => {
+    mockLocalStorage.setItem(COMMIT_HASH_LSK, "old_hash");
+
+    render(<PwaUpdateNotifier />);
+
+    expect(notifications.show).toHaveBeenCalledOnce();
+    expect(mockLocalStorage.getItem(WHATS_NEW_LAST_ANNOUNCED_LSK)).toBe(
+      latestEntryId
+    );
+  });
+
+  it("seeds the announced marker on first visit so new users aren't toasted", () => {
+    render(<PwaUpdateNotifier />);
+
+    expect(notifications.show).not.toHaveBeenCalled();
+    expect(mockLocalStorage.getItem(COMMIT_HASH_LSK)).toBe("abc1234");
+    expect(mockLocalStorage.getItem(WHATS_NEW_LAST_ANNOUNCED_LSK)).toBe(
+      latestEntryId
+    );
+  });
+
+  it("renders a 'See What's New' link to /whats-new/ that dismisses the toast", async () => {
+    mockLocalStorage.setItem(COMMIT_HASH_LSK, "old_hash");
+    render(<PwaUpdateNotifier />);
+
+    const call = vi.mocked(notifications.show).mock.calls[0]?.[0];
+    expect(call).toBeDefined();
+    renderWithProviders(<div>{call?.message}</div>);
+
+    const link = screen.getByRole("link", { name: "See What's New" });
+    expect(link).toHaveAttribute("href", "/whats-new/");
+
+    await userEvent.click(link);
+    expect(notifications.hide).toHaveBeenCalledWith("pwa-update");
   });
 
   it("registers the service worker with immediate option and onRegisteredSW", () => {

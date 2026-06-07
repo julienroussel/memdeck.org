@@ -157,10 +157,13 @@ export const Provider = () => (
         FallbackComponent={RootErrorFallback}
         onError={handleRootError}
       >
-        <Notifications />
         <LanguageLoadNotifier />
         <PwaUpdateNotifier />
         <BrowserRouter>
+          {/* Inside the router so toast messages can render react-router <Link>s
+              (e.g. the PWA update toast's "See What's New" link). Mantine portals
+              to a fixed DOM target regardless of React-tree position. */}
+          <Notifications />
           <FocusOnNavigate />
           <App />
         </BrowserRouter>
