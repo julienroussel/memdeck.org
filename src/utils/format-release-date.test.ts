@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { SUPPORTED_LANGUAGES } from "../i18n/language";
+import { SUPPORTED_LANGUAGES } from "../i18n/supported-languages";
 import { formatReleaseDate } from "./format-release-date";
 
 // A fixed mid-year, mid-day instant. Assertions stay timezone-independent (no

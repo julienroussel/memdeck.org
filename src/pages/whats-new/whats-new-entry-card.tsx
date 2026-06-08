@@ -1,7 +1,7 @@
 import { Badge, Card, Group, Stack, Text, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import type { WhatsNewEntry, WhatsNewType } from "../../data/whats-new";
-import type { SupportedLanguage } from "../../i18n/language";
+import type { SupportedLanguage } from "../../i18n/supported-languages";
 import { formatReleaseDate } from "../../utils/format-release-date";
 
 const TYPE_LABEL_KEYS = {

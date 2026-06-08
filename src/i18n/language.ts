@@ -3,17 +3,10 @@ import { LANGUAGE_LSK, LOCALE_RELOAD_SSK } from "../constants";
 import { analytics } from "../services/analytics";
 import { includes } from "../utils/includes";
 import { isStaleChunkError } from "../utils/stale-chunk";
-
-export const SUPPORTED_LANGUAGES = [
-  "en",
-  "fr",
-  "es",
-  "de",
-  "it",
-  "nl",
-  "pt",
-] as const;
-export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
+import {
+  SUPPORTED_LANGUAGES,
+  type SupportedLanguage,
+} from "./supported-languages";
 
 export const LANGUAGE_LABELS = {
   en: "English",

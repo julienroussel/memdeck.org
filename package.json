@@ -37,6 +37,7 @@
     "lighthouse": "lhci autorun",
     "generate:splash": "node scripts/generate-splash-images.ts",
     "generate:screenshots": "node scripts/generate-screenshots.ts",
+    "whats-new:draft": "node scripts/draft-whats-new.ts",
     "prepare": "lefthook install"
   },
   "devDependencies": {
