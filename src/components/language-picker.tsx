@@ -6,8 +6,8 @@ import {
   changeLanguage,
   isSupportedLanguage,
   LANGUAGE_LABELS,
-  SUPPORTED_LANGUAGES,
 } from "../i18n/language";
+import { SUPPORTED_LANGUAGES } from "../i18n/supported-languages";
 import { analytics } from "../services/analytics";
 
 const LANGUAGE_OPTIONS = SUPPORTED_LANGUAGES.map((lang) => ({

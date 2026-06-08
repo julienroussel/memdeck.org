@@ -1,4 +1,4 @@
-import type { SupportedLanguage } from "../i18n/language";
+import type { SupportedLanguage } from "../i18n/supported-languages";
 
 /** Category of a changelog entry; surfaced as a localized badge on the page. */
 export type WhatsNewType = "stack" | "feature" | "fix";

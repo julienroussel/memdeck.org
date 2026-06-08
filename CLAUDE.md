@@ -248,7 +248,7 @@ All user-facing English text must follow these principles:
 ## Adding a New Locale
 
 1. Copy `src/i18n/locales/en.json` to `src/i18n/locales/<code>.json` and translate values. Keys must stay identical — they're typed off `en` via `src/i18n/types.ts`, so any drift is a type error.
-2. Register the locale in `src/i18n/language.ts` — add `<code>` to `SUPPORTED_LANGUAGES`, `LANGUAGE_LABELS`, `LANGUAGE_CODES`, and `languageLoaders` (all four must stay in sync; they share a `satisfies Record<SupportedLanguage, …>` constraint).
+2. Register the locale: add `<code>` to `SUPPORTED_LANGUAGES` in `src/i18n/supported-languages.ts` (the dependency-free leaf that owns the list/type), then to `LANGUAGE_LABELS`, `LANGUAGE_CODES`, and `languageLoaders` in `src/i18n/language.ts` (all four must stay in sync; `LANGUAGE_LABELS`/`LANGUAGE_CODES` share a `satisfies Record<SupportedLanguage, …>` constraint).
 3. The filename must match `vite.config.ts`'s `LOCALE_CHUNK_RE` (`/i18n/locales/(?!en)(\w+)\.json$/`) — use a plain `<code>.json`, not `<code>-<region>.json`, or the chunk won't be split correctly.
 4. Run `pnpm run build` — a new `dist/assets/locale-<code>-<hash>.js` chunk should appear and be excluded from precaching (see `globIgnores` in `vite.config.ts`).
 

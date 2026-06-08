@@ -6,8 +6,8 @@ import {
   detectLanguage,
   isSupportedLanguage,
   LANGUAGE_CODES,
-  SUPPORTED_LANGUAGES,
 } from "./language";
+import { SUPPORTED_LANGUAGES } from "./supported-languages";
 
 vi.mock("i18next", () => ({
   default: {

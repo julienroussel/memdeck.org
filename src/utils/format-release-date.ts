@@ -1,4 +1,4 @@
-import type { SupportedLanguage } from "../i18n/language";
+import type { SupportedLanguage } from "../i18n/supported-languages";
 
 /**
  * Formats an ISO 8601 instant as a localized date + time string. No `timeZone`
