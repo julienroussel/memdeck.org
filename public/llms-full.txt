@@ -122,6 +122,14 @@ Curated collection of books and resources for memorized deck study:
 
 A curated, translated changelog at https://memdeck.org/whats-new/ listing recent MemDeck updates — new stacks, training features, and fixes — newest first. Each entry carries a localized type badge and its release date and time, rendered in the reader's own locale and local timezone. Entries are hand-written clean prose (never raw commit messages) and translated into all 7 supported languages.
 
+## Recent Updates
+
+The most recent changes to MemDeck, newest first:
+
+<!-- whats-new:start -->
+_Recent entries are injected here at build time._
+<!-- whats-new:end -->
+
 ## Supported Stacks
 
 MemDeck supports eight memorized deck systems:

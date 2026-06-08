@@ -24,7 +24,7 @@
     "lint:e2e-no-wait": "if grep -rnE \"\\.\\s*waitForTimeout\\s*\\(\" --include='*.ts' --include='*.tsx' e2e/ ; then echo 'E2E tests must use semantic waits, not waitForTimeout. See .claude/rules/pwa-and-lazy-loading.md.' >&2; exit 1; fi",
     "fix": "ultracite fix",
     "dev": "vite",
-    "build": "vite build && node scripts/generate-sitemap.ts && node scripts/prerender.ts",
+    "build": "vite build && node scripts/generate-sitemap.ts && node scripts/generate-llms-whats-new.ts && node scripts/prerender.ts",
     "typecheck": "tsc -b",
     "preview": "vite preview",
     "test": "vitest run",
