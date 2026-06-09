@@ -229,19 +229,15 @@ describe("generateNextDistanceRound", () => {
       expect(payload.newChoices.data.length).toBeGreaterThan(0);
       expect(payload.newExpectedDistance).not.toBeNull();
       expect(payload.newExpectedDistance).not.toBe(0);
+      expect(payload.newAnswerCard.index).toBeGreaterThanOrEqual(1);
+      expect(payload.newAnswerCard.index).toBeLessThanOrEqual(6);
+      expect(payload.newCard.index).not.toBe(payload.newAnswerCard.index);
     }
     expect(payload.newCard.index).toBeGreaterThanOrEqual(1);
     expect(payload.newCard.index).toBeLessThanOrEqual(6);
-    expect(payload.newAnswerCard.index).toBeGreaterThanOrEqual(1);
-    expect(payload.newAnswerCard.index).toBeLessThanOrEqual(6);
-    expect(payload.newCard.index).not.toBe(payload.newAnswerCard.index);
   });
 
-  it("returns a mode-independent placeholder payload (no throw) when cycleSize < MIN_DISTANCE_RANGE", () => {
-    // The placeholder is intentionally compute-shaped regardless of the
-    // requested mode — the page short-circuits to a rangeTooSmall banner
-    // and never reads choices/prompt data, so the placeholder shape is
-    // load-bearing only for "no throw across all mode inputs".
+  it("returns a mode-independent range-too-small payload (no throw) when cycleSize < MIN_DISTANCE_RANGE", () => {
     const tooSmall = {
       start: createDeckPosition(1),
       end: createDeckPosition(5),
@@ -253,14 +249,8 @@ describe("generateNextDistanceRound", () => {
         "cyclic",
         tooSmall
       );
-      expect(payload.newDisplay).toBe("compute");
-      if (payload.newDisplay === "compute") {
-        expect(payload.newOffset).toBeNull();
-        expect(payload.newChoices.kind).toBe("numbers");
-        expect(payload.newChoices.data).toEqual([]);
-      }
+      expect(payload.newDisplay).toBe("range-too-small");
       expect(payload.newCard.index).toBe(tooSmall.start);
-      expect(payload.newAnswerCard.index).toBe(tooSmall.start);
     }
   });
 });
@@ -294,41 +284,15 @@ describe("isCorrectAnswer", () => {
     expect(isCorrectAnswer({ kind: "compute", value: 5 }, round)).toBe(false);
   });
 
-  it("rejects every answer (including 0) when round is the rangeTooSmall placeholder", () => {
-    // The placeholder produced by buildRangeTooSmallPayload has empty
-    // choices and `expectedDistance: 0`. Without the defensive guard, an
-    // answer of `{kind:'compute', value:0}` would silently match and
-    // pollute session stats. This test pins that guard.
-    const tooSmall = {
-      start: createDeckPosition(1),
-      end: createDeckPosition(5),
-    };
-    const placeholderPayload = generateNextDistanceRound(
-      stackOrder,
-      "compute",
-      "cyclic",
-      tooSmall
+  it("rejects every answer (including 0) when the round is range-too-small", () => {
+    // Without this guard an answer could silently score against an
+    // unplayable round and pollute session stats. This test pins it.
+    const round: DistanceRound = { display: "range-too-small" };
+    expect(isCorrectAnswer({ kind: "compute", value: 0 }, round)).toBe(false);
+    expect(isCorrectAnswer({ kind: "compute", value: 1 }, round)).toBe(false);
+    expect(isCorrectAnswer({ kind: "apply", value: TwoOfHearts }, round)).toBe(
+      false
     );
-    if (placeholderPayload.newDisplay !== "compute") {
-      throw new Error("expected placeholder to be compute-shaped");
-    }
-    const placeholderRound: DistanceRound = {
-      display: "compute",
-      expectedDistance: placeholderPayload.newExpectedDistance,
-      offset: null,
-      answerCard: placeholderPayload.newAnswerCard,
-      choices: placeholderPayload.newChoices,
-    };
-    expect(placeholderRound.choices.data).toEqual([]);
-    expect(
-      isCorrectAnswer({ kind: "compute", value: 0 }, placeholderRound)
-    ).toBe(false);
-    expect(
-      isCorrectAnswer({ kind: "compute", value: 1 }, placeholderRound)
-    ).toBe(false);
-    expect(
-      isCorrectAnswer({ kind: "apply", value: TwoOfHearts }, placeholderRound)
-    ).toBe(false);
   });
 });
 
@@ -361,7 +325,7 @@ describe("createInitialState", () => {
     expect(state.card.index).toBeLessThanOrEqual(52);
   });
 
-  it("returns a placeholder state without throwing when cycleSize < MIN_DISTANCE_RANGE", () => {
+  it("returns a range-too-small state without throwing when cycleSize < MIN_DISTANCE_RANGE", () => {
     const tooSmall = {
       start: createDeckPosition(1),
       end: createDeckPosition(5),
@@ -375,14 +339,8 @@ describe("createInitialState", () => {
     });
     expect(state.successes).toBe(0);
     expect(state.fails).toBe(0);
-    expect(state.display).toBe("compute");
-    if (state.display === "compute") {
-      expect(state.offset).toBeNull();
-      expect(state.choices.kind).toBe("numbers");
-      expect(state.choices.data).toEqual([]);
-    }
+    expect(state.display).toBe("range-too-small");
     expect(state.card.index).toBe(tooSmall.start);
-    expect(state.answerCard.index).toBe(tooSmall.start);
   });
 });
 

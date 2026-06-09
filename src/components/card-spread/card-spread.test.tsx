@@ -144,13 +144,14 @@ describe("CardSpread", () => {
 
   describe("Keyboard navigation", () => {
     // The component tracks an `offset` value that shifts all cards visually.
-    // Each card receives a CSS custom property `--i` computed as:
-    //   index + 1 - (items.length / 2) + offset
+    // The offset is applied as a `--offset` CSS custom property on the
+    // CONTAINER (so each drag/keyboard step re-renders one node instead of
+    // all 52 buttons), while each card keeps a static `--i` computed as:
+    //   index + 1 - (items.length / 2)
+    // styles.css combines them: calc((var(--i) + var(--offset)) * ...).
     // ArrowRight increases offset by KEYBOARD_STEP (3), ArrowLeft decreases it.
     // maxOffset = items.length / 2. Using 6 cards: maxOffset = 3, KEYBOARD_STEP = 3.
-    // Initial offset = 0, so card[0] --i = 0 + 1 - 3 + 0 = -2.
-    // After ArrowRight: offset = 3, card[0] --i = 1.
-    // After ArrowLeft: offset = -3, card[0] --i = -5.
+    // Initial --offset = 0; card[0] --i = 0 + 1 - 3 = -2 and never changes.
 
     const sixUniqueCards = [
       AceOfHearts,
@@ -173,111 +174,109 @@ describe("CardSpread", () => {
     const getCssVar = (el: HTMLElement, name: string) =>
       el.style.getPropertyValue(name);
 
-    it("ArrowRight increases the offset, shifting card CSS positions forward", () => {
+    it("ArrowRight increases the container offset, leaving per-card --i static", () => {
       render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
       const group = screen.getByRole("group");
       const firstCard = getFirstButton();
 
+      expect(getCssVar(group, "--offset")).toBe("0");
       expect(getCssVar(firstCard, "--i")).toBe("-2");
 
       fireEvent.keyDown(group, { key: "ArrowRight" });
 
-      expect(getCssVar(firstCard, "--i")).toBe("1");
+      expect(getCssVar(group, "--offset")).toBe("3");
+      expect(getCssVar(firstCard, "--i")).toBe("-2");
     });
 
-    it("ArrowLeft decreases the offset, shifting card CSS positions backward", () => {
+    it("ArrowLeft decreases the container offset, leaving per-card --i static", () => {
       render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
       const group = screen.getByRole("group");
       const firstCard = getFirstButton();
 
+      expect(getCssVar(group, "--offset")).toBe("0");
       expect(getCssVar(firstCard, "--i")).toBe("-2");
 
       fireEvent.keyDown(group, { key: "ArrowLeft" });
 
-      expect(getCssVar(firstCard, "--i")).toBe("-5");
+      expect(getCssVar(group, "--offset")).toBe("-3");
+      expect(getCssVar(firstCard, "--i")).toBe("-2");
     });
 
     it("ArrowRight clamps at the maximum offset and stops changing", () => {
       render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
       const group = screen.getByRole("group");
-      const firstCard = getFirstButton();
 
       // One press reaches maxOffset (3 === KEYBOARD_STEP for 6 cards).
       fireEvent.keyDown(group, { key: "ArrowRight" });
-      expect(getCssVar(firstCard, "--i")).toBe("1");
+      expect(getCssVar(group, "--offset")).toBe("3");
 
       // Additional presses should not change the value beyond the boundary.
       fireEvent.keyDown(group, { key: "ArrowRight" });
-      expect(getCssVar(firstCard, "--i")).toBe("1");
+      expect(getCssVar(group, "--offset")).toBe("3");
     });
 
     it("ArrowLeft clamps at the minimum offset and stops changing", () => {
       render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
       const group = screen.getByRole("group");
-      const firstCard = getFirstButton();
 
       // One press reaches -maxOffset (-3 === -KEYBOARD_STEP for 6 cards).
       fireEvent.keyDown(group, { key: "ArrowLeft" });
-      expect(getCssVar(firstCard, "--i")).toBe("-5");
+      expect(getCssVar(group, "--offset")).toBe("-3");
 
       // Additional presses should not change the value beyond the boundary.
       fireEvent.keyDown(group, { key: "ArrowLeft" });
-      expect(getCssVar(firstCard, "--i")).toBe("-5");
+      expect(getCssVar(group, "--offset")).toBe("-3");
     });
 
     it("ArrowRight then ArrowLeft returns cards to their original positions", () => {
       render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
       const group = screen.getByRole("group");
-      const firstCard = getFirstButton();
-      const initialValue = getCssVar(firstCard, "--i");
+      const initialValue = getCssVar(group, "--offset");
 
       fireEvent.keyDown(group, { key: "ArrowRight" });
       fireEvent.keyDown(group, { key: "ArrowLeft" });
 
-      expect(getCssVar(firstCard, "--i")).toBe(initialValue);
+      expect(getCssVar(group, "--offset")).toBe(initialValue);
     });
 
     it("when canMove=false, ArrowRight does not change card positions", () => {
       render(<CardSpread canMove={false} items={cardItems(sixUniqueCards)} />);
 
       const group = screen.getByRole("group");
-      const firstCard = getFirstButton();
-      const initialValue = getCssVar(firstCard, "--i");
+      const initialValue = getCssVar(group, "--offset");
 
       fireEvent.keyDown(group, { key: "ArrowRight" });
 
-      expect(getCssVar(firstCard, "--i")).toBe(initialValue);
+      expect(getCssVar(group, "--offset")).toBe(initialValue);
     });
 
     it("when canMove=false, ArrowLeft does not change card positions", () => {
       render(<CardSpread canMove={false} items={cardItems(sixUniqueCards)} />);
 
       const group = screen.getByRole("group");
-      const firstCard = getFirstButton();
-      const initialValue = getCssVar(firstCard, "--i");
+      const initialValue = getCssVar(group, "--offset");
 
       fireEvent.keyDown(group, { key: "ArrowLeft" });
 
-      expect(getCssVar(firstCard, "--i")).toBe(initialValue);
+      expect(getCssVar(group, "--offset")).toBe(initialValue);
     });
 
     it("unhandled keys such as Enter, Escape, and Tab do not change card positions", () => {
       render(<CardSpread items={cardItems(sixUniqueCards)} />);
 
       const group = screen.getByRole("group");
-      const firstCard = getFirstButton();
-      const initialValue = getCssVar(firstCard, "--i");
+      const initialValue = getCssVar(group, "--offset");
 
       fireEvent.keyDown(group, { key: "Enter" });
       fireEvent.keyDown(group, { key: "Escape" });
       fireEvent.keyDown(group, { key: "Tab" });
 
-      expect(getCssVar(firstCard, "--i")).toBe(initialValue);
+      expect(getCssVar(group, "--offset")).toBe(initialValue);
     });
   });
 

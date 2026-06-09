@@ -72,7 +72,7 @@ export const App = () => {
         <Header opened={opened} toggle={toggle} />
       </AppShell.Header>
 
-      <AppShell.Navbar id="main-nav" p="md">
+      <AppShell.Navbar id="main-nav" inert={!opened || undefined} p="md">
         <AppShell.Section component={ScrollArea} grow>
           <NavLinks onClick={closeMobile} />
         </AppShell.Section>

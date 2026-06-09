@@ -16,7 +16,7 @@ import type {
   StackValue,
 } from "../../types/stacks";
 import type { TimerSettings } from "../../types/timer";
-import { buildWrongAnswerNotification } from "../flashcard/utils";
+import { buildWrongAnswerNotification } from "../../utils/notifications";
 import {
   type AdvancePayload,
   createInitialState,
@@ -37,7 +37,7 @@ type UseDistanceGameResult = {
   /**
    * The round-shaped fields, discriminated by `display`. Compute rounds carry
    * `expectedDistance` and numeric choices; Apply rounds carry `offset` and
-   * card choices.
+   * card choices; a `range-too-small` round carries no prompt data.
    */
   round: DistanceRound;
   convention: DistanceConvention;
@@ -185,6 +185,11 @@ export const useDistanceGame = (
 
   const revealAnswer = useCallback(() => {
     const round = roundRef.current;
+    // A range-too-small round has no answer to reveal (the page hides the
+    // reveal button in that state).
+    if (round.display === "range-too-small") {
+      return;
+    }
     const revealMessage =
       round.display === "apply"
         ? formatCardName(round.answerCard.card)

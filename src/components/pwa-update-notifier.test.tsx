@@ -3,13 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { RegisterSWOptions } from "vite-plugin-pwa/types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  COMMIT_HASH_LSK,
-  PWA_UPDATE_COOLDOWN_MS,
-  PWA_UPDATE_TOAST_TIMEOUT,
-  UPDATE_NOTIFIED_AT_LSK,
-  WHATS_NEW_LAST_ANNOUNCED_LSK,
-} from "../constants";
+import { COMMIT_HASH_LSK, WHATS_NEW_LAST_ANNOUNCED_LSK } from "../constants";
 import { WHATS_NEW_ENTRIES } from "../data/whats-new";
 import { render as renderWithProviders } from "../test-utils";
 import { createMockLocalStorage } from "../test-utils/mock-local-storage";
@@ -81,7 +75,7 @@ describe("PwaUpdateNotifier", () => {
     expect(notifications.show).not.toHaveBeenCalled();
   });
 
-  it("shows a teal auto-closing toast when hash differs and a new entry is unannounced", () => {
+  it("shows a teal persistent toast when hash differs and a new entry is unannounced", () => {
     mockLocalStorage.setItem(COMMIT_HASH_LSK, "old_hash");
     render(<PwaUpdateNotifier />);
 
@@ -90,51 +84,36 @@ describe("PwaUpdateNotifier", () => {
       expect.objectContaining({
         id: "pwa-update",
         color: "teal",
-        autoClose: PWA_UPDATE_TOAST_TIMEOUT,
+        autoClose: false,
         title: "Updated",
         withCloseButton: true,
       })
     );
   });
 
-  it("updates stored hash and timestamp after showing toast", () => {
-    const now = 1_700_000_000_000;
-    vi.spyOn(Date, "now").mockReturnValue(now);
+  it("updates the stored hash after showing the toast", () => {
     mockLocalStorage.setItem(COMMIT_HASH_LSK, "old_hash");
 
     render(<PwaUpdateNotifier />);
 
     expect(mockLocalStorage.getItem(COMMIT_HASH_LSK)).toBe("abc1234");
-    expect(mockLocalStorage.getItem(UPDATE_NOTIFIED_AT_LSK)).toBe(String(now));
   });
 
-  it("does not show a toast when within 24h cooldown", () => {
-    const now = 1_700_000_000_000;
-    vi.spyOn(Date, "now").mockReturnValue(now);
-    mockLocalStorage.setItem(COMMIT_HASH_LSK, "old_hash");
-    mockLocalStorage.setItem(
-      UPDATE_NOTIFIED_AT_LSK,
-      String(now - PWA_UPDATE_COOLDOWN_MS + 1000)
-    );
+  it("announces and tracks back-to-back updates without a cooldown", () => {
+    mockLocalStorage.setItem(COMMIT_HASH_LSK, "old_hash_1");
+    const { unmount } = render(<PwaUpdateNotifier />);
 
+    expect(notifications.show).toHaveBeenCalledTimes(1);
+    expect(mockTrackFeatureUsed).toHaveBeenCalledTimes(1);
+    unmount();
+
+    // A second update applied right after: telemetry fires again, but the gate
+    // keeps the toast silent because the latest entry is already announced.
+    mockLocalStorage.setItem(COMMIT_HASH_LSK, "old_hash_2");
     render(<PwaUpdateNotifier />);
 
-    expect(notifications.show).not.toHaveBeenCalled();
-    expect(mockLocalStorage.getItem(COMMIT_HASH_LSK)).toBe("abc1234");
-  });
-
-  it("shows a toast when cooldown has expired (25h ago)", () => {
-    const now = 1_700_000_000_000;
-    vi.spyOn(Date, "now").mockReturnValue(now);
-    mockLocalStorage.setItem(COMMIT_HASH_LSK, "old_hash");
-    mockLocalStorage.setItem(
-      UPDATE_NOTIFIED_AT_LSK,
-      String(now - PWA_UPDATE_COOLDOWN_MS - 3_600_000)
-    );
-
-    render(<PwaUpdateNotifier />);
-
-    expect(notifications.show).toHaveBeenCalledOnce();
+    expect(mockTrackFeatureUsed).toHaveBeenCalledTimes(2);
+    expect(notifications.show).toHaveBeenCalledTimes(1);
   });
 
   it("tracks 'PWA Update Applied' analytics event", () => {

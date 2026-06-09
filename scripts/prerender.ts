@@ -83,47 +83,53 @@ try {
     // Update meta name="title"
     html = html.replace(
       /(<meta\s+name="title"\s+content=")[^"]*(")/,
-      (_, p1, p2) => `${p1}${extracted.title}${p2}`
+      (_: string, p1: string, p2: string) => `${p1}${extracted.title}${p2}`
     );
 
     // Update meta name="description"
     html = html.replace(
       /(<meta\s+name="description"\s+content=")[\s\S]*?(")/,
-      (_, p1, p2) => `${p1}${extracted.description}${p2}`
+      (_: string, p1: string, p2: string) =>
+        `${p1}${extracted.description}${p2}`
     );
 
     // Update canonical link
     html = html.replace(
       /(<link\s+rel="canonical"\s+href=")[^"]*(")/,
-      (_, p1, p2) => `${p1}${extracted.canonicalUrl}${p2}`
+      (_: string, p1: string, p2: string) =>
+        `${p1}${extracted.canonicalUrl}${p2}`
     );
 
     // Update OG tags
     html = html.replace(
       /(<meta\s+property="og:title"\s+content=")[^"]*(")/,
-      (_, p1, p2) => `${p1}${extracted.title}${p2}`
+      (_: string, p1: string, p2: string) => `${p1}${extracted.title}${p2}`
     );
     html = html.replace(
       /(<meta\s+property="og:description"\s+content=")[\s\S]*?(")/,
-      (_, p1, p2) => `${p1}${extracted.description}${p2}`
+      (_: string, p1: string, p2: string) =>
+        `${p1}${extracted.description}${p2}`
     );
     html = html.replace(
       /(<meta\s+property="og:url"\s+content=")[^"]*(")/,
-      (_, p1, p2) => `${p1}${extracted.canonicalUrl}${p2}`
+      (_: string, p1: string, p2: string) =>
+        `${p1}${extracted.canonicalUrl}${p2}`
     );
 
     // Update Twitter tags
     html = html.replace(
       /(<meta\s+name="twitter:title"\s+content=")[^"]*(")/,
-      (_, p1, p2) => `${p1}${extracted.title}${p2}`
+      (_: string, p1: string, p2: string) => `${p1}${extracted.title}${p2}`
     );
     html = html.replace(
       /(<meta\s+name="twitter:description"\s+content=")[\s\S]*?(")/,
-      (_, p1, p2) => `${p1}${extracted.description}${p2}`
+      (_: string, p1: string, p2: string) =>
+        `${p1}${extracted.description}${p2}`
     );
     html = html.replace(
       /(<meta\s+name="twitter:url"\s+content=")[^"]*(")/,
-      (_, p1, p2) => `${p1}${extracted.canonicalUrl}${p2}`
+      (_: string, p1: string, p2: string) =>
+        `${p1}${extracted.canonicalUrl}${p2}`
     );
 
     // Write the pre-rendered HTML to the appropriate path

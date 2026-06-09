@@ -17,7 +17,6 @@ import {
 } from "../../hooks/use-suggestion-deep-link";
 import { isFlashcardMode } from "../../types/flashcard";
 import { cardItems, numberItems } from "../../types/typeguards";
-import { getNeighborCard } from "../../utils/neighbor";
 import { FlashcardActiveRound } from "./flashcard-active-round";
 import { FlashcardSettingsContent } from "./flashcard-settings-content";
 import { useFlashcardGame } from "./use-flashcard-game";
@@ -72,6 +71,7 @@ export const Flashcard = () => {
   const {
     score,
     card,
+    answerCard,
     choices,
     shouldShowCard,
     timeRemaining,
@@ -98,13 +98,6 @@ export const Flashcard = () => {
     () => cardItems(choices.map((c) => c.card)),
     [choices]
   );
-  const answerCard = useMemo(() => {
-    if (isNeighborMode && resolvedDirection !== null) {
-      return getNeighborCard(stackOrder, card, resolvedDirection, limits);
-    }
-    return card;
-  }, [isNeighborMode, resolvedDirection, stackOrder, card, limits]);
-
   return (
     <div className="fullMantineContainerHeight">
       <JsonLd data={breadcrumbSchema} />

@@ -63,7 +63,10 @@ describe("getStoredValue", () => {
     const result = getStoredValue("test-key", "default", isString);
 
     expect(result).toBe("stored-value");
-    expect(mockReadLocalStorageValue).toHaveBeenCalledWith({ key: "test-key" });
+    expect(mockReadLocalStorageValue).toHaveBeenCalledWith({
+      key: "test-key",
+      deserialize: expect.any(Function),
+    });
   });
 
   it("returns default value when stored value is undefined", () => {

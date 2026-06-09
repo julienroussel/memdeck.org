@@ -101,8 +101,11 @@ describe("useDistanceGame initial state", () => {
         DEFAULT_STACK_LIMITS
       )
     );
-    expect(result.current.round.display).toBe("compute");
-    expect(result.current.round.choices.kind).toBe("numbers");
+    const round = result.current.round;
+    expect(round.display).toBe("compute");
+    if (round.display === "compute") {
+      expect(round.choices.kind).toBe("numbers");
+    }
   });
 
   it("starts in apply display when mode is apply", () => {
@@ -116,10 +119,11 @@ describe("useDistanceGame initial state", () => {
         DEFAULT_STACK_LIMITS
       )
     );
-    expect(result.current.round.display).toBe("apply");
-    expect(result.current.round.choices.kind).toBe("cards");
-    if (result.current.round.display === "apply") {
-      expect(result.current.round.offset).not.toBeNull();
+    const round = result.current.round;
+    expect(round.display).toBe("apply");
+    if (round.display === "apply") {
+      expect(round.choices.kind).toBe("cards");
+      expect(round.offset).not.toBeNull();
     }
   });
 });
@@ -141,13 +145,14 @@ describe("useDistanceGame submitAnswer", () => {
       )
     );
 
-    if (result.current.round.choices.kind !== "numbers") {
-      throw new Error("expected numbers choices in compute mode");
+    const round = result.current.round;
+    if (round.display !== "compute") {
+      throw new Error("expected a compute round in compute mode");
     }
     const cardBefore = result.current.card;
     const expectedDistance = computeDistance(
       result.current.card.index - 1,
-      result.current.round.answerCard.index - 1,
+      round.answerCard.index - 1,
       "cyclic",
       DEFAULT_STACK_LIMITS
     );
@@ -184,8 +189,8 @@ describe("useDistanceGame submitAnswer", () => {
         DEFAULT_STACK_LIMITS
       )
     );
-    if (result.current.round.choices.kind !== "numbers") {
-      throw new Error("expected numbers choices");
+    if (result.current.round.display !== "compute") {
+      throw new Error("expected a compute round");
     }
     const cardBefore = result.current.card;
     // Submit a value far outside the distance set: 9999 is never a valid distance
@@ -217,11 +222,12 @@ describe("useDistanceGame submitAnswer", () => {
       )
     );
 
-    if (result.current.round.choices.kind !== "cards") {
-      throw new Error("expected cards choices in apply mode");
+    const round = result.current.round;
+    if (round.display !== "apply") {
+      throw new Error("expected an apply round in apply mode");
     }
     const cardBefore = result.current.card;
-    const correctCard = result.current.round.answerCard.card;
+    const correctCard = round.answerCard.card;
 
     act(() => {
       result.current.submitAnswer({ kind: "apply", value: correctCard });
@@ -256,16 +262,17 @@ describe("useDistanceGame submitAnswer", () => {
       )
     );
 
-    if (result.current.round.choices.kind !== "cards") {
-      throw new Error("expected cards choices in apply mode");
+    const round = result.current.round;
+    if (round.display !== "apply") {
+      throw new Error("expected an apply round in apply mode");
     }
     // Round generation requires MIN_DISTANCE_RANGE (6) cards in scope, so
     // distinct distractors are guaranteed by construction. Assert it
     // explicitly so this test fails loudly if that invariant breaks.
-    expect(result.current.round.choices.data.length).toBeGreaterThanOrEqual(2);
+    expect(round.choices.data.length).toBeGreaterThanOrEqual(2);
     const cardBefore = result.current.card;
-    const correctCard = result.current.round.answerCard.card;
-    const wrongCard = result.current.round.choices.data.find(
+    const correctCard = round.answerCard.card;
+    const wrongCard = round.choices.data.find(
       (c) =>
         c.card.suit !== correctCard.suit || c.card.rank !== correctCard.rank
     );
@@ -304,9 +311,13 @@ describe("useDistanceGame revealAnswer", () => {
         DEFAULT_STACK_LIMITS
       )
     );
+    const round = result.current.round;
+    if (round.display !== "compute") {
+      throw new Error("expected a compute round in compute mode");
+    }
     const expectedDistance = computeDistance(
       result.current.card.index - 1,
-      result.current.round.answerCard.index - 1,
+      round.answerCard.index - 1,
       "cyclic",
       DEFAULT_STACK_LIMITS
     );
@@ -333,7 +344,11 @@ describe("useDistanceGame revealAnswer", () => {
         DEFAULT_STACK_LIMITS
       )
     );
-    const expectedName = formatCardName(result.current.round.answerCard.card);
+    const round = result.current.round;
+    if (round.display !== "apply") {
+      throw new Error("expected an apply round in apply mode");
+    }
+    const expectedName = formatCardName(round.answerCard.card);
     act(() => {
       result.current.revealAnswer();
     });
@@ -458,8 +473,9 @@ describe("useDistanceGame reset on prop change", () => {
     // Cyclic convention only generates positive distances (1..N-1) — sample
     // a handful of cyclic rounds to anchor the invariant.
     for (let i = 0; i < 20; i++) {
-      if (result.current.round.choices.kind === "numbers") {
-        for (const v of result.current.round.choices.data) {
+      const round = result.current.round;
+      if (round.display === "compute") {
+        for (const v of round.choices.data) {
           expect(v).toBeGreaterThanOrEqual(1);
         }
       }
@@ -474,9 +490,10 @@ describe("useDistanceGame reset on prop change", () => {
     // round must surface a negative value in its numeric choices.
     let sawNegative = false;
     for (let i = 0; i < 30; i++) {
+      const round = result.current.round;
       if (
-        result.current.round.choices.kind === "numbers" &&
-        result.current.round.choices.data.some((v) => v < 0)
+        round.display === "compute" &&
+        round.choices.data.some((v) => v < 0)
       ) {
         sawNegative = true;
         break;

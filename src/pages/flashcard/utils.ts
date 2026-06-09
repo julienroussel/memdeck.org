@@ -1,6 +1,3 @@
-import type { TFunction } from "i18next";
-import { NOTIFICATION_CLOSE_TIMEOUT } from "../../constants";
-
 const DISPLAY_MODES = ["card", "index"] as const;
 
 export type DisplayMode = (typeof DISPLAY_MODES)[number];
@@ -14,10 +11,3 @@ export const getRandomDisplayMode = (): DisplayMode => {
   }
   return mode;
 };
-
-export const buildWrongAnswerNotification = (t: TFunction) => ({
-  color: "red" as const,
-  title: t("common.wrongAnswerTitle"),
-  message: t("common.wrongAnswerMessage"),
-  autoClose: NOTIFICATION_CLOSE_TIMEOUT,
-});

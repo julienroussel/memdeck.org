@@ -7,7 +7,7 @@ import { type Stack, stacks } from "../../types/stacks";
 import { useSpotCheckGame } from "./use-spot-check-game";
 
 vi.mock("@mantine/notifications", () => ({
-  notifications: { show: vi.fn() },
+  notifications: { show: vi.fn(), hide: vi.fn() },
 }));
 
 let capturedTimerOptions: Parameters<typeof useGameTimer>[0] | null = null;

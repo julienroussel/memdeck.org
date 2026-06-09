@@ -1,7 +1,6 @@
 import { Grid, Text } from "@mantine/core";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ErrorBoundary } from "../../components/error-boundary";
 import { buildBreadcrumbSchema, JsonLd } from "../../components/json-ld";
 import { RevealButton } from "../../components/reveal-button";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
@@ -95,9 +94,9 @@ export const Distance = () => {
   );
 
   // Safe to invoke unconditionally even when rangeTooSmall: the reducer's
-  // generateNextDistanceRound short-circuits to a placeholder payload (see
-  // buildRangeTooSmallPayload) when cycleSize < MIN_DISTANCE_RANGE, the
-  // timer is force-disabled above, and the page hides the prompt UI.
+  // generateNextDistanceRound short-circuits to a `range-too-small` round
+  // when cycleSize < MIN_DISTANCE_RANGE, the timer is force-disabled above,
+  // and the page renders the alert instead of the prompt UI.
   const {
     score,
     card,
@@ -120,71 +119,69 @@ export const Distance = () => {
   const activeModeLabel = t(ACTIVE_MODE_KEYS[mode]);
 
   return (
-    <ErrorBoundary>
-      <div className="fullMantineContainerHeight">
-        <JsonLd data={breadcrumbSchema} />
-        <Grid
-          gap={0}
-          overflow="hidden"
-          style={{ display: "grid", height: "100%" }}
-        >
-          <Grid.Col span={12}>
-            <TrainingHeader
-              activeSession={activeSession}
-              isStructuredSession={isStructuredSession}
-              onStartSession={startSession}
-              onStopSession={stopSession}
-              rangeSize={rangeSize}
-              score={score}
-              sessionTooltip={t("session.startSessionTooltip")}
-              settingsContent={
-                <DistanceSettingsContent
-                  convention={convention}
-                  mode={mode}
-                  onConventionChange={handleConventionChange}
-                  onDurationChange={setTimerDuration}
-                  onModeChange={handleModeChange}
-                  onTimerEnabledChange={handleTimerEnabledChange}
-                  timerSettings={timerSettings}
-                />
-              }
-              settingsTooltip={t("distance.settingsAriaLabel")}
-              subtitle={activeModeLabel}
-              title={t("distance.title")}
-            />
-            <Text c="dimmed" mb="xs" size="sm">
-              {t("distance.pageDescription")}
-            </Text>
-            <span aria-hidden="true" className="sr-only">
-              {t("distance.seoIntro")}
-            </span>
-          </Grid.Col>
+    <div className="fullMantineContainerHeight">
+      <JsonLd data={breadcrumbSchema} />
+      <Grid
+        gap={0}
+        overflow="hidden"
+        style={{ display: "grid", height: "100%" }}
+      >
+        <Grid.Col span={12}>
+          <TrainingHeader
+            activeSession={activeSession}
+            isStructuredSession={isStructuredSession}
+            onStartSession={startSession}
+            onStopSession={stopSession}
+            rangeSize={rangeSize}
+            score={score}
+            sessionTooltip={t("session.startSessionTooltip")}
+            settingsContent={
+              <DistanceSettingsContent
+                convention={convention}
+                mode={mode}
+                onConventionChange={handleConventionChange}
+                onDurationChange={setTimerDuration}
+                onModeChange={handleModeChange}
+                onTimerEnabledChange={handleTimerEnabledChange}
+                timerSettings={timerSettings}
+              />
+            }
+            settingsTooltip={t("distance.settingsAriaLabel")}
+            subtitle={activeModeLabel}
+            title={t("distance.title")}
+          />
+          <Text c="dimmed" mb="xs" size="sm">
+            {t("distance.pageDescription")}
+          </Text>
+          <span aria-hidden="true" className="sr-only">
+            {t("distance.seoIntro")}
+          </span>
+        </Grid.Col>
 
-          {rangeTooSmall ? (
-            <DistanceRangeTooSmallAlert />
-          ) : (
-            <DistanceActiveRound
-              card={card}
-              round={round}
-              roundConvention={roundConvention}
-              submitAnswer={submitAnswer}
-              timeRemaining={timeRemaining}
-              timerDuration={timerDuration}
-              timerSettings={timerSettings}
-            />
-          )}
-        </Grid>
-        {status.phase === "summary" && (
-          <SessionSummaryModal
-            onDismiss={dismissSummary}
-            onNewSession={startNewSession}
-            summary={status.summary}
+        {round.display === "range-too-small" ? (
+          <DistanceRangeTooSmallAlert />
+        ) : (
+          <DistanceActiveRound
+            card={card}
+            round={round}
+            roundConvention={roundConvention}
+            submitAnswer={submitAnswer}
+            timeRemaining={timeRemaining}
+            timerDuration={timerDuration}
+            timerSettings={timerSettings}
           />
         )}
-        {status.phase !== "summary" && !rangeTooSmall && (
-          <RevealButton onReveal={revealAnswer} />
-        )}
-      </div>
-    </ErrorBoundary>
+      </Grid>
+      {status.phase === "summary" && (
+        <SessionSummaryModal
+          onDismiss={dismissSummary}
+          onNewSession={startNewSession}
+          summary={status.summary}
+        />
+      )}
+      {status.phase !== "summary" && !rangeTooSmall && (
+        <RevealButton onReveal={revealAnswer} />
+      )}
+    </div>
   );
 };

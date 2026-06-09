@@ -44,7 +44,13 @@ export const probeStoredValue = <T>(
   validate: (value: unknown) => value is T
 ): StoredValueProbe<T> => {
   try {
-    const raw: unknown = readLocalStorageValue({ key });
+    // Custom `deserialize` so the prototype-stripping reviver applies on this
+    // path too — Mantine's default `deserializeJSON` parses without a reviver,
+    // which would hand probeStoredValue consumers unstripped objects.
+    const raw: unknown = readLocalStorageValue({
+      key,
+      deserialize: deserializeWithSafeReviver,
+    });
 
     if (raw === undefined || raw === null) {
       return { status: "absent" };
@@ -158,6 +164,21 @@ const safeJsonReviver = (key: string, value: unknown): unknown => {
     return;
   }
   return value;
+};
+
+// Reviver-applying replacement for Mantine's default `deserializeJSON`,
+// passed to `readLocalStorageValue` by `probeStoredValue` above. Mirrors
+// Mantine's malformed-JSON semantics — return the raw string so the caller's
+// validator fails on it and the probe classifies it as corrupt.
+const deserializeWithSafeReviver = (value: string | undefined): unknown => {
+  if (value === undefined) {
+    return;
+  }
+  try {
+    return JSON.parse(value, safeJsonReviver);
+  } catch {
+    return value;
+  }
 };
 
 const parseRawValue = <T>(

@@ -6,10 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import {
   COMMIT_HASH_LSK,
-  PWA_UPDATE_COOLDOWN_MS,
-  PWA_UPDATE_TOAST_TIMEOUT,
   ROUTES,
-  UPDATE_NOTIFIED_AT_LSK,
   WHATS_NEW_LAST_ANNOUNCED_LSK,
 } from "../constants";
 import { WHATS_NEW_ENTRIES } from "../data/whats-new";
@@ -110,16 +107,7 @@ export const PwaUpdateNotifier = () => {
 
     safeSetItem(COMMIT_HASH_LSK, __COMMIT_HASH__);
 
-    const lastNotified = safeGetItem(UPDATE_NOTIFIED_AT_LSK);
-    if (lastNotified) {
-      const elapsed = Date.now() - Number(lastNotified);
-      if (elapsed < PWA_UPDATE_COOLDOWN_MS) {
-        return;
-      }
-    }
-
-    safeSetItem(UPDATE_NOTIFIED_AT_LSK, String(Date.now()));
-    // Telemetry stays above the What's New gate below: every applied update is
+    // Telemetry stays above the What's New gate: every applied update is
     // tracked, even when the toast stays silent because nothing new shipped.
     analytics.trackFeatureUsed("PWA Update Applied");
 
@@ -135,7 +123,9 @@ export const PwaUpdateNotifier = () => {
     notifications.show({
       id: PWA_UPDATE_TOAST_ID,
       color: "teal",
-      autoClose: PWA_UPDATE_TOAST_TIMEOUT,
+      // Persistent (WCAG 2.2.1): the toast holds a link keyboard/SR users may
+      // not reach within an auto-close window; the close button dismisses it.
+      autoClose: false,
       title: t("pwaUpdate.title"),
       message: (
         <>

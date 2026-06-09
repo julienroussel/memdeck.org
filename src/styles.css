@@ -50,8 +50,11 @@
   border: none;
   border-radius: 3%;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
-  transform: rotate(calc(var(--i) * var(--degree)))
-    translate(calc(var(--i) * 15px), 10px);
+  transform: rotate(calc((var(--i) + var(--offset, 0)) * var(--degree)))
+    translate(
+      calc((var(--i) + var(--offset, 0)) * var(--spread-gap, 15px)),
+      10px
+    );
   transform-origin: 50% 100%;
   -webkit-tap-highlight-color: transparent;
 }
@@ -60,6 +63,14 @@
   z-index: 1;
   outline: 3px solid var(--mantine-primary-color-filled, #228be6);
   outline-offset: 2px;
+}
+
+/* Spot Check spread: wider per-card offset so each overlapped card keeps a
+   ≥24px unobscured tap strip (WCAG 2.2 SC 2.5.8 Target Size Minimum).
+   26px (not 24px) leaves margin for the per-card rotation, which shrinks the
+   axis-aligned strip on outer cards. */
+.spotCheckSpread {
+  --spread-gap: 26px;
 }
 
 .cardShadow {

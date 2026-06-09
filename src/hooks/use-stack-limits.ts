@@ -32,6 +32,7 @@ type UseStackLimitsResult = {
 // and the next `setLimits` call would merge into `{}`, silently destroying
 // every other stack's saved range. Splitting into per-stack keys would
 // require a migration touching consumers outside this hook's ownership.
+const STACK_LIMITS_CORRUPT_NOTIFICATION_ID = "stack-limits-corrupt";
 export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
   const { t } = useTranslation();
   const tRef = useRef(t);
@@ -49,31 +50,29 @@ export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
 
   // Probe once on mount; if the stored blob is corrupt, lock writes for the
   // lifetime of this hook instance so we don't overwrite recoverable data.
+  // The probe (localStorage I/O), analytics emit, and Mantine notification
+  // are side effects, so they run in a mount-only effect rather than during
+  // render — `handleSetLimits` only fires from event handlers, which can't
+  // run before mount effects, so the lock is always set before any possible
+  // write. The null-latch keeps the effect idempotent under StrictMode
+  // double-invoke.
   const corruptRef = useRef<boolean | null>(null);
-  if (corruptRef.current === null) {
+  useEffect(() => {
+    if (corruptRef.current !== null) {
+      return;
+    }
     const probe = probeStoredValue(STACK_LIMITS_LSK, isStackLimitsRecord);
     const corrupt = probe.status === "corrupt" || probe.status === "read-error";
     corruptRef.current = corrupt;
     if (corrupt) {
       analytics.trackError(new Error("stackLimits-corrupt"));
+      notifications.show({
+        id: STACK_LIMITS_CORRUPT_NOTIFICATION_ID,
+        color: "red",
+        title: tRef.current("errors.stackLimitsCorrupt.title"),
+        message: tRef.current("errors.stackLimitsCorrupt.message"),
+      });
     }
-  }
-
-  // Surface the corruption to the user via a Mantine notification once on
-  // mount. Side-effects can't run during render, so the visual notice is
-  // deferred to a mount-only effect. The latch ref also keeps it idempotent
-  // under StrictMode double-invoke.
-  const corruptNoticeShownRef = useRef(false);
-  useEffect(() => {
-    if (corruptRef.current !== true || corruptNoticeShownRef.current) {
-      return;
-    }
-    corruptNoticeShownRef.current = true;
-    notifications.show({
-      color: "red",
-      title: tRef.current("errors.stackLimitsCorrupt.title"),
-      message: tRef.current("errors.stackLimitsCorrupt.message"),
-    });
   }, []);
 
   const rawStart = record[stackKey]?.start;
@@ -92,9 +91,16 @@ export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
   const handleSetLimits = useCallback(
     (newLimits: StackLimits): void => {
       // Refuse to overwrite a corrupt blob — preserves any other stacks'
-      // ranges that may still be recoverable manually. The user has already
-      // been notified of the corruption via the mount-effect toast.
+      // ranges that may still be recoverable manually. Re-show the
+      // corruption notice (id-deduped by Mantine) so each refused write
+      // reminds the user why the control is inert.
       if (corruptRef.current === true) {
+        notifications.show({
+          id: STACK_LIMITS_CORRUPT_NOTIFICATION_ID,
+          color: "red",
+          title: tRef.current("errors.stackLimitsCorrupt.title"),
+          message: tRef.current("errors.stackLimitsCorrupt.message"),
+        });
         return;
       }
       setRecord(

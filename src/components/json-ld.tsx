@@ -18,7 +18,10 @@ type JsonLdData = Record<string, unknown> & {
  */
 export const JsonLd = ({ data }: { data: JsonLdData }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const serialized = JSON.stringify(data);
+  // Escape "<" so prerendered HTML (which embeds this via innerHTML) cannot
+  // break out of the <script> element (e.g. a "</script>" inside a string).
+  // \u003c is a valid JSON escape, so parsers are unaffected.
+  const serialized = JSON.stringify(data).replaceAll("<", "\\u003c");
 
   useEffect(() => {
     const container = ref.current;

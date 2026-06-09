@@ -1,6 +1,6 @@
 import { Flex, Image } from "@mantine/core";
 import type { KeyboardEvent } from "react";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SPREAD_CARD_HEIGHT, SPREAD_CARD_WIDTH } from "../../constants";
 import { useFormatCardName } from "../../hooks/use-format-card-name";
@@ -166,49 +166,62 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
 
   // Keys are position-based (not data-based) so that DOM buttons are reused
   // when switching between card and number items, preventing flicker.
-  const renderedItems =
-    items.type === "cards"
-      ? items.data.map((item, index) => (
-          <button
-            aria-label={formatCardName(item)}
-            className="cardSpreadCard"
-            data-card-index={index}
-            // biome-ignore lint/suspicious/noArrayIndexKey: Position-based keys prevent DOM flicker when switching card/number items
-            key={`spread_${index}`}
-            onClick={handleCardButtonClick}
-            style={{
-              cursor: hasCursor ? "pointer" : "default",
-              ...cssVarCounterStyle(index, items.data.length / 2, offset),
-            }}
-            type="button"
-          >
-            <Image
-              alt=""
-              h={SPREAD_CARD_HEIGHT}
-              src={item.image}
-              w={SPREAD_CARD_WIDTH}
-            />
-          </button>
-        ))
-      : items.data.map((item, index) => (
-          <button
-            aria-label={t("cardSpread.selectPositionAriaLabel", {
-              position: item,
-            })}
-            className="cardSpreadCard"
-            data-number-index={index}
-            // biome-ignore lint/suspicious/noArrayIndexKey: Position-based keys prevent DOM flicker when switching card/number items
-            key={`spread_${index}`}
-            onClick={handleNumberButtonClick}
-            style={{
-              cursor: hasCursor ? "pointer" : "default",
-              ...cssVarCounterStyle(index, items.data.length / 2, offset),
-            }}
-            type="button"
-          >
-            <NumberCard number={item} />
-          </button>
-        ));
+  // The drag/keyboard offset is applied as a container-level CSS variable
+  // (--offset, below), so per-item styles stay static and this memo keeps
+  // drag updates from re-rendering all 52 buttons.
+  const renderedItems = useMemo(
+    () =>
+      items.type === "cards"
+        ? items.data.map((item, index) => (
+            <button
+              aria-label={formatCardName(item)}
+              className="cardSpreadCard"
+              data-card-index={index}
+              // biome-ignore lint/suspicious/noArrayIndexKey: Position-based keys prevent DOM flicker when switching card/number items
+              key={`spread_${index}`}
+              onClick={handleCardButtonClick}
+              style={{
+                cursor: hasCursor ? "pointer" : "default",
+                ...cssVarCounterStyle(index, items.data.length / 2, 0),
+              }}
+              type="button"
+            >
+              <Image
+                alt=""
+                h={SPREAD_CARD_HEIGHT}
+                src={item.image}
+                w={SPREAD_CARD_WIDTH}
+              />
+            </button>
+          ))
+        : items.data.map((item, index) => (
+            <button
+              aria-label={t("cardSpread.selectPositionAriaLabel", {
+                position: item,
+              })}
+              className="cardSpreadCard"
+              data-number-index={index}
+              // biome-ignore lint/suspicious/noArrayIndexKey: Position-based keys prevent DOM flicker when switching card/number items
+              key={`spread_${index}`}
+              onClick={handleNumberButtonClick}
+              style={{
+                cursor: hasCursor ? "pointer" : "default",
+                ...cssVarCounterStyle(index, items.data.length / 2, 0),
+              }}
+              type="button"
+            >
+              <NumberCard number={item} />
+            </button>
+          )),
+    [
+      items,
+      hasCursor,
+      formatCardName,
+      t,
+      handleCardButtonClick,
+      handleNumberButtonClick,
+    ]
+  );
 
   return (
     <Flex
@@ -221,7 +234,7 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
       role="group"
-      style={{ "--degree": `${degree}deg` }}
+      style={{ "--degree": `${degree}deg`, "--offset": offset }}
     >
       {renderedItems}
     </Flex>

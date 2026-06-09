@@ -12,7 +12,7 @@ import {
   IconSparkles,
   IconTools,
 } from "@tabler/icons-react";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
 import { ROUTES } from "../constants";
@@ -26,6 +26,9 @@ export const NavLinks = memo(function NavLinks({
   const location = useLocation();
   const { t } = useTranslation();
   const { hasUnseen } = useUnseenWhatsNew();
+  // Controlled so aria-expanded can be set: Mantine NavLink only emits
+  // data-expanded, which screen readers don't announce.
+  const [toolsOpened, setToolsOpened] = useState(true);
 
   return (
     <>
@@ -90,10 +93,12 @@ export const NavLinks = memo(function NavLinks({
       />
 
       <NavLink
+        aria-expanded={toolsOpened}
         component="button"
-        defaultOpened
         label={t("nav.tools")}
         leftSection={<IconTools size={16} stroke={1.5} />}
+        onChange={setToolsOpened}
+        opened={toolsOpened}
       >
         <NavLink
           active={location.pathname === ROUTES.flashcard}
