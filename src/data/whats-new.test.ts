@@ -35,8 +35,8 @@ describe("WHATS_NEW_ENTRIES", () => {
   });
 
   it("has a non-empty body in all supported languages when present", () => {
-    // Forward-looking guard: no seed entry carries a body yet, so this loop is
-    // vacuous today and activates when the first body-bearing entry is added.
+    // Every entry currently carries a body, so this guard runs for each one; the
+    // `continue` keeps it correct if a future entry ever omits `body`.
     // WhatsNewEntryCard's body rendering is covered in its own test.
     for (const entry of WHATS_NEW_ENTRIES) {
       if (!entry.body) {
