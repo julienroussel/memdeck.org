@@ -6,6 +6,12 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
+    // sharp 0.35.0's exports map lacks a "types" condition, so bundler resolution
+    // misses its lib/index.d.ts (TS7016; fixed upstream in lovell/sharp#4537 but
+    // unreleased). Remove once a newer sharp typechecks without it.
+    "paths": {
+      "sharp": ["./node_modules/sharp/lib/index.d.ts"]
+    },
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",

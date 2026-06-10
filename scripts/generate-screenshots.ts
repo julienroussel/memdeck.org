@@ -2,6 +2,8 @@ import { execFileSync } from "node:child_process";
 import { join } from "node:path";
 import { chromium } from "@playwright/test";
 
+const { ROUTES, SELECTED_STACK_LSK } = await import("../src/constants.ts");
+
 const hasOptipng = (() => {
   try {
     execFileSync("optipng", ["--version"], { stdio: "ignore" });
@@ -34,28 +36,28 @@ interface Screenshot {
 const SCREENSHOTS: Screenshot[] = [
   {
     name: "home-mobile",
-    url: "/",
+    url: ROUTES.home,
     width: 390,
     height: 844,
     deviceScaleFactor: 2,
   },
   {
     name: "flashcard-mobile",
-    url: "/flashcard",
+    url: ROUTES.flashcard,
     width: 390,
     height: 844,
     deviceScaleFactor: 2,
   },
   {
     name: "home-desktop",
-    url: "/",
+    url: ROUTES.home,
     width: 1280,
     height: 800,
     deviceScaleFactor: 2,
   },
   {
     name: "screenshot",
-    url: "/flashcard",
+    url: ROUTES.flashcard,
     width: 1280,
     height: 800,
     deviceScaleFactor: 2,
@@ -77,14 +79,18 @@ for (const {
     viewport: { width, height },
     deviceScaleFactor,
   });
+
+  // Seed the selected stack before any app code runs so pages render with a
+  // stack active. useLocalDb JSON-parses stored values — a bare string is
+  // classified as corrupt and ignored, so the seed must be JSON-encoded.
+  await context.addInitScript(
+    ({ key, value }: { key: string; value: string }) => {
+      localStorage.setItem(key, value);
+    },
+    { key: SELECTED_STACK_LSK, value: JSON.stringify("mnemonica") }
+  );
+
   const page = await context.newPage();
-
-  // Set a stack in localStorage so training pages render
-  await page.goto(BASE_URL, { waitUntil: "networkidle" });
-  await page.evaluate(() => {
-    localStorage.setItem("memdeck-app-stack", "mnemonica");
-  });
-
   await page.goto(`${BASE_URL}${url}`, { waitUntil: "networkidle" });
 
   // Wait for splash screen to fade
