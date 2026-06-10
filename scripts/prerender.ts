@@ -20,20 +20,25 @@ const server = await preview({ preview: { port: PORT, strictPort: true } });
 const browser = await chromium.launch();
 
 try {
-  const context = await browser.newContext();
-
-  // Set a stack in localStorage so RequireStack pages render content
-  const setupPage = await context.newPage();
-  await setupPage.goto(BASE_URL, {
-    waitUntil: "networkidle",
-    timeout: TIMEOUT,
-  });
-  await setupPage.evaluate((key) => {
-    localStorage.setItem(key, "mnemonica");
-  }, SELECTED_STACK_LSK);
-  await setupPage.close();
-
   for (const routePath of routePaths) {
+    // Fresh context per route so localStorage writes from one prerendered
+    // page can't leak into the next.
+    const context = await browser.newContext();
+
+    // Seed a stack so RequireStack pages prerender their real content.
+    // useLocalDb JSON-parses stored values — a bare string is classified as
+    // corrupt and ignored, so the seed must be JSON-encoded. The home route
+    // stays unseeded on purpose: its prerendered HTML must keep the no-stack
+    // welcome/picker that crawlers and first-time visitors should see.
+    if (routePath !== ROUTES.home) {
+      await context.addInitScript(
+        ({ key, value }: { key: string; value: string }) => {
+          localStorage.setItem(key, value);
+        },
+        { key: SELECTED_STACK_LSK, value: JSON.stringify("mnemonica") }
+      );
+    }
+
     const page = await context.newPage();
     await page.goto(`${BASE_URL}${routePath}`, {
       waitUntil: "networkidle",
@@ -145,10 +150,9 @@ try {
       console.log(`Pre-rendered: ${routePath} -> dist${routePath}/index.html`);
     }
 
-    await page.close();
+    await context.close();
   }
 
-  await context.close();
   await browser.close();
   server.httpServer?.close();
   console.log("Pre-rendering complete!");
