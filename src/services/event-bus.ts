@@ -3,6 +3,15 @@ import type { FlashcardMode, NeighborDirection } from "../types/flashcard";
 import type { SessionConfig, TrainingMode } from "../types/session";
 import type { SpotCheckMode } from "../types/spot-check";
 
+/**
+ * Two analytics pathways coexist by design:
+ * - Events listed here go through the bus: analytics subscribes to them, and
+ *   the bus is exposed as `window.__memdeckEventBus` (see main.tsx) so e2e
+ *   tests can assert they fired.
+ * - Direct `analytics.*` calls elsewhere are fire-and-forget telemetry and
+ *   are not e2e-observable.
+ * Route an event through the bus when e2e tests need to observe it.
+ */
 type AnalyticsEvents = {
   STACK_SELECTED: { stackName: string };
   FLASHCARD_ANSWER: { correct: boolean; stackName: string };

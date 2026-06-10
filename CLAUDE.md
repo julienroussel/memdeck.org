@@ -99,7 +99,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Pages**: Self-contained in `src/pages/` — each training mode is its own page. Stack-dependent pages are wrapped in `RequireStack`
 - **Components**: Reusable UI in `src/components/` (e.g., `CardSpread`, `StackPicker`, `NumberCard`, `ShareButton`, `ShareNudge`, `NavFooter`, `JsonLd`)
 - **Hooks**: Custom hooks in `src/hooks/` (e.g., `useSelectedStack`, `usePwaInstall`, `useDocumentMeta`)
-- **Utils**: Pure utility functions in `src/utils/` (e.g., `card-selection`, `card-formatting`, `format-release-date`, `localstorage`, `share`, `is-pwa`)
+- **Utils**: Utility functions in `src/utils/` (e.g., `card-selection`, `card-formatting`, `format-release-date`, `localstorage`, `share`, `is-pwa`) — mostly pure, though a few modules carry deliberate side effects (telemetry, persistence, notifications), e.g. `localstorage-telemetry`, `session-persistence`, `lazy-with-reload`
 - **Data**: Typed content modules in `src/data/` (e.g., `whats-new.ts` — the curated changelog; all 7 languages enforced at compile time via `Record<SupportedLanguage, string>`)
 - **Services**: `src/services/analytics.ts` — Google Analytics 4 integration with event tracking. Only initialized when `window.location.hostname === "memdeck.org"` — local dev, preview deployments, and e2e runs are **silent** (no GA events fired). Don't treat "GA didn't log locally" as a bug. Tracks flashcard/spot-check/ACAAN/distance answers, session completions, share actions, web vitals, and errors
 - **i18n**: `src/i18n/` — 7 languages (en, fr, es, de, it, nl, pt) using `react-i18next`. Locale files are lazy-loaded as separate chunks. Type-safe keys derived from the English locale

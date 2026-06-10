@@ -79,22 +79,16 @@ export const usePwaInstall = (): UsePwaInstallResult => {
   }, []);
 
   useEffect(() => {
-    if (runningAsPwa || !isMobile) {
-      return;
-    }
-    if (!hasCompletedSession()) {
-      return;
-    }
-    if (permanentlyDismissed) {
-      return;
-    }
-    if (
+    const cooldownActive =
       dismissedAt !== null &&
-      Date.now() - dismissedAt < PWA_INSTALL_COOLDOWN_MS
-    ) {
-      return;
-    }
-    setEligible(true);
+      Date.now() - dismissedAt < PWA_INSTALL_COOLDOWN_MS;
+    const isEligible =
+      !runningAsPwa &&
+      isMobile === true &&
+      hasCompletedSession() &&
+      !permanentlyDismissed &&
+      !cooldownActive;
+    setEligible(isEligible);
   }, [runningAsPwa, isMobile, permanentlyDismissed, dismissedAt]);
 
   const install = useCallback((): boolean => {
@@ -104,14 +98,15 @@ export const usePwaInstall = (): UsePwaInstallResult => {
     }
     deferredPromptRef.current = null;
     setEligible(false);
-    // Handle rejection without changing the sync return signature: restore
-    // the ref + eligibility so the user can retry, and emit telemetry. The
-    // returned promise from prompt() is intentionally fire-and-forget after
-    // the catch handler — callers only care whether the native flow was
-    // *initiated* synchronously.
+    // Handle rejection without changing the sync return signature: emit
+    // telemetry once and leave the ref empty — prompt() may only be called
+    // once per BeforeInstallPromptEvent, so restoring the consumed event
+    // would make every retry reject again. A fresh beforeinstallprompt
+    // event (captured by the listener above) re-enables the native flow.
+    // The returned promise from prompt() is intentionally fire-and-forget
+    // after the catch handler — callers only care whether the native flow
+    // was *initiated* synchronously.
     event.prompt().catch((error: unknown) => {
-      deferredPromptRef.current = event;
-      setEligible(true);
       const wrapped =
         error instanceof Error
           ? new Error(error.message, { cause: error })

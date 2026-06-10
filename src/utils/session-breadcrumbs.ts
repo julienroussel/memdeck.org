@@ -90,6 +90,11 @@ export const readLastSaveFailedBreadcrumb =
         } catch {
           // Analytics MUST NOT break the read path.
         }
+        // Purge the unreadable blob so the trackError above fires once — not
+        // on every mount — and the slot is free for a future breadcrumb.
+        // clearLastSaveFailedBreadcrumb handles removeItem/sentinel failures
+        // internally.
+        clearLastSaveFailedBreadcrumb();
         return null;
       default:
         return null;

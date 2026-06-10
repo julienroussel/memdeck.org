@@ -37,6 +37,32 @@ import { useSessionRecording } from "./use-session-recording";
 
 export type { SessionPhase } from "../types/session";
 
+// Surface a write failure when auto-saving the previous session: the prior
+// session is dropped either way (the new one replaces it), so a silent failure
+// here skipped both telemetry and the toast. Extracted to keep startSession
+// under the cognitive-complexity ceiling.
+const reportPriorSessionFinalizeFailure = (
+  reason: FinalizeFailureReason,
+  t: ReturnType<typeof useTranslation>["t"]
+) => {
+  reportSessionPersistenceFailed(reason, "useSession:startSession");
+  const isUnrecoverable =
+    reason === "corrupt" || reason === "corrupt-prior-state";
+  notifications.show({
+    color: isUnrecoverable ? "red" : "yellow",
+    title: t(
+      isUnrecoverable
+        ? "errors.sessionStorageCorrupt.title"
+        : "errors.sessionSaveFailed.title"
+    ),
+    message: t(
+      isUnrecoverable
+        ? "errors.sessionStorageCorrupt.message"
+        : "errors.sessionSaveFailed.message"
+    ),
+  });
+};
+
 type UseSessionOptionsBase = {
   stackKey: StackKey;
   autoStart?: boolean;
@@ -339,11 +365,18 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
 
   const startSession = useCallback(
     (config: SessionConfig) => {
-      // Auto-save current active session if it meets minimum threshold
+      // Auto-save current active session if it meets minimum threshold.
+      // The previous session is dropped either way (the new one replaces it),
+      // so a write failure must be surfaced here — mirrors the reporting +
+      // toast pattern of the flush effect and useSessionAutoSave's cleanup
+      // path; silently discarding the result skipped both.
       if (statusRef.current.phase === "active") {
         const { session } = statusRef.current;
         if (meetsMinimumSaveThreshold(session)) {
-          tryFinalizeSession(session);
+          const result = tryFinalizeSession(session);
+          if (result.status === "write-failed") {
+            reportPriorSessionFinalizeFailure(result.reason, tRef.current);
+          }
         }
       }
 

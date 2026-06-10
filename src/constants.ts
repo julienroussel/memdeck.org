@@ -69,15 +69,6 @@ export const LOCALE_RELOAD_SSK = "memdeck-locale-reload";
 export const LAST_SAVE_FAILED_SHOWN_SSK = "memdeck-app-last-save-failed-shown";
 
 export const COMMIT_HASH_LSK = "memdeck-app-commit-hash";
-export const UPDATE_NOTIFIED_AT_LSK = "memdeck-app-update-notified-at";
-export const PWA_UPDATE_COOLDOWN_MS = 24 * 60 * 60 * 1000;
-/**
- * Toast visible duration. 10s (not 5s) so keyboard and screen-reader users have
- * time to reach the toast's "See What's New" link before it auto-closes — Mantine
- * pauses autoClose on hover but not on focus.
- */
-export const PWA_UPDATE_TOAST_TIMEOUT = 10_000;
-
 export const PWA_INSTALL_DISMISSED_AT_LSK =
   "memdeck-app-pwa-install-dismissed-at";
 export const PWA_INSTALL_PERMANENTLY_DISMISSED_LSK =

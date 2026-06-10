@@ -32,7 +32,7 @@ import {
  * a non-null `offset` and card choices. This makes the impossible states
  * (e.g., display="apply" with offset=null) unrepresentable.
  */
-export type DistanceRound =
+export type PlayableDistanceRound =
   | {
       display: "compute";
       expectedDistance: number;
@@ -47,6 +47,16 @@ export type DistanceRound =
       answerCard: PlayingCardPosition;
       choices: { kind: "cards"; data: PlayingCardPosition[] };
     };
+
+/**
+ * A playable round, or the `range-too-small` state produced when
+ * `cycleSize < MIN_DISTANCE_RANGE`. The latter carries no prompt data —
+ * consumers must narrow on `display` before reading round fields, which makes
+ * reading prompt data from an unplayable round a compile-time error.
+ */
+export type DistanceRound =
+  | PlayableDistanceRound
+  | { display: "range-too-small" };
 
 /**
  * The user's submitted answer, discriminated to match the current round kind.
@@ -88,7 +98,8 @@ type AdvanceRound =
       newOffset: number;
       newAnswerCard: PlayingCardPosition;
       newChoices: { kind: "cards"; data: PlayingCardPosition[] };
-    };
+    }
+  | { newDisplay: "range-too-small" };
 
 export type AdvancePayload = AdvancePayloadBase & AdvanceRound;
 
@@ -199,45 +210,29 @@ const pickPromptKind = (mode: DistanceMode): DistancePromptKind => {
 };
 
 /**
- * Builds the rangeTooSmall placeholder payload. See SAFETY note on the
- * call site — these values are inert because the page guards on
- * `rangeTooSmall` and never reads them.
+ * Builds the `range-too-small` payload. The prompt card is a stable
+ * placeholder (the first card in range) so `GameState.card` stays populated;
+ * the round itself carries no prompt data — consumers must narrow on
+ * `display` before reading it.
  */
 const buildRangeTooSmallPayload = (
   stackOrder: Stack,
   convention: DistanceConvention,
   limits: StackLimits
-): AdvancePayload => {
-  const placeholder: PlayingCardPosition = {
+): AdvancePayload => ({
+  newCard: {
     index: limits.start,
     card: getCardAt(stackOrder, limits.start - 1),
-  };
-  // Placeholder for rangeTooSmall — consumers must guard on
-  // choices.data.length === 0 before reading expectedDistance. The
-  // expectedDistance: 0 violates the discriminated-union invariant for a
-  // real compute round but is inert because the page-level rangeTooSmall
-  // guard prevents it from ever reaching the user, and `isCorrectAnswer`
-  // short-circuits on the empty choices array.
-  return {
-    newCard: placeholder,
-    newAnswerCard: placeholder,
-    newChoices: { kind: "numbers", data: [] },
-    newDisplay: "compute",
-    newExpectedDistance: 0,
-    newOffset: null,
-    newConvention: convention,
-  };
-};
+  },
+  newDisplay: "range-too-small",
+  newConvention: convention,
+});
 
 /**
  * Build the next-round payload, used by both initial state and every
  * post-answer transition. When `rangeSize < MIN_DISTANCE_RANGE` (the
- * minimum needed to pick 5 unique choices), returns a placeholder payload —
- * the page renders the rangeTooSmall banner in that case and never reads
- * choices/prompt data, so the placeholder is harmless. The placeholder is
- * always compute-shaped (with `expectedDistance: 0`) since the discriminated
- * union requires a non-null distance for compute branches; the page never
- * surfaces this value.
+ * minimum needed to pick 5 unique choices), returns a `range-too-small`
+ * payload — the page renders the rangeTooSmall banner in that case.
  */
 export const generateNextDistanceRound = (
   stackOrder: Stack,
@@ -247,12 +242,6 @@ export const generateNextDistanceRound = (
 ): AdvancePayload => {
   const cycleSize = limits.end - limits.start + 1;
   if (cycleSize < MIN_DISTANCE_RANGE) {
-    // SAFETY: this placeholder is only reached when the page-level
-    // `rangeTooSmall` guard is bypassed (e.g., a unit test). The page
-    // short-circuits to `DistanceRangeTooSmallAlert` and never reads these
-    // values, so `expectedDistance: 0` (an invariant violation for a real
-    // compute round) and the empty `data` array are inert. Do not rely on
-    // these values from any consumer that bypasses the guard.
     return buildRangeTooSmallPayload(stackOrder, convention, limits);
   }
   const kind = pickPromptKind(mode);
@@ -284,20 +273,13 @@ export const generateNextDistanceRound = (
  * Compares a user's discriminated answer against the active round.
  * Compute: numeric value must match `expectedDistance`.
  * Apply: card must match `answerCard.card` by suit and rank.
- *
- * Defensive guard: if the round has no choices (i.e. it's the
- * `buildRangeTooSmallPayload` placeholder served when `cycleSize <
- * MIN_DISTANCE_RANGE`), every answer is wrong. The page-level rangeTooSmall
- * alert prevents the user from ever submitting against this placeholder, but
- * if a routing or test regression bypasses that guard, an answer of `0`
- * would otherwise score correct against the placeholder's
- * `expectedDistance: 0` and silently pollute session stats.
+ * A `range-too-small` round has no answer, so every submission is wrong.
  */
 export const isCorrectAnswer = (
   answer: DistanceAnswer,
   round: DistanceRound
 ): boolean => {
-  if (round.choices.data.length === 0) {
+  if (round.display === "range-too-small") {
     return false;
   }
   if (answer.kind === "compute") {
@@ -318,6 +300,14 @@ const buildStateFromPayload = (
   base: GameStateBase,
   payload: AdvancePayload
 ): GameState => {
+  if (payload.newDisplay === "range-too-small") {
+    return {
+      ...base,
+      card: payload.newCard,
+      convention: payload.newConvention,
+      display: "range-too-small",
+    };
+  }
   if (payload.newDisplay === "compute") {
     return {
       ...base,

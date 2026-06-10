@@ -26,6 +26,13 @@ const mockSetValue = vi.fn(
 );
 const mockProbeStoredValue = vi.fn();
 const mockEmitStackLimitsChanged = vi.fn();
+const mockNotificationsShow = vi.fn();
+
+vi.mock("@mantine/notifications", () => ({
+  notifications: {
+    show: (...args: unknown[]) => mockNotificationsShow(...args),
+  },
+}));
 
 vi.mock("../utils/localstorage", () => ({
   useLocalDb: vi.fn((_, defaultValue) => [defaultValue, mockSetValue, vi.fn()]),
@@ -257,6 +264,45 @@ describe("useStackLimits", () => {
       rangeSize: 21,
       stackName: stacks[stackKey].name,
     });
+  });
+
+  it("re-shows the id-deduped corruption notice when the corrupt-lock refuses a write", () => {
+    mockProbeStoredValue.mockReturnValue({
+      status: "corrupt",
+      raw: "garbage",
+    });
+
+    const { result } = renderHook(() => useStackLimits("mnemonica"));
+
+    // The mount effect shows the notice once with the dedupe id.
+    expect(mockNotificationsShow).toHaveBeenCalledTimes(1);
+    expect(mockNotificationsShow).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "stack-limits-corrupt" })
+    );
+    mockNotificationsShow.mockClear();
+
+    result.current.setLimits({
+      start: createDeckPosition(5),
+      end: createDeckPosition(25),
+    });
+
+    expect(mockNotificationsShow).toHaveBeenCalledTimes(1);
+    expect(mockNotificationsShow).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "stack-limits-corrupt" })
+    );
+  });
+
+  it("does not show the corruption notice when the stored blob is valid or absent", () => {
+    mockProbeStoredValue.mockReturnValue({ status: "absent" });
+
+    const { result } = renderHook(() => useStackLimits("mnemonica"));
+
+    result.current.setLimits({
+      start: createDeckPosition(5),
+      end: createDeckPosition(25),
+    });
+
+    expect(mockNotificationsShow).not.toHaveBeenCalled();
   });
 
   it("does not emit STACK_LIMITS_CHANGED when the corrupt-lock blocks the write", () => {

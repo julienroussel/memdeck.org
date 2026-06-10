@@ -9,12 +9,15 @@ import type { PlayingCard } from "../../types/playingcard";
 import type { PlayingCardPosition } from "../../types/stacks";
 import type { TimerSettings } from "../../types/timer";
 import { cardItems, numberItems } from "../../types/typeguards";
-import type { DistanceAnswer, DistanceRound } from "./distance-game-reducer";
+import type {
+  DistanceAnswer,
+  PlayableDistanceRound,
+} from "./distance-game-reducer";
 import { DistancePromptDisplay } from "./distance-prompt-display";
 
 type DistanceActiveRoundProps = {
   card: PlayingCardPosition;
-  round: DistanceRound;
+  round: PlayableDistanceRound;
   roundConvention: DistanceConvention;
   submitAnswer: (answer: DistanceAnswer) => void;
   timerSettings: TimerSettings;

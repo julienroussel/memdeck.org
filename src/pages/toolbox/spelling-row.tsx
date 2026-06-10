@@ -1,6 +1,6 @@
 import { Badge, Image, Table, Text, useMatches } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
-import type { KeyboardEvent } from "react";
+import { type MouseEvent, memo } from "react";
 import { useTranslation } from "react-i18next";
 import { CARD_ASPECT_RATIO } from "../../constants";
 import type { PlayingCard } from "../../types/playingcard";
@@ -16,10 +16,16 @@ const CARD_CELL_STYLE = {
   gap: 8,
 } as const;
 const ROW_CLICKABLE_STYLE = "clickableRow";
-const POSITION_CELL_STYLE = {
+const TOGGLE_BUTTON_STYLE = {
   display: "inline-flex",
   alignItems: "center",
   gap: 4,
+  background: "none",
+  border: 0,
+  padding: 0,
+  font: "inherit",
+  color: "inherit",
+  cursor: "pointer",
 } as const;
 const CHEVRON_EXPANDED_STYLE = {
   transition: "transform 200ms",
@@ -37,42 +43,40 @@ type SpellingRowProps = {
   stackOrder: Stack;
 };
 
-export const SpellingRow = ({
+export const SpellingRow = memo(function SpellingRow({
   entry,
   isExpanded,
   onToggle,
   formatCardName,
   stackOrder,
-}: SpellingRowProps) => {
+}: SpellingRowProps) {
   const { t } = useTranslation();
   const detailId = `spelling-detail-${entry.position}`;
   const detailColSpan = useMatches({ base: 3, xs: 4 });
 
-  const handleClick = () => {
+  // Pointer-only convenience; keyboard users toggle via the button in the
+  // first cell (ARIA disclosure pattern).
+  const handleRowClick = () => {
     onToggle(entry.position);
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLTableRowElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      onToggle(entry.position);
-    }
+  const handleToggleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    onToggle(entry.position);
   };
 
   return (
     <>
-      <Table.Tr
-        aria-controls={detailId}
-        aria-expanded={isExpanded}
-        aria-label={formatCardName(entry.card)}
-        className={ROW_CLICKABLE_STYLE}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        role="button"
-        tabIndex={0}
-      >
+      <Table.Tr className={ROW_CLICKABLE_STYLE} onClick={handleRowClick}>
         <Table.Td>
-          <span style={POSITION_CELL_STYLE}>
+          <button
+            aria-controls={isExpanded ? detailId : undefined}
+            aria-expanded={isExpanded}
+            aria-label={`${entry.position}, ${formatCardName(entry.card)}`}
+            onClick={handleToggleClick}
+            style={TOGGLE_BUTTON_STYLE}
+            type="button"
+          >
             <IconChevronRight
               aria-hidden="true"
               size={14}
@@ -81,7 +85,7 @@ export const SpellingRow = ({
               }
             />
             {entry.position}
-          </span>
+          </button>
         </Table.Td>
         <Table.Td style={CARD_CELL_STYLE}>
           <Image
@@ -130,4 +134,4 @@ export const SpellingRow = ({
       )}
     </>
   );
-};
+});

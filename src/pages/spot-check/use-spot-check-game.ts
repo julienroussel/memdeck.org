@@ -21,6 +21,10 @@ import {
 } from "./spot-check-game-reducer";
 import { isSpotCheckAnswerCorrect, type PuzzleState } from "./utils";
 
+// Fixed id so repeated Reveal taps replace the pinned toast instead of
+// stacking permanently-open notifications (Mantine shows at most 5).
+const SPOT_CHECK_REVEAL_NOTIFICATION_ID = "spot-check-reveal";
+
 // --- Hook ---
 
 type UseSpotCheckGameOptions = {
@@ -196,11 +200,18 @@ export const useSpotCheckGame = (
       }
     }
 
+    // show() is a no-op while a same-id toast is visible — hide first so only
+    // the latest reveal stays pinned.
+    notifications.hide(SPOT_CHECK_REVEAL_NOTIFICATION_ID);
     notifications.show({
+      id: SPOT_CHECK_REVEAL_NOTIFICATION_ID,
       color: "yellow",
       title: t("spotCheck.revealTitle"),
       message: revealMessage,
-      autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+      // Position details take time to read — keep the notification open until
+      // the user dismisses it (WCAG 2.2 SC 2.2.1 Timing Adjustable).
+      autoClose: false,
+      withCloseButton: true,
     });
 
     const payload = generateNextRound();

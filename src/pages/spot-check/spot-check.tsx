@@ -2,10 +2,12 @@ import { Space, Stack, Text } from "@mantine/core";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CardSpread } from "../../components/card-spread/card-spread";
+import { buildBreadcrumbSchema, JsonLd } from "../../components/json-ld";
 import { RevealButton } from "../../components/reveal-button";
 import { SessionSummaryModal } from "../../components/session-summary-modal";
 import { TimerDisplay } from "../../components/timer-display";
 import { TrainingHeader } from "../../components/training-header";
+import { ROUTES } from "../../constants";
 import { useCardImagePreload } from "../../hooks/use-card-image-preload";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
@@ -24,6 +26,8 @@ import { cardItems } from "../../types/typeguards";
 import { SpotCheckSettingsContent } from "./spot-check-settings-content";
 import { useSpotCheckGame } from "./use-spot-check-game";
 import { useSpotCheckSettings } from "./use-spot-check-settings";
+
+const breadcrumbSchema = buildBreadcrumbSchema("Spot Check", ROUTES.spotCheck);
 
 const MODE_INSTRUCTION_LABELS = {
   missing: "spotCheck.identifyMissing",
@@ -96,6 +100,7 @@ export const SpotCheck = () => {
 
   return (
     <div className="fullMantineContainerHeight">
+      <JsonLd data={breadcrumbSchema} />
       <Stack gap={0} h="100%" style={{ overflow: "hidden" }}>
         <TrainingHeader
           activeSession={activeSession}
@@ -137,7 +142,7 @@ export const SpotCheck = () => {
           </Text>
           <Space h="sm" />
         </div>
-        <div style={{ flex: 1 }}>
+        <div className="spotCheckSpread" style={{ flex: 1 }}>
           <CardSpread
             canMove
             degree={0.5}

@@ -17,7 +17,16 @@ export function lazyWithReload<T extends ComponentType<unknown>>(
       const key = `${CHUNK_RELOAD_SSK}${window.location.pathname}`;
       const params = new URLSearchParams(window.location.search);
 
-      if (sessionStorage.getItem(key) || params.has(CHUNK_RELOADED_PARAM)) {
+      let hasReloadSentinel = false;
+      try {
+        hasReloadSentinel = sessionStorage.getItem(key) !== null;
+      } catch {
+        // Accessing sessionStorage itself can throw (SecurityError when
+        // storage is disabled). Treat as "no sentinel present" — the setItem
+        // below fails the same way and falls back to the URL-param guard.
+      }
+
+      if (hasReloadSentinel || params.has(CHUNK_RELOADED_PARAM)) {
         throw error;
       }
 

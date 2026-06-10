@@ -13,7 +13,7 @@ import { TwoOfHearts } from "../../types/suits/hearts";
 import { AceOfSpades, FiveOfSpades } from "../../types/suits/spades";
 import type { TimerSettings } from "../../types/timer";
 import { DistanceActiveRound } from "./distance-active-round";
-import type { DistanceRound } from "./distance-game-reducer";
+import type { PlayableDistanceRound } from "./distance-game-reducer";
 
 const promptCard: PlayingCardPosition = {
   index: createDeckPosition(1),
@@ -38,7 +38,7 @@ const cardChoiceC: PlayingCardPosition = {
   card: FiveOfSpades,
 };
 
-const computeRound: DistanceRound = {
+const computeRound: PlayableDistanceRound = {
   display: "compute",
   expectedDistance: 3,
   offset: null,
@@ -46,7 +46,7 @@ const computeRound: DistanceRound = {
   choices: { kind: "numbers", data: [1, 2, 3, 4, 5] },
 };
 
-const applyRound: DistanceRound = {
+const applyRound: PlayableDistanceRound = {
   display: "apply",
   expectedDistance: null,
   offset: 5,

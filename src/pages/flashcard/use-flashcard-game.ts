@@ -18,6 +18,7 @@ import type {
 } from "../../types/stacks";
 import type { TimerSettings } from "../../types/timer";
 import type { ResolvedDirection } from "../../utils/neighbor";
+import { buildWrongAnswerNotification } from "../../utils/notifications";
 import type { AdvancePayload } from "./flashcard-game-reducer";
 import {
   createInitialState,
@@ -26,7 +27,7 @@ import {
   generateNewCardAndChoices,
   isCorrectAnswer,
 } from "./flashcard-game-reducer";
-import { buildWrongAnswerNotification, getRandomDisplayMode } from "./utils";
+import { getRandomDisplayMode } from "./utils";
 
 // --- Hook ---
 
@@ -37,6 +38,8 @@ type UseFlashcardGameOptions = {
 type UseFlashcardGameResult = {
   score: GameScore;
   card: PlayingCardPosition;
+  /** The card the user must select as the answer. Same as `card` for standard modes. */
+  answerCard: PlayingCardPosition;
   choices: PlayingCardPosition[];
   shouldShowCard: boolean;
   timeRemaining: number;
@@ -270,6 +273,7 @@ export const useFlashcardGame = (
   return {
     score: { successes: state.successes, fails: state.fails },
     card: state.card,
+    answerCard: state.answerCard,
     choices: state.choices,
     shouldShowCard,
     timeRemaining: state.timeRemaining,

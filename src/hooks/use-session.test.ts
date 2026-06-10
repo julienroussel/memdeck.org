@@ -1038,6 +1038,102 @@ describe("useSession hook", () => {
   });
 
   // -----------------------------------------------------------------------
+  // startSession — prior-session auto-save failure surfacing
+  // -----------------------------------------------------------------------
+
+  describe("startSession — prior-session auto-save failure surfacing", () => {
+    /** Start an open session and answer 3 questions so it meets the save threshold. */
+    const runSessionPastSaveThreshold = (result: {
+      current: ReturnType<typeof useSession>;
+    }) => {
+      act(() => {
+        result.current.startSession({ type: "open" });
+      });
+      for (let i = 0; i < 3; i++) {
+        act(() => {
+          result.current.handleAnswer({
+            correct: true,
+            questionAdvanced: true,
+          });
+        });
+      }
+    };
+
+    it("shows the yellow save-failed notification and reports analytics when auto-saving the prior session fails with write-failed", () => {
+      const { result } = renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
+
+      runSessionPastSaveThreshold(result);
+
+      // The SECOND startSession auto-saves the prior active session; force
+      // that finalize to fail.
+      mockFinalizeSession.mockReturnValueOnce({
+        ok: false,
+        reason: "write-failed",
+      });
+      act(() => {
+        result.current.startSession({ type: "open" });
+      });
+
+      expect(mockTrackError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "LocalDbWriteFailed",
+          message: "reason=write-failed",
+        }),
+        "useSession:startSession"
+      );
+      // Unlike the flush effect's red toast, the auto-save path uses yellow
+      // for recoverable reasons — the prior session is dropped either way
+      // (the new one replaces it), so there is no retry to invite.
+      expect(mockNotificationsShow).toHaveBeenCalledWith(
+        expect.objectContaining({
+          color: "yellow",
+          title: "errors.sessionSaveFailed.title",
+          message: "errors.sessionSaveFailed.message",
+        })
+      );
+      // The failure must not block the new session from starting.
+      const { status } = result.current;
+      assertPhase(status, "active");
+      expect(status.session.questionsCompleted).toBe(0);
+    });
+
+    it("shows the red corrupt-storage notification when auto-saving the prior session fails with corrupt", () => {
+      const { result } = renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
+
+      runSessionPastSaveThreshold(result);
+
+      mockFinalizeSession.mockReturnValueOnce({
+        ok: false,
+        reason: "corrupt",
+      });
+      act(() => {
+        result.current.startSession({ type: "open" });
+      });
+
+      // corrupt = two failed writes (stats write + history rollback), so it
+      // lands in the LocalDbWriteFailed bucket — same as the flush path.
+      expect(mockTrackError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "LocalDbWriteFailed",
+          message: "reason=corrupt",
+        }),
+        "useSession:startSession"
+      );
+      expect(mockNotificationsShow).toHaveBeenCalledWith(
+        expect.objectContaining({
+          color: "red",
+          title: "errors.sessionStorageCorrupt.title",
+          message: "errors.sessionStorageCorrupt.message",
+        })
+      );
+    });
+  });
+
+  // -----------------------------------------------------------------------
   // last-save-failed breadcrumb on mount
   // -----------------------------------------------------------------------
 

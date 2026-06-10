@@ -125,14 +125,11 @@ describe("usePwaInstall", () => {
     expect(nativeUsed).toBe(false);
   });
 
-  it("install rejection re-enables eligibility and restores deferredPromptRef so a second install attempt can succeed", async () => {
+  it("install rejection does not restore the consumed prompt — prompt() may only be called once per event", async () => {
     withSession();
     const { result } = renderHook(() => usePwaInstall());
 
-    const firstPrompt = vi
-      .fn()
-      .mockRejectedValueOnce(new Error("User cancelled"))
-      .mockResolvedValueOnce(undefined);
+    const firstPrompt = vi.fn().mockRejectedValue(new Error("User cancelled"));
     const event = new Event("beforeinstallprompt", { cancelable: true });
     Object.defineProperty(event, "prompt", { value: firstPrompt });
     window.dispatchEvent(event);
@@ -145,16 +142,15 @@ describe("usePwaInstall", () => {
       await Promise.resolve();
     });
     expect(firstCall).toBe(true);
-    expect(result.current.eligible).toBe(true);
+    expect(result.current.eligible).toBe(false);
 
-    let secondCall = false;
+    let secondCall = true;
     await act(async () => {
       secondCall = result.current.install();
       await Promise.resolve();
     });
-    expect(secondCall).toBe(true);
-    expect(firstPrompt).toHaveBeenCalledTimes(2);
-    expect(result.current.eligible).toBe(false);
+    expect(secondCall).toBe(false);
+    expect(firstPrompt).toHaveBeenCalledTimes(1);
   });
 
   it("install rejection forwards a wrapped error with name PwaInstallPromptRejected to analytics.trackError", async () => {
@@ -192,6 +188,16 @@ describe("usePwaInstall", () => {
     expect(mockLocalStorage.getItem(PWA_INSTALL_DISMISSED_AT_LSK)).toBe(
       String(now)
     );
+    expect(result.current.eligible).toBe(false);
+  });
+
+  it("resets eligibility when the viewport leaves the mobile breakpoint", () => {
+    withSession();
+    const { result, rerender } = renderHook(() => usePwaInstall());
+    expect(result.current.eligible).toBe(true);
+
+    mockIsMobile = false;
+    rerender();
     expect(result.current.eligible).toBe(false);
   });
 

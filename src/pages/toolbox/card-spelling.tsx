@@ -1,6 +1,6 @@
 import { Stack, Table, Text, TextInput, VisuallyHidden } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFormatCardName } from "../../hooks/use-format-card-name";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
@@ -38,9 +38,9 @@ export const CardSpelling = () => {
     setQuery(event.currentTarget.value);
   };
 
-  const handleRowToggle = (position: number) => {
+  const handleRowToggle = useCallback((position: number) => {
     setExpandedPosition((prev) => (prev === position ? null : position));
-  };
+  }, []);
 
   return (
     <Stack gap="md">
