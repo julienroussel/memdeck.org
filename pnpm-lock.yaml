@@ -109,8 +109,8 @@ importers:
         specifier: 6.0.3
         version: 6.0.3
       ultracite:
-        specifier: 7.8.2
-        version: 7.8.2(oxlint@1.38.0)
+        specifier: 7.8.3
+        version: 7.8.3(oxlint@1.38.0)
       vite:
         specifier: 8.0.16
         version: 8.0.16(@types/node@25.9.2)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.15))(terser@5.48.0)(yaml@2.9.0)
@@ -3960,8 +3960,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  ultracite@7.8.2:
-    resolution: {integrity: sha512-+XeWzAEsewEr/kM686bOIWWt5DN+Pww4JUEOQUqOx4p/Pi58FWV+vPtEo2wi5WVWSgIkf8NzfTWGXmJjdqMl8g==}
+  ultracite@7.8.3:
+    resolution: {integrity: sha512-Fsj9aYJfh57uDB6DrdKVafKhF0QNekwqTrZKoTMYePjZp1npyFCnfZVj2SnPZdOcxAGHJfmLYUIDq0YPh8acVA==}
     hasBin: true
     peerDependencies:
       oxfmt: '>=0.1.0'
@@ -8359,7 +8359,7 @@ snapshots:
 
   typescript@6.0.3: {}
 
-  ultracite@7.8.2(oxlint@1.38.0):
+  ultracite@7.8.3(oxlint@1.38.0):
     dependencies:
       '@clack/prompts': 1.5.1
       commander: 15.0.0
