@@ -1,1 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="234" height="333"><title>Two of Diamonds Playing Card</title><g transform="translate(0 -719.362)"><rect width="233.244" height="332.244" x=".378" y="719.74" rx="8.919" ry="8.946" style="fill:#fff;fill-opacity:1;stroke:gray;stroke-width:.75590551;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"/><path d="m117 814.076 28.244-28.336L117 757.403 88.756 785.74ZM117 1014.321l28.244-28.336L117 957.648l-28.244 28.337ZM17.206 780.702l9.414-9.445-9.414-9.446-9.415 9.446zM216.794 991.022l9.415 9.446-9.415 9.445-9.414-9.445z" style="fill:red;fill-opacity:1;stroke:none;stroke-width:1"/><g aria-label="2" style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:3.77201176px;line-height:0%;font-family:&quot;Levenim MT&quot;;-inkscape-font-specification:&quot;Sans Bold&quot;;letter-spacing:0;word-spacing:0;fill:red;fill-opacity:1;stroke:none;stroke-width:1"><path d="m27 735.552-.711 5.649H7.94q.423-4.86 3.92-8.588l6.224-5.303q3.247-2.804 3.247-5.629 0-1.882-1.076-2.997-1.056-1.133-2.92-1.133-2.152 0-3.208 1.153-.692.768-1.057 2.363-.365 1.69-.576 1.96-.308.095-.711.095h-2.42q-.424 0-.73-.173-.135-.403-.135-.903 0-4.015 2.632-6.378 2.516-2.267 6.55-2.267 3.747 0 6.13 1.998 2.536 2.113 2.536 5.802 0 3.631-2.805 6.647-.98 1.076-5.572 4.592-3.343 2.594-4.111 4.669h8.953l.153-1.73q.212-.922 1.134-.922h1.92q1.115 0 .98 1.095" style="font-size:39.34609222px;line-height:1.25;stroke-width:1" transform="scale(.98105 1.01931)"/></g><g aria-label="2" style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:3.77201176px;line-height:0%;font-family:&quot;Levenim MT&quot;;-inkscape-font-specification:&quot;Sans Bold&quot;;letter-spacing:0;word-spacing:0;fill:red;fill-opacity:1;stroke:none;stroke-width:1"><path d="m-211.519-1002.606-.71 5.648h-18.348q.422-4.86 3.919-8.588l6.225-5.302q3.246-2.805 3.246-5.63 0-1.882-1.075-2.997-1.057-1.133-2.92-1.133-2.152 0-3.209 1.153-.692.768-1.057 2.363-.365 1.69-.576 1.96-.307.095-.71.095h-2.422q-.422 0-.73-.172-.134-.404-.134-.904 0-4.015 2.632-6.378 2.517-2.267 6.551-2.267 3.746 0 6.129 1.998 2.536 2.113 2.536 5.802 0 3.631-2.805 6.647-.98 1.076-5.572 4.592-3.343 2.594-4.111 4.669h8.953l.153-1.73q.212-.922 1.134-.922h1.921q1.114 0 .98 1.095z" style="font-size:39.34609222px;line-height:1.25;stroke-width:1" transform="scale(-.98105 -1.01931)"/></g></g></svg>
+<svg height="333" width="234" xmlns="http://www.w3.org/2000/svg">
+  <title>Two of Diamonds Playing Card</title>
+  <g transform="translate(0 -719.362)">
+    <rect
+      height="332.244"
+      rx="8.919"
+      ry="8.946"
+      style="fill:#fff;fill-opacity:1;stroke:gray;stroke-width:.75590551;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+      width="233.244"
+      x=".378"
+      y="719.74"
+    />
+    <path
+      d="m117 814.076 28.244-28.336L117 757.403 88.756 785.74ZM117 1014.321l28.244-28.336L117 957.648l-28.244 28.337ZM17.206 780.702l9.414-9.445-9.414-9.446-9.415 9.446zM216.794 991.022l9.415 9.446-9.415 9.445-9.414-9.445z"
+      style="fill:red;fill-opacity:1;stroke:none;stroke-width:1"
+    />
+    <g
+      aria-label="2"
+      style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:3.77201176px;line-height:0%;font-family:&quot;Levenim MT&quot;;-inkscape-font-specification:&quot;Sans Bold&quot;;letter-spacing:0;word-spacing:0;fill:red;fill-opacity:1;stroke:none;stroke-width:1"
+    >
+      <path
+        d="m27 735.552-.711 5.649H7.94q.423-4.86 3.92-8.588l6.224-5.303q3.247-2.804 3.247-5.629 0-1.882-1.076-2.997-1.056-1.133-2.92-1.133-2.152 0-3.208 1.153-.692.768-1.057 2.363-.365 1.69-.576 1.96-.308.095-.711.095h-2.42q-.424 0-.73-.173-.135-.403-.135-.903 0-4.015 2.632-6.378 2.516-2.267 6.55-2.267 3.747 0 6.13 1.998 2.536 2.113 2.536 5.802 0 3.631-2.805 6.647-.98 1.076-5.572 4.592-3.343 2.594-4.111 4.669h8.953l.153-1.73q.212-.922 1.134-.922h1.92q1.115 0 .98 1.095"
+        style="font-size:39.34609222px;line-height:1.25;stroke-width:1"
+        transform="scale(.98105 1.01931)"
+      />
+    </g>
+    <g
+      aria-label="2"
+      style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:3.77201176px;line-height:0%;font-family:&quot;Levenim MT&quot;;-inkscape-font-specification:&quot;Sans Bold&quot;;letter-spacing:0;word-spacing:0;fill:red;fill-opacity:1;stroke:none;stroke-width:1"
+    >
+      <path
+        d="m-211.519-1002.606-.71 5.648h-18.348q.422-4.86 3.919-8.588l6.225-5.302q3.246-2.805 3.246-5.63 0-1.882-1.075-2.997-1.057-1.133-2.92-1.133-2.152 0-3.209 1.153-.692.768-1.057 2.363-.365 1.69-.576 1.96-.307.095-.71.095h-2.422q-.422 0-.73-.172-.134-.404-.134-.904 0-4.015 2.632-6.378 2.517-2.267 6.551-2.267 3.746 0 6.129 1.998 2.536 2.113 2.536 5.802 0 3.631-2.805 6.647-.98 1.076-5.572 4.592-3.343 2.594-4.111 4.669h8.953l.153-1.73q.212-.922 1.134-.922h1.921q1.114 0 .98 1.095z"
+        style="font-size:39.34609222px;line-height:1.25;stroke-width:1"
+        transform="scale(-.98105 -1.01931)"
+      />
+    </g>
+  </g>
+</svg>
