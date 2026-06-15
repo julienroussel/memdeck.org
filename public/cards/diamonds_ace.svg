@@ -1,1 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="234" height="333"><title>Ace of Diamonds Playing Card</title><g transform="translate(0 -719.362)"><rect width="233.244" height="332.244" x=".378" y="719.74" rx="8.919" ry="8.946" style="fill:#fff;fill-opacity:1;stroke:gray;stroke-width:.75590551;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"/><path d="m117 914.199 28.244-28.337L117 857.526l-28.244 28.336ZM17.206 780.702l9.414-9.445-9.414-9.446-9.415 9.446zM216.794 991.022l9.415 9.446-9.415 9.445-9.414-9.445z" style="fill:red;fill-opacity:1;stroke:none;stroke-width:1"/><g aria-label="A" style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:3.77201176px;line-height:0%;font-family:&quot;Levenim MT&quot;;-inkscape-font-specification:&quot;Sans Bold&quot;;letter-spacing:0;word-spacing:0;fill:red;fill-opacity:1;stroke:none;stroke-width:1"><path d="M32.051 627.488h-4.655l-1.84-4.847h-9.6l-1.92 4.847H9.381l9.071-23.534h4.544zm-8.175-9.215-3.12-8.08-3.136 8.08z" style="font-size:32.76629639px;line-height:1.25;stroke-width:1" transform="scale(.83055 1.20403)"/></g><g aria-label="A" style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:3.77201176px;line-height:0%;font-family:&quot;Levenim MT&quot;;-inkscape-font-specification:&quot;Sans Bold&quot;;letter-spacing:0;word-spacing:0;fill:red;fill-opacity:1;stroke:none;stroke-width:1"><path d="M-249.691-844.008h-4.656l-1.84-4.848h-9.6l-1.92 4.848h-4.655l9.071-23.535h4.544zm-8.176-9.216-3.12-8.08-3.136 8.08z" style="font-size:32.76629639px;line-height:1.25;stroke-width:1" transform="scale(-.83055 -1.20403)"/></g></g></svg>
+<svg height="333" width="234" xmlns="http://www.w3.org/2000/svg">
+  <title>Ace of Diamonds Playing Card</title>
+  <g transform="translate(0 -719.362)">
+    <rect
+      height="332.244"
+      rx="8.919"
+      ry="8.946"
+      style="fill:#fff;fill-opacity:1;stroke:gray;stroke-width:.75590551;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+      width="233.244"
+      x=".378"
+      y="719.74"
+    />
+    <path
+      d="m117 914.199 28.244-28.337L117 857.526l-28.244 28.336ZM17.206 780.702l9.414-9.445-9.414-9.446-9.415 9.446zM216.794 991.022l9.415 9.446-9.415 9.445-9.414-9.445z"
+      style="fill:red;fill-opacity:1;stroke:none;stroke-width:1"
+    />
+    <g
+      aria-label="A"
+      style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:3.77201176px;line-height:0%;font-family:&quot;Levenim MT&quot;;-inkscape-font-specification:&quot;Sans Bold&quot;;letter-spacing:0;word-spacing:0;fill:red;fill-opacity:1;stroke:none;stroke-width:1"
+    >
+      <path
+        d="M32.051 627.488h-4.655l-1.84-4.847h-9.6l-1.92 4.847H9.381l9.071-23.534h4.544zm-8.175-9.215-3.12-8.08-3.136 8.08z"
+        style="font-size:32.76629639px;line-height:1.25;stroke-width:1"
+        transform="scale(.83055 1.20403)"
+      />
+    </g>
+    <g
+      aria-label="A"
+      style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:3.77201176px;line-height:0%;font-family:&quot;Levenim MT&quot;;-inkscape-font-specification:&quot;Sans Bold&quot;;letter-spacing:0;word-spacing:0;fill:red;fill-opacity:1;stroke:none;stroke-width:1"
+    >
+      <path
+        d="M-249.691-844.008h-4.656l-1.84-4.848h-9.6l-1.92 4.848h-4.655l9.071-23.535h4.544zm-8.176-9.216-3.12-8.08-3.136 8.08z"
+        style="font-size:32.76629639px;line-height:1.25;stroke-width:1"
+        transform="scale(-.83055 -1.20403)"
+      />
+    </g>
+  </g>
+</svg>

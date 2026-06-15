@@ -1,1 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="62mm" height="88mm" viewBox="0 0 62 88"><title>Blank Playing Card</title><path d="M2.447 208.994h57.019c1.31 0 2.347 1.06 2.347 2.352v83.18c0 1.314-1.036 2.374-2.347 2.374H2.446C1.158 296.9.1 295.84.1 294.526v-83.18a2.36 2.36 0 0 1 2.347-2.352z" style="fill:#fff;fill-opacity:1;fill-rule:nonzero;stroke:gray;stroke-width:.2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.19999981;stroke-dasharray:none;stroke-opacity:1" transform="translate(0 -209)"/></svg>
+<svg
+  height="88mm"
+  viewBox="0 0 62 88"
+  width="62mm"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <title>Blank Playing Card</title>
+  <path
+    d="M2.447 208.994h57.019c1.31 0 2.347 1.06 2.347 2.352v83.18c0 1.314-1.036 2.374-2.347 2.374H2.446C1.158 296.9.1 295.84.1 294.526v-83.18a2.36 2.36 0 0 1 2.347-2.352z"
+    style="fill:#fff;fill-opacity:1;fill-rule:nonzero;stroke:gray;stroke-width:.2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.19999981;stroke-dasharray:none;stroke-opacity:1"
+    transform="translate(0 -209)"
+  />
+</svg>
