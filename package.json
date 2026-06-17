@@ -54,7 +54,7 @@
     "@vitest/coverage-v8": "4.1.9",
     "fta-cli": "3.0.0",
     "globals": "17.6.0",
-    "happy-dom": "20.10.4",
+    "happy-dom": "20.10.5",
     "knip": "6.17.1",
     "lefthook": "2.1.9",
     "postcss": "8.5.15",
@@ -69,9 +69,9 @@
     "workbox-window": "7.4.1"
   },
   "dependencies": {
-    "@mantine/core": "9.3.1",
-    "@mantine/hooks": "9.3.1",
-    "@mantine/notifications": "9.3.1",
+    "@mantine/core": "9.3.2",
+    "@mantine/hooks": "9.3.2",
+    "@mantine/notifications": "9.3.2",
     "@tabler/icons-react": "3.44.0",
     "i18next": "26.3.1",
     "react": "19.2.7",
