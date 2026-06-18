@@ -54,7 +54,7 @@
     "@vitest/coverage-v8": "4.1.9",
     "fta-cli": "3.0.0",
     "globals": "17.6.0",
-    "happy-dom": "20.10.5",
+    "happy-dom": "20.10.6",
     "knip": "6.17.1",
     "lefthook": "2.1.9",
     "postcss": "8.5.15",
@@ -79,7 +79,7 @@
     "react-error-boundary": "6.1.2",
     "react-ga4": "3.0.1",
     "react-i18next": "17.0.8",
-    "react-router": "7.18.0",
+    "react-router": "8.0.0",
     "web-vitals": "5.3.0"
   },
   "browserslist": {
