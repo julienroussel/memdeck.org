@@ -57,7 +57,7 @@
     "happy-dom": "20.10.6",
     "knip": "6.23.0",
     "lefthook": "2.1.9",
-    "postcss": "8.5.15",
+    "postcss": "8.5.16",
     "postcss-preset-mantine": "1.18.0",
     "postcss-simple-vars": "7.0.1",
     "sharp": "0.35.2",
