@@ -140,8 +140,8 @@ describe("useSuggestionDeepLink", () => {
     const apply = vi.fn();
     const onTimed = vi.fn();
     renderDeepLink("/flashcard/?try=apple&timed=1", {
-      tryHandlers: [tryHandler(isFruit, apply)],
       onTimed,
+      tryHandlers: [tryHandler(isFruit, apply)],
     });
 
     await waitFor(() => expect(currentLocation()).toBe("/flashcard/"));
@@ -153,8 +153,8 @@ describe("useSuggestionDeepLink", () => {
     const apply = vi.fn();
     const onTimed = vi.fn();
     renderDeepLink("/flashcard/", {
-      tryHandlers: [tryHandler(isFruit, apply)],
       onTimed,
+      tryHandlers: [tryHandler(isFruit, apply)],
     });
 
     // The probe rendering means the hook mounted and its layout effect ran.

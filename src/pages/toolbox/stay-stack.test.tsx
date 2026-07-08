@@ -7,10 +7,10 @@ import { StayStack } from "./stay-stack";
 
 vi.mock("../../hooks/use-selected-stack", () => ({
   useRequiredStack: () => ({
-    stackKey: "mnemonica" as const,
     stack: stacks.mnemonica,
-    stackOrder: stacks.mnemonica.order,
+    stackKey: "mnemonica" as const,
     stackName: stacks.mnemonica.name,
+    stackOrder: stacks.mnemonica.order,
   }),
 }));
 
@@ -50,7 +50,7 @@ describe("StayStack", () => {
 
     render(<StayStack />);
 
-    for (let i = 0; i < result.cycleCount; i++) {
+    for (let i = 0; i < result.cycleCount; i += 1) {
       const label = `Cycle ${i + 1} of ${result.cycleCount}`;
       expect(screen.getByRole("table", { name: label })).toBeInTheDocument();
     }

@@ -53,20 +53,20 @@ export const useSelectedStack = (): SelectedStackResult => {
   if (selectedStackKey !== "" && selectedStackKey in stacks) {
     const stack = stacks[selectedStackKey];
     return {
-      stackKey: selectedStackKey,
-      stack,
-      stackOrder: stack.order,
-      stackName: stack.name,
       setStackKey,
+      stack,
+      stackKey: selectedStackKey,
+      stackName: stack.name,
+      stackOrder: stack.order,
     };
   }
 
   return {
-    stackKey: "",
-    stack: null,
-    stackOrder: null,
-    stackName: null,
     setStackKey,
+    stack: null,
+    stackKey: "",
+    stackName: null,
+    stackOrder: null,
   };
 };
 
@@ -85,9 +85,9 @@ export const useRequiredStack = (): RequiredStackResult => {
   }
 
   return {
-    stackKey: result.stackKey,
     stack: result.stack,
-    stackOrder: result.stackOrder,
+    stackKey: result.stackKey,
     stackName: result.stackName,
+    stackOrder: result.stackOrder,
   };
 };

@@ -11,10 +11,10 @@ describe("buildWrongAnswerNotification", () => {
     // duplicating its overload signatures. Test-only cast — justified.
     const mockT = ((key: string) => key) as unknown as TFunction;
     expect(buildWrongAnswerNotification(mockT)).toEqual({
-      color: "red",
-      title: "common.wrongAnswerTitle",
-      message: "common.wrongAnswerMessage",
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+      color: "red",
+      message: "common.wrongAnswerMessage",
+      title: "common.wrongAnswerTitle",
     });
   });
 });

@@ -46,11 +46,11 @@ const mockReadAllTimeStats = vi.fn();
 const mockComputeSessionSummary = vi.fn();
 const mockUpdateAllTimeStats = vi.fn();
 const mockEventBusEmit = {
-  SESSION_STARTED: vi.fn(),
-  SESSION_COMPLETED: vi.fn(),
-  STACK_SELECTED: vi.fn(),
   FLASHCARD_ANSWER: vi.fn(),
   FLASHCARD_MODE_CHANGED: vi.fn(),
+  SESSION_COMPLETED: vi.fn(),
+  SESSION_STARTED: vi.fn(),
+  STACK_SELECTED: vi.fn(),
 };
 
 // Mock finalizeSession to delegate to the mocked persistence functions.
@@ -78,8 +78,8 @@ const mockFinalizeSession = vi.fn(
     const summary = mockComputeSessionSummary(record, history, allTimeStats);
     mockUpdateAllTimeStats(record);
     mockEventBusEmit.SESSION_COMPLETED({
-      mode: record.mode,
       accuracy: record.accuracy,
+      mode: record.mode,
       questionsCompleted: record.questionsCompleted,
     });
     return { ok: true, summary };
@@ -119,12 +119,12 @@ const mockClearBreadcrumb = vi.fn();
 const mockHasNotifShown = vi.fn();
 const mockMarkNotifShown = vi.fn();
 vi.mock("../utils/session-breadcrumbs", () => ({
-  readLastSaveFailedBreadcrumb: () => mockReadBreadcrumb(),
   clearLastSaveFailedBreadcrumb: () => mockClearBreadcrumb(),
   hasLastSaveFailedNotificationBeenShown: (failedAt: string) =>
     mockHasNotifShown(failedAt),
   markLastSaveFailedNotificationShown: (failedAt: string) =>
     mockMarkNotifShown(failedAt),
+  readLastSaveFailedBreadcrumb: () => mockReadBreadcrumb(),
   writeLastSaveFailedBreadcrumb: vi.fn(),
 }));
 
@@ -163,37 +163,37 @@ describe("useSession hook", () => {
     vi.stubGlobal("crypto", {
       ...globalThis.crypto,
       randomUUID: () => {
-        uuidCounter++;
+        uuidCounter += 1;
         return `test-uuid-${uuidCounter}`;
       },
     });
 
     // Default mock return values for finalization helpers
     mockBuildSessionRecord.mockImplementation((session: ActiveSession) => ({
-      id: session.id,
-      mode: session.mode,
-      stackKey: session.stackKey,
-      config: session.config,
-      startedAt: session.startedAt,
-      endedAt: "2025-01-01T00:10:00.000Z",
-      durationSeconds: 600,
-      successes: session.successes,
-      fails: session.fails,
-      questionsCompleted: session.questionsCompleted,
       accuracy:
         session.successes + session.fails > 0
           ? session.successes / (session.successes + session.fails)
           : 0,
       bestStreak: session.bestStreak,
+      config: session.config,
+      durationSeconds: 600,
+      endedAt: "2025-01-01T00:10:00.000Z",
+      fails: session.fails,
+      id: session.id,
+      mode: session.mode,
+      questionsCompleted: session.questionsCompleted,
+      stackKey: session.stackKey,
+      startedAt: session.startedAt,
+      successes: session.successes,
     }));
     mockReadSessionHistory.mockReturnValue([]);
     mockReadAllTimeStats.mockReturnValue({});
     mockComputeSessionSummary.mockImplementation((record: unknown) => ({
-      record,
       encouragement: "Nice!",
       isAccuracyImprovement: false,
       isNewGlobalBestStreak: false,
       previousAverageAccuracy: null,
+      record,
     }));
   });
 
@@ -232,14 +232,14 @@ describe("useSession hook", () => {
     expect(status.session.config).toEqual({ type: "open" });
     expect(result.current.activeSession).not.toBeNull();
     expect(mockEventBusEmit.SESSION_STARTED).toHaveBeenCalledWith({
-      mode: "flashcard",
       config: { type: "open" },
+      mode: "flashcard",
     });
   });
 
   it("auto-starts an open session on mount when autoStart is true", () => {
     const { result } = renderHook(() =>
-      useSession({ mode: "flashcard", stackKey: "mnemonica", autoStart: true })
+      useSession({ autoStart: true, mode: "flashcard", stackKey: "mnemonica" })
     );
 
     const { status } = result.current;
@@ -249,7 +249,7 @@ describe("useSession hook", () => {
 
   it("does not auto-start when autoStart is false", () => {
     const { result } = renderHook(() =>
-      useSession({ mode: "flashcard", stackKey: "mnemonica", autoStart: false })
+      useSession({ autoStart: false, mode: "flashcard", stackKey: "mnemonica" })
     );
 
     expect(result.current.status.phase).toBe("idle");
@@ -263,7 +263,7 @@ describe("useSession hook", () => {
     // long since been consumed, so it alone would never re-fire.
     const { result, rerender } = renderHook(
       ({ autoStart }: { autoStart: boolean }) =>
-        useSession({ mode: "flashcard", stackKey: "mnemonica", autoStart }),
+        useSession({ autoStart, mode: "flashcard", stackKey: "mnemonica" }),
       { initialProps: { autoStart: false } }
     );
     expect(result.current.status.phase).toBe("idle");
@@ -275,7 +275,7 @@ describe("useSession hook", () => {
 
   it("does not auto-restart after Stop returns to idle (autoStart unchanged is not a re-arm)", () => {
     const { result } = renderHook(() =>
-      useSession({ mode: "flashcard", stackKey: "mnemonica", autoStart: true })
+      useSession({ autoStart: true, mode: "flashcard", stackKey: "mnemonica" })
     );
     assertPhase(result.current.status, "active");
 
@@ -326,9 +326,9 @@ describe("useSession hook", () => {
           tryHandlers: [tryHandler(isFlashcardMode, noop)],
         });
         const sessionApi = useSession({
+          autoStart: !deepLinkPending,
           mode: "flashcard",
           stackKey: "mnemonica",
-          autoStart: !deepLinkPending,
         });
         return { navigate, sessionApi };
       },
@@ -466,11 +466,11 @@ describe("useSession hook", () => {
     );
 
     act(() => {
-      result.current.startSession({ type: "structured", totalQuestions: 10 });
+      result.current.startSession({ totalQuestions: 10, type: "structured" });
     });
 
     // Answer 9 questions (one short of completion)
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < 9; i += 1) {
       act(() => {
         result.current.handleAnswer({ correct: true, questionAdvanced: true });
       });
@@ -505,7 +505,7 @@ describe("useSession hook", () => {
     );
 
     act(() => {
-      result.current.startSession({ type: "structured", totalQuestions: 1 });
+      result.current.startSession({ totalQuestions: 1, type: "structured" });
     });
 
     // The single answer triggers both:
@@ -519,10 +519,10 @@ describe("useSession hook", () => {
     expect(mockBuildSessionRecord).toHaveBeenCalledOnce();
     expect(mockBuildSessionRecord).toHaveBeenCalledWith(
       expect.objectContaining({
+        bestStreak: 1,
+        currentStreak: 1,
         questionsCompleted: 1,
         successes: 1,
-        currentStreak: 1,
-        bestStreak: 1,
       })
     );
   });
@@ -550,7 +550,7 @@ describe("useSession hook", () => {
     );
 
     act(() => {
-      result.current.startSession({ type: "structured", totalQuestions: 1 });
+      result.current.startSession({ totalQuestions: 1, type: "structured" });
     });
     act(() => {
       result.current.handleAnswer({ correct: true, questionAdvanced: true });
@@ -607,7 +607,7 @@ describe("useSession hook", () => {
     });
 
     // Answer 3 questions (meets minimum threshold for open sessions)
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i += 1) {
       act(() => {
         result.current.handleAnswer({ correct: true, questionAdvanced: true });
       });
@@ -632,11 +632,11 @@ describe("useSession hook", () => {
     );
 
     act(() => {
-      result.current.startSession({ type: "structured", totalQuestions: 10 });
+      result.current.startSession({ totalQuestions: 10, type: "structured" });
     });
 
     // Complete a structured session to reach summary phase
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 10; i += 1) {
       act(() => {
         result.current.handleAnswer({ correct: true, questionAdvanced: true });
       });
@@ -658,11 +658,11 @@ describe("useSession hook", () => {
     );
 
     act(() => {
-      result.current.startSession({ type: "structured", totalQuestions: 10 });
+      result.current.startSession({ totalQuestions: 10, type: "structured" });
     });
 
     // Complete a structured session to reach summary phase
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 10; i += 1) {
       act(() => {
         result.current.handleAnswer({ correct: true, questionAdvanced: true });
       });
@@ -677,8 +677,8 @@ describe("useSession hook", () => {
     expect(result.current.status.phase).toBe("active");
     expect(result.current.activeSession).not.toBeNull();
     expect(result.current.activeSession?.config).toEqual({
-      type: "structured",
       totalQuestions: 10,
+      type: "structured",
     });
     // Should be a fresh session with zero counters
     expect(result.current.activeSession?.successes).toBe(0);
@@ -694,15 +694,15 @@ describe("useSession hook", () => {
     const { result } = renderHook(
       (props: DistanceRenderProps) =>
         useSession({
+          distanceConvention: props.distanceConvention,
+          distanceMode: props.distanceMode,
           mode: "distance",
           stackKey: "mnemonica",
-          distanceMode: props.distanceMode,
-          distanceConvention: props.distanceConvention,
         }),
       {
         initialProps: {
-          distanceMode: "compute" as DistanceMode,
           distanceConvention: "signed" as DistanceConvention,
+          distanceMode: "compute" as DistanceMode,
         },
       }
     );
@@ -738,20 +738,20 @@ describe("useSession hook", () => {
   it("emits SESSION_STARTED with mode 'distance'", () => {
     const { result } = renderHook(() =>
       useSession({
+        distanceConvention: "cyclic",
+        distanceMode: "apply",
         mode: "distance",
         stackKey: "mnemonica",
-        distanceMode: "apply",
-        distanceConvention: "cyclic",
       })
     );
 
     act(() => {
-      result.current.startSession({ type: "structured", totalQuestions: 10 });
+      result.current.startSession({ totalQuestions: 10, type: "structured" });
     });
 
     expect(mockEventBusEmit.SESSION_STARTED).toHaveBeenCalledWith({
+      config: { totalQuestions: 10, type: "structured" },
       mode: "distance",
-      config: { type: "structured", totalQuestions: 10 },
     });
   });
 
@@ -762,8 +762,8 @@ describe("useSession hook", () => {
   it("re-snapshots stackLimits in the active session when limits change mid-session", () => {
     const limitsA = DEFAULT_STACK_LIMITS;
     const limitsB: StackLimits = {
-      start: createDeckPosition(1),
       end: createDeckPosition(20),
+      start: createDeckPosition(1),
     };
 
     const { result, rerender } = renderHook(
@@ -788,12 +788,12 @@ describe("useSession hook", () => {
 
   it("does not re-snapshot when limits are structurally equal across renders", () => {
     const limits: StackLimits = {
-      start: createDeckPosition(1),
       end: createDeckPosition(20),
+      start: createDeckPosition(1),
     };
     const sameLimitsNewRef: StackLimits = {
-      start: createDeckPosition(1),
       end: createDeckPosition(20),
+      start: createDeckPosition(1),
     };
 
     const { result, rerender } = renderHook(
@@ -822,8 +822,8 @@ describe("useSession hook", () => {
   it("does not fire the re-snapshot effect while phase is idle", () => {
     const limitsA = DEFAULT_STACK_LIMITS;
     const limitsB: StackLimits = {
-      start: createDeckPosition(1),
       end: createDeckPosition(20),
+      start: createDeckPosition(1),
     };
 
     const { result, rerender } = renderHook(
@@ -847,8 +847,8 @@ describe("useSession hook", () => {
   it("patches a queued pendingFinalizationRef when limits change after stopSession", () => {
     const limitsA = DEFAULT_STACK_LIMITS;
     const limitsB: StackLimits = {
-      start: createDeckPosition(1),
       end: createDeckPosition(20),
+      start: createDeckPosition(1),
     };
 
     const { result, rerender } = renderHook(
@@ -867,7 +867,7 @@ describe("useSession hook", () => {
 
     // Reach the auto-save threshold so stopSession will queue finalization
     // rather than just returning to idle.
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i += 1) {
       act(() => {
         result.current.handleAnswer({ correct: true, questionAdvanced: true });
       });
@@ -882,7 +882,7 @@ describe("useSession hook", () => {
 
     expect(result.current.status.phase).toBe("summary");
     // The persisted record should reflect the new limits, not the old ones.
-    const calls = mockBuildSessionRecord.mock.calls;
+    const { calls } = mockBuildSessionRecord.mock;
     const finalizedSession = calls.at(-1)?.[0];
     expect(finalizedSession?.stackLimits).toEqual(limitsB);
   });
@@ -899,7 +899,7 @@ describe("useSession hook", () => {
       act(() => {
         result.current.startSession({ type: "open" });
       });
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 3; i += 1) {
         act(() => {
           result.current.handleAnswer({
             correct: true,
@@ -926,8 +926,8 @@ describe("useSession hook", () => {
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
           color: "red",
-          title: "errors.sessionSaveFailed.title",
           message: "errors.sessionSaveFailed.message",
+          title: "errors.sessionSaveFailed.title",
         })
       );
       // Phase stays active so the user can retry Stop after clearing storage.
@@ -940,8 +940,8 @@ describe("useSession hook", () => {
       // `action` dimension, so it's the discriminator the fix exists to set.
       expect(mockTrackError).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: "LocalDbWriteFailed",
           message: "reason=write-failed",
+          name: "LocalDbWriteFailed",
         }),
         "useSession:flush"
       );
@@ -961,16 +961,16 @@ describe("useSession hook", () => {
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
           color: "red",
-          title: "errors.sessionStorageCorrupt.title",
           message: "errors.sessionStorageCorrupt.message",
+          title: "errors.sessionStorageCorrupt.title",
         })
       );
       // corrupt = two failed writes (stats write + history rollback), so it
       // also lands in the LocalDbWriteFailed bucket.
       expect(mockTrackError).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: "LocalDbWriteFailed",
           message: "reason=corrupt",
+          name: "LocalDbWriteFailed",
         }),
         "useSession:flush"
       );
@@ -1002,8 +1002,8 @@ describe("useSession hook", () => {
       // inflating the write-failure bucket.
       expect(mockTrackError).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: "LocalDbPersistenceFailed",
           message: "reason=corrupt-prior-state",
+          name: "LocalDbPersistenceFailed",
         }),
         "useSession:flush"
       );
@@ -1029,8 +1029,8 @@ describe("useSession hook", () => {
       // so it shares the LocalDbPersistenceFailed name, not LocalDbWriteFailed.
       expect(mockTrackError).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: "LocalDbPersistenceFailed",
           message: "reason=serialize-failed",
+          name: "LocalDbPersistenceFailed",
         }),
         "useSession:flush"
       );
@@ -1049,7 +1049,7 @@ describe("useSession hook", () => {
       act(() => {
         result.current.startSession({ type: "open" });
       });
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 3; i += 1) {
         act(() => {
           result.current.handleAnswer({
             correct: true,
@@ -1078,8 +1078,8 @@ describe("useSession hook", () => {
 
       expect(mockTrackError).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: "LocalDbWriteFailed",
           message: "reason=write-failed",
+          name: "LocalDbWriteFailed",
         }),
         "useSession:startSession"
       );
@@ -1089,8 +1089,8 @@ describe("useSession hook", () => {
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
           color: "yellow",
-          title: "errors.sessionSaveFailed.title",
           message: "errors.sessionSaveFailed.message",
+          title: "errors.sessionSaveFailed.title",
         })
       );
       // The failure must not block the new session from starting.
@@ -1118,16 +1118,16 @@ describe("useSession hook", () => {
       // lands in the LocalDbWriteFailed bucket — same as the flush path.
       expect(mockTrackError).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: "LocalDbWriteFailed",
           message: "reason=corrupt",
+          name: "LocalDbWriteFailed",
         }),
         "useSession:startSession"
       );
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
           color: "red",
-          title: "errors.sessionStorageCorrupt.title",
           message: "errors.sessionStorageCorrupt.message",
+          title: "errors.sessionStorageCorrupt.title",
         })
       );
     });
@@ -1147,8 +1147,8 @@ describe("useSession hook", () => {
 
     it("surfaces a yellow notification and clears the breadcrumb when one was left by the prior session", () => {
       mockReadBreadcrumb.mockReturnValueOnce({
-        reason: "write-failed",
         failedAt: "2025-01-01T00:00:00.000Z",
+        reason: "write-failed",
       });
 
       renderHook(() =>
@@ -1158,8 +1158,8 @@ describe("useSession hook", () => {
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
           color: "yellow",
-          title: "errors.lastSaveFailed.title",
           message: "errors.lastSaveFailed.message",
+          title: "errors.lastSaveFailed.title",
         })
       );
       expect(mockClearBreadcrumb).toHaveBeenCalledOnce();
@@ -1185,8 +1185,8 @@ describe("useSession hook", () => {
       // sessionStorage sentinel is the across-mount layer (covered by
       // separate tests below); this one pins the within-mount latch.
       mockReadBreadcrumb.mockReturnValue({
-        reason: "write-failed",
         failedAt: "2025-01-01T00:00:00.000Z",
+        reason: "write-failed",
       });
       // clear silently succeeds (does not throw) but in this scenario the
       // underlying storage write also failed — i.e. the breadcrumb remains.
@@ -1208,8 +1208,8 @@ describe("useSession hook", () => {
 
     it("suppresses the notification when the sentinel already matches the breadcrumb's failedAt (across-mount loop fix, issue #629)", () => {
       mockReadBreadcrumb.mockReturnValueOnce({
-        reason: "write-failed",
         failedAt: "2025-01-01T00:00:00.000Z",
+        reason: "write-failed",
       });
       mockHasNotifShown.mockReturnValueOnce(true);
 
@@ -1230,8 +1230,8 @@ describe("useSession hook", () => {
     it("marks the sentinel with the breadcrumb's failedAt before showing on the first mount", () => {
       const failedAt = "2025-01-01T00:00:00.000Z";
       mockReadBreadcrumb.mockReturnValueOnce({
-        reason: "write-failed",
         failedAt,
+        reason: "write-failed",
       });
       mockHasNotifShown.mockReturnValueOnce(false);
 
@@ -1244,8 +1244,8 @@ describe("useSession hook", () => {
       expect(mockNotificationsShow).toHaveBeenCalledWith(
         expect.objectContaining({
           color: "yellow",
-          title: "errors.lastSaveFailed.title",
           message: "errors.lastSaveFailed.message",
+          title: "errors.lastSaveFailed.title",
         })
       );
     });
@@ -1253,8 +1253,8 @@ describe("useSession hook", () => {
     it("queries the sentinel using the breadcrumb's failedAt — pins the keying contract", () => {
       const failedAt = "2025-06-15T08:30:42.123Z";
       mockReadBreadcrumb.mockReturnValueOnce({
-        reason: "serialize-failed",
         failedAt,
+        reason: "serialize-failed",
       });
 
       renderHook(() =>
@@ -1285,7 +1285,7 @@ describe("useSession hook", () => {
       act(() => {
         result.current.startSession({ type: "open" });
       });
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 3; i += 1) {
         act(() => {
           result.current.handleAnswer({
             correct: true,

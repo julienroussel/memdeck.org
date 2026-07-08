@@ -91,12 +91,12 @@ export const useDistanceSettings = (): UseDistanceSettingsResult => {
   );
 
   return {
-    mode,
     convention,
-    timerSettings,
-    setTimerDuration,
-    handleModeChange,
     handleConventionChange,
+    handleModeChange,
     handleTimerEnabledChange,
+    mode,
+    setTimerDuration,
+    timerSettings,
   };
 };

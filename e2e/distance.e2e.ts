@@ -117,7 +117,7 @@ test.describe("Distance Number Training", () => {
     const ATTEMPTS = 8;
     expect(itemCount).toBeLessThanOrEqual(ATTEMPTS);
 
-    for (let i = 0; i < ATTEMPTS; i++) {
+    for (let i = 0; i < ATTEMPTS; i += 1) {
       // Capture the score total before clicking. Every click submits an
       // answer that dispatches either CORRECT_ANSWER (successes+1) or
       // WRONG_ANSWER (fails+1), so successes+fails is monotonic per click.
@@ -171,7 +171,7 @@ test.describe("Distance Number Training", () => {
       },
       [
         STACK_LIMITS_LSK,
-        JSON.stringify({ mnemonica: { start: 1, end: 5 } }),
+        JSON.stringify({ mnemonica: { end: 5, start: 1 } }),
       ] as const
     );
 

@@ -237,10 +237,10 @@ describe("notifyLocalDbWriteFailed", () => {
 
     expect(showSpy).toHaveBeenCalledTimes(1);
     expect(showSpy).toHaveBeenCalledWith({
-      id: "local-db-write-failed-flashcard-mode",
       color: "yellow",
-      title: "tr:errors.localDbWriteFailed.title",
+      id: "local-db-write-failed-flashcard-mode",
       message: "tr:errors.localDbWriteFailed.message",
+      title: "tr:errors.localDbWriteFailed.title",
     });
   });
 
@@ -324,8 +324,8 @@ describe("handleLocalDbWriteFailed", () => {
     expect(trackErrorSpy).toHaveBeenCalledTimes(1);
     expect(showSpy).toHaveBeenCalledTimes(1);
     expect(showSpy.mock.calls[0]?.[0]).toMatchObject({
-      id: "local-db-write-failed-flashcard-mode",
       color: "yellow",
+      id: "local-db-write-failed-flashcard-mode",
     });
   });
 });

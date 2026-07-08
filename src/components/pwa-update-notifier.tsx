@@ -121,12 +121,11 @@ export const PwaUpdateNotifier = () => {
     safeSetItem(WHATS_NEW_LAST_ANNOUNCED_LSK, latestEntryId);
 
     notifications.show({
-      id: PWA_UPDATE_TOAST_ID,
-      color: "teal",
       // Persistent (WCAG 2.2.1): the toast holds a link keyboard/SR users may
       // not reach within an auto-close window; the close button dismisses it.
       autoClose: false,
-      title: t("pwaUpdate.title"),
+      color: "teal",
+      id: PWA_UPDATE_TOAST_ID,
       message: (
         <>
           {t("pwaUpdate.message")}{" "}
@@ -139,6 +138,7 @@ export const PwaUpdateNotifier = () => {
           </Anchor>
         </>
       ),
+      title: t("pwaUpdate.title"),
       withCloseButton: true,
     });
   }, [t]);

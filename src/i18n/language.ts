@@ -9,20 +9,20 @@ import {
 } from "./supported-languages";
 
 export const LANGUAGE_LABELS = {
-  en: "English",
-  fr: "Français",
-  es: "Español",
   de: "Deutsch",
+  en: "English",
+  es: "Español",
+  fr: "Français",
   it: "Italiano",
   nl: "Nederlands",
   pt: "Português",
 } as const satisfies Record<SupportedLanguage, string>;
 
 export const LANGUAGE_CODES = {
-  en: "EN",
-  fr: "FR",
-  es: "ES",
   de: "DE",
+  en: "EN",
+  es: "ES",
+  fr: "FR",
   it: "IT",
   nl: "NL",
   pt: "PT",
@@ -41,7 +41,7 @@ export const detectLanguage = (): SupportedLanguage => {
     // localStorage may be unavailable (private browsing, sandboxed iframe, etc.)
   }
 
-  const browserLang = navigator.language.split("-")[0];
+  const [browserLang] = navigator.language.split("-");
   if (browserLang && isSupportedLanguage(browserLang)) {
     return browserLang;
   }
@@ -53,9 +53,9 @@ export const languageLoaders: Record<
   Exclude<SupportedLanguage, "en">,
   () => Promise<{ default: Record<string, unknown> }>
 > = {
-  fr: () => import("./locales/fr.json"),
-  es: () => import("./locales/es.json"),
   de: () => import("./locales/de.json"),
+  es: () => import("./locales/es.json"),
+  fr: () => import("./locales/fr.json"),
   it: () => import("./locales/it.json"),
   nl: () => import("./locales/nl.json"),
   pt: () => import("./locales/pt.json"),
@@ -73,7 +73,7 @@ async function updateServiceWorker(): Promise<void> {
 
   await registration.update();
 
-  const waiting = registration.waiting;
+  const { waiting } = registration;
   if (!waiting) {
     return;
   }
@@ -147,7 +147,8 @@ let changeLanguageCallId = 0;
 export const changeLanguage = async (
   lang: SupportedLanguage
 ): Promise<void> => {
-  const callId = ++changeLanguageCallId;
+  changeLanguageCallId += 1;
+  const callId = changeLanguageCallId;
 
   if (!i18n.hasResourceBundle(lang, "translation") && lang !== "en") {
     const loader = languageLoaders[lang];

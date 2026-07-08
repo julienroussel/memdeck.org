@@ -24,8 +24,8 @@ export const StackRangeBadge = ({ stackKey }: StackRangeBadgeProps) => {
   const label = full
     ? t("stackLimits.badgeFull", { count: DECK_SIZE })
     : t("stackLimits.badgePartial", {
-        start: limits.start,
         end: limits.end,
+        start: limits.start,
       });
 
   return (
@@ -37,8 +37,8 @@ export const StackRangeBadge = ({ stackKey }: StackRangeBadgeProps) => {
           full
             ? t("stackLimits.badgeFullAriaLabel", { count: DECK_SIZE })
             : t("stackLimits.badgePartialAriaLabel", {
-                start: limits.start,
                 end: limits.end,
+                start: limits.start,
               })
         }
         color={full ? "gray" : "blue"}
@@ -62,7 +62,7 @@ export const StackRangeBadge = ({ stackKey }: StackRangeBadgeProps) => {
               <IconAlertTriangle
                 aria-hidden="true"
                 size={14}
-                style={{ verticalAlign: "middle", marginRight: 4 }}
+                style={{ marginRight: 4, verticalAlign: "middle" }}
               />{" "}
               {t("stackLimits.spotCheckHint", {
                 count: MIN_SPOT_CHECK_RANGE,

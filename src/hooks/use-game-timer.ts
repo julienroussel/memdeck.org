@@ -40,8 +40,8 @@ export const useGameTimer = <TTimeoutAction extends { type: string }>({
   // Handle timer duration changes from settings
   useEffect(() => {
     dispatch({
-      type: "RESET_TIMER",
       payload: { duration: timerSettings.duration },
+      type: "RESET_TIMER",
     });
   }, [timerSettings.duration, dispatch]);
 
@@ -74,11 +74,6 @@ export const useGameTimer = <TTimeoutAction extends { type: string }>({
  * Use these in your game reducer to handle TICK and RESET_TIMER actions.
  */
 export const timerReducerCases = {
-  TICK: <TState extends { timeRemaining: number }>(state: TState): TState => ({
-    ...state,
-    timeRemaining: Math.max(0, state.timeRemaining - 1),
-  }),
-
   RESET_TIMER: <
     TState extends { timeRemaining: number; timerDuration: number },
   >(
@@ -88,5 +83,9 @@ export const timerReducerCases = {
     ...state,
     timeRemaining: duration,
     timerDuration: duration,
+  }),
+  TICK: <TState extends { timeRemaining: number }>(state: TState): TState => ({
+    ...state,
+    timeRemaining: Math.max(0, state.timeRemaining - 1),
   }),
 };

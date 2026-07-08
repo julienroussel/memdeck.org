@@ -8,7 +8,48 @@
     "rules": {
       "style": {
         "useConsistentTypeDefinitions": "off"
+      },
+      "suspicious": {
+        // Type-aware rule whose cross-module inference is unreliable in this
+        // repo: every diagnostic it currently emits is a false positive — it
+        // reports demonstrably reachable discriminated-union switch cases as
+        // dead (session-breadcrumbs.ts's probe.status switch,
+        // use-spot-check-game.ts's ps.mode switch) and a reassigned `let` as
+        // always-falsy (localstorage.test.ts's `throwOnNext`). On the pinned
+        // biome 2.5.2 these surface as false diagnostics; biome 2.5.3
+        // additionally panics in module_resolver on the same files
+        // (biomejs/biome#7355, #7324). Keep off until upstream type resolution
+        // is trustworthy; re-check when bumping biome.
+        "noUnnecessaryConditions": "off"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      // E2E specs and build scripts are inherently sequential (ordered user
+      // actions; browsers launched one at a time to bound memory) and are not
+      // hot paths, so the performance rule against awaiting in a loop does not
+      // apply.
+      "includes": ["e2e/**", "scripts/**"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noAwaitInLoops": "off"
+          }
+        }
+      }
+    },
+    {
+      // Inline prop callbacks in test render helpers are fine — no render-perf
+      // concern in a unit test.
+      "includes": ["**/*.test.tsx"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noJsxPropsBind": "off"
+          }
+        }
+      }
+    }
+  ]
 }

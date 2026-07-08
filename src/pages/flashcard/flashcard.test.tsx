@@ -11,14 +11,14 @@ import type { ResolvedDirection } from "../../utils/neighbor";
 // Mock the timer hook so useFlashcardGame mounts without a real interval.
 vi.mock("../../hooks/use-game-timer", () => ({
   timerReducerCases: {
-    TICK: (s: { timeRemaining: number }) => ({
-      ...s,
-      timeRemaining: Math.max(0, s.timeRemaining - 1),
-    }),
     RESET_TIMER: (
       s: { timeRemaining: number; timerDuration: number },
       duration: number
     ) => ({ ...s, timeRemaining: duration, timerDuration: duration }),
+    TICK: (s: { timeRemaining: number }) => ({
+      ...s,
+      timeRemaining: Math.max(0, s.timeRemaining - 1),
+    }),
   },
   useGameTimer: vi.fn(),
 }));
@@ -48,16 +48,16 @@ vi.mock("../../hooks/use-document-meta", () => ({
 
 vi.mock("../../hooks/use-selected-stack", () => ({
   useRequiredStack: () => ({
-    stackKey: "mnemonica",
     stack: stacks.mnemonica,
-    stackOrder: stacks.mnemonica.order,
+    stackKey: "mnemonica",
     stackName: stacks.mnemonica.name,
+    stackOrder: stacks.mnemonica.order,
   }),
 }));
 
 const fullLimits = {
-  start: createDeckPosition(1),
   end: createDeckPosition(52),
+  start: createDeckPosition(1),
 };
 
 type StackLimitsResult = {
@@ -68,10 +68,10 @@ type StackLimitsResult = {
 };
 
 const limitsResult = (start: number, end: number): StackLimitsResult => ({
-  limits: { start: createDeckPosition(start), end: createDeckPosition(end) },
-  setLimits: vi.fn(),
-  rangeSize: end - start + 1,
   isFullDeck: start === 1 && end === 52,
+  limits: { end: createDeckPosition(end), start: createDeckPosition(start) },
+  rangeSize: end - start + 1,
+  setLimits: vi.fn(),
 });
 
 const mockUseStackLimits = vi.fn<() => StackLimitsResult>();
@@ -94,13 +94,13 @@ const settingsResult = (
   mode: FlashcardMode,
   neighborDirection: NeighborDirection
 ): FlashcardSettingsResult => ({
+  handleDirectionChange: vi.fn(),
+  handleModeChange: vi.fn(),
+  handleTimerEnabledChange: vi.fn(),
   mode,
   neighborDirection,
-  timerSettings: { enabled: false, duration: 15 },
   setTimerDuration: vi.fn(),
-  handleModeChange: vi.fn(),
-  handleDirectionChange: vi.fn(),
-  handleTimerEnabledChange: vi.fn(),
+  timerSettings: { duration: 15, enabled: false },
 });
 
 const mockUseFlashcardSettings = vi.fn<() => FlashcardSettingsResult>();
@@ -113,8 +113,8 @@ vi.mock("./use-flashcard-settings", () => ({
 let mockDeepLinkPending = false;
 
 vi.mock("../../hooks/use-suggestion-deep-link", () => ({
-  useSuggestionDeepLink: () => mockDeepLinkPending,
   tryHandler: () => () => false,
+  useSuggestionDeepLink: () => mockDeepLinkPending,
 }));
 
 type CapturedSessionOpts = { autoStart: boolean };
@@ -124,14 +124,14 @@ vi.mock("../../hooks/use-session", () => ({
   useSession: (opts: CapturedSessionOpts) => {
     capturedSessionOpts.push(opts);
     return {
-      status: { phase: "idle" },
-      startSession: vi.fn(),
-      handleAnswer: vi.fn(),
-      startNewSession: vi.fn(),
-      isStructuredSession: false,
       activeSession: null,
-      stopSession: vi.fn(),
       dismissSummary: vi.fn(),
+      handleAnswer: vi.fn(),
+      isStructuredSession: false,
+      startNewSession: vi.fn(),
+      startSession: vi.fn(),
+      status: { phase: "idle" },
+      stopSession: vi.fn(),
     };
   },
 }));
@@ -163,12 +163,12 @@ vi.mock("../../components/reveal-button", () => ({
   RevealButton: () => null,
 }));
 vi.mock("../../components/json-ld", () => ({
-  JsonLd: () => null,
   buildBreadcrumbSchema: () => ({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [],
   }),
+  JsonLd: () => null,
 }));
 
 const lastRoundProps = (): CapturedRoundProps => {

@@ -9,7 +9,7 @@ import { useFlashcardGame } from "./use-flashcard-game";
 
 const INDEX_ANSWER_PATTERN = /^\d+$/;
 
-const defaultTimerSettings: TimerSettings = { enabled: false, duration: 15 };
+const defaultTimerSettings: TimerSettings = { duration: 15, enabled: false };
 
 // --- Mocks for hook-level tests ---
 
@@ -24,11 +24,8 @@ vi.mock("../../utils/localstorage", () => ({
 vi.mock("../../hooks/use-game-timer", () => {
   let capturedOnTimeout: (() => void) | undefined;
   return {
+    __getCapturedOnTimeout: () => capturedOnTimeout,
     timerReducerCases: {
-      TICK: (state: { timeRemaining: number }) => ({
-        ...state,
-        timeRemaining: Math.max(0, state.timeRemaining - 1),
-      }),
       RESET_TIMER: (
         state: { timeRemaining: number; timerDuration: number },
         duration: number
@@ -37,11 +34,14 @@ vi.mock("../../hooks/use-game-timer", () => {
         timeRemaining: duration,
         timerDuration: duration,
       }),
+      TICK: (state: { timeRemaining: number }) => ({
+        ...state,
+        timeRemaining: Math.max(0, state.timeRemaining - 1),
+      }),
     },
     useGameTimer: vi.fn((opts: { onTimeout?: () => void }) => {
       capturedOnTimeout = opts.onTimeout;
     }),
-    __getCapturedOnTimeout: () => capturedOnTimeout,
   };
 });
 
@@ -164,7 +164,7 @@ describe("useFlashcardGame hook", () => {
       const cardBefore = result.current.card;
 
       let cardChanged = false;
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 10; i += 1) {
         act(() => {
           result.current.revealAnswer();
         });
@@ -343,7 +343,7 @@ describe("useFlashcardGame hook", () => {
 
       expect(result.current.score.successes).toBe(0);
 
-      for (let i = 1; i <= 3; i++) {
+      for (let i = 1; i <= 3; i += 1) {
         const correctCard = result.current.card.card;
         act(() => {
           result.current.submitAnswer(correctCard);
@@ -467,8 +467,8 @@ describe("useFlashcardGame hook", () => {
   describe("partial range", () => {
     it("returns a card within the specified range", () => {
       const limits = {
-        start: createDeckPosition(1),
         end: createDeckPosition(10),
+        start: createDeckPosition(1),
       };
       const { result } = renderHook(() =>
         useFlashcardGame(
@@ -492,8 +492,8 @@ describe("useFlashcardGame hook", () => {
 
     it("respects range after submitting an answer", () => {
       const limits = {
-        start: createDeckPosition(1),
         end: createDeckPosition(10),
+        start: createDeckPosition(1),
       };
       const { result } = renderHook(() =>
         useFlashcardGame(
@@ -530,12 +530,12 @@ describe("useFlashcardGame hook", () => {
   describe("when limits change", () => {
     it("resets score to zero when limits change", () => {
       const initialLimits = {
-        start: createDeckPosition(1),
         end: createDeckPosition(52),
+        start: createDeckPosition(1),
       };
       const newLimits = {
-        start: createDeckPosition(1),
         end: createDeckPosition(20),
+        start: createDeckPosition(1),
       };
 
       const { result, rerender } = renderHook(
@@ -561,17 +561,17 @@ describe("useFlashcardGame hook", () => {
       // Change limits to trigger reset
       rerender({ limits: newLimits });
 
-      expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+      expect(result.current.score).toEqual({ fails: 0, successes: 0 });
     });
 
     it("serves cards within the new range after limits change", () => {
       const initialLimits = {
-        start: createDeckPosition(1),
         end: createDeckPosition(52),
+        start: createDeckPosition(1),
       };
       const newLimits = {
-        start: createDeckPosition(1),
         end: createDeckPosition(20),
+        start: createDeckPosition(1),
       };
 
       const { result, rerender } = renderHook(
@@ -747,8 +747,8 @@ describe("useFlashcardGame hook", () => {
 
     it("works with minimum range size in neighbor mode", () => {
       const limits = {
-        start: createDeckPosition(1),
         end: createDeckPosition(6),
+        start: createDeckPosition(1),
       };
       const { result } = renderHook(() =>
         useFlashcardGame(
@@ -798,7 +798,7 @@ describe("useFlashcardGame hook", () => {
   describe("when stack changes", () => {
     it("resets score and draws cards from the new stack", () => {
       type Props = { stack: Stack; name: string };
-      const initialProps: Props = { stack: testStack, name: "Mnemonica" };
+      const initialProps: Props = { name: "Mnemonica", stack: testStack };
       const { result, rerender } = renderHook(
         ({ stack, name }: Props) =>
           useFlashcardGame(
@@ -818,9 +818,9 @@ describe("useFlashcardGame hook", () => {
       });
       expect(result.current.score.successes).toBe(1);
 
-      rerender({ stack: stacks.aronson.order, name: stacks.aronson.name });
+      rerender({ name: stacks.aronson.name, stack: stacks.aronson.order });
 
-      expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+      expect(result.current.score).toEqual({ fails: 0, successes: 0 });
       const { index, card } = result.current.card;
       expect(stacks.aronson.order[index - 1]).toBe(card);
     });

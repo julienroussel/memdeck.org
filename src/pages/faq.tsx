@@ -25,15 +25,15 @@ export const Faq = () => {
   const { t } = useTranslation();
 
   useDocumentMeta({
-    title: t("faq.pageTitle"),
     description: t("faq.pageDescription"),
+    title: t("faq.pageTitle"),
   });
 
   const faqItems = useMemo(
     () =>
       FAQ_KEYS.map((key) => ({
-        question: t(`faq.${key}Q`),
         answer: t(`faq.${key}A`),
+        question: t(`faq.${key}Q`),
       })),
     [t]
   );
@@ -44,11 +44,11 @@ export const Faq = () => {
       "@type": "FAQPage" as const,
       mainEntity: faqItems.map((item) => ({
         "@type": "Question",
-        name: item.question,
         acceptedAnswer: {
           "@type": "Answer",
           text: item.answer,
         },
+        name: item.question,
       })),
     }),
     [faqItems]

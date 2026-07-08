@@ -64,8 +64,8 @@ describe("getStoredValue", () => {
 
     expect(result).toBe("stored-value");
     expect(mockReadLocalStorageValue).toHaveBeenCalledWith({
-      key: "test-key",
       deserialize: expect.any(Function),
+      key: "test-key",
     });
   });
 
@@ -309,17 +309,17 @@ describe("getStoredValue with validate", () => {
       typeof (value as { fontSize: unknown }).fontSize === "number";
 
     mockReadLocalStorageValue.mockReturnValue({
-      theme: "dark",
       fontSize: 14,
+      theme: "dark",
     });
 
     const result = getStoredValue(
       "settings",
-      { theme: "light", fontSize: 12 },
+      { fontSize: 12, theme: "light" },
       isSettings
     );
 
-    expect(result).toEqual({ theme: "dark", fontSize: 14 });
+    expect(result).toEqual({ fontSize: 14, theme: "dark" });
   });
 
   it("rejects invalid object shape with object validator", () => {
@@ -334,17 +334,17 @@ describe("getStoredValue with validate", () => {
       typeof (value as { fontSize: unknown }).fontSize === "number";
 
     mockReadLocalStorageValue.mockReturnValue({
-      theme: 123,
       fontSize: "not-a-number",
+      theme: 123,
     });
 
     const result = getStoredValue(
       "settings",
-      { theme: "light", fontSize: 12 },
+      { fontSize: 12, theme: "light" },
       isSettings
     );
 
-    expect(result).toEqual({ theme: "light", fontSize: 12 });
+    expect(result).toEqual({ fontSize: 12, theme: "light" });
   });
 
   it("preserves falsy values that pass validation", () => {
@@ -398,7 +398,7 @@ describe("probeStoredValue", () => {
 
     const probe = probeStoredValue("test-key", isString);
 
-    expect(probe).toEqual({ status: "corrupt", raw: 123 });
+    expect(probe).toEqual({ raw: 123, status: "corrupt" });
   });
 
   it("returns { status: 'read-error', error } when readLocalStorageValue throws", () => {
@@ -409,7 +409,7 @@ describe("probeStoredValue", () => {
 
     const probe = probeStoredValue("test-key", isString);
 
-    expect(probe).toEqual({ status: "read-error", error: readError });
+    expect(probe).toEqual({ error: readError, status: "read-error" });
   });
 
   it("logs a DEV warning when the read throws", () => {
@@ -464,18 +464,18 @@ describe("useLocalDb", () => {
       delete store[k];
     });
     vi.stubGlobal("localStorage", {
-      get length() {
-        return Object.keys(store).length;
-      },
-      getItem: getItemMock,
-      setItem: setItemMock,
-      removeItem: removeItemMock,
       clear: () => {
         for (const k of Object.keys(store)) {
           delete store[k];
         }
       },
+      getItem: getItemMock,
       key: (i: number) => Object.keys(store)[i] ?? null,
+      get length() {
+        return Object.keys(store).length;
+      },
+      removeItem: removeItemMock,
+      setItem: setItemMock,
     });
   });
 
@@ -599,7 +599,7 @@ describe("useLocalDb", () => {
       const { rerender } = renderHook(() =>
         useLocalDb("k", "default", isString)
       );
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 10; i += 1) {
         rerender();
       }
 
@@ -661,7 +661,7 @@ describe("useLocalDb", () => {
       const { rerender } = renderHook(() =>
         useLocalDb("k", "default", isString, { onCorrupt })
       );
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 20; i += 1) {
         rerender();
       }
 
@@ -766,7 +766,7 @@ describe("useLocalDb", () => {
       const { result, rerender } = renderHook(() =>
         useLocalDb("k", "default", isString)
       );
-      const initial = result.current[1];
+      const [, initial] = result.current;
 
       rerender();
       rerender();
@@ -779,7 +779,7 @@ describe("useLocalDb", () => {
         ({ k }: { k: string }) => useLocalDb(k, "default", isString),
         { initialProps: { k: "a" } }
       );
-      const initial = result.current[1];
+      const [, initial] = result.current;
 
       rerender({ k: "b" });
 
@@ -839,7 +839,7 @@ describe("useLocalDb", () => {
       );
 
       const { result } = renderHook(() => useLocalDb<Bag>("k", {}, isBag));
-      const parsed = result.current[0];
+      const [parsed] = result.current;
 
       // Use Object.keys (own enumerable keys) — `in` walks the prototype
       // chain and would mask a successful pollution.
@@ -858,7 +858,7 @@ describe("useLocalDb", () => {
       );
 
       const { result } = renderHook(() => useLocalDb<Bag>("k", {}, isBag));
-      const parsed = result.current[0];
+      const [parsed] = result.current;
       const inner = parsed.a as Bag;
 
       expect(Object.keys(inner)).not.toContain("polluted");
@@ -874,7 +874,7 @@ describe("useLocalDb", () => {
       );
 
       const { result } = renderHook(() => useLocalDb<Bag>("k", {}, isBag));
-      const parsed = result.current[0];
+      const [parsed] = result.current;
 
       // Object.keys returns own enumerable keys — `"constructor" in parsed`
       // would return true because of the inherited Object.prototype.constructor,

@@ -83,14 +83,14 @@ describe("eventBus", () => {
       const unsubscribe = eventBus.subscribe.SESSION_STARTED(listener);
 
       eventBus.emit.SESSION_STARTED({
+        config: { totalQuestions: 10, type: "structured" },
         mode: "flashcard",
-        config: { type: "structured", totalQuestions: 10 },
       });
 
       expect(listener).toHaveBeenCalledOnce();
       expect(listener).toHaveBeenCalledWith({
+        config: { totalQuestions: 10, type: "structured" },
         mode: "flashcard",
-        config: { type: "structured", totalQuestions: 10 },
       });
 
       unsubscribe();
@@ -101,16 +101,16 @@ describe("eventBus", () => {
       const unsubscribe = eventBus.subscribe.SESSION_COMPLETED(listener);
 
       eventBus.emit.SESSION_COMPLETED({
-        mode: "flashcard",
         accuracy: 0.85,
+        mode: "flashcard",
         questionsCompleted: 10,
         saved: true,
       });
 
       expect(listener).toHaveBeenCalledOnce();
       expect(listener).toHaveBeenCalledWith({
-        mode: "flashcard",
         accuracy: 0.85,
+        mode: "flashcard",
         questionsCompleted: 10,
         saved: true,
       });
@@ -210,8 +210,8 @@ describe("eventBus", () => {
 
       expect(() =>
         prodBus.emit.SESSION_COMPLETED({
-          mode: "flashcard",
           accuracy: 0.5,
+          mode: "flashcard",
           questionsCompleted: 10,
           saved: true,
         })

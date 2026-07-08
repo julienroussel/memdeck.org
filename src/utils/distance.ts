@@ -61,7 +61,7 @@ export const applyOffset = (
   const a = fromZeroBased - (limits.start - 1);
   const target = (((a + offset) % cycleSize) + cycleSize) % cycleSize;
   const zeroBased = limits.start - 1 + target;
-  return { zeroBased, index: createDeckPosition(zeroBased + 1) };
+  return { index: createDeckPosition(zeroBased + 1), zeroBased };
 };
 
 /**
@@ -78,7 +78,7 @@ export const getValidDistanceRange = (
   const min = -Math.ceil(cycleSize / 2) + 1;
   const max = Math.floor(cycleSize / 2);
   const result: number[] = [];
-  for (let n = min; n <= max; n++) {
+  for (let n = min; n <= max; n += 1) {
     if (n !== 0) {
       result.push(n);
     }
@@ -119,7 +119,7 @@ export const pickComputeDistractors = (
     if (bucket === undefined) {
       continue;
     }
-    for (let i = bucket.length - 1; i > 0; i--) {
+    for (let i = bucket.length - 1; i > 0; i -= 1) {
       const j = Math.floor(Math.random() * (i + 1));
       const a = bucket[i];
       const b = bucket[j];

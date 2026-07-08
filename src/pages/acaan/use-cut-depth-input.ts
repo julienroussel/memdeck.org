@@ -46,9 +46,9 @@ export const useCutDepthInput = (
 
   return {
     cutDepth,
-    maxCutDepth: MAX_CUT_DEPTH,
-    handleCutDepthChange,
     handleCheckAnswer,
+    handleCutDepthChange,
     handleKeyDown,
+    maxCutDepth: MAX_CUT_DEPTH,
   };
 };

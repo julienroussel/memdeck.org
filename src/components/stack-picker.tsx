@@ -12,7 +12,7 @@ const availableStacks = Object.entries(stacks)
   }))
   .sort((a, b) => a.label.localeCompare(b.label));
 
-export const StackPicker = memo(function StackPicker() {
+export const StackPicker = memo(() => {
   const { stackKey, setStackKey } = useSelectedStack();
   const { t } = useTranslation();
 
@@ -29,7 +29,7 @@ export const StackPicker = memo(function StackPicker() {
 
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
-      const value = event.currentTarget.value;
+      const { value } = event.currentTarget;
       const narrowed = isStackKey(value) ? value : "";
       setStackKey(narrowed);
       if (narrowed !== "") {
@@ -52,3 +52,5 @@ export const StackPicker = memo(function StackPicker() {
     />
   );
 });
+
+StackPicker.displayName = "StackPicker";

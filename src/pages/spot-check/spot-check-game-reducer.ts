@@ -77,9 +77,9 @@ export const createInitialState = (
   timerDuration: number,
   mode: SpotCheckMode
 ): GameState => ({
-  successes: 0,
   fails: 0,
   puzzleState: generatePuzzle(cards, mode),
+  successes: 0,
   timeRemaining: timerDuration,
   timerDuration,
 });
@@ -94,8 +94,8 @@ export const gameReducer = (
     case "CORRECT_ANSWER":
       return {
         ...state,
-        successes: state.successes + 1,
         puzzleState: action.payload.newPuzzle,
+        successes: state.successes + 1,
         timeRemaining: state.timerDuration,
       };
     case "WRONG_ANSWER":

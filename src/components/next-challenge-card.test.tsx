@@ -9,15 +9,15 @@ import type { FeatureSuggestion } from "../types/discovery";
 import { NextChallengeCard } from "./next-challenge-card";
 
 const suggestion: FeatureSuggestion = {
+  deepLink: { param: "try", value: "swapped" },
+  i18n: { titleKey: "discovery.spotCheckSwappedTitle" },
+  icon: IconCards,
   id: "spotcheck-swapped",
-  mode: "spotcheck",
-  isUsed: () => false,
   isApplicable: () => true,
+  isUsed: () => false,
+  mode: "spotcheck",
   priority: 2,
   route: ROUTES.spotCheck,
-  deepLink: { param: "try", value: "swapped" },
-  icon: IconCards,
-  i18n: { titleKey: "discovery.spotCheckSwappedTitle" },
 };
 
 const mockAccept = vi.fn();
@@ -44,10 +44,10 @@ beforeEach(() => {
   mockDismiss.mockReset();
   mockTrackShown.mockReset();
   hookValue = {
-    nextSuggestion: suggestion,
     accept: mockAccept,
     dismiss: mockDismiss,
     exploredCount: 2,
+    nextSuggestion: suggestion,
     totalCount: 13,
   };
 });

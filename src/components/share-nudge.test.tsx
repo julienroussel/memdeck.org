@@ -52,12 +52,12 @@ vi.mock("../services/analytics", () => ({
 }));
 
 const defaultStats = {
-  totalSessions: 10,
-  totalCorrect: 50,
-  totalIncorrect: 5,
-  totalCards: 55,
   averageAccuracy: 0.91,
   bestAccuracy: 1,
+  totalCards: 55,
+  totalCorrect: 50,
+  totalIncorrect: 5,
+  totalSessions: 10,
 };
 
 beforeEach(() => {

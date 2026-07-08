@@ -9,17 +9,17 @@ import type { PlayingCardPosition } from "../../types/stacks";
 import type { ResolvedDirection } from "../../utils/neighbor";
 
 const CARD_VISIBLE_STYLE: CSSProperties = {
-  visibility: "visible",
+  left: 0,
   position: "relative",
   top: 0,
-  left: 0,
+  visibility: "visible",
 };
 
 const CARD_HIDDEN_STYLE: CSSProperties = {
-  visibility: "hidden",
+  left: 0,
   position: "absolute",
   top: 0,
-  left: 0,
+  visibility: "hidden",
 };
 
 type FlashcardCardDisplayProps = {
@@ -42,12 +42,12 @@ export const FlashcardCardDisplay = ({
     <Center>
       <div
         style={{
-          display: "flex",
           alignItems: "center",
+          display: "flex",
           gap: 12,
         }}
       >
-        {isNeighborMode && (
+        {isNeighborMode ? (
           <IconChevronLeft
             aria-hidden={resolvedDirection === "before" ? undefined : true}
             aria-label={t("flashcard.neighborArrowBefore")}
@@ -57,12 +57,12 @@ export const FlashcardCardDisplay = ({
               visibility: resolvedDirection === "before" ? "visible" : "hidden",
             }}
           />
-        )}
+        ) : null}
         <div
           style={{
+            height: CARD_HEIGHT,
             position: "relative",
             width: CARD_WIDTH,
-            height: CARD_HEIGHT,
           }}
         >
           <div aria-hidden={!shouldShowCard}>
@@ -84,7 +84,7 @@ export const FlashcardCardDisplay = ({
             />
           </div>
         </div>
-        {isNeighborMode && (
+        {isNeighborMode ? (
           <IconChevronRight
             aria-hidden={resolvedDirection === "after" ? undefined : true}
             aria-label={t("flashcard.neighborArrowAfter")}
@@ -94,7 +94,7 @@ export const FlashcardCardDisplay = ({
               visibility: resolvedDirection === "after" ? "visible" : "hidden",
             }}
           />
-        )}
+        ) : null}
       </div>
     </Center>
   );

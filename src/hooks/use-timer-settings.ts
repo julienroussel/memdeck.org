@@ -24,8 +24,8 @@ const TIMER_DURATION_VALUES = [
 const TIMER_DURATIONS: ReadonlySet<number> = new Set(TIMER_DURATION_VALUES);
 
 const DEFAULT_TIMER_SETTINGS: TimerSettings = {
-  enabled: false,
   duration: 15,
+  enabled: false,
 };
 
 const isTimerDuration = (value: unknown): value is TimerDuration =>
@@ -97,5 +97,5 @@ export const useTimerSettings = (
     [setTimerSettings]
   );
 
-  return { timerSettings, setTimerEnabled, setTimerDuration };
+  return { setTimerDuration, setTimerEnabled, timerSettings };
 };

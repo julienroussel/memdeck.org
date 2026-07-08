@@ -18,33 +18,33 @@ vi.mock("../hooks/use-stack-limits", () => ({
 const mockUseStackLimits = vi.mocked(useStackLimits);
 
 const fullDeckResult = {
-  limits: {
-    start: createDeckPosition(1),
-    end: createDeckPosition(DECK_SIZE),
-  },
-  setLimits: vi.fn(),
-  rangeSize: DECK_SIZE,
   isFullDeck: true,
+  limits: {
+    end: createDeckPosition(DECK_SIZE),
+    start: createDeckPosition(1),
+  },
+  rangeSize: DECK_SIZE,
+  setLimits: vi.fn(),
 };
 
 const partialResult = {
-  limits: {
-    start: createDeckPosition(1),
-    end: createDeckPosition(20),
-  },
-  setLimits: vi.fn(),
-  rangeSize: 20,
   isFullDeck: false,
+  limits: {
+    end: createDeckPosition(20),
+    start: createDeckPosition(1),
+  },
+  rangeSize: 20,
+  setLimits: vi.fn(),
 };
 
 const smallRangeResult = {
-  limits: {
-    start: createDeckPosition(1),
-    end: createDeckPosition(MIN_FLASHCARD_RANGE),
-  },
-  setLimits: vi.fn(),
-  rangeSize: MIN_FLASHCARD_RANGE,
   isFullDeck: false,
+  limits: {
+    end: createDeckPosition(MIN_FLASHCARD_RANGE),
+    start: createDeckPosition(1),
+  },
+  rangeSize: MIN_FLASHCARD_RANGE,
+  setLimits: vi.fn(),
 };
 
 describe("StackRangeBadge", () => {
@@ -132,8 +132,8 @@ describe("StackRangeBadge", () => {
     );
 
     expect(setLimitsMock).toHaveBeenCalledWith({
-      start: createDeckPosition(1),
       end: createDeckPosition(13),
+      start: createDeckPosition(1),
     });
   });
 });

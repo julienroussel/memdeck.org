@@ -68,10 +68,10 @@ export const useSpotCheckGame = (
   const [state, dispatch] = useReducer(
     gameReducer,
     {
+      limits,
+      mode: spotCheckMode,
       stackOrder,
       timerDuration: timerSettings.duration,
-      mode: spotCheckMode,
-      limits,
     },
     ({ stackOrder: s, timerDuration: d, mode: m, limits: l }) =>
       createInitialState(getCardsForPuzzle(s, l), d, m)
@@ -96,12 +96,12 @@ export const useSpotCheckGame = (
     prevLimitsRef.current = limits;
     cardsRef.current = getCardsForPuzzle(stackOrder, limits);
     dispatch({
-      type: "RESET_GAME",
       payload: {
         cards: cardsRef.current,
-        timerDuration: timerSettings.duration,
         spotCheckMode,
+        timerDuration: timerSettings.duration,
       },
+      type: "RESET_GAME",
     });
   }
 
@@ -117,26 +117,26 @@ export const useSpotCheckGame = (
 
   const createTimeoutAction = useCallback(() => {
     const payload = generateNextRound();
-    return { type: "TIMEOUT" as const, payload };
+    return { payload, type: "TIMEOUT" as const };
   }, [generateNextRound]);
 
   const handleTimeout = useCallback(() => {
     notifications.show({
-      color: "red",
-      title: t("spotCheck.timesUp"),
-      message: t("spotCheck.movingToNext"),
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+      color: "red",
+      message: t("spotCheck.movingToNext"),
+      title: t("spotCheck.timesUp"),
     });
     eventBus.emit.SPOT_CHECK_ANSWER({ correct: false, stackName });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
   }, [stackName, t]);
 
   useGameTimer({
-    timerSettings,
-    timeRemaining: state.timeRemaining,
-    dispatch,
     createTimeoutAction,
+    dispatch,
     onTimeout: handleTimeout,
+    timeRemaining: state.timeRemaining,
+    timerSettings,
   });
 
   const submitAnswer = useCallback(
@@ -150,20 +150,20 @@ export const useSpotCheckGame = (
 
       if (correct) {
         notifications.show({
-          color: "green",
-          title: t("spotCheck.correctAnswer"),
-          message: "",
           autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+          color: "green",
+          message: "",
+          title: t("spotCheck.correctAnswer"),
         });
         const payload = generateNextRound();
-        dispatch({ type: "CORRECT_ANSWER", payload });
+        dispatch({ payload, type: "CORRECT_ANSWER" });
         onAnswerRef.current?.({ correct: true, questionAdvanced: true });
       } else {
         notifications.show({
-          color: "red",
-          title: t("spotCheck.wrongAnswer"),
-          message: "",
           autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+          color: "red",
+          message: "",
+          title: t("spotCheck.wrongAnswer"),
         });
         dispatch({ type: "WRONG_ANSWER" });
         onAnswerRef.current?.({ correct: false, questionAdvanced: false });
@@ -204,30 +204,30 @@ export const useSpotCheckGame = (
     // the latest reveal stays pinned.
     notifications.hide(SPOT_CHECK_REVEAL_NOTIFICATION_ID);
     notifications.show({
-      id: SPOT_CHECK_REVEAL_NOTIFICATION_ID,
-      color: "yellow",
-      title: t("spotCheck.revealTitle"),
-      message: revealMessage,
       // Position details take time to read — keep the notification open until
       // the user dismisses it (WCAG 2.2 SC 2.2.1 Timing Adjustable).
       autoClose: false,
+      color: "yellow",
+      id: SPOT_CHECK_REVEAL_NOTIFICATION_ID,
+      message: revealMessage,
+      title: t("spotCheck.revealTitle"),
       withCloseButton: true,
     });
 
     const payload = generateNextRound();
-    dispatch({ type: "REVEAL_ANSWER", payload });
+    dispatch({ payload, type: "REVEAL_ANSWER" });
     analytics.trackFeatureUsed("Reveal Answer - Spot Check");
     eventBus.emit.SPOT_CHECK_ANSWER({ correct: false, stackName });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
   }, [stackName, generateNextRound, t]);
 
   return {
-    score: { successes: state.successes, fails: state.fails },
     puzzleCards: state.puzzleState.puzzle.cards,
     puzzleState: state.puzzleState,
+    revealAnswer,
+    score: { fails: state.fails, successes: state.successes },
+    submitAnswer,
     timeRemaining: state.timeRemaining,
     timerDuration: state.timerDuration,
-    submitAnswer,
-    revealAnswer,
   };
 };

@@ -36,8 +36,8 @@ describe("PwaInstallPrompt", () => {
 
   it("renders iOS install instructions when user agent is iPhone", () => {
     Object.defineProperty(navigator, "userAgent", {
-      value: "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)",
       configurable: true,
+      value: "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)",
     });
     render(<PwaInstallPrompt onClose={vi.fn()} opened={true} />);
     expect(screen.getByText(TAP_THE_SHARE_PATTERN)).toBeInTheDocument();

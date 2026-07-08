@@ -6,19 +6,19 @@ export type SpotCheckI18nKey =
 
 export const SPOT_CHECK_MODE_OPTIONS = [
   {
-    value: "missing",
-    labelKey: "spotCheck.modeMissing",
     descriptionKey: "spotCheck.modeMissingDescription",
+    labelKey: "spotCheck.modeMissing",
+    value: "missing",
   },
   {
-    value: "swapped",
-    labelKey: "spotCheck.modeSwapped",
     descriptionKey: "spotCheck.modeSwappedDescription",
+    labelKey: "spotCheck.modeSwapped",
+    value: "swapped",
   },
   {
-    value: "moved",
-    labelKey: "spotCheck.modeMoved",
     descriptionKey: "spotCheck.modeMovedDescription",
+    labelKey: "spotCheck.modeMoved",
+    value: "moved",
   },
 ] as const satisfies ReadonlyArray<{
   value: string;

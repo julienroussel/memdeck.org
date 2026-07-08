@@ -35,8 +35,8 @@ vi.mock("@mantine/notifications", () => ({
 }));
 
 vi.mock("../utils/localstorage", () => ({
-  useLocalDb: vi.fn((_, defaultValue) => [defaultValue, mockSetValue, vi.fn()]),
   probeStoredValue: (...args: unknown[]) => mockProbeStoredValue(...args),
+  useLocalDb: vi.fn((_, defaultValue) => [defaultValue, mockSetValue, vi.fn()]),
 }));
 
 vi.mock("../services/analytics", () => ({
@@ -85,7 +85,7 @@ describe("useStackLimits", () => {
 
   it("returns stored limits when a value exists for the stack key", () => {
     mockedUseLocalDb.mockReturnValue([
-      { mnemonica: { start: 5, end: 20 } },
+      { mnemonica: { end: 20, start: 5 } },
       mockSetValue,
       vi.fn(),
     ]);
@@ -93,14 +93,14 @@ describe("useStackLimits", () => {
     const { result } = renderHook(() => useStackLimits("mnemonica"));
 
     expect(result.current.limits).toEqual({
-      start: createDeckPosition(5),
       end: createDeckPosition(20),
+      start: createDeckPosition(5),
     });
   });
 
   it("returns isFullDeck false for a partial range", () => {
     mockedUseLocalDb.mockReturnValue([
-      { mnemonica: { start: 1, end: 20 } },
+      { mnemonica: { end: 20, start: 1 } },
       mockSetValue,
       vi.fn(),
     ]);
@@ -113,7 +113,7 @@ describe("useStackLimits", () => {
 
   it("returns default limits when a different stack key is stored", () => {
     mockedUseLocalDb.mockReturnValue([
-      { aronson: { start: 10, end: 30 } },
+      { aronson: { end: 30, start: 10 } },
       mockSetValue,
       vi.fn(),
     ]);
@@ -127,8 +127,8 @@ describe("useStackLimits", () => {
     const { result } = renderHook(() => useStackLimits("mnemonica"));
 
     const newLimits = {
-      start: createDeckPosition(10),
       end: createDeckPosition(30),
+      start: createDeckPosition(10),
     };
     result.current.setLimits(newLimits);
 
@@ -139,7 +139,7 @@ describe("useStackLimits", () => {
       prev: Record<string, unknown>
     ) => Record<string, unknown>;
     const updated = setterFn({});
-    expect(updated).toEqual({ mnemonica: { start: 10, end: 30 } });
+    expect(updated).toEqual({ mnemonica: { end: 30, start: 10 } });
   });
 
   it("passes isStackLimitsRecord as the validator and write/corrupt callbacks to useLocalDb", () => {
@@ -167,14 +167,14 @@ describe("useStackLimits", () => {
   });
 
   it("preserves existing stack entries when setLimits is called for a different stack", () => {
-    const existingRecord = { aronson: { start: 1, end: 10 } };
+    const existingRecord = { aronson: { end: 10, start: 1 } };
     mockedUseLocalDb.mockReturnValue([existingRecord, mockSetValue, vi.fn()]);
 
     const { result } = renderHook(() => useStackLimits("mnemonica"));
 
     const newLimits = {
-      start: createDeckPosition(5),
       end: createDeckPosition(25),
+      start: createDeckPosition(5),
     };
     result.current.setLimits(newLimits);
 
@@ -184,22 +184,22 @@ describe("useStackLimits", () => {
     const updated = setterFn(existingRecord);
 
     expect(updated).toEqual({
-      aronson: { start: 1, end: 10 },
-      mnemonica: { start: 5, end: 25 },
+      aronson: { end: 10, start: 1 },
+      mnemonica: { end: 25, start: 5 },
     });
   });
 
   it("does not write when the stored blob is corrupt — would otherwise destroy other stacks' ranges", () => {
     mockProbeStoredValue.mockReturnValue({
-      status: "corrupt",
       raw: "garbage",
+      status: "corrupt",
     });
 
     const { result } = renderHook(() => useStackLimits("mnemonica"));
 
     result.current.setLimits({
-      start: createDeckPosition(5),
       end: createDeckPosition(25),
+      start: createDeckPosition(5),
     });
 
     expect(mockSetValue).not.toHaveBeenCalled();
@@ -207,15 +207,15 @@ describe("useStackLimits", () => {
 
   it("does not write when the stored blob read errored", () => {
     mockProbeStoredValue.mockReturnValue({
-      status: "read-error",
       error: new Error("boom"),
+      status: "read-error",
     });
 
     const { result } = renderHook(() => useStackLimits("mnemonica"));
 
     result.current.setLimits({
-      start: createDeckPosition(5),
       end: createDeckPosition(25),
+      start: createDeckPosition(5),
     });
 
     expect(mockSetValue).not.toHaveBeenCalled();
@@ -223,8 +223,8 @@ describe("useStackLimits", () => {
 
   it("fires analytics.trackError once on mount when the stored blob is corrupt", () => {
     mockProbeStoredValue.mockReturnValue({
-      status: "corrupt",
       raw: "garbage",
+      status: "corrupt",
     });
 
     renderHook(() => useStackLimits("mnemonica"));
@@ -253,23 +253,23 @@ describe("useStackLimits", () => {
     const { result } = renderHook(() => useStackLimits(stackKey));
 
     result.current.setLimits({
-      start: createDeckPosition(5),
       end: createDeckPosition(25),
+      start: createDeckPosition(5),
     });
 
     expect(mockEmitStackLimitsChanged).toHaveBeenCalledTimes(1);
     expect(mockEmitStackLimitsChanged).toHaveBeenCalledWith({
-      start: 5,
       end: 25,
       rangeSize: 21,
       stackName: stacks[stackKey].name,
+      start: 5,
     });
   });
 
   it("re-shows the id-deduped corruption notice when the corrupt-lock refuses a write", () => {
     mockProbeStoredValue.mockReturnValue({
-      status: "corrupt",
       raw: "garbage",
+      status: "corrupt",
     });
 
     const { result } = renderHook(() => useStackLimits("mnemonica"));
@@ -282,8 +282,8 @@ describe("useStackLimits", () => {
     mockNotificationsShow.mockClear();
 
     result.current.setLimits({
-      start: createDeckPosition(5),
       end: createDeckPosition(25),
+      start: createDeckPosition(5),
     });
 
     expect(mockNotificationsShow).toHaveBeenCalledTimes(1);
@@ -298,8 +298,8 @@ describe("useStackLimits", () => {
     const { result } = renderHook(() => useStackLimits("mnemonica"));
 
     result.current.setLimits({
-      start: createDeckPosition(5),
       end: createDeckPosition(25),
+      start: createDeckPosition(5),
     });
 
     expect(mockNotificationsShow).not.toHaveBeenCalled();
@@ -307,15 +307,15 @@ describe("useStackLimits", () => {
 
   it("does not emit STACK_LIMITS_CHANGED when the corrupt-lock blocks the write", () => {
     mockProbeStoredValue.mockReturnValue({
-      status: "corrupt",
       raw: "garbage",
+      status: "corrupt",
     });
 
     const { result } = renderHook(() => useStackLimits("mnemonica"));
 
     result.current.setLimits({
-      start: createDeckPosition(5),
       end: createDeckPosition(25),
+      start: createDeckPosition(5),
     });
 
     expect(mockEmitStackLimitsChanged).not.toHaveBeenCalled();
@@ -323,15 +323,15 @@ describe("useStackLimits", () => {
 
   it("does not emit STACK_LIMITS_CHANGED when the stored blob read errored", () => {
     mockProbeStoredValue.mockReturnValue({
-      status: "read-error",
       error: new Error("boom"),
+      status: "read-error",
     });
 
     const { result } = renderHook(() => useStackLimits("mnemonica"));
 
     result.current.setLimits({
-      start: createDeckPosition(5),
       end: createDeckPosition(25),
+      start: createDeckPosition(5),
     });
 
     expect(mockEmitStackLimitsChanged).not.toHaveBeenCalled();
@@ -347,8 +347,8 @@ describe("useStackLimits", () => {
     const { result } = renderHook(() => useStackLimits("mnemonica"));
 
     result.current.setLimits({
-      start: createDeckPosition(5),
       end: createDeckPosition(25),
+      start: createDeckPosition(5),
     });
 
     expect(mockSetValue).toHaveBeenCalledTimes(1);

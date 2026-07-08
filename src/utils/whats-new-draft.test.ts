@@ -4,8 +4,8 @@ import { cleanCommitSubject } from "./whats-new-draft";
 describe("cleanCommitSubject", () => {
   it("maps a feat commit to the feature badge and strips the prefix and PR ref", () => {
     expect(cleanCommitSubject("feat: add neighbor mode (#5)")).toEqual({
-      type: "feature",
       text: "add neighbor mode",
+      type: "feature",
     });
   });
 
@@ -15,22 +15,22 @@ describe("cleanCommitSubject", () => {
         "fix: deep-linked discovery sessions now record the preselected mode (#706)"
       )
     ).toEqual({
-      type: "fix",
       text: "deep-linked discovery sessions now record the preselected mode",
+      type: "fix",
     });
   });
 
   it("parses a subject with no PR ref and trims trailing whitespace", () => {
     expect(cleanCommitSubject("feat: add a thing  ")).toEqual({
-      type: "feature",
       text: "add a thing",
+      type: "feature",
     });
   });
 
   it("strips a trailing PR ref followed by whitespace", () => {
     expect(cleanCommitSubject("feat: a thing (#5) ")).toEqual({
-      type: "feature",
       text: "a thing",
+      type: "feature",
     });
   });
 
@@ -40,8 +40,8 @@ describe("cleanCommitSubject", () => {
         "feat(nav): add llms.txt footer link with i18n accessible label (#675)"
       )
     ).toEqual({
-      type: "feature",
       text: "add llms.txt footer link with i18n accessible label",
+      type: "feature",
     });
   });
 
@@ -51,8 +51,8 @@ describe("cleanCommitSubject", () => {
         'feat: What\'s New nav entry + automatic "New" badge (#713) (#719)'
       )
     ).toEqual({
-      type: "feature",
       text: 'What\'s New nav entry + automatic "New" badge',
+      type: "feature",
     });
   });
 
@@ -62,22 +62,22 @@ describe("cleanCommitSubject", () => {
         "feat: What's New /whats-new/ changelog page (foundation) (#718)"
       )
     ).toEqual({
-      type: "feature",
       text: "What's New /whats-new/ changelog page (foundation)",
+      type: "feature",
     });
   });
 
   it("tolerates a conventional-commit breaking-change marker", () => {
     expect(cleanCommitSubject("feat!: drop the legacy API (#9)")).toEqual({
-      type: "feature",
       text: "drop the legacy API",
+      type: "feature",
     });
   });
 
   it("strips a scope and breaking-change marker together", () => {
     expect(cleanCommitSubject("fix(core)!: boom (#9)")).toEqual({
-      type: "fix",
       text: "boom",
+      type: "fix",
     });
   });
 

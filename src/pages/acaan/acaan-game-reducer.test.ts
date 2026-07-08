@@ -25,9 +25,9 @@ const makeScenario = (
 const baseScenario = makeScenario(1, 5);
 
 const makeState = (overrides: Partial<GameState> = {}): GameState => ({
+  fails: 0,
   scenario: baseScenario,
   successes: 0,
-  fails: 0,
   timeRemaining: 30,
   timerDuration: 30,
   ...overrides,
@@ -61,8 +61,8 @@ describe("getCurrentCutDepth", () => {
   });
 
   it("returns a value in the valid range 0-51 for all positions", () => {
-    for (let cardPos = 1; cardPos <= 52; cardPos++) {
-      for (let targetPos = 1; targetPos <= 52; targetPos++) {
+    for (let cardPos = 1; cardPos <= 52; cardPos += 1) {
+      for (let targetPos = 1; targetPos <= 52; targetPos += 1) {
         const scenario = makeScenario(cardPos, targetPos);
         const depth = getCurrentCutDepth(scenario);
         expect(depth).toBeGreaterThanOrEqual(0);
@@ -141,8 +141,8 @@ describe("gameReducer", () => {
     it("increments successes by 1", () => {
       const state = makeState({ successes: 2 });
       const next = gameReducer(state, {
-        type: "CORRECT_ANSWER",
         payload: { newScenario },
+        type: "CORRECT_ANSWER",
       });
       expect(next.successes).toBe(3);
     });
@@ -150,8 +150,8 @@ describe("gameReducer", () => {
     it("does not change fails", () => {
       const state = makeState({ fails: 1 });
       const next = gameReducer(state, {
-        type: "CORRECT_ANSWER",
         payload: { newScenario },
+        type: "CORRECT_ANSWER",
       });
       expect(next.fails).toBe(1);
     });
@@ -159,8 +159,8 @@ describe("gameReducer", () => {
     it("replaces the scenario with the new scenario from payload", () => {
       const state = makeState();
       const next = gameReducer(state, {
-        type: "CORRECT_ANSWER",
         payload: { newScenario },
+        type: "CORRECT_ANSWER",
       });
       expect(next.scenario).toBe(newScenario);
     });
@@ -168,8 +168,8 @@ describe("gameReducer", () => {
     it("resets timeRemaining to timerDuration", () => {
       const state = makeState({ timeRemaining: 5, timerDuration: 30 });
       const next = gameReducer(state, {
-        type: "CORRECT_ANSWER",
         payload: { newScenario },
+        type: "CORRECT_ANSWER",
       });
       expect(next.timeRemaining).toBe(30);
     });
@@ -189,7 +189,7 @@ describe("gameReducer", () => {
     });
 
     it("does not reset the timer or advance to the next scenario", () => {
-      const state = makeState({ timeRemaining: 10, scenario: baseScenario });
+      const state = makeState({ scenario: baseScenario, timeRemaining: 10 });
       const next = gameReducer(state, { type: "WRONG_ANSWER" });
       expect(next.timeRemaining).toBe(10);
       expect(next.scenario).toBe(baseScenario);
@@ -208,8 +208,8 @@ describe("gameReducer", () => {
     it("increments fails by 1", () => {
       const state = makeState({ fails: 2 });
       const next = gameReducer(state, {
-        type: "TIMEOUT",
         payload: { newScenario },
+        type: "TIMEOUT",
       });
       expect(next.fails).toBe(3);
     });
@@ -217,8 +217,8 @@ describe("gameReducer", () => {
     it("replaces the scenario with the new scenario from payload", () => {
       const state = makeState();
       const next = gameReducer(state, {
-        type: "TIMEOUT",
         payload: { newScenario },
+        type: "TIMEOUT",
       });
       expect(next.scenario).toBe(newScenario);
     });
@@ -226,8 +226,8 @@ describe("gameReducer", () => {
     it("resets timeRemaining to timerDuration", () => {
       const state = makeState({ timeRemaining: 0, timerDuration: 30 });
       const next = gameReducer(state, {
-        type: "TIMEOUT",
         payload: { newScenario },
+        type: "TIMEOUT",
       });
       expect(next.timeRemaining).toBe(30);
     });
@@ -235,8 +235,8 @@ describe("gameReducer", () => {
     it("does not change successes", () => {
       const state = makeState({ successes: 5 });
       const next = gameReducer(state, {
-        type: "TIMEOUT",
         payload: { newScenario },
+        type: "TIMEOUT",
       });
       expect(next.successes).toBe(5);
     });
@@ -246,8 +246,8 @@ describe("gameReducer", () => {
     it("increments fails by 1", () => {
       const state = makeState({ fails: 0 });
       const next = gameReducer(state, {
-        type: "REVEAL_ANSWER",
         payload: { newScenario },
+        type: "REVEAL_ANSWER",
       });
       expect(next.fails).toBe(1);
     });
@@ -255,8 +255,8 @@ describe("gameReducer", () => {
     it("replaces the scenario with the new scenario from payload", () => {
       const state = makeState();
       const next = gameReducer(state, {
-        type: "REVEAL_ANSWER",
         payload: { newScenario },
+        type: "REVEAL_ANSWER",
       });
       expect(next.scenario).toBe(newScenario);
     });
@@ -264,8 +264,8 @@ describe("gameReducer", () => {
     it("resets timeRemaining to timerDuration", () => {
       const state = makeState({ timeRemaining: 15, timerDuration: 30 });
       const next = gameReducer(state, {
-        type: "REVEAL_ANSWER",
         payload: { newScenario },
+        type: "REVEAL_ANSWER",
       });
       expect(next.timeRemaining).toBe(30);
     });
@@ -273,8 +273,8 @@ describe("gameReducer", () => {
     it("does not change successes", () => {
       const state = makeState({ successes: 7 });
       const next = gameReducer(state, {
-        type: "REVEAL_ANSWER",
         payload: { newScenario },
+        type: "REVEAL_ANSWER",
       });
       expect(next.successes).toBe(7);
     });
@@ -282,12 +282,12 @@ describe("gameReducer", () => {
     it("behaves identically to TIMEOUT (shared case)", () => {
       const state = makeState({ fails: 1, successes: 2, timeRemaining: 3 });
       const fromTimeout = gameReducer(state, {
-        type: "TIMEOUT",
         payload: { newScenario },
+        type: "TIMEOUT",
       });
       const fromReveal = gameReducer(state, {
-        type: "REVEAL_ANSWER",
         payload: { newScenario },
+        type: "REVEAL_ANSWER",
       });
       expect(fromReveal).toEqual(fromTimeout);
     });
@@ -307,7 +307,7 @@ describe("gameReducer", () => {
     });
 
     it("does not change successes, fails, or scenario", () => {
-      const state = makeState({ successes: 3, fails: 2, timeRemaining: 5 });
+      const state = makeState({ fails: 2, successes: 3, timeRemaining: 5 });
       const next = gameReducer(state, { type: "TICK" });
       expect(next.successes).toBe(3);
       expect(next.fails).toBe(2);
@@ -325,8 +325,8 @@ describe("gameReducer", () => {
     it("sets timeRemaining to the provided duration", () => {
       const state = makeState({ timeRemaining: 5 });
       const next = gameReducer(state, {
-        type: "RESET_TIMER",
         payload: { duration: 60 },
+        type: "RESET_TIMER",
       });
       expect(next.timeRemaining).toBe(60);
     });
@@ -334,17 +334,17 @@ describe("gameReducer", () => {
     it("updates timerDuration to the provided duration", () => {
       const state = makeState({ timerDuration: 30 });
       const next = gameReducer(state, {
-        type: "RESET_TIMER",
         payload: { duration: 45 },
+        type: "RESET_TIMER",
       });
       expect(next.timerDuration).toBe(45);
     });
 
     it("does not change successes, fails, or scenario", () => {
-      const state = makeState({ successes: 4, fails: 1 });
+      const state = makeState({ fails: 1, successes: 4 });
       const next = gameReducer(state, {
-        type: "RESET_TIMER",
         payload: { duration: 30 },
+        type: "RESET_TIMER",
       });
       expect(next.successes).toBe(4);
       expect(next.fails).toBe(1);
@@ -354,10 +354,10 @@ describe("gameReducer", () => {
 
   describe("RESET_GAME", () => {
     it("resets successes and fails to 0", () => {
-      const state = makeState({ successes: 10, fails: 5 });
+      const state = makeState({ fails: 5, successes: 10 });
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: { stackOrder, timerDuration: 30 },
+        type: "RESET_GAME",
       });
       expect(next.successes).toBe(0);
       expect(next.fails).toBe(0);
@@ -366,8 +366,8 @@ describe("gameReducer", () => {
     it("resets timeRemaining to the provided timerDuration", () => {
       const state = makeState({ timeRemaining: 5 });
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: { stackOrder, timerDuration: 60 },
+        type: "RESET_GAME",
       });
       expect(next.timeRemaining).toBe(60);
       expect(next.timerDuration).toBe(60);
@@ -376,8 +376,8 @@ describe("gameReducer", () => {
     it("sets a new scenario from the provided stack", () => {
       const state = makeState({ successes: 5 });
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: { stackOrder, timerDuration: 30 },
+        type: "RESET_GAME",
       });
       expect(next.scenario).toHaveProperty("card");
       expect(next.scenario).toHaveProperty("cardPosition");
@@ -385,10 +385,10 @@ describe("gameReducer", () => {
     });
 
     it("returns a complete fresh GameState", () => {
-      const state = makeState({ successes: 99, fails: 99, timeRemaining: 1 });
+      const state = makeState({ fails: 99, successes: 99, timeRemaining: 1 });
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: { stackOrder, timerDuration: 30 },
+        type: "RESET_GAME",
       });
       expect(next.successes).toBe(0);
       expect(next.fails).toBe(0);

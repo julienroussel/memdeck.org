@@ -72,7 +72,7 @@ test.describe("User Journeys", () => {
     await expect(scoreBadges).toHaveCount(2);
 
     // User practices by clicking answers
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 5; i += 1) {
       // Wait for card spread to render before clicking
       await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
 
@@ -201,7 +201,7 @@ test.describe("User Journeys", () => {
     let isLight = await themeSwitch.isChecked();
 
     // Toggle multiple times by clicking the visible track
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i += 1) {
       await themeSwitchTrack.click();
       isLight = !isLight;
 
@@ -225,7 +225,7 @@ test.describe("User Journeys", () => {
 
   test("should work properly on smaller screens", async ({ page }) => {
     // Set mobile viewport
-    await page.setViewportSize({ width: 375, height: 667 });
+    await page.setViewportSize({ height: 667, width: 375 });
 
     // Navigate to home
     await page.goto("/");

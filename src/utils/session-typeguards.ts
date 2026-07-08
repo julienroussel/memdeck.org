@@ -150,15 +150,15 @@ export const isSessionRecord = (value: unknown): value is SessionRecord => {
 // from other modes are a sign of corrupt persisted state, not just type-
 // system slack from structural typing.
 const FOREIGN_MODE_FIELDS = {
-  flashcard: ["spotCheckMode", "distanceMode", "distanceConvention"],
   acaan: [
     "flashcardMode",
     "spotCheckMode",
     "distanceMode",
     "distanceConvention",
   ],
-  spotcheck: ["flashcardMode", "distanceMode", "distanceConvention"],
   distance: ["flashcardMode", "spotCheckMode"],
+  flashcard: ["spotCheckMode", "distanceMode", "distanceConvention"],
+  spotcheck: ["flashcardMode", "distanceMode", "distanceConvention"],
 } as const satisfies Record<TrainingMode, readonly string[]>;
 
 // A foreign-mode field is treated as "absent" only when the key is missing

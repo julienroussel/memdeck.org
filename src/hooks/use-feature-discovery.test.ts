@@ -13,17 +13,17 @@ import { useFeatureDiscovery } from "./use-feature-discovery";
 type BaseFields = Omit<Extract<SessionRecord, { mode: "acaan" }>, "mode">;
 
 const base = (id: string): BaseFields => ({
-  id,
-  stackKey: "mnemonica",
-  config: { type: "open" },
-  startedAt: "2026-01-01T00:00:00.000Z",
-  endedAt: "2026-01-01T00:05:00.000Z",
-  durationSeconds: 300,
-  successes: 8,
-  fails: 2,
-  questionsCompleted: 10,
   accuracy: 0.8,
   bestStreak: 5,
+  config: { type: "open" },
+  durationSeconds: 300,
+  endedAt: "2026-01-01T00:05:00.000Z",
+  fails: 2,
+  id,
+  questionsCompleted: 10,
+  stackKey: "mnemonica",
+  startedAt: "2026-01-01T00:00:00.000Z",
+  successes: 8,
 });
 
 const flashcard = (
@@ -31,8 +31,8 @@ const flashcard = (
   flashcardMode?: FlashcardMode
 ): SessionRecord => ({
   ...base(id),
-  mode: "flashcard",
   flashcardMode,
+  mode: "flashcard",
 });
 
 const spotcheck = (
@@ -46,9 +46,9 @@ const spotcheck = (
 
 const distance = (id: string): SessionRecord => ({
   ...base(id),
-  mode: "distance",
-  distanceMode: "compute",
   distanceConvention: "cyclic",
+  distanceMode: "compute",
+  mode: "distance",
 });
 
 const acaan = (id: string): SessionRecord => ({ ...base(id), mode: "acaan" });
@@ -94,11 +94,11 @@ const { useLocalDb } = await import("../utils/localstorage");
 const mockedUseLocalDb = vi.mocked(useLocalDb);
 
 const stats = (totalSessions: number) => ({
-  totalSessions,
-  totalQuestions: 0,
-  totalSuccesses: 0,
-  totalFails: 0,
   globalBestStreak: 0,
+  totalFails: 0,
+  totalQuestions: 0,
+  totalSessions,
+  totalSuccesses: 0,
 });
 
 beforeEach(() => {
@@ -166,9 +166,9 @@ describe("useFeatureDiscovery", () => {
       spotcheck("4", "moved"),
       {
         ...base("5"),
-        mode: "distance",
-        distanceMode: "apply",
         distanceConvention: "signed",
+        distanceMode: "apply",
+        mode: "distance",
       },
       acaan("6"),
     ];

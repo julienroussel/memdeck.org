@@ -34,25 +34,25 @@ const computeRound = (
   answerCard: PlayingCardPosition = cardAtPos2,
   data: number[] = [1, 2, 3, 4, 5]
 ): Extract<DistanceRound, { display: "compute" }> => ({
+  answerCard,
+  choices: { data, kind: "numbers" },
   display: "compute",
   expectedDistance,
   offset: null,
-  answerCard,
-  choices: { kind: "numbers", data },
 });
 
 const applyRound = (
   offset: number,
   answerCard: PlayingCardPosition = cardAtPos2
 ): Extract<DistanceRound, { display: "apply" }> => ({
+  answerCard,
+  choices: {
+    data: [cardAtPos1, cardAtPos2],
+    kind: "cards",
+  },
   display: "apply",
   expectedDistance: null,
   offset,
-  answerCard,
-  choices: {
-    kind: "cards",
-    data: [cardAtPos1, cardAtPos2],
-  },
 });
 
 type BaseStateOverrides = {
@@ -63,9 +63,9 @@ type BaseStateOverrides = {
 };
 
 const baseState = (overrides: BaseStateOverrides = {}): GameState => ({
-  successes: overrides.successes ?? 0,
-  fails: overrides.fails ?? 0,
   card: cardAtPos1,
+  fails: overrides.fails ?? 0,
+  successes: overrides.successes ?? 0,
   ...computeRound(1),
   convention: "cyclic",
   timeRemaining: overrides.timeRemaining ?? 30,
@@ -74,7 +74,7 @@ const baseState = (overrides: BaseStateOverrides = {}): GameState => ({
 
 describe("generateComputePrompt", () => {
   it("returns prompt and answer cards that differ", () => {
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 50; i += 1) {
       const round = generateComputePrompt(stackOrder, "cyclic", FULL);
       expect(round.card.index).not.toBe(round.answerCard.index);
     }
@@ -91,7 +91,7 @@ describe("generateComputePrompt", () => {
   });
 
   it("never returns 0 as a choice under signed convention", () => {
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 50; i += 1) {
       const round = generateComputePrompt(stackOrder, "signed", FULL);
       if (round.choices.kind === "numbers") {
         expect(round.choices.data).not.toContain(0);
@@ -101,10 +101,10 @@ describe("generateComputePrompt", () => {
 
   it("respects restricted range", () => {
     const range = {
-      start: createDeckPosition(10),
       end: createDeckPosition(20),
+      start: createDeckPosition(10),
     };
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 30; i += 1) {
       const round = generateComputePrompt(stackOrder, "cyclic", range);
       expect(round.card.index).toBeGreaterThanOrEqual(10);
       expect(round.card.index).toBeLessThanOrEqual(20);
@@ -127,7 +127,7 @@ describe("generateApplyPrompt", () => {
   });
 
   it("excludes the prompt card from the choices", () => {
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 30; i += 1) {
       const round = generateApplyPrompt(stackOrder, "cyclic", FULL);
       if (round.choices.kind === "cards") {
         const indices = round.choices.data.map((c) => c.index);
@@ -137,7 +137,7 @@ describe("generateApplyPrompt", () => {
   });
 
   it("uses a non-zero offset", () => {
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 30; i += 1) {
       const round = generateApplyPrompt(stackOrder, "signed", FULL);
       expect(round.offset).not.toBe(0);
     }
@@ -145,10 +145,10 @@ describe("generateApplyPrompt", () => {
 
   it("respects restricted range — answer card stays inside the range", () => {
     const range = {
-      start: createDeckPosition(15),
       end: createDeckPosition(25),
+      start: createDeckPosition(15),
     };
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 30; i += 1) {
       const round = generateApplyPrompt(stackOrder, "cyclic", range);
       expect(round.answerCard.index).toBeGreaterThanOrEqual(15);
       expect(round.answerCard.index).toBeLessThanOrEqual(25);
@@ -187,7 +187,7 @@ describe("generateNextDistanceRound", () => {
 
   it("produces either kind in both mode (covers both branches over many tries)", () => {
     const kinds = new Set<string>();
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i += 1) {
       const payload = generateNextDistanceRound(
         stackOrder,
         "both",
@@ -214,8 +214,8 @@ describe("generateNextDistanceRound", () => {
     // MIN_DISTANCE_RANGE is 6 — verify the boundary case generates a real
     // round (non-empty choices) rather than the placeholder.
     const exactlyMin = {
-      start: createDeckPosition(1),
       end: createDeckPosition(6),
+      start: createDeckPosition(1),
     };
     const payload = generateNextDistanceRound(
       stackOrder,
@@ -239,8 +239,8 @@ describe("generateNextDistanceRound", () => {
 
   it("returns a mode-independent range-too-small payload (no throw) when cycleSize < MIN_DISTANCE_RANGE", () => {
     const tooSmall = {
-      start: createDeckPosition(1),
       end: createDeckPosition(5),
+      start: createDeckPosition(1),
     };
     for (const mode of ["compute", "apply", "both"] as const) {
       const payload = generateNextDistanceRound(
@@ -299,11 +299,11 @@ describe("isCorrectAnswer", () => {
 describe("createInitialState", () => {
   it("starts with zero scores and a fresh round", () => {
     const state = createInitialState({
+      convention: "cyclic",
+      distanceMode: "compute",
+      limits: FULL,
       stackOrder,
       timerDuration: 15,
-      distanceMode: "compute",
-      convention: "cyclic",
-      limits: FULL,
     });
     expect(state.successes).toBe(0);
     expect(state.fails).toBe(0);
@@ -314,11 +314,11 @@ describe("createInitialState", () => {
 
   it("starts an apply round under apply mode", () => {
     const state = createInitialState({
+      convention: "cyclic",
+      distanceMode: "apply",
+      limits: FULL,
       stackOrder,
       timerDuration: 10,
-      distanceMode: "apply",
-      convention: "cyclic",
-      limits: FULL,
     });
     expect(state.display).toBe("apply");
     expect(state.card.index).toBeGreaterThanOrEqual(1);
@@ -327,15 +327,15 @@ describe("createInitialState", () => {
 
   it("returns a range-too-small state without throwing when cycleSize < MIN_DISTANCE_RANGE", () => {
     const tooSmall = {
-      start: createDeckPosition(1),
       end: createDeckPosition(5),
+      start: createDeckPosition(1),
     };
     const state = createInitialState({
+      convention: "cyclic",
+      distanceMode: "compute",
+      limits: tooSmall,
       stackOrder,
       timerDuration: 15,
-      distanceMode: "compute",
-      convention: "cyclic",
-      limits: tooSmall,
     });
     expect(state.successes).toBe(0);
     expect(state.fails).toBe(0);
@@ -346,20 +346,20 @@ describe("createInitialState", () => {
 
 describe("gameReducer", () => {
   const advancePayload = {
-    newCard: cardAtPos1,
     newAnswerCard: cardAtPos2,
-    newChoices: { kind: "numbers" as const, data: [1, 2, 3, 4, 5] },
+    newCard: cardAtPos1,
+    newChoices: { data: [1, 2, 3, 4, 5], kind: "numbers" as const },
+    newConvention: "cyclic" as const,
     newDisplay: "compute" as const,
     newExpectedDistance: 3,
     newOffset: null,
-    newConvention: "cyclic" as const,
   };
 
   it("CORRECT_ANSWER increments successes, advances to next round, resets timer", () => {
     const initial = baseState({ timeRemaining: 5 });
     const next = gameReducer(initial, {
-      type: "CORRECT_ANSWER",
       payload: advancePayload,
+      type: "CORRECT_ANSWER",
     });
     expect(next.successes).toBe(1);
     expect(next.fails).toBe(0);
@@ -382,9 +382,9 @@ describe("gameReducer", () => {
 
   it("WRONG_ANSWER preserves the apply-round shape (offset, display)", () => {
     const initial: GameState = {
-      successes: 0,
-      fails: 0,
       card: cardAtPos1,
+      fails: 0,
+      successes: 0,
       ...applyRound(7, cardAtPos2),
       convention: "cyclic",
       timeRemaining: 5,
@@ -404,8 +404,8 @@ describe("gameReducer", () => {
   it("TIMEOUT increments fails and advances to next round", () => {
     const initial = baseState();
     const next = gameReducer(initial, {
-      type: "TIMEOUT",
       payload: advancePayload,
+      type: "TIMEOUT",
     });
     expect(next.fails).toBe(1);
     expect(next.successes).toBe(0);
@@ -417,8 +417,8 @@ describe("gameReducer", () => {
   it("REVEAL_ANSWER increments fails and advances to next round", () => {
     const initial = baseState();
     const next = gameReducer(initial, {
-      type: "REVEAL_ANSWER",
       payload: advancePayload,
+      type: "REVEAL_ANSWER",
     });
     expect(next.fails).toBe(1);
     if (next.display === "compute") {
@@ -435,24 +435,24 @@ describe("gameReducer", () => {
   it("RESET_TIMER updates duration and timeRemaining", () => {
     const initial = baseState({ timeRemaining: 5, timerDuration: 30 });
     const next = gameReducer(initial, {
-      type: "RESET_TIMER",
       payload: { duration: 10 },
+      type: "RESET_TIMER",
     });
     expect(next.timeRemaining).toBe(10);
     expect(next.timerDuration).toBe(10);
   });
 
   it("RESET_GAME rebuilds state from initial config", () => {
-    const initial = baseState({ successes: 5, fails: 3 });
+    const initial = baseState({ fails: 3, successes: 5 });
     const next = gameReducer(initial, {
-      type: "RESET_GAME",
       payload: {
+        convention: "signed",
+        distanceMode: "compute",
+        limits: FULL,
         stackOrder,
         timerDuration: 15,
-        distanceMode: "compute",
-        convention: "signed",
-        limits: FULL,
       },
+      type: "RESET_GAME",
     });
     expect(next.successes).toBe(0);
     expect(next.fails).toBe(0);

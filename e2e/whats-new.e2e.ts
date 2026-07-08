@@ -30,7 +30,7 @@ test.describe("What's New page", () => {
   test("reflows on a narrow mobile viewport without horizontal overflow", async ({
     page,
   }) => {
-    await page.setViewportSize({ width: 375, height: 667 });
+    await page.setViewportSize({ height: 667, width: 375 });
     await page.goto("/whats-new/");
     await page.waitForLoadState("networkidle");
 

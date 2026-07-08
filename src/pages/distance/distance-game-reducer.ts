@@ -158,9 +158,9 @@ export const generateComputePrompt = (
   );
   const choices = shuffle([distance, ...distractors]);
   return {
-    card: promptCard,
     answerCard: targetCard,
-    choices: { kind: "numbers", data: choices },
+    card: promptCard,
+    choices: { data: choices, kind: "numbers" },
     distance,
   };
 };
@@ -184,16 +184,16 @@ export const generateApplyPrompt = (
   const offset = pickRandomOffset(convention, cycleSize);
   const { zeroBased } = applyOffset(promptCard.index - 1, offset, limits);
   const targetCard: PlayingCardPosition = {
-    index: createDeckPosition(zeroBased + 1),
     card: getCardAt(stackOrder, zeroBased),
+    index: createDeckPosition(zeroBased + 1),
   };
   const cardChoices = shuffle(
     generateNeighborChoices(stackOrder, targetCard, promptCard, limits)
   );
   return {
-    card: promptCard,
     answerCard: targetCard,
-    choices: { kind: "cards", data: cardChoices },
+    card: promptCard,
+    choices: { data: cardChoices, kind: "cards" },
     offset,
   };
 };
@@ -221,11 +221,11 @@ const buildRangeTooSmallPayload = (
   limits: StackLimits
 ): AdvancePayload => ({
   newCard: {
-    index: limits.start,
     card: getCardAt(stackOrder, limits.start - 1),
+    index: limits.start,
   },
-  newDisplay: "range-too-small",
   newConvention: convention,
+  newDisplay: "range-too-small",
 });
 
 /**
@@ -248,24 +248,24 @@ export const generateNextDistanceRound = (
   if (kind === "compute") {
     const round = generateComputePrompt(stackOrder, convention, limits);
     return {
-      newCard: round.card,
       newAnswerCard: round.answerCard,
+      newCard: round.card,
       newChoices: round.choices,
+      newConvention: convention,
       newDisplay: "compute",
       newExpectedDistance: round.distance,
       newOffset: null,
-      newConvention: convention,
     };
   }
   const round = generateApplyPrompt(stackOrder, convention, limits);
   return {
-    newCard: round.card,
     newAnswerCard: round.answerCard,
+    newCard: round.card,
     newChoices: round.choices,
+    newConvention: convention,
     newDisplay: "apply",
     newExpectedDistance: null,
     newOffset: round.offset,
-    newConvention: convention,
   };
 };
 
@@ -311,24 +311,24 @@ const buildStateFromPayload = (
   if (payload.newDisplay === "compute") {
     return {
       ...base,
+      answerCard: payload.newAnswerCard,
       card: payload.newCard,
+      choices: payload.newChoices,
       convention: payload.newConvention,
       display: "compute",
       expectedDistance: payload.newExpectedDistance,
       offset: null,
-      answerCard: payload.newAnswerCard,
-      choices: payload.newChoices,
     };
   }
   return {
     ...base,
+    answerCard: payload.newAnswerCard,
     card: payload.newCard,
+    choices: payload.newChoices,
     convention: payload.newConvention,
     display: "apply",
     expectedDistance: null,
     offset: payload.newOffset,
-    answerCard: payload.newAnswerCard,
-    choices: payload.newChoices,
   };
 };
 
@@ -345,10 +345,10 @@ export const createInitialState = (
   );
   return buildStateFromPayload(
     {
-      successes: 0,
-      fails: 0,
       card: round.newCard,
       convention: round.newConvention,
+      fails: 0,
+      successes: 0,
       timeRemaining: timerDuration,
       timerDuration,
     },
@@ -378,10 +378,10 @@ export const gameReducer = (
     case "CORRECT_ANSWER":
       return buildStateFromPayload(
         {
-          successes: state.successes + 1,
-          fails: state.fails,
           card: action.payload.newCard,
           convention: action.payload.newConvention,
+          fails: state.fails,
+          successes: state.successes + 1,
           timeRemaining: state.timerDuration,
           timerDuration: state.timerDuration,
         },
@@ -401,10 +401,10 @@ export const gameReducer = (
     case "REVEAL_ANSWER":
       return buildStateFromPayload(
         {
-          successes: state.successes,
-          fails: state.fails + 1,
           card: action.payload.newCard,
           convention: action.payload.newConvention,
+          fails: state.fails + 1,
+          successes: state.successes,
           timeRemaining: state.timerDuration,
           timerDuration: state.timerDuration,
         },

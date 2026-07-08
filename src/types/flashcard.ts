@@ -5,24 +5,24 @@ type FlashcardI18nKey = `flashcard.${keyof (typeof en)["flashcard"] & string}`;
 
 const FLASHCARD_MODE_OPTIONS = [
   {
-    value: "cardonly",
-    labelKey: "flashcard.modeCardOnly",
     descriptionKey: "flashcard.modeCardOnlyDescription",
+    labelKey: "flashcard.modeCardOnly",
+    value: "cardonly",
   },
   {
-    value: "bothmodes",
-    labelKey: "flashcard.modeBothModes",
     descriptionKey: "flashcard.modeBothModesDescription",
+    labelKey: "flashcard.modeBothModes",
+    value: "bothmodes",
   },
   {
-    value: "numberonly",
-    labelKey: "flashcard.modeNumberOnly",
     descriptionKey: "flashcard.modeNumberOnlyDescription",
+    labelKey: "flashcard.modeNumberOnly",
+    value: "numberonly",
   },
   {
-    value: "neighbor",
-    labelKey: "flashcard.modeNeighbor",
     descriptionKey: "flashcard.modeNeighborDescription",
+    labelKey: "flashcard.modeNeighbor",
+    value: "neighbor",
   },
 ] as const satisfies ReadonlyArray<{
   value: string;
@@ -39,9 +39,9 @@ export const isFlashcardMode = (value: unknown): value is FlashcardMode =>
 export type NeighborDirection = "before" | "after" | "random";
 
 export const NEIGHBOR_DIRECTION_OPTIONS = [
-  { value: "before", labelKey: "flashcard.neighborBefore" },
-  { value: "after", labelKey: "flashcard.neighborAfter" },
-  { value: "random", labelKey: "flashcard.neighborRandom" },
+  { labelKey: "flashcard.neighborBefore", value: "before" },
+  { labelKey: "flashcard.neighborAfter", value: "after" },
+  { labelKey: "flashcard.neighborRandom", value: "random" },
 ] as const satisfies ReadonlyArray<{
   value: NeighborDirection;
   labelKey: FlashcardI18nKey;
@@ -59,17 +59,17 @@ type PrimaryMode = "position" | "neighbor";
 type PositionSubMode = "cardonly" | "numberonly" | "bothmodes";
 
 export const PRIMARY_MODE_OPTIONS = [
-  { value: "position", labelKey: "flashcard.modePosition" },
-  { value: "neighbor", labelKey: "flashcard.modeNeighbor" },
+  { labelKey: "flashcard.modePosition", value: "position" },
+  { labelKey: "flashcard.modeNeighbor", value: "neighbor" },
 ] as const satisfies ReadonlyArray<{
   value: PrimaryMode;
   labelKey: FlashcardI18nKey;
 }>;
 
 export const POSITION_SUB_MODE_OPTIONS = [
-  { value: "cardonly", labelKey: "flashcard.subModeCard" },
-  { value: "numberonly", labelKey: "flashcard.subModeNumber" },
-  { value: "bothmodes", labelKey: "flashcard.subModeBoth" },
+  { labelKey: "flashcard.subModeCard", value: "cardonly" },
+  { labelKey: "flashcard.subModeNumber", value: "numberonly" },
+  { labelKey: "flashcard.subModeBoth", value: "bothmodes" },
 ] as const satisfies ReadonlyArray<{
   value: PositionSubMode;
   labelKey: FlashcardI18nKey;

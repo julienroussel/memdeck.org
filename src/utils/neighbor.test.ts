@@ -8,8 +8,8 @@ const stackOrder = mnemonica.order;
 const fullDeck = DEFAULT_STACK_LIMITS;
 
 const makeCardPosition = (index: number): PlayingCardPosition => ({
-  index: createDeckPosition(index),
   card: stackOrder[index - 1],
+  index: createDeckPosition(index),
 });
 
 describe("resolveDirection", () => {
@@ -23,7 +23,7 @@ describe("resolveDirection", () => {
 
   it("returns 'before' or 'after' when direction is 'random'", () => {
     const results = new Set<string>();
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i += 1) {
       results.add(resolveDirection("random"));
     }
     expect(results.has("before")).toBe(true);
@@ -134,8 +134,8 @@ describe("getNeighborCard", () => {
 
   it("throws when questionCard index is outside the limits", () => {
     const partialRange = {
-      start: createDeckPosition(5),
       end: createDeckPosition(15),
+      start: createDeckPosition(5),
     };
     const outsideCard = makeCardPosition(20);
     expect(() =>
@@ -145,8 +145,8 @@ describe("getNeighborCard", () => {
 
   describe("with partial range", () => {
     const partialRange = {
-      start: createDeckPosition(5),
       end: createDeckPosition(15),
+      start: createDeckPosition(5),
     };
 
     it("wraps from range end to range start when direction is 'after'", () => {
@@ -200,8 +200,8 @@ describe("getNeighborCard", () => {
 
   describe("with single-card range", () => {
     const singleCardRange = {
-      start: createDeckPosition(5),
       end: createDeckPosition(5),
+      start: createDeckPosition(5),
     };
 
     it("wraps 'after' back to the same position when range has one card", () => {
@@ -231,8 +231,8 @@ describe("getNeighborCard", () => {
 
   describe("with two-card range", () => {
     const twoCardRange = {
-      start: createDeckPosition(5),
       end: createDeckPosition(6),
+      start: createDeckPosition(5),
     };
 
     it("returns position 6 when asking 'after' from position 5", () => {

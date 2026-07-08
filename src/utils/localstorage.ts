@@ -48,8 +48,8 @@ export const probeStoredValue = <T>(
     // path too — Mantine's default `deserializeJSON` parses without a reviver,
     // which would hand probeStoredValue consumers unstripped objects.
     const raw: unknown = readLocalStorageValue({
-      key,
       deserialize: deserializeWithSafeReviver,
+      key,
     });
 
     if (raw === undefined || raw === null) {
@@ -60,7 +60,7 @@ export const probeStoredValue = <T>(
       if (import.meta.env.DEV) {
         console.warn(`[localStorage] Validation failed for key "${key}":`, raw);
       }
-      return { status: "corrupt", raw };
+      return { raw, status: "corrupt" };
     }
 
     return { status: "valid", value: raw };
@@ -74,7 +74,7 @@ export const probeStoredValue = <T>(
     // overwriting on the next write would silently destroy potentially
     // recoverable data. Consumers without recovery semantics can collapse
     // this to a default explicitly.
-    return { status: "read-error", error };
+    return { error, status: "read-error" };
   }
 };
 
@@ -196,15 +196,15 @@ const parseRawValue = <T>(
     // telemetry. Mirrors `probeStoredValue` semantics (where Mantine's
     // `deserializeJSON` catches the parse error and the validator then fails
     // on the still-string value).
-    return { status: "corrupt", raw };
+    return { raw, status: "corrupt" };
   }
   try {
     if (validate(parsed)) {
       return { status: "valid", value: parsed };
     }
-    return { status: "corrupt", raw: parsed };
+    return { raw: parsed, status: "corrupt" };
   } catch (error) {
-    return { status: "read-error", error };
+    return { error, status: "read-error" };
   }
 };
 
@@ -423,7 +423,7 @@ export const useLocalDb = <T>(
     // during prerender or pre-i18n init) doesn't pin `wasValid` true and
     // cause every subsequent probe to re-attempt the toast.
     wasValidRef.current = isValid
-      ? { wasValid: true, key }
+      ? { key, wasValid: true }
       : { wasValid: false };
     if (
       wasValid &&

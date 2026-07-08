@@ -28,8 +28,8 @@ describe("generateUniqueCardChoices", () => {
 
   it("includes initial choices in the result", () => {
     const initialChoices: PlayingCardPosition[] = [
-      { index: createDeckPosition(1), card: testStack[0] },
-      { index: createDeckPosition(2), card: testStack[1] },
+      { card: testStack[0], index: createDeckPosition(1) },
+      { card: testStack[1], index: createDeckPosition(2) },
     ];
 
     const choices = generateUniqueCardChoices(
@@ -65,9 +65,9 @@ describe("generateUniqueCardChoices", () => {
 
   it("returns initial choices unchanged when already meeting totalChoices", () => {
     const initialChoices: PlayingCardPosition[] = [
-      { index: createDeckPosition(1), card: testStack[0] },
-      { index: createDeckPosition(2), card: testStack[1] },
-      { index: createDeckPosition(3), card: testStack[2] },
+      { card: testStack[0], index: createDeckPosition(1) },
+      { card: testStack[1], index: createDeckPosition(2) },
+      { card: testStack[2], index: createDeckPosition(3) },
     ];
 
     const choices = generateUniqueCardChoices(
@@ -83,11 +83,11 @@ describe("generateUniqueCardChoices", () => {
 
   it("returns initial choices unchanged when exceeding totalChoices", () => {
     const initialChoices: PlayingCardPosition[] = [
-      { index: createDeckPosition(1), card: testStack[0] },
-      { index: createDeckPosition(2), card: testStack[1] },
-      { index: createDeckPosition(3), card: testStack[2] },
-      { index: createDeckPosition(4), card: testStack[3] },
-      { index: createDeckPosition(5), card: testStack[4] },
+      { card: testStack[0], index: createDeckPosition(1) },
+      { card: testStack[1], index: createDeckPosition(2) },
+      { card: testStack[2], index: createDeckPosition(3) },
+      { card: testStack[3], index: createDeckPosition(4) },
+      { card: testStack[4], index: createDeckPosition(5) },
     ];
 
     const choices = generateUniqueCardChoices(
@@ -143,8 +143,8 @@ describe("generateUniqueCardChoices", () => {
 
   it("preserves order of initial choices at the start", () => {
     const initialChoices: PlayingCardPosition[] = [
-      { index: createDeckPosition(10), card: testStack[9] },
-      { index: createDeckPosition(20), card: testStack[19] },
+      { card: testStack[9], index: createDeckPosition(10) },
+      { card: testStack[19], index: createDeckPosition(20) },
     ];
 
     const choices = generateUniqueCardChoices(
@@ -160,8 +160,8 @@ describe("generateUniqueCardChoices", () => {
 
   it("throws when totalChoices exceeds the range size", () => {
     const narrowLimits = {
-      start: createDeckPosition(1),
       end: createDeckPosition(3),
+      start: createDeckPosition(1),
     };
     expect(() =>
       generateUniqueCardChoices(testStack, narrowLimits, [], 5)
@@ -170,8 +170,8 @@ describe("generateUniqueCardChoices", () => {
 
   it("only produces cards within a partial range", () => {
     const partialLimits = {
-      start: createDeckPosition(1),
       end: createDeckPosition(10),
+      start: createDeckPosition(1),
     };
     const choices = generateUniqueCardChoices(testStack, partialLimits, [], 5);
 
@@ -186,12 +186,12 @@ describe("generateUniqueCardChoices", () => {
 describe("generateNeighborChoices", () => {
   // Position 1 in mnemonica = FourOfClubs, position 2 = TwoOfHearts
   const answerCard: PlayingCardPosition = {
-    index: createDeckPosition(2),
     card: testStack[1],
+    index: createDeckPosition(2),
   };
   const questionCard: PlayingCardPosition = {
-    index: createDeckPosition(1),
     card: testStack[0],
+    index: createDeckPosition(1),
   };
 
   it("returns the default number of choices (5)", () => {
@@ -235,7 +235,7 @@ describe("generateNeighborChoices", () => {
 
   it("never includes the questionCard in the result", () => {
     // Run multiple times to reduce false-pass probability
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 20; i += 1) {
       const choices = generateNeighborChoices(
         testStack,
         answerCard,
@@ -267,16 +267,16 @@ describe("generateNeighborChoices", () => {
 
   it("only produces choices within a partial range", () => {
     const partialLimits = {
-      start: createDeckPosition(1),
       end: createDeckPosition(10),
+      start: createDeckPosition(1),
     };
     const partialAnswer: PlayingCardPosition = {
-      index: createDeckPosition(2),
       card: testStack[1],
+      index: createDeckPosition(2),
     };
     const partialQuestion: PlayingCardPosition = {
-      index: createDeckPosition(1),
       card: testStack[0],
+      index: createDeckPosition(1),
     };
 
     const choices = generateNeighborChoices(
@@ -296,16 +296,16 @@ describe("generateNeighborChoices", () => {
 
   it("throws when totalChoices exceeds available pool (range size minus question card)", () => {
     const narrowLimits = {
-      start: createDeckPosition(1),
       end: createDeckPosition(3),
+      start: createDeckPosition(1),
     };
     const narrowAnswer: PlayingCardPosition = {
-      index: createDeckPosition(2),
       card: testStack[1],
+      index: createDeckPosition(2),
     };
     const narrowQuestion: PlayingCardPosition = {
-      index: createDeckPosition(1),
       card: testStack[0],
+      index: createDeckPosition(1),
     };
 
     // Range size is 3, effective pool is 2 (question card excluded), requesting 5

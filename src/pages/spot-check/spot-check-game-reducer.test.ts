@@ -15,8 +15,8 @@ import {
 import type { PuzzleState } from "./utils";
 
 const FULL_LIMITS = {
-  start: createDeckPosition(1),
   end: createDeckPosition(DECK_SIZE),
+  start: createDeckPosition(1),
 };
 
 const UNHANDLED_ACTION_RE = /Unhandled action type/;
@@ -30,9 +30,9 @@ const samplePuzzleState = (): PuzzleState =>
   generatePuzzle(sampleCards, "missing");
 
 const baseState = (overrides?: Partial<GameState>): GameState => ({
-  successes: 2,
   fails: 1,
   puzzleState: samplePuzzleState(),
+  successes: 2,
   timeRemaining: 7,
   timerDuration: 15,
   ...overrides,
@@ -45,8 +45,8 @@ describe("gameReducer", () => {
       const newPuzzle = generatePuzzle(sampleCards, "swapped");
 
       const next = gameReducer(state, {
-        type: "CORRECT_ANSWER",
         payload: { newPuzzle },
+        type: "CORRECT_ANSWER",
       });
 
       expect(next.successes).toBe(state.successes + 1);
@@ -78,8 +78,8 @@ describe("gameReducer", () => {
       const newPuzzle = generatePuzzle(sampleCards, "moved");
 
       const next = gameReducer(state, {
-        type: "REVEAL_ANSWER",
         payload: { newPuzzle },
+        type: "REVEAL_ANSWER",
       });
 
       expect(next.fails).toBe(state.fails + 1);
@@ -95,8 +95,8 @@ describe("gameReducer", () => {
       const newPuzzle = generatePuzzle(sampleCards, "swapped");
 
       const next = gameReducer(state, {
-        type: "TIMEOUT",
         payload: { newPuzzle },
+        type: "TIMEOUT",
       });
 
       expect(next.fails).toBe(state.fails + 1);
@@ -124,8 +124,8 @@ describe("gameReducer", () => {
       const state = baseState({ timeRemaining: 4, timerDuration: 10 });
 
       const next = gameReducer(state, {
-        type: "RESET_TIMER",
         payload: { duration: 30 },
+        type: "RESET_TIMER",
       });
 
       expect(next.timeRemaining).toBe(30);
@@ -135,15 +135,15 @@ describe("gameReducer", () => {
 
   describe("RESET_GAME", () => {
     it("returns a fresh state via createInitialState", () => {
-      const state = baseState({ successes: 9, fails: 4 });
+      const state = baseState({ fails: 4, successes: 9 });
 
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: {
           cards: sampleCards,
-          timerDuration: 20,
           spotCheckMode: "missing",
+          timerDuration: 20,
         },
+        type: "RESET_GAME",
       });
 
       expect(next.successes).toBe(0);
@@ -210,8 +210,8 @@ describe("getCardsForPuzzle", () => {
 
   it("returns a slice from start-1 to end (inclusive) otherwise", () => {
     const limits = {
-      start: createDeckPosition(5),
       end: createDeckPosition(10),
+      start: createDeckPosition(5),
     };
 
     const result = getCardsForPuzzle(stackOrder, limits);
@@ -223,7 +223,7 @@ describe("getCardsForPuzzle", () => {
 
   it("returns a single-card slice when start equals end", () => {
     const position: DeckPosition = createDeckPosition(3);
-    const limits = { start: position, end: position };
+    const limits = { end: position, start: position };
 
     const result = getCardsForPuzzle(stackOrder, limits);
 

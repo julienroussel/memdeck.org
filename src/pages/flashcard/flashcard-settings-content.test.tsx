@@ -17,10 +17,10 @@ const defaultProps: {
   mode: "cardonly",
   neighborDirection: "before",
   onDirectionChange: vi.fn(),
-  onModeChange: vi.fn(),
   onDurationChange: vi.fn(),
+  onModeChange: vi.fn(),
   onTimerEnabledChange: vi.fn(),
-  timerSettings: { enabled: false, duration: 30 },
+  timerSettings: { duration: 30, enabled: false },
 };
 
 describe("FlashcardSettingsContent", () => {

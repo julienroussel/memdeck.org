@@ -514,18 +514,18 @@ test.describe("Error Scenarios - Edge Cases", () => {
           Date.now() - (1000 - i) * 60_000 + 300_000
         ).toISOString();
         return {
-          id: `session-${i}`,
-          mode: modes[i % modes.length],
-          stackKey: stacks[i % stacks.length],
-          config: { type: "structured", totalQuestions: 20 },
-          startedAt,
-          endedAt,
-          durationSeconds: 300,
-          successes: 10,
-          fails: 5,
-          questionsCompleted: 15,
           accuracy: 66.67,
           bestStreak: 5,
+          config: { totalQuestions: 20, type: "structured" },
+          durationSeconds: 300,
+          endedAt,
+          fails: 5,
+          id: `session-${i}`,
+          mode: modes[i % modes.length],
+          questionsCompleted: 15,
+          stackKey: stacks[i % stacks.length],
+          startedAt,
+          successes: 10,
         };
       });
       localStorage.setItem(
@@ -719,8 +719,8 @@ test.describe("Error Scenarios - Error Boundary Fallback", () => {
       },
       (route) => {
         route.fulfill({
-          contentType: "application/javascript",
           body: 'throw new Error("Simulated chunk error");',
+          contentType: "application/javascript",
         });
       }
     );

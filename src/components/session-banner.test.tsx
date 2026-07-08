@@ -8,7 +8,7 @@ import { SessionBanner } from "./session-banner";
 describe("SessionBanner", () => {
   it("renders progress as completed/total for structured sessions", () => {
     const session = makeActiveSession({
-      config: { type: "structured", totalQuestions: 20 },
+      config: { totalQuestions: 20, type: "structured" },
       questionsCompleted: 8,
     });
 
@@ -34,8 +34,8 @@ describe("SessionBanner", () => {
 
   it("renders the Score component with correct success and fail counts", () => {
     const session = makeActiveSession({
-      successes: 12,
       fails: 3,
+      successes: 12,
     });
 
     render(<SessionBanner onStop={vi.fn()} session={session} />);
@@ -51,8 +51,8 @@ describe("SessionBanner", () => {
 
   it("renders accuracy percentage", () => {
     const session = makeActiveSession({
-      successes: 7,
       fails: 3,
+      successes: 7,
       // 7/(7+3) = 0.7 = 70%
     });
 

@@ -33,20 +33,20 @@ describe("useUnseenWhatsNew", () => {
       store[k] = String(v);
     });
     vi.stubGlobal("localStorage", {
-      get length() {
-        return Object.keys(store).length;
-      },
-      getItem: vi.fn((k: string) => (k in store ? store[k] : null)),
-      setItem: setItemMock,
-      removeItem: vi.fn((k: string) => {
-        delete store[k];
-      }),
       clear: () => {
         for (const k of Object.keys(store)) {
           delete store[k];
         }
       },
+      getItem: vi.fn((k: string) => (k in store ? store[k] : null)),
       key: (i: number) => Object.keys(store)[i] ?? null,
+      get length() {
+        return Object.keys(store).length;
+      },
+      removeItem: vi.fn((k: string) => {
+        delete store[k];
+      }),
+      setItem: setItemMock,
     });
   });
 

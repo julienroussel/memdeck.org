@@ -11,9 +11,9 @@ import { SUPPORTED_LANGUAGES } from "./supported-languages";
 
 vi.mock("i18next", () => ({
   default: {
-    hasResourceBundle: vi.fn(),
     addResourceBundle: vi.fn(),
     changeLanguage: vi.fn(),
+    hasResourceBundle: vi.fn(),
   },
 }));
 
@@ -490,13 +490,13 @@ describe("changeLanguage", () => {
 
     const updateMock = vi.fn().mockResolvedValue(undefined);
     const waitingWorker = {
-      state: "installed",
-      postMessage: vi.fn(),
       addEventListener: vi.fn((_event: string, cb: () => void) => {
         // Simulate immediate activation
         waitingWorker.state = "activated";
         cb();
       }),
+      postMessage: vi.fn(),
+      state: "installed",
     };
     vi.stubGlobal("navigator", {
       ...navigator,
@@ -562,10 +562,10 @@ describe("changeLanguage", () => {
       getItem: () => {
         throw new Error("SecurityError");
       },
-      setItem: () => {
+      removeItem: () => {
         throw new Error("SecurityError");
       },
-      removeItem: () => {
+      setItem: () => {
         throw new Error("SecurityError");
       },
     });

@@ -25,28 +25,28 @@ vi.mock("../../hooks/use-document-meta", () => ({
 const { Stats } = await import("./stats");
 
 const emptyStatsEntry = () => ({
-  totalSessions: 0,
-  totalQuestions: 0,
-  totalSuccesses: 0,
-  totalFails: 0,
   globalBestStreak: 0,
+  totalFails: 0,
+  totalQuestions: 0,
+  totalSessions: 0,
+  totalSuccesses: 0,
 });
 
 const sessionHistoryDefaults = {
   history: [],
   historyStatus: "ready" as LocalDbStatus,
   sessionsByMode: () => [],
-  sessionsByStack: () => [],
   sessionsByModeAndStack: () => [],
+  sessionsByStack: () => [],
 };
 
 const allTimeStatsDefaults = {
-  stats: {},
-  statsStatus: "ready" as LocalDbStatus,
+  getGlobalStats: emptyStatsEntry,
   getStats: emptyStatsEntry,
   getStatsByMode: emptyStatsEntry,
   getStatsByStack: emptyStatsEntry,
-  getGlobalStats: emptyStatsEntry,
+  stats: {},
+  statsStatus: "ready" as LocalDbStatus,
 };
 
 const setHooks = ({

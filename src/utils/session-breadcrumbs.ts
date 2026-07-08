@@ -43,8 +43,8 @@ export const writeLastSaveFailedBreadcrumb = (
 ): void => {
   try {
     const breadcrumb: LastSaveFailedBreadcrumb = {
-      reason,
       failedAt: new Date().toISOString(),
+      reason,
     };
     localStorage.setItem(LAST_SAVE_FAILED_LSK, JSON.stringify(breadcrumb));
   } catch (error) {

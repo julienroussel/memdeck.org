@@ -23,9 +23,9 @@ import { useDistanceGame } from "./use-distance-game";
 import { useDistanceSettings } from "./use-distance-settings";
 
 const ACTIVE_MODE_KEYS = {
-  compute: "distance.activeModeCompute",
   apply: "distance.activeModeApply",
   both: "distance.activeModeBoth",
+  compute: "distance.activeModeCompute",
 } as const;
 
 const breadcrumbSchema = buildBreadcrumbSchema("Distance", ROUTES.distance);
@@ -33,8 +33,8 @@ const breadcrumbSchema = buildBreadcrumbSchema("Distance", ROUTES.distance);
 export const Distance = () => {
   const { t } = useTranslation();
   useDocumentMeta({
-    title: t("distance.pageTitle"),
     description: t("distance.pageDescription"),
+    title: t("distance.pageTitle"),
   });
   useCardImagePreload();
 
@@ -51,11 +51,11 @@ export const Distance = () => {
   } = useDistanceSettings();
 
   const deepLinkPending = useSuggestionDeepLink({
+    onTimed: () => handleTimerEnabledChange(true),
     tryHandlers: [
       tryHandler(isDistanceMode, handleModeChange),
       tryHandler(isDistanceConvention, handleConventionChange),
     ],
-    onTimed: () => handleTimerEnabledChange(true),
   });
 
   const { limits, rangeSize } = useStackLimits(stackKey);
@@ -70,11 +70,11 @@ export const Distance = () => {
     stopSession,
     dismissSummary,
   } = useSession({
+    autoStart: !deepLinkPending,
+    distanceConvention: convention,
+    distanceMode: mode,
     mode: "distance",
     stackKey,
-    distanceMode: mode,
-    distanceConvention: convention,
-    autoStart: !deepLinkPending,
     stackLimits: limits,
     timed: timerSettings.enabled,
   });

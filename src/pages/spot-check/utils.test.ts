@@ -61,7 +61,7 @@ describe("swapTwoCards", () => {
 
   it("leaves all other positions unchanged", () => {
     const result = swapTwoCards(testStack);
-    for (let i = 0; i < DECK_SIZE; i++) {
+    for (let i = 0; i < DECK_SIZE; i += 1) {
       if (i !== result.indexA && i !== result.indexB) {
         expect(result.cards[i]).toBe(testStack[i]);
       }
@@ -293,7 +293,7 @@ describe("isSpotCheckAnswerCorrect", () => {
       // Find an index that wasn't swapped
       let otherIdx = 0;
       while (otherIdx === puzzle.indexA || otherIdx === puzzle.indexB) {
-        otherIdx++;
+        otherIdx += 1;
       }
       const card = puzzle.cards[otherIdx];
       if (!card) {
@@ -325,7 +325,7 @@ describe("isSpotCheckAnswerCorrect", () => {
       // Find a card that isn't the moved card
       let otherIdx = 0;
       while (puzzle.cards[otherIdx] === puzzle.movedCard) {
-        otherIdx++;
+        otherIdx += 1;
       }
       const card = puzzle.cards[otherIdx];
       if (!card) {

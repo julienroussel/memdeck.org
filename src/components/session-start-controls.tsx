@@ -32,7 +32,7 @@ export const SessionStartControls = ({
 
   const handlePresetClick = useCallback(
     (preset: number) => {
-      onStart({ type: "structured", totalQuestions: preset });
+      onStart({ totalQuestions: preset, type: "structured" });
       onAfterStart?.();
     },
     [onStart, onAfterStart]

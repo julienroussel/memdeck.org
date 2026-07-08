@@ -39,10 +39,10 @@ describe("ResetButton", () => {
       vi.stubGlobal("localStorage", {
         clear: clearMock,
         getItem: vi.fn(),
-        setItem: vi.fn(),
-        removeItem: removeItemMock,
-        length: 0,
         key: keyMock,
+        length: 0,
+        removeItem: removeItemMock,
+        setItem: vi.fn(),
       });
       Object.defineProperty(window, "location", {
         value: { reload: reloadMock },
@@ -126,10 +126,10 @@ describe("resetSettings", () => {
     vi.stubGlobal("localStorage", {
       clear: vi.fn(),
       getItem: vi.fn(),
-      setItem: vi.fn(),
-      removeItem: removeItemMock,
-      length: 4,
       key: keyMock,
+      length: 4,
+      removeItem: removeItemMock,
+      setItem: vi.fn(),
     });
     Object.defineProperty(window, "location", {
       value: { reload: reloadMock },
@@ -168,10 +168,10 @@ describe("resetApp", () => {
     vi.stubGlobal("localStorage", {
       clear: clearMock,
       getItem: vi.fn(),
-      setItem: vi.fn(),
-      removeItem: vi.fn(),
-      length: 0,
       key: vi.fn(),
+      length: 0,
+      removeItem: vi.fn(),
+      setItem: vi.fn(),
     });
     Object.defineProperty(window, "location", {
       value: { reload: reloadMock },
@@ -197,12 +197,12 @@ describe("resetApp", () => {
   it("unregisters service workers", async () => {
     const unregisterMock = vi.fn().mockResolvedValue(true);
     Object.defineProperty(navigator, "serviceWorker", {
+      configurable: true,
       value: {
         getRegistrations: vi
           .fn()
           .mockResolvedValue([{ unregister: unregisterMock }]),
       },
-      configurable: true,
     });
 
     await resetApp();
@@ -212,8 +212,8 @@ describe("resetApp", () => {
   it("clears cache storage", async () => {
     const deleteMock = vi.fn().mockResolvedValue(true);
     vi.stubGlobal("caches", {
-      keys: vi.fn().mockResolvedValue(["cache-v1"]),
       delete: deleteMock,
+      keys: vi.fn().mockResolvedValue(["cache-v1"]),
     });
 
     await resetApp();
@@ -223,8 +223,8 @@ describe("resetApp", () => {
   it("clears all cache storage entries when multiple caches exist", async () => {
     const deleteMock = vi.fn().mockResolvedValue(true);
     vi.stubGlobal("caches", {
-      keys: vi.fn().mockResolvedValue(["cache-v1", "cache-v2"]),
       delete: deleteMock,
+      keys: vi.fn().mockResolvedValue(["cache-v1", "cache-v2"]),
     });
 
     await resetApp();
@@ -235,8 +235,8 @@ describe("resetApp", () => {
 
   it("does not throw when service worker API is unavailable", async () => {
     Object.defineProperty(navigator, "serviceWorker", {
-      value: undefined,
       configurable: true,
+      value: undefined,
     });
 
     await expect(resetApp()).resolves.toBeUndefined();

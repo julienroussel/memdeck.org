@@ -15,8 +15,8 @@ export type StackLimitsRecord = Partial<
 >;
 
 export const DEFAULT_STACK_LIMITS: StackLimits = {
-  start: createDeckPosition(1),
   end: createDeckPosition(DECK_SIZE),
+  start: createDeckPosition(1),
 };
 
 export const getRangeSize = (limits: StackLimits): number =>

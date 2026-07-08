@@ -22,18 +22,18 @@ const mockedUseLocalDb = vi.mocked(useLocalDb);
 const { useSessionHistory } = await import("./use-session-history");
 
 const makeRecord = (overrides: Partial<SessionRecord> = {}): SessionRecord => ({
-  id: "test-id",
-  mode: "flashcard",
-  stackKey: "mnemonica",
-  config: { type: "structured", totalQuestions: 10 },
-  startedAt: "2025-01-01T00:00:00.000Z",
-  endedAt: "2025-01-01T00:05:00.000Z",
-  durationSeconds: 300,
-  successes: 8,
-  fails: 2,
-  questionsCompleted: 10,
   accuracy: 0.8,
   bestStreak: 5,
+  config: { totalQuestions: 10, type: "structured" },
+  durationSeconds: 300,
+  endedAt: "2025-01-01T00:05:00.000Z",
+  fails: 2,
+  id: "test-id",
+  mode: "flashcard",
+  questionsCompleted: 10,
+  stackKey: "mnemonica",
+  startedAt: "2025-01-01T00:00:00.000Z",
+  successes: 8,
   ...overrides,
 });
 

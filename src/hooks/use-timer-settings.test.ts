@@ -29,33 +29,33 @@ const mockedUseLocalDb = vi.mocked(useLocalDb);
 
 describe("isTimerSettings", () => {
   it("rejects duration of 0", () => {
-    expect(isTimerSettings({ enabled: true, duration: 0 })).toBe(false);
+    expect(isTimerSettings({ duration: 0, enabled: true })).toBe(false);
   });
 
   it("rejects duration of NaN", () => {
-    expect(isTimerSettings({ enabled: true, duration: Number.NaN })).toBe(
+    expect(isTimerSettings({ duration: Number.NaN, enabled: true })).toBe(
       false
     );
   });
 
   it("rejects out-of-range duration", () => {
-    expect(isTimerSettings({ enabled: true, duration: 99_999 })).toBe(false);
+    expect(isTimerSettings({ duration: 99_999, enabled: true })).toBe(false);
   });
 
   it("rejects negative duration", () => {
-    expect(isTimerSettings({ enabled: true, duration: -10 })).toBe(false);
+    expect(isTimerSettings({ duration: -10, enabled: true })).toBe(false);
   });
 
   it("accepts duration of 10", () => {
-    expect(isTimerSettings({ enabled: true, duration: 10 })).toBe(true);
+    expect(isTimerSettings({ duration: 10, enabled: true })).toBe(true);
   });
 
   it("accepts duration of 15", () => {
-    expect(isTimerSettings({ enabled: true, duration: 15 })).toBe(true);
+    expect(isTimerSettings({ duration: 15, enabled: true })).toBe(true);
   });
 
   it("accepts duration of 30", () => {
-    expect(isTimerSettings({ enabled: true, duration: 30 })).toBe(true);
+    expect(isTimerSettings({ duration: 30, enabled: true })).toBe(true);
   });
 
   it("rejects non-object values", () => {
@@ -76,7 +76,7 @@ describe("useTimerSettings", () => {
 
   it("uses the provided localStorage key", () => {
     mockedUseLocalDb.mockReturnValue([
-      { enabled: false, duration: 15 },
+      { duration: 15, enabled: false },
       mockSetSettings,
       vi.fn(),
     ]);
@@ -96,32 +96,32 @@ describe("useTimerSettings", () => {
 
   it("returns default timer settings", () => {
     mockedUseLocalDb.mockReturnValue([
-      { enabled: false, duration: 15 },
+      { duration: 15, enabled: false },
       mockSetSettings,
       vi.fn(),
     ]);
 
     const { timerSettings } = useTimerSettings(FLASHCARD_TIMER_LSK);
 
-    expect(timerSettings).toEqual({ enabled: false, duration: 15 });
+    expect(timerSettings).toEqual({ duration: 15, enabled: false });
   });
 
   it("returns existing timer settings", () => {
     mockedUseLocalDb.mockReturnValue([
-      { enabled: true, duration: 30 },
+      { duration: 30, enabled: true },
       mockSetSettings,
       vi.fn(),
     ]);
 
     const { timerSettings } = useTimerSettings(FLASHCARD_TIMER_LSK);
 
-    expect(timerSettings).toEqual({ enabled: true, duration: 30 });
+    expect(timerSettings).toEqual({ duration: 30, enabled: true });
   });
 
   describe("setTimerEnabled", () => {
     it("enables the timer", () => {
       mockedUseLocalDb.mockReturnValue([
-        { enabled: false, duration: 15 },
+        { duration: 15, enabled: false },
         mockSetSettings,
         vi.fn(),
       ]);
@@ -129,9 +129,9 @@ describe("useTimerSettings", () => {
       const { setTimerEnabled } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerEnabled(true);
 
-      const updater = mockSetSettings.mock.calls[0][0];
-      const result = updater({ enabled: false, duration: 15 });
-      expect(result).toEqual({ enabled: true, duration: 15 });
+      const [[updater]] = mockSetSettings.mock.calls;
+      const result = updater({ duration: 15, enabled: false });
+      expect(result).toEqual({ duration: 15, enabled: true });
     });
 
     it("runs the caller's onSuccess when the timer setting is persisted", () => {
@@ -141,7 +141,7 @@ describe("useTimerSettings", () => {
         }
       );
       mockedUseLocalDb.mockReturnValue([
-        { enabled: false, duration: 15 },
+        { duration: 15, enabled: false },
         setSettingsSucceeding,
         vi.fn(),
       ]);
@@ -162,7 +162,7 @@ describe("useTimerSettings", () => {
       // invokes onSuccess (mirrors a Mantine-swallowed quota-exceeded write).
       const setSettingsRejecting = vi.fn();
       mockedUseLocalDb.mockReturnValue([
-        { enabled: false, duration: 15 },
+        { duration: 15, enabled: false },
         setSettingsRejecting,
         vi.fn(),
       ]);
@@ -177,7 +177,7 @@ describe("useTimerSettings", () => {
 
     it("disables the timer", () => {
       mockedUseLocalDb.mockReturnValue([
-        { enabled: true, duration: 15 },
+        { duration: 15, enabled: true },
         mockSetSettings,
         vi.fn(),
       ]);
@@ -185,14 +185,14 @@ describe("useTimerSettings", () => {
       const { setTimerEnabled } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerEnabled(false);
 
-      const updater = mockSetSettings.mock.calls[0][0];
-      const result = updater({ enabled: true, duration: 15 });
-      expect(result).toEqual({ enabled: false, duration: 15 });
+      const [[updater]] = mockSetSettings.mock.calls;
+      const result = updater({ duration: 15, enabled: true });
+      expect(result).toEqual({ duration: 15, enabled: false });
     });
 
     it("preserves duration when toggling enabled", () => {
       mockedUseLocalDb.mockReturnValue([
-        { enabled: false, duration: 30 },
+        { duration: 30, enabled: false },
         mockSetSettings,
         vi.fn(),
       ]);
@@ -200,8 +200,8 @@ describe("useTimerSettings", () => {
       const { setTimerEnabled } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerEnabled(true);
 
-      const updater = mockSetSettings.mock.calls[0][0];
-      const result = updater({ enabled: false, duration: 30 });
+      const [[updater]] = mockSetSettings.mock.calls;
+      const result = updater({ duration: 30, enabled: false });
       expect(result.duration).toBe(30);
     });
   });
@@ -209,7 +209,7 @@ describe("useTimerSettings", () => {
   describe("setTimerDuration", () => {
     it("updates the timer duration to 10 seconds", () => {
       mockedUseLocalDb.mockReturnValue([
-        { enabled: true, duration: 15 },
+        { duration: 15, enabled: true },
         mockSetSettings,
         vi.fn(),
       ]);
@@ -217,14 +217,14 @@ describe("useTimerSettings", () => {
       const { setTimerDuration } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerDuration(10);
 
-      const updater = mockSetSettings.mock.calls[0][0];
-      const result = updater({ enabled: true, duration: 15 });
-      expect(result).toEqual({ enabled: true, duration: 10 });
+      const [[updater]] = mockSetSettings.mock.calls;
+      const result = updater({ duration: 15, enabled: true });
+      expect(result).toEqual({ duration: 10, enabled: true });
     });
 
     it("updates the timer duration to 30 seconds", () => {
       mockedUseLocalDb.mockReturnValue([
-        { enabled: true, duration: 15 },
+        { duration: 15, enabled: true },
         mockSetSettings,
         vi.fn(),
       ]);
@@ -232,14 +232,14 @@ describe("useTimerSettings", () => {
       const { setTimerDuration } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerDuration(30);
 
-      const updater = mockSetSettings.mock.calls[0][0];
-      const result = updater({ enabled: true, duration: 15 });
-      expect(result).toEqual({ enabled: true, duration: 30 });
+      const [[updater]] = mockSetSettings.mock.calls;
+      const result = updater({ duration: 15, enabled: true });
+      expect(result).toEqual({ duration: 30, enabled: true });
     });
 
     it("preserves enabled state when changing duration", () => {
       mockedUseLocalDb.mockReturnValue([
-        { enabled: false, duration: 15 },
+        { duration: 15, enabled: false },
         mockSetSettings,
         vi.fn(),
       ]);
@@ -247,8 +247,8 @@ describe("useTimerSettings", () => {
       const { setTimerDuration } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerDuration(10);
 
-      const updater = mockSetSettings.mock.calls[0][0];
-      const result = updater({ enabled: false, duration: 15 });
+      const [[updater]] = mockSetSettings.mock.calls;
+      const result = updater({ duration: 15, enabled: false });
       expect(result.enabled).toBe(false);
     });
   });

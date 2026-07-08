@@ -98,12 +98,12 @@ export const useFlashcardSettings = (): UseFlashcardSettingsResult => {
   );
 
   return {
+    handleDirectionChange,
+    handleModeChange,
+    handleTimerEnabledChange,
     mode,
     neighborDirection,
-    timerSettings,
     setTimerDuration,
-    handleModeChange,
-    handleDirectionChange,
-    handleTimerEnabledChange,
+    timerSettings,
   };
 };

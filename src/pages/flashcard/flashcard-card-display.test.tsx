@@ -9,8 +9,8 @@ import { AceOfSpades } from "../../types/suits/spades";
 import { FlashcardCardDisplay } from "./flashcard-card-display";
 
 const testCard: PlayingCardPosition = {
-  index: createDeckPosition(1),
   card: AceOfSpades,
+  index: createDeckPosition(1),
 };
 
 describe("FlashcardCardDisplay", () => {

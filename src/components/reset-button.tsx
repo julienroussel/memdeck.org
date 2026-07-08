@@ -10,18 +10,16 @@ const STATS_KEYS = [SESSION_HISTORY_LSK, ALL_TIME_STATS_LSK];
 const clearServiceWorkersAndCaches = async () => {
   try {
     const registrations = await navigator.serviceWorker.getRegistrations();
-    for (const registration of registrations) {
-      await registration.unregister();
-    }
+    await Promise.all(
+      registrations.map((registration) => registration.unregister())
+    );
   } catch {
     // Service worker API may not be available
   }
 
   try {
     const keys = await caches.keys();
-    for (const key of keys) {
-      await caches.delete(key);
-    }
+    await Promise.all(keys.map((key) => caches.delete(key)));
   } catch {
     // Cache API may not be available
   }
@@ -30,7 +28,7 @@ const clearServiceWorkersAndCaches = async () => {
 export const resetSettings = async () => {
   try {
     const keysToRemove: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
+    for (let i = 0; i < localStorage.length; i += 1) {
       const key = localStorage.key(i);
       if (key && !STATS_KEYS.includes(key)) {
         keysToRemove.push(key);

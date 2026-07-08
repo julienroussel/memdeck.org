@@ -15,8 +15,8 @@ export const shareMemDeck = async (message: string): Promise<ShareResult> => {
   if (canNativeShare()) {
     try {
       await navigator.share({
-        title: SITE_NAME,
         text: message,
+        title: SITE_NAME,
         url: SITE_URL,
       });
       return "shared";

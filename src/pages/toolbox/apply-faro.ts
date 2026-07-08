@@ -44,7 +44,7 @@ export const applyFaro = (
   }
   const n = Math.floor(count);
   let current: PlayingCard[] = [...cards];
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < n; i += 1) {
     current = singleFaro(current, type);
   }
   return current;

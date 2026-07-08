@@ -56,8 +56,8 @@ export const Toolbox = () => {
   );
 
   useDocumentMeta({
-    title: t("toolbox.pageTitle"),
     description: t("toolbox.pageDescription"),
+    title: t("toolbox.pageTitle"),
   });
   useCardImagePreload();
 

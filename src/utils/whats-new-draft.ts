@@ -27,5 +27,5 @@ export const cleanCommitSubject = (
   if (!text) {
     return null;
   }
-  return { type, text };
+  return { text, type };
 };

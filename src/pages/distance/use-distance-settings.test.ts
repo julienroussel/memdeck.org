@@ -42,9 +42,9 @@ vi.mock("../../utils/localstorage", () => ({
 
 vi.mock("../../hooks/use-timer-settings", () => ({
   useTimerSettings: vi.fn(() => ({
-    timerSettings: { enabled: false, duration: 15 },
-    setTimerEnabled: mockSetTimerEnabled,
     setTimerDuration: mockSetTimerDuration,
+    setTimerEnabled: mockSetTimerEnabled,
+    timerSettings: { duration: 15, enabled: false },
   })),
 }));
 
@@ -57,8 +57,8 @@ vi.mock("../../services/analytics", () => ({
 vi.mock("../../services/event-bus", () => ({
   eventBus: {
     emit: {
-      DISTANCE_MODE_CHANGED: mockEmitDistanceModeChanged,
       DISTANCE_CONVENTION_CHANGED: mockEmitDistanceConventionChanged,
+      DISTANCE_MODE_CHANGED: mockEmitDistanceModeChanged,
     },
   },
 }));
@@ -136,8 +136,8 @@ describe("useDistanceSettings", () => {
 
   it("returns timer settings from useTimerSettings", () => {
     expect(result.current.timerSettings).toEqual({
-      enabled: false,
       duration: 15,
+      enabled: false,
     });
   });
 

@@ -90,11 +90,11 @@ export const useAllTimeStats = (): UseAllTimeStatsResult => {
   );
 
   return {
-    stats,
-    statsStatus,
+    getGlobalStats,
     getStats,
     getStatsByMode,
     getStatsByStack,
-    getGlobalStats,
+    stats,
+    statsStatus,
   };
 };

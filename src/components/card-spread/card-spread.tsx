@@ -16,7 +16,7 @@ const isCardsProps = (props: CardSpreadProps): props is CardSpreadCardsProps =>
 
 const KEYBOARD_STEP = 3;
 
-export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
+export const CardSpread = memo((props: CardSpreadProps) => {
   const {
     items,
     canMove = true,
@@ -79,7 +79,7 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
   const handleTouchMove = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
       if (canMove && e.touches.length === 1) {
-        const touch = e.nativeEvent.touches[0];
+        const [touch] = e.nativeEvent.touches;
         if (!touch) {
           return;
         }
@@ -240,3 +240,5 @@ export const CardSpread = memo(function CardSpread(props: CardSpreadProps) {
     </Flex>
   );
 });
+
+CardSpread.displayName = "CardSpread";

@@ -35,33 +35,33 @@ interface Screenshot {
 
 const SCREENSHOTS: Screenshot[] = [
   {
+    deviceScaleFactor: 2,
+    height: 844,
     name: "home-mobile",
     url: ROUTES.home,
     width: 390,
-    height: 844,
-    deviceScaleFactor: 2,
   },
   {
+    deviceScaleFactor: 2,
+    height: 844,
     name: "flashcard-mobile",
     url: ROUTES.flashcard,
     width: 390,
-    height: 844,
-    deviceScaleFactor: 2,
   },
   {
+    deviceScaleFactor: 2,
+    height: 800,
     name: "home-desktop",
     url: ROUTES.home,
     width: 1280,
-    height: 800,
-    deviceScaleFactor: 2,
   },
   {
+    deviceScaleFactor: 2,
+    height: 800,
     name: "screenshot",
+    outputDir: join(ROOT_DIR, "docs"),
     url: ROUTES.flashcard,
     width: 1280,
-    height: 800,
-    deviceScaleFactor: 2,
-    outputDir: join(ROOT_DIR, "docs"),
   },
 ];
 
@@ -76,8 +76,8 @@ for (const {
   outputDir,
 } of SCREENSHOTS) {
   const context = await browser.newContext({
-    viewport: { width, height },
     deviceScaleFactor,
+    viewport: { height, width },
   });
 
   // Seed the selected stack before any app code runs so pages render with a

@@ -115,17 +115,17 @@ export type RoutePath = "/" | `/${string}/`;
 
 /** All route paths used by the app — shared between routes.tsx and the pre-render script */
 export const ROUTES = {
-  home: "/",
-  guide: "/guide/",
-  resources: "/resources/",
-  faq: "/faq/",
-  flashcard: "/flashcard/",
-  spotCheck: "/spot-check/",
+  about: "/about/",
   acaan: "/acaan/",
   distance: "/distance/",
-  toolbox: "/toolbox/",
+  faq: "/faq/",
+  flashcard: "/flashcard/",
+  guide: "/guide/",
+  home: "/",
+  resources: "/resources/",
+  spotCheck: "/spot-check/",
   stats: "/stats/",
-  about: "/about/",
+  toolbox: "/toolbox/",
   whatsNew: "/whats-new/",
 } as const satisfies Record<string, RoutePath>;
 
@@ -137,29 +137,29 @@ export const ROUTES = {
  */
 export const PWA_SHORTCUTS = [
   {
+    description: "Practice memorized deck with flashcard drills",
     name: "Flashcard",
     short_name: "Flashcard",
     url: ROUTES.flashcard,
-    description: "Practice memorized deck with flashcard drills",
   },
   {
+    description: "Any Card At Any Number calculator",
     name: "ACAAN",
     short_name: "ACAAN",
     url: ROUTES.acaan,
-    description: "Any Card At Any Number calculator",
   },
   {
+    description:
+      "Practice distance numbers between cards in your memorized stack",
     name: "Distance",
     short_name: "Distance",
     url: ROUTES.distance,
-    description:
-      "Practice distance numbers between cards in your memorized stack",
   },
   {
+    description: "Memorized deck utilities",
     name: "Toolbox",
     short_name: "Toolbox",
     url: ROUTES.toolbox,
-    description: "Memorized deck utilities",
   },
 ] as const satisfies readonly {
   name: string;

@@ -10,7 +10,7 @@ import {
 
 describe("getRandomTargetPosition", () => {
   it("returns a position between 1 and 52", () => {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i += 1) {
       const position = getRandomTargetPosition(createDeckPosition(1));
       expect(position).toBeGreaterThanOrEqual(1);
       expect(position).toBeLessThanOrEqual(52);
@@ -18,8 +18,8 @@ describe("getRandomTargetPosition", () => {
   });
 
   it("never returns the excluded position", () => {
-    for (let excludePos = 1; excludePos <= 52; excludePos++) {
-      for (let i = 0; i < 20; i++) {
+    for (let excludePos = 1; excludePos <= 52; excludePos += 1) {
+      for (let i = 0; i < 20; i += 1) {
         const position = getRandomTargetPosition(
           createDeckPosition(excludePos)
         );
@@ -47,7 +47,7 @@ describe("generateAcaanScenario", () => {
   });
 
   it("returns card position between 1 and 52", () => {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i += 1) {
       const scenario = generateAcaanScenario(mnemonica.order);
       expect(scenario.cardPosition).toBeGreaterThanOrEqual(1);
       expect(scenario.cardPosition).toBeLessThanOrEqual(52);
@@ -55,7 +55,7 @@ describe("generateAcaanScenario", () => {
   });
 
   it("returns target position between 1 and 52", () => {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i += 1) {
       const scenario = generateAcaanScenario(mnemonica.order);
       expect(scenario.targetPosition).toBeGreaterThanOrEqual(1);
       expect(scenario.targetPosition).toBeLessThanOrEqual(52);
@@ -63,14 +63,14 @@ describe("generateAcaanScenario", () => {
   });
 
   it("target position is always different from card position", () => {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i += 1) {
       const scenario = generateAcaanScenario(mnemonica.order);
       expect(scenario.targetPosition).not.toBe(scenario.cardPosition);
     }
   });
 
   it("card at cardPosition matches the returned card", () => {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i += 1) {
       const scenario = generateAcaanScenario(mnemonica.order);
       const cardAtPosition = mnemonica.order[scenario.cardPosition - 1];
       expect(scenario.card).toBe(cardAtPosition);
@@ -79,7 +79,7 @@ describe("generateAcaanScenario", () => {
 
   it("generates different scenarios on multiple calls (not always the same)", () => {
     const scenarios: AcaanScenario[] = [];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 50; i += 1) {
       scenarios.push(generateAcaanScenario(mnemonica.order));
     }
 
@@ -159,8 +159,8 @@ describe("calculateCutDepth", () => {
   });
 
   it("returns values in valid range (0-51)", () => {
-    for (let cardPos = 1; cardPos <= 52; cardPos++) {
-      for (let targetPos = 1; targetPos <= 52; targetPos++) {
+    for (let cardPos = 1; cardPos <= 52; cardPos += 1) {
+      for (let targetPos = 1; targetPos <= 52; targetPos += 1) {
         const cutDepth = calculateCutDepth(
           createDeckPosition(cardPos),
           createDeckPosition(targetPos)

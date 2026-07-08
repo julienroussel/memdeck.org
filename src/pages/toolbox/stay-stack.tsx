@@ -16,8 +16,8 @@ import { computeSequences } from "./compute-sequences";
 const THUMBNAIL_WIDTH = 40;
 const THUMBNAIL_HEIGHT = Math.round(THUMBNAIL_WIDTH * CARD_ASPECT_RATIO);
 const CARD_CELL_STYLE = {
-  display: "flex",
   alignItems: "center",
+  display: "flex",
   gap: 8,
 } as const;
 

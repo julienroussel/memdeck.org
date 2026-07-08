@@ -14,10 +14,7 @@ type SessionBannerProps = {
   onStop: () => void;
 };
 
-export const SessionBanner = memo(function SessionBanner({
-  session,
-  onStop,
-}: SessionBannerProps) {
+export const SessionBanner = memo(({ session, onStop }: SessionBannerProps) => {
   const {
     config,
     questionsCompleted,
@@ -96,3 +93,5 @@ export const SessionBanner = memo(function SessionBanner({
     </Paper>
   );
 });
+
+SessionBanner.displayName = "SessionBanner";

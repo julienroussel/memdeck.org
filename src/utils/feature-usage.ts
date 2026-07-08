@@ -21,42 +21,42 @@ export const deriveFeatureUsage = (history: SessionRecord[]): UsageFlags => {
   // `boolean`/`number` for later mutation while still requiring every union
   // member as a key — a new mode/variant is a compile error here.
   const modes: Record<TrainingMode, boolean> = {
-    flashcard: false,
     acaan: false,
-    spotcheck: false,
     distance: false,
+    flashcard: false,
+    spotcheck: false,
   };
   const flashcardModes: Record<FlashcardMode, boolean> = {
-    cardonly: false,
     bothmodes: false,
-    numberonly: false,
+    cardonly: false,
     neighbor: false,
+    numberonly: false,
   };
   const spotCheckModes: Record<SpotCheckMode, boolean> = {
     missing: false,
-    swapped: false,
     moved: false,
+    swapped: false,
   };
   const distanceModes: Record<DistanceMode, boolean> = {
-    compute: false,
     apply: false,
     both: false,
+    compute: false,
   };
   const distanceConventions: Record<DistanceConvention, boolean> = {
     cyclic: false,
     signed: false,
   };
   const timedModes: Record<TrainingMode, boolean> = {
-    flashcard: false,
     acaan: false,
-    spotcheck: false,
     distance: false,
+    flashcard: false,
+    spotcheck: false,
   };
   const counts: Record<TrainingMode, number> = {
-    flashcard: 0,
     acaan: 0,
-    spotcheck: 0,
     distance: 0,
+    flashcard: 0,
+    spotcheck: 0,
   };
 
   for (const record of history) {
@@ -102,12 +102,12 @@ export const deriveFeatureUsage = (history: SessionRecord[]): UsageFlags => {
   }
 
   return {
-    modes,
-    flashcardModes,
-    spotCheckModes,
-    distanceModes,
     distanceConventions,
-    timedModes,
+    distanceModes,
+    flashcardModes,
+    modes,
     mostUsedMode,
+    spotCheckModes,
+    timedModes,
   };
 };

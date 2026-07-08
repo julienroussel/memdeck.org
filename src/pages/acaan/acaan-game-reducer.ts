@@ -52,9 +52,9 @@ export const createInitialState = (
   stackOrder: Stack,
   timerDuration: number
 ): GameState => ({
+  fails: 0,
   scenario: generateAcaanScenario(stackOrder),
   successes: 0,
-  fails: 0,
   timeRemaining: timerDuration,
   timerDuration,
 });
@@ -69,8 +69,8 @@ export const gameReducer = (
     case "CORRECT_ANSWER":
       return {
         ...state,
-        successes: state.successes + 1,
         scenario: action.payload.newScenario,
+        successes: state.successes + 1,
         timeRemaining: state.timerDuration,
       };
     // Note: WRONG_ANSWER intentionally does NOT reset the timer or advance to next scenario.

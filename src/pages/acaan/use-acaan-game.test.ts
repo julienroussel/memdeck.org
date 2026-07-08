@@ -23,11 +23,8 @@ vi.mock("@mantine/notifications", () => ({
 vi.mock("../../hooks/use-game-timer", () => {
   let capturedOnTimeout: (() => void) | undefined;
   return {
+    __getCapturedOnTimeout: () => capturedOnTimeout,
     timerReducerCases: {
-      TICK: (state: { timeRemaining: number }) => ({
-        ...state,
-        timeRemaining: Math.max(0, state.timeRemaining - 1),
-      }),
       RESET_TIMER: (
         state: { timeRemaining: number; timerDuration: number },
         duration: number
@@ -36,11 +33,14 @@ vi.mock("../../hooks/use-game-timer", () => {
         timeRemaining: duration,
         timerDuration: duration,
       }),
+      TICK: (state: { timeRemaining: number }) => ({
+        ...state,
+        timeRemaining: Math.max(0, state.timeRemaining - 1),
+      }),
     },
     useGameTimer: vi.fn((opts: { onTimeout?: () => void }) => {
       capturedOnTimeout = opts.onTimeout;
     }),
-    __getCapturedOnTimeout: () => capturedOnTimeout,
   };
 });
 
@@ -50,7 +50,7 @@ vi.mock("../../services/event-bus", () => ({
   },
 }));
 
-const mockTimerSettings: TimerSettings = { enabled: false, duration: 15 };
+const mockTimerSettings: TimerSettings = { duration: 15, enabled: false };
 
 // Helper to create a test scenario
 const createTestScenario = (
@@ -64,9 +64,9 @@ const createTestScenario = (
 
 // Helper to create a test state
 const createTestState = (overrides: Partial<GameState> = {}): GameState => ({
+  fails: 0,
   scenario: createTestScenario(10, 5),
   successes: 0,
-  fails: 0,
   timeRemaining: 15,
   timerDuration: 15,
   ...overrides,
@@ -159,8 +159,8 @@ describe("gameReducer", () => {
       const state = createTestState({ successes: 2 });
       const newScenario = createTestScenario(20, 15);
       const action: GameAction = {
-        type: "CORRECT_ANSWER",
         payload: { newScenario },
+        type: "CORRECT_ANSWER",
       };
 
       const newState = gameReducer(state, action);
@@ -172,8 +172,8 @@ describe("gameReducer", () => {
       const state = createTestState({ fails: 1 });
       const newScenario = createTestScenario(20, 15);
       const action: GameAction = {
-        type: "CORRECT_ANSWER",
         payload: { newScenario },
+        type: "CORRECT_ANSWER",
       };
 
       const newState = gameReducer(state, action);
@@ -185,8 +185,8 @@ describe("gameReducer", () => {
       const state = createTestState();
       const newScenario = createTestScenario(30, 25);
       const action: GameAction = {
-        type: "CORRECT_ANSWER",
         payload: { newScenario },
+        type: "CORRECT_ANSWER",
       };
 
       const newState = gameReducer(state, action);
@@ -201,8 +201,8 @@ describe("gameReducer", () => {
       });
       const newScenario = createTestScenario(20, 15);
       const action: GameAction = {
-        type: "CORRECT_ANSWER",
         payload: { newScenario },
+        type: "CORRECT_ANSWER",
       };
 
       const newState = gameReducer(state, action);
@@ -258,8 +258,8 @@ describe("gameReducer", () => {
       const state = createTestState({ fails: 1 });
       const newScenario = createTestScenario(20, 15);
       const action: GameAction = {
-        type: "REVEAL_ANSWER",
         payload: { newScenario },
+        type: "REVEAL_ANSWER",
       };
 
       const newState = gameReducer(state, action);
@@ -271,8 +271,8 @@ describe("gameReducer", () => {
       const state = createTestState({ successes: 5 });
       const newScenario = createTestScenario(20, 15);
       const action: GameAction = {
-        type: "REVEAL_ANSWER",
         payload: { newScenario },
+        type: "REVEAL_ANSWER",
       };
 
       const newState = gameReducer(state, action);
@@ -284,8 +284,8 @@ describe("gameReducer", () => {
       const state = createTestState();
       const newScenario = createTestScenario(15, 10);
       const action: GameAction = {
-        type: "REVEAL_ANSWER",
         payload: { newScenario },
+        type: "REVEAL_ANSWER",
       };
 
       const newState = gameReducer(state, action);
@@ -300,8 +300,8 @@ describe("gameReducer", () => {
       });
       const newScenario = createTestScenario(20, 15);
       const action: GameAction = {
-        type: "REVEAL_ANSWER",
         payload: { newScenario },
+        type: "REVEAL_ANSWER",
       };
 
       const newState = gameReducer(state, action);
@@ -315,8 +315,8 @@ describe("gameReducer", () => {
       const state = createTestState({ fails: 1 });
       const newScenario = createTestScenario(20, 15);
       const action: GameAction = {
-        type: "TIMEOUT",
         payload: { newScenario },
+        type: "TIMEOUT",
       };
 
       const newState = gameReducer(state, action);
@@ -328,8 +328,8 @@ describe("gameReducer", () => {
       const state = createTestState({ successes: 5 });
       const newScenario = createTestScenario(20, 15);
       const action: GameAction = {
-        type: "TIMEOUT",
         payload: { newScenario },
+        type: "TIMEOUT",
       };
 
       const newState = gameReducer(state, action);
@@ -341,8 +341,8 @@ describe("gameReducer", () => {
       const state = createTestState();
       const newScenario = createTestScenario(15, 10);
       const action: GameAction = {
-        type: "TIMEOUT",
         payload: { newScenario },
+        type: "TIMEOUT",
       };
 
       const newState = gameReducer(state, action);
@@ -357,8 +357,8 @@ describe("gameReducer", () => {
       });
       const newScenario = createTestScenario(20, 15);
       const action: GameAction = {
-        type: "TIMEOUT",
         payload: { newScenario },
+        type: "TIMEOUT",
       };
 
       const newState = gameReducer(state, action);
@@ -388,8 +388,8 @@ describe("gameReducer", () => {
 
     it("does not change other state properties", () => {
       const state = createTestState({
-        successes: 3,
         fails: 2,
+        successes: 3,
         timerDuration: 15,
       });
       const action: GameAction = { type: "TICK" };
@@ -407,8 +407,8 @@ describe("gameReducer", () => {
     it("updates timerDuration to new value", () => {
       const state = createTestState({ timerDuration: 15 });
       const action: GameAction = {
-        type: "RESET_TIMER",
         payload: { duration: 30 },
+        type: "RESET_TIMER",
       };
 
       const newState = gameReducer(state, action);
@@ -419,8 +419,8 @@ describe("gameReducer", () => {
     it("updates timeRemaining to new duration", () => {
       const state = createTestState({ timeRemaining: 5 });
       const action: GameAction = {
-        type: "RESET_TIMER",
         payload: { duration: 10 },
+        type: "RESET_TIMER",
       };
 
       const newState = gameReducer(state, action);
@@ -429,10 +429,10 @@ describe("gameReducer", () => {
     });
 
     it("does not change scores", () => {
-      const state = createTestState({ successes: 4, fails: 2 });
+      const state = createTestState({ fails: 2, successes: 4 });
       const action: GameAction = {
-        type: "RESET_TIMER",
         payload: { duration: 30 },
+        type: "RESET_TIMER",
       };
 
       const newState = gameReducer(state, action);
@@ -445,8 +445,8 @@ describe("gameReducer", () => {
       const state = createTestState();
       const originalScenario = state.scenario;
       const action: GameAction = {
-        type: "RESET_TIMER",
         payload: { duration: 30 },
+        type: "RESET_TIMER",
       };
 
       const newState = gameReducer(state, action);
@@ -457,10 +457,10 @@ describe("gameReducer", () => {
 
   describe("RESET_GAME action", () => {
     it("resets scores to zero", () => {
-      const state = createTestState({ successes: 5, fails: 3 });
+      const state = createTestState({ fails: 3, successes: 5 });
       const action: GameAction = {
-        type: "RESET_GAME",
         payload: { stackOrder: mnemonica.order, timerDuration: 15 },
+        type: "RESET_GAME",
       };
 
       const newState = gameReducer(state, action);
@@ -472,8 +472,8 @@ describe("gameReducer", () => {
     it("generates a new scenario from the provided stack", () => {
       const state = createTestState();
       const action: GameAction = {
-        type: "RESET_GAME",
         payload: { stackOrder: mnemonica.order, timerDuration: 15 },
+        type: "RESET_GAME",
       };
 
       const newState = gameReducer(state, action);
@@ -487,8 +487,8 @@ describe("gameReducer", () => {
     it("resets timeRemaining to the provided timerDuration", () => {
       const state = createTestState({ timeRemaining: 3, timerDuration: 15 });
       const action: GameAction = {
-        type: "RESET_GAME",
         payload: { stackOrder: mnemonica.order, timerDuration: 30 },
+        type: "RESET_GAME",
       };
 
       const newState = gameReducer(state, action);
@@ -503,8 +503,8 @@ describe("gameReducer", () => {
       const state = createTestState();
       const newScenario = createTestScenario(20, 15);
       const action: GameAction = {
-        type: "CORRECT_ANSWER",
         payload: { newScenario },
+        type: "CORRECT_ANSWER",
       };
 
       const newState = gameReducer(state, action);
@@ -692,8 +692,8 @@ describe("useAcaanGame hook", () => {
     it("resets score and draws scenario from the new stack", () => {
       type Props = { stack: Stack; name: string };
       const initialProps: Props = {
-        stack: mnemonica.order,
         name: "Mnemonica",
+        stack: mnemonica.order,
       };
       const { result, rerender } = renderHook(
         ({ stack, name }: Props) =>
@@ -706,9 +706,9 @@ describe("useAcaanGame hook", () => {
       });
       expect(result.current.score.fails).toBe(1);
 
-      rerender({ stack: aronson.order, name: "Aronson" });
+      rerender({ name: "Aronson", stack: aronson.order });
 
-      expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+      expect(result.current.score).toEqual({ fails: 0, successes: 0 });
       const { card, cardPosition } = result.current.scenario;
       expect(aronson.order[cardPosition - 1]).toBe(card);
     });

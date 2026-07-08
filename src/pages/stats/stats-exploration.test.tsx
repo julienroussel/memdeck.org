@@ -24,19 +24,19 @@ vi.mock("../../hooks/use-feature-discovery", () => ({
 // the session is untimed, so nothing else flips.)
 const numberOnlyHistory = [
   makeSessionRecord({
+    flashcardMode: "numberonly",
     id: "s1",
     mode: "flashcard",
-    flashcardMode: "numberonly",
   }),
 ];
 
 beforeEach(() => {
   mockAccept.mockReset();
   hookValue = {
-    nextSuggestion: null,
     accept: mockAccept,
     dismiss: vi.fn(),
     exploredCount: 0,
+    nextSuggestion: null,
     totalCount: 13,
   };
 });
@@ -90,9 +90,9 @@ describe("StatsExploration", () => {
       <StatsExploration
         history={[
           makeSessionRecord({
+            flashcardMode: "cardonly",
             id: "s1",
             mode: "flashcard",
-            flashcardMode: "cardonly",
           }),
         ]}
       />
@@ -110,15 +110,15 @@ describe("StatsExploration", () => {
       <StatsExploration
         history={[
           makeSessionRecord({
+            flashcardMode: "numberonly",
             id: "f1",
             mode: "flashcard",
-            flashcardMode: "numberonly",
             timed: true,
           }),
           makeSessionRecord({
+            flashcardMode: "neighbor",
             id: "f2",
             mode: "flashcard",
-            flashcardMode: "neighbor",
           }),
           makeSessionRecord({
             id: "s1",
@@ -132,10 +132,10 @@ describe("StatsExploration", () => {
             spotCheckMode: "moved",
           }),
           makeSessionRecord({
+            distanceConvention: "signed",
+            distanceMode: "apply",
             id: "d1",
             mode: "distance",
-            distanceMode: "apply",
-            distanceConvention: "signed",
             timed: true,
           }),
           makeSessionRecord({ id: "a1", mode: "acaan", timed: true }),

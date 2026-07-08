@@ -5,13 +5,13 @@ import type { TimerSettings } from "../types/timer";
 import { TimerSettingsControl } from "./timer-settings-control";
 
 const defaultDisabledSettings: TimerSettings = {
-  enabled: false,
   duration: 30,
+  enabled: false,
 };
 
 const defaultEnabledSettings: TimerSettings = {
-  enabled: true,
   duration: 30,
+  enabled: true,
 };
 
 describe("TimerSettingsControl", () => {
@@ -112,7 +112,7 @@ describe("TimerSettingsControl", () => {
     });
 
     it("reflects the currently selected duration of 15 seconds", () => {
-      const settings: TimerSettings = { enabled: true, duration: 15 };
+      const settings: TimerSettings = { duration: 15, enabled: true };
 
       render(
         <TimerSettingsControl
@@ -127,7 +127,7 @@ describe("TimerSettingsControl", () => {
     });
 
     it("reflects the currently selected duration of 10 seconds", () => {
-      const settings: TimerSettings = { enabled: true, duration: 10 };
+      const settings: TimerSettings = { duration: 10, enabled: true };
 
       render(
         <TimerSettingsControl
@@ -142,7 +142,7 @@ describe("TimerSettingsControl", () => {
     });
 
     it("reflects the currently selected duration of 30 seconds", () => {
-      const settings: TimerSettings = { enabled: true, duration: 30 };
+      const settings: TimerSettings = { duration: 30, enabled: true };
 
       render(
         <TimerSettingsControl
@@ -214,7 +214,7 @@ describe("TimerSettingsControl", () => {
     it("calls onDurationChange with 10 when the 10s option is selected", () => {
       const handleDurationChange = vi.fn();
       // Start with 15s selected so clicking 10s fires the change event
-      const settings: TimerSettings = { enabled: true, duration: 15 };
+      const settings: TimerSettings = { duration: 15, enabled: true };
 
       render(
         <TimerSettingsControl
@@ -233,7 +233,7 @@ describe("TimerSettingsControl", () => {
     it("calls onDurationChange with 15 when the 15s option is selected", () => {
       const handleDurationChange = vi.fn();
       // Start with 30s selected so clicking 15s fires the change event
-      const settings: TimerSettings = { enabled: true, duration: 30 };
+      const settings: TimerSettings = { duration: 30, enabled: true };
 
       render(
         <TimerSettingsControl
@@ -252,7 +252,7 @@ describe("TimerSettingsControl", () => {
     it("calls onDurationChange with 30 when the 30s option is selected", () => {
       const handleDurationChange = vi.fn();
       // Start with 10s selected so clicking 30s fires the change event
-      const settings: TimerSettings = { enabled: true, duration: 10 };
+      const settings: TimerSettings = { duration: 10, enabled: true };
 
       render(
         <TimerSettingsControl
@@ -270,7 +270,7 @@ describe("TimerSettingsControl", () => {
 
     it("does not call onDurationChange when the already-selected option is re-clicked", () => {
       const handleDurationChange = vi.fn();
-      const settings: TimerSettings = { enabled: true, duration: 30 };
+      const settings: TimerSettings = { duration: 30, enabled: true };
 
       render(
         <TimerSettingsControl

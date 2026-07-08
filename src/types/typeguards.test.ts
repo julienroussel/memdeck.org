@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { stacks } from "./stacks";
 import { cardItems, isPlayingCard, numberItems } from "./typeguards";
 
-const testCard = stacks.mnemonica.order[0];
+const [testCard] = stacks.mnemonica.order;
 
 describe("cardItems", () => {
   it("returns object with type 'cards' and data", () => {
@@ -87,27 +87,27 @@ describe("isPlayingCard", () => {
   });
 
   it("returns false for objects missing suit", () => {
-    const invalid = { rank: "A", image: "test.svg" };
+    const invalid = { image: "test.svg", rank: "A" };
     expect(isPlayingCard(invalid as never)).toBe(false);
   });
 
   it("returns false for objects missing rank", () => {
-    const invalid = { suit: "hearts", image: "test.svg" };
+    const invalid = { image: "test.svg", suit: "hearts" };
     expect(isPlayingCard(invalid as never)).toBe(false);
   });
 
   it("returns false for objects missing image", () => {
-    const invalid = { suit: "hearts", rank: "A" };
+    const invalid = { rank: "A", suit: "hearts" };
     expect(isPlayingCard(invalid as never)).toBe(false);
   });
 
   it("returns true for objects with all required properties", () => {
-    const valid = { suit: "hearts", rank: "A", image: "test.svg" };
+    const valid = { image: "test.svg", rank: "A", suit: "hearts" };
     expect(isPlayingCard(valid as never)).toBe(true);
   });
 
   it("returns true for objects with extra properties", () => {
-    const valid = { suit: "hearts", rank: "A", image: "test.svg", extra: true };
+    const valid = { extra: true, image: "test.svg", rank: "A", suit: "hearts" };
     expect(isPlayingCard(valid as never)).toBe(true);
   });
 

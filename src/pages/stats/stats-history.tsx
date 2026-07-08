@@ -20,23 +20,23 @@ type StatsHistoryProps = {
 export const formatDate = (iso: string): string => {
   const date = new Date(iso);
   return date.toLocaleDateString(undefined, {
-    month: "short",
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+    month: "short",
   });
 };
 
 const SPOT_CHECK_SUB_MODE_KEYS = {
   missing: "stats.subModeMissing",
-  swapped: "stats.subModeSwapped",
   moved: "stats.subModeMoved",
+  swapped: "stats.subModeSwapped",
 } as const satisfies Record<SpotCheckMode, StatsI18nKey>;
 
 const DISTANCE_SUB_MODE_KEYS = {
-  compute: "stats.subModeCompute",
   apply: "stats.subModeApply",
   both: "stats.subModeBoth",
+  compute: "stats.subModeCompute",
 } as const satisfies Record<DistanceMode, StatsI18nKey>;
 
 const formatModeLabel = (

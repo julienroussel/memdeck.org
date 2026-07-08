@@ -17,8 +17,8 @@ const breadcrumbSchema = buildBreadcrumbSchema("Stats", ROUTES.stats);
 export const Stats = () => {
   const { t } = useTranslation();
   useDocumentMeta({
-    title: t("stats.pageTitle"),
     description: t("stats.pageDescription"),
+    title: t("stats.pageTitle"),
   });
   const { history, historyStatus } = useSessionHistory();
   const { getGlobalStats, statsStatus } = useAllTimeStats();
@@ -39,7 +39,7 @@ export const Stats = () => {
         {t("stats.seoIntro")}
       </span>
 
-      {hasCorruption && <StatsCorruptionAlert />}
+      {hasCorruption ? <StatsCorruptionAlert /> : null}
 
       {!(hasData || hasCorruption) && (
         <Text c="dimmed" ta="center">

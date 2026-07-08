@@ -1,65 +1,65 @@
 export const AceOfClubs = {
-  suit: "clubs",
-  rank: "A",
   image: "/cards/clubs_ace.svg",
+  rank: "A",
+  suit: "clubs",
 } as const;
 export const TwoOfClubs = {
-  suit: "clubs",
-  rank: "2",
   image: "/cards/clubs_2.svg",
+  rank: "2",
+  suit: "clubs",
 } as const;
 export const ThreeOfClubs = {
-  suit: "clubs",
-  rank: "3",
   image: "/cards/clubs_3.svg",
+  rank: "3",
+  suit: "clubs",
 } as const;
 export const FourOfClubs = {
-  suit: "clubs",
-  rank: "4",
   image: "/cards/clubs_4.svg",
+  rank: "4",
+  suit: "clubs",
 } as const;
 export const FiveOfClubs = {
-  suit: "clubs",
-  rank: "5",
   image: "/cards/clubs_5.svg",
+  rank: "5",
+  suit: "clubs",
 } as const;
 export const SixOfClubs = {
-  suit: "clubs",
-  rank: "6",
   image: "/cards/clubs_6.svg",
+  rank: "6",
+  suit: "clubs",
 } as const;
 export const SevenOfClubs = {
-  suit: "clubs",
-  rank: "7",
   image: "/cards/clubs_7.svg",
+  rank: "7",
+  suit: "clubs",
 } as const;
 export const EightOfClubs = {
-  suit: "clubs",
-  rank: "8",
   image: "/cards/clubs_8.svg",
+  rank: "8",
+  suit: "clubs",
 } as const;
 export const NineOfClubs = {
-  suit: "clubs",
-  rank: "9",
   image: "/cards/clubs_9.svg",
+  rank: "9",
+  suit: "clubs",
 } as const;
 export const TenOfClubs = {
-  suit: "clubs",
-  rank: "10",
   image: "/cards/clubs_10.svg",
+  rank: "10",
+  suit: "clubs",
 } as const;
 export const JackOfClubs = {
-  suit: "clubs",
-  rank: "J",
   image: "/cards/clubs_jack.svg",
+  rank: "J",
+  suit: "clubs",
 } as const;
 export const QueenOfClubs = {
-  suit: "clubs",
-  rank: "Q",
   image: "/cards/clubs_queen.svg",
+  rank: "Q",
+  suit: "clubs",
 } as const;
 export const KingOfClubs = {
-  suit: "clubs",
-  rank: "K",
   image: "/cards/clubs_king.svg",
+  rank: "K",
+  suit: "clubs",
 } as const;

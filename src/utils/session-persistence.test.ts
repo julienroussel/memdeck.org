@@ -58,19 +58,19 @@ Object.defineProperty(globalThis, "localStorage", {
 
 const makeSession = (overrides: Parameters<typeof makeActiveSession>[0] = {}) =>
   makeActiveSession({
-    id: "test-session-id",
-    config: { type: "structured", totalQuestions: 10 },
-    successes: 8,
-    fails: 2,
-    questionsCompleted: 10,
-    currentStreak: 3,
     bestStreak: 5,
+    config: { totalQuestions: 10, type: "structured" },
+    currentStreak: 3,
+    fails: 2,
+    id: "test-session-id",
+    questionsCompleted: 10,
+    successes: 8,
     ...overrides,
   });
 
 const testStackLimits = {
-  start: createDeckPosition(5),
   end: createDeckPosition(20),
+  start: createDeckPosition(5),
 };
 
 beforeEach(() => {
@@ -101,7 +101,7 @@ describe("buildSessionRecord", () => {
   });
 
   it("calculates accuracy of 0 when no attempts", () => {
-    const session = makeSession({ successes: 0, fails: 0 });
+    const session = makeSession({ fails: 0, successes: 0 });
     const record = buildSessionRecord(session);
     expect(record.accuracy).toBe(0);
   });
@@ -109,7 +109,7 @@ describe("buildSessionRecord", () => {
   it("propagates stackLimits when present on the active session", () => {
     const session = makeSession({ stackLimits: testStackLimits });
     const record = buildSessionRecord(session);
-    expect(record.stackLimits).toEqual({ start: 5, end: 20 });
+    expect(record.stackLimits).toEqual({ end: 20, start: 5 });
   });
 
   it("leaves stackLimits undefined when not present on the active session", () => {
@@ -151,7 +151,7 @@ describe("computeSessionSummary", () => {
   const emptyStats: AllTimeStats = {};
 
   it("returns perfect encouragement key for 100% accuracy", () => {
-    const record = makeRecord({ accuracy: 1, successes: 10, fails: 0 });
+    const record = makeRecord({ accuracy: 1, fails: 0, successes: 10 });
     const summary = computeSessionSummary(record, [], emptyStats);
     expect(summary.encouragement).toEqual({
       key: "session.encouragement.perfect",
@@ -169,11 +169,11 @@ describe("computeSessionSummary", () => {
 
   it("returns improvement key when accuracy exceeds rolling average", () => {
     const history = [
-      makeRecord({ id: "old-1", accuracy: 0.5 }),
-      makeRecord({ id: "old-2", accuracy: 0.6 }),
+      makeRecord({ accuracy: 0.5, id: "old-1" }),
+      makeRecord({ accuracy: 0.6, id: "old-2" }),
     ];
 
-    const record = makeRecord({ id: "new", accuracy: 0.79, bestStreak: 0 });
+    const record = makeRecord({ accuracy: 0.79, bestStreak: 0, id: "new" });
     const summary = computeSessionSummary(record, history, emptyStats);
     expect(summary.encouragement).toEqual({
       key: "session.encouragement.improvement",
@@ -182,22 +182,22 @@ describe("computeSessionSummary", () => {
   });
 
   it("returns new best streak key with params when applicable", () => {
-    const history = [makeRecord({ id: "old-1", accuracy: 0.9 })];
+    const history = [makeRecord({ accuracy: 0.9, id: "old-1" })];
 
     const allTimeStats: AllTimeStats = {
       "flashcard:mnemonica": {
-        totalSessions: 1,
-        totalQuestions: 10,
-        totalSuccesses: 9,
-        totalFails: 1,
         globalBestStreak: 5,
+        totalFails: 1,
+        totalQuestions: 10,
+        totalSessions: 1,
+        totalSuccesses: 9,
       },
     };
 
     const record = makeRecord({
-      id: "new",
       accuracy: 0.7,
       bestStreak: 6,
+      id: "new",
     });
     const summary = computeSessionSummary(record, history, allTimeStats);
     expect(summary.encouragement).toEqual({
@@ -208,34 +208,34 @@ describe("computeSessionSummary", () => {
   });
 
   it("does not treat tying the global best streak as a new best", () => {
-    const history = [makeRecord({ id: "old-1", accuracy: 0.9 })];
+    const history = [makeRecord({ accuracy: 0.9, id: "old-1" })];
 
     const allTimeStats: AllTimeStats = {
       "flashcard:mnemonica": {
-        totalSessions: 1,
-        totalQuestions: 10,
-        totalSuccesses: 9,
-        totalFails: 1,
         globalBestStreak: 5,
+        totalFails: 1,
+        totalQuestions: 10,
+        totalSessions: 1,
+        totalSuccesses: 9,
       },
     };
 
     const record = makeRecord({
-      id: "new",
       accuracy: 0.7,
       bestStreak: 5,
+      id: "new",
     });
     const summary = computeSessionSummary(record, history, allTimeStats);
     expect(summary.isNewGlobalBestStreak).toBe(false);
   });
 
   it("returns keepGoing key for low accuracy below 50%", () => {
-    const history = [makeRecord({ id: "old-1", accuracy: 0.4 })];
+    const history = [makeRecord({ accuracy: 0.4, id: "old-1" })];
 
     const record = makeRecord({
-      id: "new",
       accuracy: 0.3,
       bestStreak: 0,
+      id: "new",
     });
     const summary = computeSessionSummary(record, history, emptyStats);
     expect(summary.encouragement).toEqual({
@@ -244,8 +244,8 @@ describe("computeSessionSummary", () => {
   });
 
   it("returns consistent key for high accuracy that does not exceed the rolling average", () => {
-    const history = [makeRecord({ id: "old-1", accuracy: 0.9 })];
-    const record = makeRecord({ id: "new", accuracy: 0.8, bestStreak: 0 });
+    const history = [makeRecord({ accuracy: 0.9, id: "old-1" })];
+    const record = makeRecord({ accuracy: 0.8, bestStreak: 0, id: "new" });
     const summary = computeSessionSummary(record, history, emptyStats);
     expect(summary.encouragement).toEqual({
       key: "session.encouragement.consistent",
@@ -253,8 +253,8 @@ describe("computeSessionSummary", () => {
   });
 
   it("returns progress key for moderate accuracy between 50-80% that does not exceed the rolling average", () => {
-    const history = [makeRecord({ id: "old-1", accuracy: 0.7 })];
-    const record = makeRecord({ id: "new", accuracy: 0.5, bestStreak: 0 });
+    const history = [makeRecord({ accuracy: 0.7, id: "old-1" })];
+    const record = makeRecord({ accuracy: 0.5, bestStreak: 0, id: "new" });
     const summary = computeSessionSummary(record, history, emptyStats);
     expect(summary.encouragement).toEqual({
       key: "session.encouragement.progress",
@@ -263,11 +263,11 @@ describe("computeSessionSummary", () => {
 
   it("includes previousAverageAccuracy when history exists", () => {
     const history = [
-      makeRecord({ id: "old-1", accuracy: 0.6 }),
-      makeRecord({ id: "old-2", accuracy: 0.8 }),
+      makeRecord({ accuracy: 0.6, id: "old-1" }),
+      makeRecord({ accuracy: 0.8, id: "old-2" }),
     ];
 
-    const record = makeRecord({ id: "new", accuracy: 0.5, bestStreak: 0 });
+    const record = makeRecord({ accuracy: 0.5, bestStreak: 0, id: "new" });
     const summary = computeSessionSummary(record, history, emptyStats);
     expect(summary.previousAverageAccuracy).toBe(0.7);
   });
@@ -291,8 +291,8 @@ describe("finalizeSession", () => {
     expect(summary.record.bestStreak).toBe(5);
 
     expect(eventBus.emit.SESSION_COMPLETED).toHaveBeenCalledWith({
-      mode: "flashcard",
       accuracy: 0.8,
+      mode: "flashcard",
       questionsCompleted: 10,
       saved: true,
     });
@@ -328,21 +328,21 @@ describe("finalizeSession", () => {
     // Seed all-time stats with a globalBestStreak of 3
     const existingStats: AllTimeStats = {
       "flashcard:mnemonica": {
-        totalSessions: 1,
-        totalQuestions: 10,
-        totalSuccesses: 8,
-        totalFails: 2,
         globalBestStreak: 3,
+        totalFails: 2,
+        totalQuestions: 10,
+        totalSessions: 1,
+        totalSuccesses: 8,
       },
     };
     storage.set(ALL_TIME_STATS_LSK, JSON.stringify(existingStats));
 
     // Seed history so there's a previous average accuracy
-    const oldRecord = makeRecord({ id: "old", accuracy: 0.5, bestStreak: 3 });
+    const oldRecord = makeRecord({ accuracy: 0.5, bestStreak: 3, id: "old" });
     storage.set(SESSION_HISTORY_LSK, JSON.stringify([oldRecord]));
 
     // Finalize a session with bestStreak=5, which exceeds the old globalBestStreak of 3
-    const session = makeSession({ id: "new-session", bestStreak: 5 });
+    const session = makeSession({ bestStreak: 5, id: "new-session" });
     const result = finalizeSession(session);
 
     if (!result.ok) {
@@ -360,7 +360,7 @@ describe("finalizeSession", () => {
   });
 
   it("returns greatStart encouragement for first session with no history", () => {
-    const session = makeSession({ successes: 7, fails: 3 });
+    const session = makeSession({ fails: 3, successes: 7 });
     const result = finalizeSession(session);
 
     if (!result.ok) {
@@ -426,7 +426,7 @@ describe("finalizeSession", () => {
     let callCount = 0;
     const originalSetItem = mockLocalStorage.setItem;
     mockLocalStorage.setItem = (key: string, value: string) => {
-      callCount++;
+      callCount += 1;
       if (callCount === 1) {
         // First setItem: history write — let it through.
         originalSetItem.call(mockLocalStorage, key, value);
@@ -461,7 +461,7 @@ describe("finalizeSession", () => {
     const stringifySpy = vi
       .spyOn(JSON, "stringify")
       .mockImplementation((value, replacer, space) => {
-        callCount++;
+        callCount += 1;
         if (callCount === failingCall) {
           throw new TypeError("circular reference");
         }
@@ -483,7 +483,7 @@ describe("finalizeSession", () => {
     // single new record.
     storage.set(
       SESSION_HISTORY_LSK,
-      JSON.stringify([{ totally: "not", a: "session", record: true }])
+      JSON.stringify([{ a: "session", record: true, totally: "not" }])
     );
 
     const session = makeSession();
@@ -494,7 +494,7 @@ describe("finalizeSession", () => {
     // Importantly, the history was NOT overwritten — the corrupt blob is still
     // present so the user can attempt manual recovery (export, repair, etc.).
     expect(storage.get(SESSION_HISTORY_LSK)).toBe(
-      JSON.stringify([{ totally: "not", a: "session", record: true }])
+      JSON.stringify([{ a: "session", record: true, totally: "not" }])
     );
     // Stats must also be untouched.
     expect(storage.get(ALL_TIME_STATS_LSK)).toBeUndefined();
@@ -531,7 +531,7 @@ describe("finalizeSession", () => {
       // Build the same record finalizeSession would produce. Date fields are
       // overridden inside buildSessionRecord, but the dedupe check only
       // compares ids, so the seed shape just needs the id to match.
-      ...makeRecord({ id: session.id, accuracy: 0.8 }),
+      ...makeRecord({ accuracy: 0.8, id: session.id }),
     };
     storage.set(SESSION_HISTORY_LSK, JSON.stringify([record]));
     // Stats intentionally absent — this is the "corrupt" inconsistency.

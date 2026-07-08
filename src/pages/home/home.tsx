@@ -8,8 +8,8 @@ import { HomeWithStack } from "./home-with-stack";
 export const Home = () => {
   const { t } = useTranslation();
   useDocumentMeta({
-    title: t("home.pageTitle"),
     description: t("home.pageDescription"),
+    title: t("home.pageTitle"),
   });
   useCardImagePreload();
   const { stackKey, stackName } = useSelectedStack();

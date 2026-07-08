@@ -197,10 +197,10 @@ export const useFeatureDiscovery = (
   );
 
   return {
-    nextSuggestion,
     accept,
     dismiss,
     exploredCount,
+    nextSuggestion,
     totalCount: TOTAL_SUGGESTIONS,
   };
 };

@@ -60,10 +60,10 @@ export const useSpotCheckSettings = (): UseSpotCheckSettingsResult => {
   );
 
   return {
-    mode,
-    timerSettings,
-    setTimerDuration,
     handleModeChange,
     handleTimerEnabledChange,
+    mode,
+    setTimerDuration,
+    timerSettings,
   };
 };

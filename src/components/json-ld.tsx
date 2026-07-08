@@ -57,15 +57,15 @@ export const buildBreadcrumbSchema = (
     itemListElement: [
       {
         "@type": "ListItem",
-        position: 1,
-        name: "Home",
         item: `${SITE_URL}/`,
+        name: "Home",
+        position: 1,
       },
       {
         "@type": "ListItem",
-        position: 2,
-        name,
         item: `${SITE_URL}${route}`,
+        name,
+        position: 2,
       },
     ],
   }) as const;

@@ -116,8 +116,8 @@ export const generateNeighborCardAndChoices = (
     generateNeighborChoices(stackOrder, answerCard, questionCard, limits)
   );
   return {
-    card: questionCard,
     answerCard,
+    card: questionCard,
     choices,
     resolvedDirection: resolved,
   };
@@ -141,26 +141,26 @@ export const createInitialState = (config: InitialStateConfig): GameState => {
         limits
       );
     return {
-      successes: 0,
-      fails: 0,
-      card,
       answerCard,
+      card,
       choices,
       display: "card",
+      fails: 0,
       resolvedDirection,
+      successes: 0,
       timeRemaining: timerDuration,
       timerDuration,
     };
   }
   const { card, choices } = generateNewCardAndChoices(stackOrder, limits);
   return {
-    successes: 0,
-    fails: 0,
-    card,
     answerCard: card,
+    card,
     choices,
     display: "card",
+    fails: 0,
     resolvedDirection: null,
+    successes: 0,
     timeRemaining: timerDuration,
     timerDuration,
   };
@@ -176,12 +176,12 @@ export const gameReducer = (
     case "CORRECT_ANSWER":
       return {
         ...state,
-        successes: state.successes + 1,
-        card: action.payload.newCard,
         answerCard: action.payload.newAnswerCard,
+        card: action.payload.newCard,
         choices: action.payload.newChoices,
         display: action.payload.newDisplay,
         resolvedDirection: action.payload.newResolvedDirection,
+        successes: state.successes + 1,
         timeRemaining: state.timerDuration,
       };
     // Note: WRONG_ANSWER intentionally does NOT reset the timer or advance to next card.
@@ -195,11 +195,11 @@ export const gameReducer = (
     case "REVEAL_ANSWER":
       return {
         ...state,
-        fails: state.fails + 1,
-        card: action.payload.newCard,
         answerCard: action.payload.newAnswerCard,
+        card: action.payload.newCard,
         choices: action.payload.newChoices,
         display: action.payload.newDisplay,
+        fails: state.fails + 1,
         resolvedDirection: action.payload.newResolvedDirection,
         timeRemaining: state.timerDuration,
       };

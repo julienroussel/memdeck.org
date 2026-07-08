@@ -38,13 +38,13 @@ const makeChoices = (): PlayingCardPosition[] => [
 ];
 
 const makeState = (overrides: Partial<GameState> = {}): GameState => ({
-  successes: 0,
-  fails: 0,
-  card: cardAtPos1,
   answerCard: cardAtPos1,
+  card: cardAtPos1,
   choices: makeChoices(),
   display: "card",
+  fails: 0,
   resolvedDirection: null,
+  successes: 0,
   timeRemaining: 30,
   timerDuration: 30,
   ...overrides,
@@ -139,10 +139,10 @@ describe("generateNewCardAndChoices", () => {
 
   it("constrains card and choices to the specified partial range", () => {
     const partialRange = {
-      start: createDeckPosition(5),
       end: createDeckPosition(15),
+      start: createDeckPosition(5),
     };
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 20; i += 1) {
       const { card, choices } = generateNewCardAndChoices(
         stackOrder,
         partialRange
@@ -199,7 +199,7 @@ describe("generateNeighborCardAndChoices", () => {
 
   it("resolves 'random' direction to 'before' or 'after'", () => {
     const directions = new Set<string>();
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 50; i += 1) {
       const result = generateNeighborCardAndChoices(
         stackOrder,
         "random",
@@ -215,7 +215,7 @@ describe("generateNeighborCardAndChoices", () => {
   });
 
   it("includes the answer card in choices but not the question card", () => {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 10; i += 1) {
       const result = generateNeighborCardAndChoices(
         stackOrder,
         "before",
@@ -240,7 +240,7 @@ describe("generateNeighborCardAndChoices", () => {
 
   it("shuffles choices so the answer is not always first", () => {
     const answerPositions = new Set<number>();
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 50; i += 1) {
       const result = generateNeighborCardAndChoices(
         stackOrder,
         "before",
@@ -259,10 +259,10 @@ describe("generateNeighborCardAndChoices", () => {
 
   it("constrains question and answer cards to the specified partial range", () => {
     const partialRange = {
-      start: createDeckPosition(5),
       end: createDeckPosition(15),
+      start: createDeckPosition(5),
     };
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 20; i += 1) {
       const result = generateNeighborCardAndChoices(
         stackOrder,
         "after",
@@ -374,10 +374,10 @@ describe("createInitialState", () => {
 
   it("generates a neighbor question when flashcardMode is 'neighbor'", () => {
     const state = createInitialState({
-      stackOrder,
-      timerDuration: 30,
       flashcardMode: "neighbor",
       neighborDirection: "before",
+      stackOrder,
+      timerDuration: 30,
     });
     expect(state.resolvedDirection).toBe("before");
     expect(state.answerCard).not.toBe(state.card);
@@ -385,29 +385,29 @@ describe("createInitialState", () => {
 
   it("resolves direction for neighbor mode with 'after'", () => {
     const state = createInitialState({
-      stackOrder,
-      timerDuration: 30,
       flashcardMode: "neighbor",
       neighborDirection: "after",
+      stackOrder,
+      timerDuration: 30,
     });
     expect(state.resolvedDirection).toBe("after");
   });
 
   it("resolves random direction to 'before' or 'after' in neighbor mode", () => {
     const state = createInitialState({
-      stackOrder,
-      timerDuration: 30,
       flashcardMode: "neighbor",
       neighborDirection: "random",
+      stackOrder,
+      timerDuration: 30,
     });
     expect(["before", "after"]).toContain(state.resolvedDirection);
   });
 
   it("generates a standard question when flashcardMode is not 'neighbor'", () => {
     const state = createInitialState({
+      flashcardMode: "cardonly",
       stackOrder,
       timerDuration: 30,
-      flashcardMode: "cardonly",
     });
     expect(state.resolvedDirection).toBeNull();
     expect(state.answerCard).toBe(state.card);
@@ -421,14 +421,14 @@ describe("createInitialState", () => {
 
   it("constrains initial state to partial range limits", () => {
     const partialRange = {
-      start: createDeckPosition(5),
       end: createDeckPosition(15),
+      start: createDeckPosition(5),
     };
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 20; i += 1) {
       const state = createInitialState({
+        limits: partialRange,
         stackOrder,
         timerDuration: 30,
-        limits: partialRange,
       });
       expect(state.card.index).toBeGreaterThanOrEqual(5);
       expect(state.card.index).toBeLessThanOrEqual(15);
@@ -448,14 +448,14 @@ describe("gameReducer", () => {
     it("increments successes by 1", () => {
       const state = makeState({ successes: 3 });
       const next = gameReducer(state, {
-        type: "CORRECT_ANSWER",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: null,
         },
+        type: "CORRECT_ANSWER",
       });
       expect(next.successes).toBe(4);
     });
@@ -463,14 +463,14 @@ describe("gameReducer", () => {
     it("does not change fails", () => {
       const state = makeState({ fails: 2 });
       const next = gameReducer(state, {
-        type: "CORRECT_ANSWER",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: null,
         },
+        type: "CORRECT_ANSWER",
       });
       expect(next.fails).toBe(2);
     });
@@ -478,14 +478,14 @@ describe("gameReducer", () => {
     it("replaces card with the new card from payload", () => {
       const state = makeState();
       const next = gameReducer(state, {
-        type: "CORRECT_ANSWER",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: null,
         },
+        type: "CORRECT_ANSWER",
       });
       expect(next.card).toBe(newCard);
       expect(next.answerCard).toBe(newCard);
@@ -495,14 +495,14 @@ describe("gameReducer", () => {
     it("replaces choices with the new choices from payload", () => {
       const state = makeState();
       const next = gameReducer(state, {
-        type: "CORRECT_ANSWER",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "index",
           newResolvedDirection: null,
         },
+        type: "CORRECT_ANSWER",
       });
       expect(next.choices).toBe(newChoices);
     });
@@ -510,14 +510,14 @@ describe("gameReducer", () => {
     it("sets display to the new display mode from payload", () => {
       const state = makeState({ display: "card" });
       const next = gameReducer(state, {
-        type: "CORRECT_ANSWER",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "index",
           newResolvedDirection: null,
         },
+        type: "CORRECT_ANSWER",
       });
       expect(next.display).toBe("index");
     });
@@ -525,14 +525,14 @@ describe("gameReducer", () => {
     it("resets timeRemaining to timerDuration", () => {
       const state = makeState({ timeRemaining: 5, timerDuration: 30 });
       const next = gameReducer(state, {
-        type: "CORRECT_ANSWER",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: null,
         },
+        type: "CORRECT_ANSWER",
       });
       expect(next.timeRemaining).toBe(30);
     });
@@ -541,14 +541,14 @@ describe("gameReducer", () => {
       const newAnswerCard = makeCardPosition(AceOfHearts, 51);
       const state = makeState();
       const next = gameReducer(state, {
-        type: "CORRECT_ANSWER",
         payload: {
-          newCard,
           newAnswerCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: "before",
         },
+        type: "CORRECT_ANSWER",
       });
       expect(next.card).toBe(newCard);
       expect(next.answerCard).toBe(newAnswerCard);
@@ -571,7 +571,7 @@ describe("gameReducer", () => {
     });
 
     it("does not reset the timer or advance to the next card", () => {
-      const state = makeState({ timeRemaining: 15, card: cardAtPos1 });
+      const state = makeState({ card: cardAtPos1, timeRemaining: 15 });
       const next = gameReducer(state, { type: "WRONG_ANSWER" });
       expect(next.timeRemaining).toBe(15);
       expect(next.card).toBe(cardAtPos1);
@@ -597,14 +597,14 @@ describe("gameReducer", () => {
     it("increments fails by 1", () => {
       const state = makeState({ fails: 1 });
       const next = gameReducer(state, {
-        type: "TIMEOUT",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: null,
         },
+        type: "TIMEOUT",
       });
       expect(next.fails).toBe(2);
     });
@@ -612,14 +612,14 @@ describe("gameReducer", () => {
     it("replaces card with the new card from payload", () => {
       const state = makeState();
       const next = gameReducer(state, {
-        type: "TIMEOUT",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: null,
         },
+        type: "TIMEOUT",
       });
       expect(next.card).toBe(newCard);
       expect(next.answerCard).toBe(newCard);
@@ -629,14 +629,14 @@ describe("gameReducer", () => {
     it("replaces choices with the new choices from payload", () => {
       const state = makeState();
       const next = gameReducer(state, {
-        type: "TIMEOUT",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: null,
         },
+        type: "TIMEOUT",
       });
       expect(next.choices).toBe(newChoices);
     });
@@ -644,14 +644,14 @@ describe("gameReducer", () => {
     it("sets display to the new display from payload", () => {
       const state = makeState({ display: "card" });
       const next = gameReducer(state, {
-        type: "TIMEOUT",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "index",
           newResolvedDirection: null,
         },
+        type: "TIMEOUT",
       });
       expect(next.display).toBe("index");
     });
@@ -659,14 +659,14 @@ describe("gameReducer", () => {
     it("resets timeRemaining to timerDuration", () => {
       const state = makeState({ timeRemaining: 0, timerDuration: 30 });
       const next = gameReducer(state, {
-        type: "TIMEOUT",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: null,
         },
+        type: "TIMEOUT",
       });
       expect(next.timeRemaining).toBe(30);
     });
@@ -674,14 +674,14 @@ describe("gameReducer", () => {
     it("does not change successes", () => {
       const state = makeState({ successes: 4 });
       const next = gameReducer(state, {
-        type: "TIMEOUT",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: null,
         },
+        type: "TIMEOUT",
       });
       expect(next.successes).toBe(4);
     });
@@ -691,14 +691,14 @@ describe("gameReducer", () => {
     it("increments fails by 1", () => {
       const state = makeState({ fails: 0 });
       const next = gameReducer(state, {
-        type: "REVEAL_ANSWER",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: null,
         },
+        type: "REVEAL_ANSWER",
       });
       expect(next.fails).toBe(1);
     });
@@ -706,14 +706,14 @@ describe("gameReducer", () => {
     it("replaces card with the new card from payload", () => {
       const state = makeState();
       const next = gameReducer(state, {
-        type: "REVEAL_ANSWER",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: null,
         },
+        type: "REVEAL_ANSWER",
       });
       expect(next.card).toBe(newCard);
     });
@@ -721,14 +721,14 @@ describe("gameReducer", () => {
     it("resets timeRemaining to timerDuration", () => {
       const state = makeState({ timeRemaining: 12, timerDuration: 30 });
       const next = gameReducer(state, {
-        type: "REVEAL_ANSWER",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: null,
         },
+        type: "REVEAL_ANSWER",
       });
       expect(next.timeRemaining).toBe(30);
     });
@@ -736,14 +736,14 @@ describe("gameReducer", () => {
     it("does not change successes", () => {
       const state = makeState({ successes: 9 });
       const next = gameReducer(state, {
-        type: "REVEAL_ANSWER",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "card",
           newResolvedDirection: null,
         },
+        type: "REVEAL_ANSWER",
       });
       expect(next.successes).toBe(9);
     });
@@ -751,24 +751,24 @@ describe("gameReducer", () => {
     it("behaves identically to TIMEOUT (shared case)", () => {
       const state = makeState({ fails: 1, successes: 2, timeRemaining: 3 });
       const fromTimeout = gameReducer(state, {
-        type: "TIMEOUT",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "index",
           newResolvedDirection: null,
         },
+        type: "TIMEOUT",
       });
       const fromReveal = gameReducer(state, {
-        type: "REVEAL_ANSWER",
         payload: {
-          newCard,
           newAnswerCard: newCard,
+          newCard,
           newChoices,
           newDisplay: "index",
           newResolvedDirection: null,
         },
+        type: "REVEAL_ANSWER",
       });
       expect(fromReveal).toEqual(fromTimeout);
     });
@@ -796,11 +796,11 @@ describe("gameReducer", () => {
     it("does not change successes, fails, card, choices, or display", () => {
       const choices = makeChoices();
       const state = makeState({
-        successes: 3,
-        fails: 2,
-        timeRemaining: 5,
         choices,
         display: "index",
+        fails: 2,
+        successes: 3,
+        timeRemaining: 5,
       });
       const next = gameReducer(state, { type: "TICK" });
       expect(next.successes).toBe(3);
@@ -815,8 +815,8 @@ describe("gameReducer", () => {
     it("sets timeRemaining to the provided duration", () => {
       const state = makeState({ timeRemaining: 5 });
       const next = gameReducer(state, {
-        type: "RESET_TIMER",
         payload: { duration: 60 },
+        type: "RESET_TIMER",
       });
       expect(next.timeRemaining).toBe(60);
     });
@@ -824,18 +824,18 @@ describe("gameReducer", () => {
     it("updates timerDuration to the provided duration", () => {
       const state = makeState({ timerDuration: 30 });
       const next = gameReducer(state, {
-        type: "RESET_TIMER",
         payload: { duration: 45 },
+        type: "RESET_TIMER",
       });
       expect(next.timerDuration).toBe(45);
     });
 
     it("does not change successes, fails, card, choices, or display", () => {
       const choices = makeChoices();
-      const state = makeState({ successes: 4, fails: 1, choices });
+      const state = makeState({ choices, fails: 1, successes: 4 });
       const next = gameReducer(state, {
-        type: "RESET_TIMER",
         payload: { duration: 30 },
+        type: "RESET_TIMER",
       });
       expect(next.successes).toBe(4);
       expect(next.fails).toBe(1);
@@ -846,10 +846,10 @@ describe("gameReducer", () => {
 
   describe("RESET_GAME", () => {
     it("resets successes and fails to 0", () => {
-      const state = makeState({ successes: 10, fails: 5 });
+      const state = makeState({ fails: 5, successes: 10 });
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: { stackOrder, timerDuration: 30 },
+        type: "RESET_GAME",
       });
       expect(next.successes).toBe(0);
       expect(next.fails).toBe(0);
@@ -858,8 +858,8 @@ describe("gameReducer", () => {
     it("resets timeRemaining and timerDuration to the provided value", () => {
       const state = makeState({ timeRemaining: 5, timerDuration: 30 });
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: { stackOrder, timerDuration: 60 },
+        type: "RESET_GAME",
       });
       expect(next.timeRemaining).toBe(60);
       expect(next.timerDuration).toBe(60);
@@ -868,8 +868,8 @@ describe("gameReducer", () => {
     it("resets display to 'card'", () => {
       const state = makeState({ display: "index" });
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: { stackOrder, timerDuration: 30 },
+        type: "RESET_GAME",
       });
       expect(next.display).toBe("card");
     });
@@ -877,8 +877,8 @@ describe("gameReducer", () => {
     it("generates a new card with a valid deck position from the provided stack", () => {
       const state = makeState({ successes: 5 });
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: { stackOrder, timerDuration: 30 },
+        type: "RESET_GAME",
       });
       expect(next.card.index).toBeGreaterThanOrEqual(1);
       expect(next.card.index).toBeLessThanOrEqual(52);
@@ -888,18 +888,18 @@ describe("gameReducer", () => {
     it("generates a choices array from the provided stack", () => {
       const state = makeState();
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: { stackOrder, timerDuration: 30 },
+        type: "RESET_GAME",
       });
       expect(Array.isArray(next.choices)).toBe(true);
       expect(next.choices.length).toBeGreaterThan(0);
     });
 
     it("returns a complete fresh GameState", () => {
-      const state = makeState({ successes: 99, fails: 99, timeRemaining: 1 });
+      const state = makeState({ fails: 99, successes: 99, timeRemaining: 1 });
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: { stackOrder, timerDuration: 30 },
+        type: "RESET_GAME",
       });
       expect(next.successes).toBe(0);
       expect(next.fails).toBe(0);
@@ -909,15 +909,15 @@ describe("gameReducer", () => {
     });
 
     it("resets to neighbor mode when flashcardMode is 'neighbor' with neighborDirection", () => {
-      const state = makeState({ successes: 10, fails: 5 });
+      const state = makeState({ fails: 5, successes: 10 });
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: {
-          stackOrder,
-          timerDuration: 30,
           flashcardMode: "neighbor",
           neighborDirection: "before",
+          stackOrder,
+          timerDuration: 30,
         },
+        type: "RESET_GAME",
       });
 
       expect(next.successes).toBe(0);
@@ -929,13 +929,13 @@ describe("gameReducer", () => {
     it("sets resolvedDirection and produces a different answerCard than card in neighbor mode", () => {
       const state = makeState();
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: {
-          stackOrder,
-          timerDuration: 30,
           flashcardMode: "neighbor",
           neighborDirection: "after",
+          stackOrder,
+          timerDuration: 30,
         },
+        type: "RESET_GAME",
       });
 
       expect(next.resolvedDirection).toBe("after");
@@ -945,13 +945,13 @@ describe("gameReducer", () => {
     it("resolves random direction in neighbor mode RESET_GAME", () => {
       const state = makeState();
       const next = gameReducer(state, {
-        type: "RESET_GAME",
         payload: {
-          stackOrder,
-          timerDuration: 30,
           flashcardMode: "neighbor",
           neighborDirection: "random",
+          stackOrder,
+          timerDuration: 30,
         },
+        type: "RESET_GAME",
       });
 
       expect(["before", "after"]).toContain(next.resolvedDirection);
@@ -960,14 +960,14 @@ describe("gameReducer", () => {
 
     it("constrains card and choices to partial range limits", () => {
       const partialRange = {
-        start: createDeckPosition(5),
         end: createDeckPosition(15),
+        start: createDeckPosition(5),
       };
-      const state = makeState({ successes: 10, fails: 5 });
-      for (let i = 0; i < 20; i++) {
+      const state = makeState({ fails: 5, successes: 10 });
+      for (let i = 0; i < 20; i += 1) {
         const next = gameReducer(state, {
+          payload: { limits: partialRange, stackOrder, timerDuration: 30 },
           type: "RESET_GAME",
-          payload: { stackOrder, timerDuration: 30, limits: partialRange },
         });
         expect(next.card.index).toBeGreaterThanOrEqual(5);
         expect(next.card.index).toBeLessThanOrEqual(15);

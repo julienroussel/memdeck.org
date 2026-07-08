@@ -535,7 +535,7 @@ test.describe("ACAAN Training", () => {
     const failBadge = page.getByLabel(INCORRECT_ANSWERS_PATTERN);
 
     // Submit a few answers to build up score
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i += 1) {
       await cutDepthInput.fill(String(i));
       await checkButton.click();
       await expect(cutDepthInput).toHaveValue("");

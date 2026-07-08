@@ -9,17 +9,17 @@ import { deriveFeatureUsage } from "./feature-usage";
 type BaseFields = Omit<Extract<SessionRecord, { mode: "acaan" }>, "mode">;
 
 const base = (id: string): BaseFields => ({
-  id,
-  stackKey: "mnemonica",
-  config: { type: "open" },
-  startedAt: "2026-01-01T00:00:00.000Z",
-  endedAt: "2026-01-01T00:05:00.000Z",
-  durationSeconds: 300,
-  successes: 8,
-  fails: 2,
-  questionsCompleted: 10,
   accuracy: 0.8,
   bestStreak: 5,
+  config: { type: "open" },
+  durationSeconds: 300,
+  endedAt: "2026-01-01T00:05:00.000Z",
+  fails: 2,
+  id,
+  questionsCompleted: 10,
+  stackKey: "mnemonica",
+  startedAt: "2026-01-01T00:00:00.000Z",
+  successes: 8,
 });
 
 const flashcard = (
@@ -28,8 +28,8 @@ const flashcard = (
   timed?: boolean
 ): SessionRecord => ({
   ...base(id),
-  mode: "flashcard",
   flashcardMode,
+  mode: "flashcard",
   timed,
 });
 
@@ -51,9 +51,9 @@ const distance = (
   timed?: boolean
 ): SessionRecord => ({
   ...base(id),
-  mode: "distance",
-  distanceMode,
   distanceConvention,
+  distanceMode,
+  mode: "distance",
   timed,
 });
 
@@ -68,10 +68,10 @@ describe("deriveFeatureUsage", () => {
     const usage = deriveFeatureUsage([]);
 
     expect(usage.modes).toEqual({
-      flashcard: false,
       acaan: false,
-      spotcheck: false,
       distance: false,
+      flashcard: false,
+      spotcheck: false,
     });
     expect(Object.values(usage.flashcardModes).every((v) => v === false)).toBe(
       true
@@ -117,26 +117,26 @@ describe("deriveFeatureUsage", () => {
     ]);
 
     expect(usage.modes).toEqual({
-      flashcard: true,
       acaan: true,
-      spotcheck: true,
       distance: true,
+      flashcard: true,
+      spotcheck: true,
     });
     expect(usage.flashcardModes).toEqual({
-      cardonly: true,
       bothmodes: true,
-      numberonly: true,
+      cardonly: true,
       neighbor: true,
+      numberonly: true,
     });
     expect(usage.spotCheckModes).toEqual({
       missing: true,
-      swapped: true,
       moved: true,
+      swapped: true,
     });
     expect(usage.distanceModes).toEqual({
-      compute: true,
       apply: true,
       both: true,
+      compute: true,
     });
     expect(usage.distanceConventions).toEqual({ cyclic: true, signed: true });
   });

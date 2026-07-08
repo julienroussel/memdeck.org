@@ -64,7 +64,7 @@ describe("computeSequences", () => {
 
   it("maps correct positions and cards per cycle", () => {
     const result = computeSequences(stack, 2);
-    const firstCycle = result.cycles[0];
+    const [firstCycle] = result.cycles;
     // First cycle starts at position 1 (index 0), steps by 2
     expect(firstCycle[0].position).toBe(1);
     expect(firstCycle[0].card).toBe(stack[0]);

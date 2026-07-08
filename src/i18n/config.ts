@@ -8,15 +8,15 @@ import en from "./locales/en.json";
  * resource bundle stay in sync without duplication.
  */
 export const i18nConfig = {
-  resources: {
-    en: { translation: en },
-  },
-  lng: "en",
   fallbackLng: "en",
   interpolation: {
     escapeValue: false,
   },
+  lng: "en",
   react: {
     useSuspense: false,
+  },
+  resources: {
+    en: { translation: en },
   },
 } as const satisfies InitOptions;

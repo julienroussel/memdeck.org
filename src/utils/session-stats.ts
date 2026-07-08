@@ -28,11 +28,11 @@ export const parseStatsKey = (
 
 /** Creates a zeroed-out AllTimeStatsEntry */
 export const createEmptyStatsEntry = (): AllTimeStatsEntry => ({
-  totalSessions: 0,
-  totalQuestions: 0,
-  totalSuccesses: 0,
-  totalFails: 0,
   globalBestStreak: 0,
+  totalFails: 0,
+  totalQuestions: 0,
+  totalSessions: 0,
+  totalSuccesses: 0,
 });
 
 /** Sums multiple AllTimeStatsEntry objects into a single aggregate */

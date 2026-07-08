@@ -7,7 +7,7 @@ import { type Stack, stacks } from "../../types/stacks";
 import { useSpotCheckGame } from "./use-spot-check-game";
 
 vi.mock("@mantine/notifications", () => ({
-  notifications: { show: vi.fn(), hide: vi.fn() },
+  notifications: { hide: vi.fn(), show: vi.fn() },
 }));
 
 let capturedTimerOptions: Parameters<typeof useGameTimer>[0] | null = null;
@@ -34,7 +34,7 @@ vi.mock("../../services/event-bus", () => ({
 
 const testStack = stacks.mnemonica.order;
 const testStackName = stacks.mnemonica.name;
-const timerOff = { enabled: false, duration: 15 } as const;
+const timerOff = { duration: 15, enabled: false } as const;
 
 afterEach(() => {
   capturedTimerOptions = null;
@@ -53,7 +53,7 @@ describe("useSpotCheckGame", () => {
           DEFAULT_STACK_LIMITS
         )
       );
-      expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+      expect(result.current.score).toEqual({ fails: 0, successes: 0 });
     });
 
     it("generates a missing puzzle with 51 cards", () => {
@@ -209,7 +209,7 @@ describe("useSpotCheckGame", () => {
       const after = gap % len;
       let wrongIndex = 0;
       while (wrongIndex === before || wrongIndex === after) {
-        wrongIndex++;
+        wrongIndex += 1;
       }
       const wrongCard = ps.puzzle.cards[wrongIndex];
 
@@ -295,7 +295,7 @@ describe("useSpotCheckGame", () => {
       let wrongIndex = 0;
       let wrongCard = result.current.puzzleCards[wrongIndex];
       while (wrongCard === swappedCardA || wrongCard === swappedCardB) {
-        wrongIndex++;
+        wrongIndex += 1;
         wrongCard = result.current.puzzleCards[wrongIndex];
       }
 
@@ -368,13 +368,13 @@ describe("useSpotCheckGame", () => {
         throw new Error("Expected moved mode");
       }
 
-      const movedCard = ps.puzzle.movedCard;
+      const { movedCard } = ps.puzzle;
 
       // Find a card that is NOT the moved card
       let wrongIndex = 0;
       let wrongCard = result.current.puzzleCards[wrongIndex];
       while (wrongCard === movedCard) {
-        wrongIndex++;
+        wrongIndex += 1;
         wrongCard = result.current.puzzleCards[wrongIndex];
       }
 
@@ -510,7 +510,7 @@ describe("useSpotCheckGame", () => {
       // Change mode
       rerender({ mode: "swapped" as const });
 
-      expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+      expect(result.current.score).toEqual({ fails: 0, successes: 0 });
       expect(result.current.puzzleState.mode).toBe("swapped");
     });
   });
@@ -518,7 +518,7 @@ describe("useSpotCheckGame", () => {
   describe("when stack changes", () => {
     it("resets score and rebuilds puzzle from the new stack", () => {
       type Props = { stack: Stack; name: string };
-      const initialProps: Props = { stack: testStack, name: testStackName };
+      const initialProps: Props = { name: testStackName, stack: testStack };
       const { result, rerender } = renderHook(
         ({ stack, name }: Props) =>
           useSpotCheckGame(
@@ -536,9 +536,9 @@ describe("useSpotCheckGame", () => {
       });
       expect(result.current.score.fails).toBe(1);
 
-      rerender({ stack: stacks.aronson.order, name: stacks.aronson.name });
+      rerender({ name: stacks.aronson.name, stack: stacks.aronson.order });
 
-      expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+      expect(result.current.score).toEqual({ fails: 0, successes: 0 });
       const ps = result.current.puzzleState;
       if (ps.mode !== "missing") {
         throw new Error("Expected missing mode after rerender");
@@ -547,7 +547,7 @@ describe("useSpotCheckGame", () => {
       // card removed at missingIndex. Cards are shared singletons across stacks,
       // so membership checks are vacuous; positional checks prove the new stack
       // is sourced.
-      for (let i = 0; i < result.current.puzzleCards.length; i++) {
+      for (let i = 0; i < result.current.puzzleCards.length; i += 1) {
         const aronsonIndex = i < ps.puzzle.missingIndex ? i : i + 1;
         expect(result.current.puzzleCards[i]).toBe(
           stacks.aronson.order[aronsonIndex]
@@ -560,8 +560,8 @@ describe("useSpotCheckGame", () => {
     it("generates a puzzle using only cards within the specified range", async () => {
       const { createDeckPosition } = await import("../../types/stacks");
       const limits = {
-        start: createDeckPosition(1),
         end: createDeckPosition(10),
+        start: createDeckPosition(1),
       };
       const { result } = renderHook(() =>
         useSpotCheckGame(testStack, testStackName, "missing", timerOff, limits)
@@ -576,8 +576,8 @@ describe("useSpotCheckGame", () => {
     it("uses all 52 cards when range covers the full deck", async () => {
       const { createDeckPosition } = await import("../../types/stacks");
       const limits = {
-        start: createDeckPosition(1),
         end: createDeckPosition(52),
+        start: createDeckPosition(1),
       };
       const { result } = renderHook(() =>
         useSpotCheckGame(testStack, testStackName, "missing", timerOff, limits)
@@ -590,8 +590,8 @@ describe("useSpotCheckGame", () => {
     it("constrains all puzzle cards to positions 5-10 of the stack", async () => {
       const { createDeckPosition } = await import("../../types/stacks");
       const limits = {
-        start: createDeckPosition(5),
         end: createDeckPosition(10),
+        start: createDeckPosition(5),
       };
       const { result } = renderHook(() =>
         useSpotCheckGame(testStack, testStackName, "missing", timerOff, limits)
@@ -606,8 +606,8 @@ describe("useSpotCheckGame", () => {
     it("produces puzzle card count matching range size minus one for missing mode", async () => {
       const { createDeckPosition } = await import("../../types/stacks");
       const limits = {
-        start: createDeckPosition(5),
         end: createDeckPosition(10),
+        start: createDeckPosition(5),
       };
       const rangeSize = 10 - 5 + 1; // 6 cards in range
 
@@ -622,12 +622,12 @@ describe("useSpotCheckGame", () => {
     it("resets game when limits change", async () => {
       const { createDeckPosition } = await import("../../types/stacks");
       const initialLimits = {
-        start: createDeckPosition(1),
         end: createDeckPosition(10),
+        start: createDeckPosition(1),
       };
       const newLimits = {
-        start: createDeckPosition(20),
         end: createDeckPosition(30),
+        start: createDeckPosition(20),
       };
 
       const { result, rerender } = renderHook(
@@ -651,18 +651,18 @@ describe("useSpotCheckGame", () => {
       // Change limits
       rerender({ limits: newLimits });
 
-      expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+      expect(result.current.score).toEqual({ fails: 0, successes: 0 });
     });
 
     it("generates a fresh puzzle with cards in the new range after limits change", async () => {
       const { createDeckPosition } = await import("../../types/stacks");
       const initialLimits = {
-        start: createDeckPosition(1),
         end: createDeckPosition(52),
+        start: createDeckPosition(1),
       };
       const newLimits = {
-        start: createDeckPosition(1),
         end: createDeckPosition(10),
+        start: createDeckPosition(1),
       };
 
       const { result, rerender } = renderHook(

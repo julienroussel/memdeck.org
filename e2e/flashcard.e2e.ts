@@ -138,7 +138,7 @@ test.describe("Flashcard Training", () => {
     await expect(scoreBadges.first()).toContainText("0");
 
     // Make multiple selections to increase score
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i += 1) {
       await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
 
       // Click on a choice from the card spread

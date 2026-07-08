@@ -5,19 +5,19 @@ type DistanceI18nKey = `distance.${keyof (typeof en)["distance"] & string}`;
 
 const DISTANCE_MODE_OPTIONS = [
   {
-    value: "compute",
-    labelKey: "distance.modeCompute",
     descriptionKey: "distance.modeComputeDescription",
+    labelKey: "distance.modeCompute",
+    value: "compute",
   },
   {
-    value: "apply",
-    labelKey: "distance.modeApply",
     descriptionKey: "distance.modeApplyDescription",
+    labelKey: "distance.modeApply",
+    value: "apply",
   },
   {
-    value: "both",
-    labelKey: "distance.modeBoth",
     descriptionKey: "distance.modeBothDescription",
+    labelKey: "distance.modeBoth",
+    value: "both",
   },
 ] as const satisfies ReadonlyArray<{
   value: string;
@@ -35,14 +35,14 @@ export { DISTANCE_MODE_OPTIONS };
 
 const DISTANCE_CONVENTION_OPTIONS = [
   {
-    value: "cyclic",
-    labelKey: "distance.conventionCyclic",
     descriptionKey: "distance.conventionCyclicDescription",
+    labelKey: "distance.conventionCyclic",
+    value: "cyclic",
   },
   {
-    value: "signed",
-    labelKey: "distance.conventionSigned",
     descriptionKey: "distance.conventionSignedDescription",
+    labelKey: "distance.conventionSigned",
+    value: "signed",
   },
 ] as const satisfies ReadonlyArray<{
   value: string;

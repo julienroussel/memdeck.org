@@ -64,9 +64,9 @@ describe("buildBreadcrumbSchema", () => {
     expect(schema["@type"]).toBe("BreadcrumbList");
     expect(schema.itemListElement[0]).toEqual({
       "@type": "ListItem",
-      position: 1,
-      name: "Home",
       item: `${SITE_URL}/`,
+      name: "Home",
+      position: 1,
     });
   });
 
@@ -74,9 +74,9 @@ describe("buildBreadcrumbSchema", () => {
     const schema = buildBreadcrumbSchema("Flashcard", ROUTES.flashcard);
     expect(schema.itemListElement[1]).toEqual({
       "@type": "ListItem",
-      position: 2,
-      name: "Flashcard",
       item: `${SITE_URL}${ROUTES.flashcard}`,
+      name: "Flashcard",
+      position: 2,
     });
   });
 

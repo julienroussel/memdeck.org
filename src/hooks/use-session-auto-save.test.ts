@@ -52,11 +52,11 @@ const useTestHarness = ({
   statusRef.current = status;
 
   useSessionAutoSave({
+    requestFinalization: requestFinalization ?? vi.fn(),
+    setStatus,
     stackKey,
     statusRef,
-    setStatus,
     tryFinalizeSession,
-    requestFinalization: requestFinalization ?? vi.fn(),
   });
 
   return { status, statusRef };
@@ -94,10 +94,10 @@ describe("useSessionAutoSave", () => {
       const { result, rerender } = renderHook(
         ({ stackKey }: { stackKey: StackKey }) =>
           useTestHarness({
-            stackKey,
             initialPhase: { phase: "active", session: activeSession },
-            tryFinalizeSession: mockTryFinalizeSession,
             requestFinalization: mockRequestFinalization,
+            stackKey,
+            tryFinalizeSession: mockTryFinalizeSession,
           }),
         { initialProps: { stackKey: "mnemonica" as StackKey } }
       );
@@ -123,8 +123,8 @@ describe("useSessionAutoSave", () => {
       const { result, rerender } = renderHook(
         ({ stackKey }: { stackKey: StackKey }) =>
           useTestHarness({
-            stackKey,
             initialPhase: { phase: "active", session: activeSession },
+            stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
         { initialProps: { stackKey: "mnemonica" as StackKey } }
@@ -142,8 +142,8 @@ describe("useSessionAutoSave", () => {
       const { result, rerender } = renderHook(
         ({ stackKey }: { stackKey: StackKey }) =>
           useTestHarness({
-            stackKey,
             initialPhase: { phase: "active", session: activeSession },
+            stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
         { initialProps: { stackKey: "mnemonica" as StackKey } }
@@ -159,8 +159,8 @@ describe("useSessionAutoSave", () => {
       const { result, rerender } = renderHook(
         ({ stackKey }: { stackKey: StackKey }) =>
           useTestHarness({
-            stackKey,
             initialPhase: { phase: "idle" },
+            stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
         { initialProps: { stackKey: "mnemonica" as StackKey } }
@@ -176,8 +176,8 @@ describe("useSessionAutoSave", () => {
       const { result, rerender } = renderHook(
         ({ stackKey }: { stackKey: StackKey }) =>
           useTestHarness({
-            stackKey,
             initialPhase: { phase: "summary", summary: mockSummary },
+            stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
         { initialProps: { stackKey: "mnemonica" as StackKey } }
@@ -196,10 +196,10 @@ describe("useSessionAutoSave", () => {
       const { result, rerender } = renderHook(
         ({ stackKey }: { stackKey: StackKey }) =>
           useTestHarness({
-            stackKey,
             initialPhase: { phase: "active", session: activeSession },
-            tryFinalizeSession: mockTryFinalizeSession,
             requestFinalization: mockRequestFinalization,
+            stackKey,
+            tryFinalizeSession: mockTryFinalizeSession,
           }),
         { initialProps: { stackKey: "mnemonica" as StackKey } }
       );
@@ -214,7 +214,7 @@ describe("useSessionAutoSave", () => {
 
     it("requests finalization for a structured session with 1 question completed on stack change", () => {
       const activeSession = makeActiveSession({
-        config: { type: "structured", totalQuestions: 10 },
+        config: { totalQuestions: 10, type: "structured" },
         questionsCompleted: 1,
       });
       const mockRequestFinalization = vi.fn();
@@ -222,10 +222,10 @@ describe("useSessionAutoSave", () => {
       const { rerender } = renderHook(
         ({ stackKey }: { stackKey: StackKey }) =>
           useTestHarness({
-            stackKey,
             initialPhase: { phase: "active", session: activeSession },
-            tryFinalizeSession: mockTryFinalizeSession,
             requestFinalization: mockRequestFinalization,
+            stackKey,
+            tryFinalizeSession: mockTryFinalizeSession,
           }),
         { initialProps: { stackKey: "mnemonica" as StackKey } }
       );
@@ -244,8 +244,8 @@ describe("useSessionAutoSave", () => {
       const { result, rerender } = renderHook(
         ({ stackKey }: { stackKey: StackKey }) =>
           useTestHarness({
-            stackKey,
             initialPhase: { phase: "active", session: activeSession },
+            stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
         { initialProps: { stackKey: "mnemonica" as StackKey } }
@@ -267,10 +267,10 @@ describe("useSessionAutoSave", () => {
       const { rerender } = renderHook(
         ({ stackKey }: { stackKey: StackKey }) =>
           useTestHarness({
-            stackKey,
             initialPhase: { phase: "active", session: activeSession },
-            tryFinalizeSession: mockTryFinalizeSession,
             requestFinalization: mockRequestFinalization,
+            stackKey,
+            tryFinalizeSession: mockTryFinalizeSession,
           }),
         { initialProps: { stackKey: "mnemonica" as StackKey } }
       );
@@ -291,8 +291,8 @@ describe("useSessionAutoSave", () => {
 
       renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -312,8 +312,8 @@ describe("useSessionAutoSave", () => {
 
       renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -328,8 +328,8 @@ describe("useSessionAutoSave", () => {
     it("does not finalize on beforeunload when phase is idle", () => {
       renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "idle" },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -344,8 +344,8 @@ describe("useSessionAutoSave", () => {
     it("does not finalize on beforeunload when phase is summary", () => {
       renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "summary", summary: mockSummary },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -397,10 +397,10 @@ describe("useSessionAutoSave", () => {
       const { rerender } = renderHook(
         ({ stackKey }: { stackKey: StackKey }) =>
           useTestHarness({
-            stackKey,
             initialPhase: { phase: "active", session: activeSession },
-            tryFinalizeSession: mockTryFinalizeSession,
             requestFinalization: mockRequestFinalization,
+            stackKey,
+            tryFinalizeSession: mockTryFinalizeSession,
           }),
         { initialProps: { stackKey: "mnemonica" as StackKey } }
       );
@@ -445,8 +445,8 @@ describe("useSessionAutoSave", () => {
 
       const { unmount } = renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -464,8 +464,8 @@ describe("useSessionAutoSave", () => {
 
       const { unmount } = renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -478,8 +478,8 @@ describe("useSessionAutoSave", () => {
     it("does not finalize on unmount when phase is idle", () => {
       const { unmount } = renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "idle" },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -496,8 +496,8 @@ describe("useSessionAutoSave", () => {
 
       const { unmount } = renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -518,15 +518,15 @@ describe("useSessionAutoSave", () => {
   describe("observability on unmount/beforeunload", () => {
     it("emits analytics.trackError when tryFinalizeSession returns write-failed on unmount", () => {
       mockTryFinalizeSession.mockReturnValue({
-        status: "write-failed",
         reason: "write-failed",
+        status: "write-failed",
       });
       const activeSession = makeActiveSession({ questionsCompleted: 5 });
 
       const { unmount } = renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -548,15 +548,15 @@ describe("useSessionAutoSave", () => {
 
     it("emits analytics.trackError with corrupt reason when on-disk state is inconsistent", () => {
       mockTryFinalizeSession.mockReturnValue({
-        status: "write-failed",
         reason: "corrupt",
+        status: "write-failed",
       });
       const activeSession = makeActiveSession({ questionsCompleted: 5 });
 
       const { unmount } = renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -577,8 +577,8 @@ describe("useSessionAutoSave", () => {
 
       const { unmount } = renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -593,8 +593,8 @@ describe("useSessionAutoSave", () => {
 
       const { unmount } = renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -609,15 +609,15 @@ describe("useSessionAutoSave", () => {
       // hook persists a breadcrumb so the next session start surfaces the
       // failure to the user.
       mockTryFinalizeSession.mockReturnValue({
-        status: "write-failed",
         reason: "write-failed",
+        status: "write-failed",
       });
       const activeSession = makeActiveSession({ questionsCompleted: 5 });
 
       renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -647,15 +647,15 @@ describe("useSessionAutoSave", () => {
       // breadcrumb here would cause useSession's next mount to show a SECOND
       // notification for the same failure — see the production comment.
       mockTryFinalizeSession.mockReturnValue({
-        status: "write-failed",
         reason: "write-failed",
+        status: "write-failed",
       });
       const activeSession = makeActiveSession({ questionsCompleted: 5 });
 
       const { unmount } = renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -667,15 +667,15 @@ describe("useSessionAutoSave", () => {
 
     it("shows a yellow Mantine notification with the save-failed title on the React-cleanup path", () => {
       mockTryFinalizeSession.mockReturnValue({
-        status: "write-failed",
         reason: "write-failed",
+        status: "write-failed",
       });
       const activeSession = makeActiveSession({ questionsCompleted: 5 });
 
       const { unmount } = renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -683,7 +683,7 @@ describe("useSessionAutoSave", () => {
       unmount();
 
       expect(notifications.show).toHaveBeenCalledOnce();
-      const call = vi.mocked(notifications.show).mock.calls[0][0];
+      const [[call]] = vi.mocked(notifications.show).mock.calls;
       expect(call.color).toBe("yellow");
       // i18n is initialised in vitest.setup.ts, so `t` returns the resolved
       // English string for the save-failed title key.
@@ -692,15 +692,15 @@ describe("useSessionAutoSave", () => {
 
     it("shows a red Mantine notification with the storage-corrupt title when reason is corrupt", () => {
       mockTryFinalizeSession.mockReturnValue({
-        status: "write-failed",
         reason: "corrupt",
+        status: "write-failed",
       });
       const activeSession = makeActiveSession({ questionsCompleted: 5 });
 
       const { unmount } = renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -708,7 +708,7 @@ describe("useSessionAutoSave", () => {
       unmount();
 
       expect(notifications.show).toHaveBeenCalledOnce();
-      const call = vi.mocked(notifications.show).mock.calls[0][0];
+      const [[call]] = vi.mocked(notifications.show).mock.calls;
       expect(call.color).toBe("red");
       // i18n-resolved English string for errors.sessionStorageCorrupt.title.
       expect(call.title).toBe("Stored data looks corrupted");
@@ -716,15 +716,15 @@ describe("useSessionAutoSave", () => {
 
     it("shows a red Mantine notification when reason is corrupt-prior-state", () => {
       mockTryFinalizeSession.mockReturnValue({
-        status: "write-failed",
         reason: "corrupt-prior-state",
+        status: "write-failed",
       });
       const activeSession = makeActiveSession({ questionsCompleted: 5 });
 
       const { unmount } = renderHook(() =>
         useTestHarness({
-          stackKey: "mnemonica",
           initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
           tryFinalizeSession: mockTryFinalizeSession,
         })
       );
@@ -732,7 +732,7 @@ describe("useSessionAutoSave", () => {
       unmount();
 
       expect(notifications.show).toHaveBeenCalledOnce();
-      const call = vi.mocked(notifications.show).mock.calls[0][0];
+      const [[call]] = vi.mocked(notifications.show).mock.calls;
       expect(call.color).toBe("red");
       // i18n-resolved English string for errors.sessionStorageCorrupt.title.
       expect(call.title).toBe("Stored data looks corrupted");

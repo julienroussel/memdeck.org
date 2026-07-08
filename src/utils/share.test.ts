@@ -30,8 +30,8 @@ describe("shareMemDeck", () => {
     expect(result).toBe("shared");
     // Native share passes structured data (title, text, url separately)
     expect(shareFn).toHaveBeenCalledWith({
-      title: SITE_NAME,
       text: TEST_MESSAGE,
+      title: SITE_NAME,
       url: SITE_URL,
     });
   });

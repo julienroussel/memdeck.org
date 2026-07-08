@@ -5,7 +5,7 @@ import type { DistanceConvention, DistanceMode } from "../../types/distance";
 import type { TimerSettings } from "../../types/timer";
 import { DistanceSettingsContent } from "./distance-settings-content";
 
-const defaultTimerSettings: TimerSettings = { enabled: false, duration: 15 };
+const defaultTimerSettings: TimerSettings = { duration: 15, enabled: false };
 
 const MODE_LABEL_REGEX = /Distance mode/i;
 const CONVENTION_LABEL_REGEX = /Distance convention/i;
@@ -20,13 +20,13 @@ const renderControl = (
   }> = {}
 ) => {
   const props = {
-    mode: "both" as const,
     convention: "cyclic" as const,
-    timerSettings: defaultTimerSettings,
-    onModeChange: vi.fn(),
+    mode: "both" as const,
     onConventionChange: vi.fn(),
     onDurationChange: vi.fn(),
+    onModeChange: vi.fn(),
     onTimerEnabledChange: vi.fn(),
+    timerSettings: defaultTimerSettings,
     ...overrides,
   };
   render(<DistanceSettingsContent {...props} />);
@@ -81,8 +81,8 @@ describe("DistanceSettingsContent", () => {
     // pass an enabled TimerSettings.
     const onDurationChange = vi.fn();
     const enabledTimerSettings: TimerSettings = {
-      enabled: true,
       duration: 15,
+      enabled: true,
     };
     render(
       <DistanceSettingsContent

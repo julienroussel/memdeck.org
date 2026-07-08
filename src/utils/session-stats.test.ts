@@ -33,11 +33,11 @@ describe("createEmptyStatsEntry", () => {
   it("returns an entry with all numeric fields set to zero", () => {
     const entry = createEmptyStatsEntry();
     expect(entry).toEqual({
-      totalSessions: 0,
-      totalQuestions: 0,
-      totalSuccesses: 0,
-      totalFails: 0,
       globalBestStreak: 0,
+      totalFails: 0,
+      totalQuestions: 0,
+      totalSessions: 0,
+      totalSuccesses: 0,
     });
   });
 });
@@ -49,11 +49,11 @@ describe("aggregateStatsEntries", () => {
 
   it("returns the entry as-is for a single-element array", () => {
     const entry: AllTimeStatsEntry = {
-      totalSessions: 5,
-      totalQuestions: 50,
-      totalSuccesses: 40,
-      totalFails: 10,
       globalBestStreak: 8,
+      totalFails: 10,
+      totalQuestions: 50,
+      totalSessions: 5,
+      totalSuccesses: 40,
     };
     const result = aggregateStatsEntries([entry]);
     expect(result).toEqual(entry);
@@ -62,18 +62,18 @@ describe("aggregateStatsEntries", () => {
   it("sums totals across entries and takes the max globalBestStreak", () => {
     const entries: AllTimeStatsEntry[] = [
       {
-        totalSessions: 5,
-        totalQuestions: 50,
-        totalSuccesses: 40,
-        totalFails: 10,
         globalBestStreak: 8,
+        totalFails: 10,
+        totalQuestions: 50,
+        totalSessions: 5,
+        totalSuccesses: 40,
       },
       {
-        totalSessions: 3,
-        totalQuestions: 30,
-        totalSuccesses: 20,
-        totalFails: 10,
         globalBestStreak: 12,
+        totalFails: 10,
+        totalQuestions: 30,
+        totalSessions: 3,
+        totalSuccesses: 20,
       },
     ];
 

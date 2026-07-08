@@ -31,18 +31,18 @@ describe("createColorSchemeManager", () => {
       delete store[k];
     });
     vi.stubGlobal("localStorage", {
-      get length() {
-        return Object.keys(store).length;
-      },
-      getItem: getItemMock,
-      setItem: setItemMock,
-      removeItem: removeItemMock,
       clear: () => {
         for (const k of Object.keys(store)) {
           delete store[k];
         }
       },
+      getItem: getItemMock,
       key: (i: number) => Object.keys(store)[i] ?? null,
+      get length() {
+        return Object.keys(store).length;
+      },
+      removeItem: removeItemMock,
+      setItem: setItemMock,
     });
   });
 

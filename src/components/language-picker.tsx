@@ -15,14 +15,14 @@ const LANGUAGE_OPTIONS = SUPPORTED_LANGUAGES.map((lang) => ({
   value: lang,
 })).sort((a, b) => a.label.localeCompare(b.label));
 
-export const LanguagePicker = memo(function LanguagePicker() {
+export const LanguagePicker = memo(() => {
   const { t, i18n } = useTranslation();
 
   const currentLang = isSupportedLanguage(i18n.language) ? i18n.language : "en";
 
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
-      const value = event.currentTarget.value;
+      const { value } = event.currentTarget;
       if (isSupportedLanguage(value)) {
         changeLanguage(value)
           .then(() => {
@@ -50,3 +50,5 @@ export const LanguagePicker = memo(function LanguagePicker() {
     />
   );
 });
+
+LanguagePicker.displayName = "LanguagePicker";

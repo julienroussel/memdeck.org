@@ -12,16 +12,16 @@ type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];
 /** Priority assigned to each route for sitemap ordering. */
 const ROUTE_PRIORITIES: Record<RoutePath, string> = {
   "/": "1.0",
+  "/about/": "0.3",
+  "/acaan/": "0.7",
+  "/distance/": "0.7",
+  "/faq/": "0.7",
   "/flashcard/": "0.9",
   "/guide/": "0.8",
   "/resources/": "0.8",
-  "/faq/": "0.7",
   "/spot-check/": "0.7",
-  "/acaan/": "0.7",
-  "/distance/": "0.7",
-  "/toolbox/": "0.5",
   "/stats/": "0.3",
-  "/about/": "0.3",
+  "/toolbox/": "0.5",
   "/whats-new/": "0.6",
 };
 
@@ -32,16 +32,16 @@ const ROUTE_PRIORITIES: Record<RoutePath, string> = {
 const getLastModified = (routePath: RoutePath): string => {
   const sourceMap: Record<RoutePath, string> = {
     "/": "src/pages/home",
+    "/about/": "src/pages/about.tsx",
+    "/acaan/": "src/pages/acaan",
+    "/distance/": "src/pages/distance",
+    "/faq/": "src/pages/faq.tsx",
     "/flashcard/": "src/pages/flashcard",
     "/guide/": "src/pages/guide",
     "/resources/": "src/pages/resources.tsx",
-    "/faq/": "src/pages/faq.tsx",
     "/spot-check/": "src/pages/spot-check",
-    "/acaan/": "src/pages/acaan",
-    "/distance/": "src/pages/distance",
-    "/toolbox/": "src/pages/toolbox",
     "/stats/": "src/pages/stats",
-    "/about/": "src/pages/about.tsx",
+    "/toolbox/": "src/pages/toolbox",
     "/whats-new/": "src/data/whats-new.ts",
   };
 

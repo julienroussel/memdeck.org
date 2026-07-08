@@ -131,8 +131,8 @@ export const AccuracyChart = ({ history }: AccuracyChartProps) => {
                   })
                 : t("stats.chartTooltipWithSubMode", {
                     mode: t(MODE_LABELS[record.mode]),
-                    subMode: t(subModeKey),
                     stack: stacks[record.stackKey]?.name ?? record.stackKey,
+                    subMode: t(subModeKey),
                     successes: record.successes,
                     total: record.questionsCompleted,
                   });

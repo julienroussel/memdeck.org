@@ -29,61 +29,61 @@ describe("getAccuracyColor", () => {
 
 describe("AccuracyChart", () => {
   const neighborSession = makeSessionRecord({
+    accuracy: 0.9,
+    fails: 1,
+    flashcardMode: "neighbor",
     id: "neighbor-1",
     mode: "flashcard",
-    flashcardMode: "neighbor",
-    accuracy: 0.9,
-    successes: 9,
-    fails: 1,
     questionsCompleted: 10,
+    successes: 9,
   });
 
   const positionSession = makeSessionRecord({
+    accuracy: 0.7,
+    fails: 3,
+    flashcardMode: "cardonly",
     id: "position-1",
     mode: "flashcard",
-    flashcardMode: "cardonly",
-    accuracy: 0.7,
-    successes: 7,
-    fails: 3,
     questionsCompleted: 10,
+    successes: 7,
   });
 
   const legacyFlashcardSession = makeSessionRecord({
+    accuracy: 0.6,
+    fails: 4,
     id: "legacy-1",
     mode: "flashcard",
-    accuracy: 0.6,
-    successes: 6,
-    fails: 4,
     questionsCompleted: 10,
+    successes: 6,
   });
 
   const acaanSession = makeSessionRecord({
+    accuracy: 0.5,
+    fails: 5,
     id: "acaan-1",
     mode: "acaan",
-    accuracy: 0.5,
-    successes: 5,
-    fails: 5,
     questionsCompleted: 10,
+    successes: 5,
   });
 
   const spotCheckMissing = makeSessionRecord({
+    accuracy: 0.8,
+    fails: 2,
     id: "spotcheck-missing",
     mode: "spotcheck",
-    spotCheckMode: "missing",
-    accuracy: 0.8,
-    successes: 8,
-    fails: 2,
     questionsCompleted: 10,
+    spotCheckMode: "missing",
+    successes: 8,
   });
 
   const spotCheckSwapped = makeSessionRecord({
+    accuracy: 0.6,
+    fails: 4,
     id: "spotcheck-swapped",
     mode: "spotcheck",
-    spotCheckMode: "swapped",
-    accuracy: 0.6,
-    successes: 6,
-    fails: 4,
     questionsCompleted: 10,
+    spotCheckMode: "swapped",
+    successes: 6,
   });
 
   const allSessions = [
@@ -201,11 +201,11 @@ describe("AccuracyChart", () => {
   it("limits displayed sessions to 20 when more are provided", () => {
     const sessions = Array.from({ length: 25 }, (_, i) =>
       makeSessionRecord({
-        id: `session-${i}`,
         accuracy: (i + 1) / 25,
-        successes: i + 1,
         fails: 25 - (i + 1),
+        id: `session-${i}`,
         questionsCompleted: 25,
+        successes: i + 1,
       })
     );
 
@@ -218,11 +218,11 @@ describe("AccuracyChart", () => {
   it("displays the most recent 20 sessions from newest-first history", () => {
     const sessions = Array.from({ length: 25 }, (_, i) =>
       makeSessionRecord({
-        id: `session-${i}`,
         accuracy: (i + 1) / 25,
-        successes: i + 1,
         fails: 25 - (i + 1),
+        id: `session-${i}`,
         questionsCompleted: 25,
+        successes: i + 1,
       })
     );
 

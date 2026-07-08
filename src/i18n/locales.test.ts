@@ -25,7 +25,7 @@ function getKeys(obj: Record<string, unknown>, prefix = ""): string[] {
     }
   }
 
-  return keys.sort();
+  return keys.sort((a, b) => a.localeCompare(b));
 }
 
 const referenceKeys = getKeys(en as Record<string, unknown>);

@@ -95,10 +95,10 @@ export const reportSessionPersistenceFailed = (
  */
 export const notifyLocalDbWriteFailed = (key: string): void => {
   notifications.show({
-    id: `local-db-write-failed-${key}`,
     color: "yellow",
-    title: i18next.t("errors.localDbWriteFailed.title"),
+    id: `local-db-write-failed-${key}`,
     message: i18next.t("errors.localDbWriteFailed.message"),
+    title: i18next.t("errors.localDbWriteFailed.title"),
   });
 };
 
@@ -113,10 +113,10 @@ export const notifyLocalDbWriteFailed = (key: string): void => {
  */
 export const notifyLocalDbCorruption = (key: string): void => {
   notifications.show({
-    id: `local-db-corrupt-${key}`,
     color: "yellow",
-    title: i18next.t("errors.localDbCorrupt.title"),
+    id: `local-db-corrupt-${key}`,
     message: i18next.t("errors.localDbCorrupt.message"),
+    title: i18next.t("errors.localDbCorrupt.title"),
   });
 };
 

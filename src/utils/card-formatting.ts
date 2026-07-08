@@ -1,7 +1,6 @@
 import type { PlayingCard, Rank, Suit } from "../types/playingcard";
 
 const RANK_NAMES: Record<Rank, string> = {
-  A: "Ace",
   "2": "Two",
   "3": "Three",
   "4": "Four",
@@ -11,15 +10,16 @@ const RANK_NAMES: Record<Rank, string> = {
   "8": "Eight",
   "9": "Nine",
   "10": "Ten",
+  A: "Ace",
   J: "Jack",
-  Q: "Queen",
   K: "King",
+  Q: "Queen",
 };
 
 const SUIT_NAMES: Record<Suit, string> = {
-  hearts: "Hearts",
-  diamonds: "Diamonds",
   clubs: "Clubs",
+  diamonds: "Diamonds",
+  hearts: "Hearts",
   spades: "Spades",
 };
 

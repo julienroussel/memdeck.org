@@ -64,8 +64,8 @@ export const useAcaanGame = (
   if (prevStackOrderRef.current !== stackOrder) {
     prevStackOrderRef.current = stackOrder;
     dispatch({
-      type: "RESET_GAME",
       payload: { stackOrder, timerDuration: timerSettings.duration },
+      type: "RESET_GAME",
     });
   }
 
@@ -73,9 +73,9 @@ export const useAcaanGame = (
     (scenario: AcaanScenario): string => {
       const cutDepth = getCurrentCutDepth(scenario);
       return t("acaan.cutDepthMessage", {
+        cutDepth: formatCutDepth(cutDepth, t("acaan.cutDepthZero")),
         from: scenario.cardPosition,
         to: scenario.targetPosition,
-        cutDepth: formatCutDepth(cutDepth, t("acaan.cutDepthZero")),
       });
     },
     [t]
@@ -83,18 +83,18 @@ export const useAcaanGame = (
 
   const createTimeoutAction = useCallback(
     () => ({
-      type: "TIMEOUT" as const,
       payload: { newScenario: generateAcaanScenario(stackOrderRef.current) },
+      type: "TIMEOUT" as const,
     }),
     []
   );
 
   const handleTimeout = useCallback(() => {
     notifications.show({
-      color: "red",
-      title: t("acaan.timesUp"),
-      message: buildCutDepthMessage(state.scenario),
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+      color: "red",
+      message: buildCutDepthMessage(state.scenario),
+      title: t("acaan.timesUp"),
     });
     eventBus.emit.ACAAN_ANSWER({
       correct: false,
@@ -104,11 +104,11 @@ export const useAcaanGame = (
   }, [buildCutDepthMessage, state.scenario, t]);
 
   useGameTimer({
-    timerSettings,
-    timeRemaining: state.timeRemaining,
-    dispatch,
     createTimeoutAction,
+    dispatch,
     onTimeout: handleTimeout,
+    timeRemaining: state.timeRemaining,
+    timerSettings,
   });
 
   const submitAnswer = useCallback(
@@ -118,16 +118,16 @@ export const useAcaanGame = (
 
       if (isCorrect) {
         notifications.show({
-          color: "green",
-          title: t("acaan.correctTitle"),
-          message: buildCutDepthMessage(state.scenario),
           autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+          color: "green",
+          message: buildCutDepthMessage(state.scenario),
+          title: t("acaan.correctTitle"),
         });
         dispatch({
-          type: "CORRECT_ANSWER",
           payload: {
             newScenario: generateAcaanScenario(stackOrderRef.current),
           },
+          type: "CORRECT_ANSWER",
         });
         eventBus.emit.ACAAN_ANSWER({
           correct: true,
@@ -136,10 +136,10 @@ export const useAcaanGame = (
         onAnswerRef.current?.({ correct: true, questionAdvanced: true });
       } else {
         notifications.show({
-          color: "red",
-          title: t("acaan.wrongTitle"),
-          message: t("acaan.wrongMessage"),
           autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+          color: "red",
+          message: t("acaan.wrongMessage"),
+          title: t("acaan.wrongTitle"),
         });
         dispatch({ type: "WRONG_ANSWER" });
         eventBus.emit.ACAAN_ANSWER({
@@ -154,15 +154,15 @@ export const useAcaanGame = (
 
   const revealAnswer = useCallback(() => {
     notifications.show({
-      color: "yellow",
-      title: t("acaan.revealTitle"),
-      message: buildCutDepthMessage(state.scenario),
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+      color: "yellow",
+      message: buildCutDepthMessage(state.scenario),
+      title: t("acaan.revealTitle"),
     });
 
     dispatch({
-      type: "REVEAL_ANSWER",
       payload: { newScenario: generateAcaanScenario(stackOrderRef.current) },
+      type: "REVEAL_ANSWER",
     });
     analytics.trackFeatureUsed("Reveal Answer - ACAAN");
     eventBus.emit.ACAAN_ANSWER({
@@ -173,11 +173,11 @@ export const useAcaanGame = (
   }, [buildCutDepthMessage, state.scenario, t]);
 
   return {
+    revealAnswer,
     scenario: state.scenario,
-    score: { successes: state.successes, fails: state.fails },
+    score: { fails: state.fails, successes: state.successes },
+    submitAnswer,
     timeRemaining: state.timeRemaining,
     timerDuration: state.timerDuration,
-    submitAnswer,
-    revealAnswer,
   };
 };

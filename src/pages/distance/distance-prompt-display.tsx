@@ -30,8 +30,8 @@ const formatOffset = (
 };
 
 const wrapperStyle = {
-  display: "flex",
   alignItems: "center",
+  display: "flex",
   gap: 16,
 } as const;
 
@@ -74,8 +74,8 @@ export const DistancePromptDisplay = (props: DistancePromptDisplayProps) => {
   const { promptCard, offset, convention } = props;
   const offsetLabel = formatOffset(offset, convention);
   const applyLabel = t("distance.promptApplyAriaLabel", {
-    offset: offsetLabel,
     card: formatCardName(promptCard.card),
+    offset: offsetLabel,
   });
 
   return (
@@ -93,8 +93,8 @@ export const DistancePromptDisplay = (props: DistancePromptDisplayProps) => {
         <div
           data-testid="distance-offset-badge"
           style={{
-            display: "flex",
             alignItems: "center",
+            display: "flex",
             justifyContent: "center",
             minWidth: 64,
           }}

@@ -331,14 +331,16 @@
       ld.textContent = JSON.stringify({
         "@context": "https://schema.org",
         "@type": "WebApplication",
-        name: "MemDeck",
-        url: "https://memdeck.org",
-        description:
-          "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant, Infinity, and Intuitiva Santi.",
         applicationCategory: "EducationalApplication",
-        operatingSystem: "Any",
+        author: {
+          "@type": "Person",
+          name: "Julien Roussel",
+          url: "https://linktr.ee/julien.roussel",
+        },
         browserRequirements:
           "Requires a modern web browser with JavaScript enabled",
+        description:
+          "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant, Infinity, and Intuitiva Santi.",
         featureList: [
           "Flashcard Training",
           "Spot Check Training",
@@ -352,18 +354,16 @@
           "Guided Discovery",
         ],
         inLanguage: ["en", "fr", "es", "de", "it", "nl", "pt"],
-        screenshot: "https://memdeck.org/screenshots/home-desktop.png",
+        name: "MemDeck",
         offers: {
           "@type": "Offer",
           price: "0",
           priceCurrency: "USD",
         },
-        author: {
-          "@type": "Person",
-          name: "Julien Roussel",
-          url: "https://linktr.ee/julien.roussel",
-        },
+        operatingSystem: "Any",
         sameAs: ["https://github.com/julienroussel/memdeck.org"],
+        screenshot: "https://memdeck.org/screenshots/home-desktop.png",
+        url: "https://memdeck.org",
       });
       document.head.appendChild(ld);
     })();

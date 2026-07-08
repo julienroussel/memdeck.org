@@ -18,6 +18,14 @@ updates:
     target-branch: 'main'
     labels:
       - 'dependencies'
+    ignore:
+      # biome 2.5.3 regressed: its module-graph scanner panics on this repo's
+      # React/hook files and hides real lint errors (biomejs/biome#7355, #7324).
+      # Held at 2.5.2 in package.json. Auto-merge would otherwise silently
+      # re-land 2.5.3 because `pnpm run lint` exits 0 even while biome panics.
+      # Blocking only 2.5.3 lets a future fixed release be proposed for review.
+      - dependency-name: '@biomejs/biome'
+        versions: ['2.5.3']
     groups:
       # Catch-all for remaining packages; dependency-review job gates merges
       all-minor-patch:

@@ -15,41 +15,40 @@ type NumberCardProps = {
   style?: CSSProperties;
 };
 
-export const NumberCard = memo(function NumberCard({
-  number,
-  width = 100,
-  fontSize = 35,
-  style,
-}: NumberCardProps) {
-  const { t } = useTranslation();
+export const NumberCard = memo(
+  ({ number, width = 100, fontSize = 35, style }: NumberCardProps) => {
+    const { t } = useTranslation();
 
-  return (
-    <div
-      aria-label={t("numberCard.ariaLabel", { number })}
-      className="numberCardContainer"
-      data-testid="number-card"
-      role="img"
-      style={{ ...style, width }}
-    >
-      <Image
-        alt=""
-        h={Math.round(width * CARD_ASPECT_RATIO)}
-        src={BLANK_CARD_IMAGE}
-      />
-      <div aria-hidden="true" className="numberCardTopLeft">
-        {number}
-      </div>
+    return (
       <div
-        aria-hidden="true"
-        className="numberCardCenter"
-        data-testid="number-card-value"
-        style={{ fontSize }}
+        aria-label={t("numberCard.ariaLabel", { number })}
+        className="numberCardContainer"
+        data-testid="number-card"
+        role="img"
+        style={{ ...style, width }}
       >
-        {number}
+        <Image
+          alt=""
+          h={Math.round(width * CARD_ASPECT_RATIO)}
+          src={BLANK_CARD_IMAGE}
+        />
+        <div aria-hidden="true" className="numberCardTopLeft">
+          {number}
+        </div>
+        <div
+          aria-hidden="true"
+          className="numberCardCenter"
+          data-testid="number-card-value"
+          style={{ fontSize }}
+        >
+          {number}
+        </div>
+        <div aria-hidden="true" className="numberCardBottomRight">
+          {number}
+        </div>
       </div>
-      <div aria-hidden="true" className="numberCardBottomRight">
-        {number}
-      </div>
-    </div>
-  );
-});
+    );
+  }
+);
+
+NumberCard.displayName = "NumberCard";

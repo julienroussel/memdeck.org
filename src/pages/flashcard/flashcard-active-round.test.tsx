@@ -15,18 +15,18 @@ import { AceOfSpades, FiveOfSpades } from "../../types/suits/spades";
 import { FlashcardActiveRound } from "./flashcard-active-round";
 
 const promptCard: PlayingCardPosition = {
-  index: createDeckPosition(1),
   card: FourOfClubs,
+  index: createDeckPosition(1),
 };
 
 const numberChoices: { type: "numbers"; data: number[] } = {
-  type: "numbers",
   data: [1, 2, 3, 4, 5],
+  type: "numbers",
 };
 
 const cardChoices: { type: "cards"; data: PlayingCard[] } = {
-  type: "cards",
   data: [TwoOfHearts, ThreeOfClubs, AceOfSpades, FiveOfSpades, FourOfClubs],
+  type: "cards",
 };
 
 // FlashcardActiveRound emits Grid.Col children, which require a Grid ancestor

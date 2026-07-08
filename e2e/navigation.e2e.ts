@@ -140,7 +140,7 @@ test.describe("Navigation", () => {
     page,
   }) => {
     // Resize to mobile
-    await page.setViewportSize({ width: 375, height: 667 });
+    await page.setViewportSize({ height: 667, width: 375 });
     await page.waitForLoadState("networkidle");
 
     // Find burger button (may be hidden on desktop)

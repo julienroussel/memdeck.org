@@ -7,8 +7,8 @@ import { StackPicker } from "./stack-picker";
 
 // vi.hoisted runs before vi.mock hoisting, so these are safe to reference in factories
 const { mockUseSelectedStack, mockEmitStackSelected } = vi.hoisted(() => ({
-  mockUseSelectedStack: vi.fn(),
   mockEmitStackSelected: vi.fn(),
+  mockUseSelectedStack: vi.fn(),
 }));
 
 vi.mock("../hooks/use-selected-stack", async (importOriginal) => {
@@ -34,11 +34,11 @@ vi.mock("../services/event-bus", async (importOriginal) => {
 });
 
 const makeNoStackResult = () => ({
-  stackKey: "" as const,
-  stack: null,
-  stackOrder: null,
-  stackName: null,
   setStackKey: vi.fn(),
+  stack: null,
+  stackKey: "" as const,
+  stackName: null,
+  stackOrder: null,
 });
 
 describe("StackPicker", () => {
@@ -96,11 +96,11 @@ describe("StackPicker", () => {
 
     it("does not render a placeholder option when a stack is already selected", () => {
       mockUseSelectedStack.mockReturnValue({
-        stackKey: "mnemonica",
-        stack: mnemonica,
-        stackOrder: mnemonica.order,
-        stackName: "Tamariz",
         setStackKey: vi.fn(),
+        stack: mnemonica,
+        stackKey: "mnemonica",
+        stackName: "Tamariz",
+        stackOrder: mnemonica.order,
       });
 
       render(<StackPicker />);
@@ -113,11 +113,11 @@ describe("StackPicker", () => {
 
     it("shows the currently selected stack value", () => {
       mockUseSelectedStack.mockReturnValue({
-        stackKey: "aronson",
-        stack: aronson,
-        stackOrder: aronson.order,
-        stackName: "Aronson",
         setStackKey: vi.fn(),
+        stack: aronson,
+        stackKey: "aronson",
+        stackName: "Aronson",
+        stackOrder: aronson.order,
       });
 
       render(<StackPicker />);
