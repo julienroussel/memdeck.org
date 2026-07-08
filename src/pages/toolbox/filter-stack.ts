@@ -12,8 +12,8 @@ export const filterStack = (
   formatName: (card: PlayingCard) => string
 ): StackEntry[] => {
   const entries: StackEntry[] = stackOrder.map((card, index) => ({
-    position: index + 1,
     card,
+    position: index + 1,
   }));
 
   const trimmed = query.trim().toLowerCase();

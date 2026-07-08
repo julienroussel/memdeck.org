@@ -11,9 +11,9 @@ const mockTrackEvent = vi.fn();
 
 vi.mock("../../hooks/use-timer-settings", () => ({
   useTimerSettings: vi.fn(() => ({
-    timerSettings: { enabled: false, duration: 15 },
-    setTimerEnabled: mockSetTimerEnabled,
     setTimerDuration: mockSetTimerDuration,
+    setTimerEnabled: mockSetTimerEnabled,
+    timerSettings: { duration: 15, enabled: false },
   })),
 }));
 
@@ -39,8 +39,8 @@ describe("useAcaanSettings", () => {
 
   it("returns timer settings from useTimerSettings", () => {
     expect(result.current.timerSettings).toEqual({
-      enabled: false,
       duration: 15,
+      enabled: false,
     });
   });
 

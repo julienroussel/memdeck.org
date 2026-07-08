@@ -31,8 +31,8 @@ export const useAcaanSettings = (): UseAcaanSettingsResult => {
   );
 
   return {
-    timerSettings,
-    setTimerDuration,
     handleTimerEnabledChange,
+    setTimerDuration,
+    timerSettings,
   };
 };

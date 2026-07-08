@@ -47,13 +47,13 @@ export const computeSequences = (
 
   const cycles: SequenceEntry[][] = [];
 
-  for (let start = 0; start < cycleCount; start++) {
+  for (let start = 0; start < cycleCount; start += 1) {
     const cycle: SequenceEntry[] = [];
     let index = start;
-    for (let j = 0; j < cycleLength; j++) {
+    for (let j = 0; j < cycleLength; j += 1) {
       cycle.push({
-        position: createDeckPosition(index + 1),
         card: stack[index],
+        position: createDeckPosition(index + 1),
       });
       index = (index + effectiveStep) % DECK_SIZE;
     }

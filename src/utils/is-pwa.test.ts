@@ -25,13 +25,13 @@ describe("isPwa", () => {
       matches: false,
     } as MediaQueryList);
     Object.defineProperty(navigator, "standalone", {
-      value: true,
       configurable: true,
+      value: true,
     });
     expect(isPwa()).toBe(true);
     Object.defineProperty(navigator, "standalone", {
-      value: undefined,
       configurable: true,
+      value: undefined,
     });
   });
 });

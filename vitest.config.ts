@@ -17,15 +17,7 @@ export default defineConfig({
     },
   },
   test: {
-    globals: false,
-    environment: "happy-dom",
-    setupFiles: ["./vitest.setup.ts"],
-    include: ["src/**/*.test.{ts,tsx}"],
-    exclude: ["node_modules", "dist"],
     coverage: {
-      provider: "v8",
-      reporter: ["text", "json", "html"],
-      reportsDirectory: "./coverage",
       include: [
         "src/**/*.{ts,tsx}",
         "!src/**/*.test.{ts,tsx}",
@@ -33,39 +25,47 @@ export default defineConfig({
         "!src/main.tsx",
         "!src/vite-env.d.ts",
       ],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      reportsDirectory: "./coverage",
       thresholds: {
+        branches: 40,
+        functions: 40,
         // Global thresholds - UI components lower overall coverage
         lines: 55,
-        functions: 40,
-        branches: 40,
-        statements: 55,
         // Per-glob thresholds — set just below current values as a ratchet.
         // Raise them as coverage improves; never lower without justification.
         "src/hooks/**/*.ts": {
-          lines: 85,
-          functions: 90,
           branches: 60,
-          statements: 85,
-        },
-        "src/utils/**/*.ts": {
-          lines: 90,
           functions: 90,
-          branches: 70,
-          statements: 90,
-        },
-        "src/types/*.ts": {
           lines: 85,
-          functions: 80,
-          branches: 70,
           statements: 85,
         },
         "src/services/**/*.ts": {
-          lines: 90,
-          functions: 90,
           branches: 85,
+          functions: 90,
+          lines: 90,
           statements: 90,
         },
+        "src/types/*.ts": {
+          branches: 70,
+          functions: 80,
+          lines: 85,
+          statements: 85,
+        },
+        "src/utils/**/*.ts": {
+          branches: 70,
+          functions: 90,
+          lines: 90,
+          statements: 90,
+        },
+        statements: 55,
       },
     },
+    environment: "happy-dom",
+    exclude: ["node_modules", "dist"],
+    globals: false,
+    include: ["src/**/*.test.{ts,tsx}"],
+    setupFiles: ["./vitest.setup.ts"],
   },
 });

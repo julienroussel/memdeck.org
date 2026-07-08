@@ -15,14 +15,14 @@ vi.mock("../../hooks/use-session", () => ({
   useSession: (options: CapturedSessionOpts) => {
     capturedSessionCalls.push(options);
     return {
-      status: { phase: "idle" },
-      startSession: vi.fn(),
-      handleAnswer: vi.fn(),
-      startNewSession: vi.fn(),
-      isStructuredSession: false,
       activeSession: null,
-      stopSession: vi.fn(),
       dismissSummary: vi.fn(),
+      handleAnswer: vi.fn(),
+      isStructuredSession: false,
+      startNewSession: vi.fn(),
+      startSession: vi.fn(),
+      status: { phase: "idle" },
+      stopSession: vi.fn(),
     };
   },
 }));
@@ -33,34 +33,34 @@ const handleTimerEnabledChange = vi.fn();
 
 vi.mock("./use-acaan-settings", () => ({
   useAcaanSettings: () => ({
-    timerSettings: { enabled: false, duration: 15 },
-    setTimerDuration: vi.fn(),
     handleTimerEnabledChange,
+    setTimerDuration: vi.fn(),
+    timerSettings: { duration: 15, enabled: false },
   }),
 }));
 
 vi.mock("./use-acaan-game", () => ({
   useAcaanGame: () => ({
+    revealAnswer: vi.fn(),
     scenario: {
       card: stacks.mnemonica.order[0],
-      targetPosition: 10,
       cutDepth: 6,
+      targetPosition: 10,
     },
-    score: { successes: 0, fails: 0 },
+    score: { fails: 0, successes: 0 },
+    submitAnswer: vi.fn(),
     timeRemaining: 15,
     timerDuration: 15,
-    submitAnswer: vi.fn(),
-    revealAnswer: vi.fn(),
   }),
 }));
 
 vi.mock("./use-cut-depth-input", () => ({
   useCutDepthInput: () => ({
     cutDepth: "",
-    maxCutDepth: 51,
-    handleCutDepthChange: vi.fn(),
     handleCheckAnswer: vi.fn(),
+    handleCutDepthChange: vi.fn(),
     handleKeyDown: vi.fn(),
+    maxCutDepth: 51,
   }),
 }));
 
@@ -93,10 +93,10 @@ vi.mock("../../hooks/use-card-image-preload", () => ({
 
 vi.mock("../../hooks/use-selected-stack", () => ({
   useRequiredStack: () => ({
-    stackKey: "mnemonica",
     stack: stacks.mnemonica,
-    stackOrder: stacks.mnemonica.order,
+    stackKey: "mnemonica",
     stackName: stacks.mnemonica.name,
+    stackOrder: stacks.mnemonica.order,
   }),
 }));
 
@@ -112,12 +112,12 @@ vi.mock("../../components/reveal-button", () => ({
   RevealButton: () => null,
 }));
 vi.mock("../../components/json-ld", () => ({
-  JsonLd: () => null,
   buildBreadcrumbSchema: () => ({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [],
   }),
+  JsonLd: () => null,
 }));
 
 // Mount the page one commit AFTER the Router so the Router's history listener

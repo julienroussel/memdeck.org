@@ -35,7 +35,7 @@ describe("deriveActiveSession", () => {
 describe("deriveIsStructuredSession", () => {
   it("returns true for a structured session config", () => {
     const session = makeActiveSession({
-      config: { type: "structured", totalQuestions: 10 },
+      config: { totalQuestions: 10, type: "structured" },
     });
 
     expect(deriveIsStructuredSession(session)).toBe(true);
@@ -114,7 +114,7 @@ describe("applyAnswerOutcome", () => {
 describe("meetsMinimumSaveThreshold", () => {
   it("returns false for a structured session with 0 questions completed", () => {
     const session = makeActiveSession({
-      config: { type: "structured", totalQuestions: 10 },
+      config: { totalQuestions: 10, type: "structured" },
       questionsCompleted: 0,
     });
 
@@ -123,7 +123,7 @@ describe("meetsMinimumSaveThreshold", () => {
 
   it("returns true for a structured session with 1 or more questions completed", () => {
     const session = makeActiveSession({
-      config: { type: "structured", totalQuestions: 10 },
+      config: { totalQuestions: 10, type: "structured" },
       questionsCompleted: 1,
     });
 

@@ -67,10 +67,10 @@ export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
     if (corrupt) {
       analytics.trackError(new Error("stackLimits-corrupt"));
       notifications.show({
-        id: STACK_LIMITS_CORRUPT_NOTIFICATION_ID,
         color: "red",
-        title: tRef.current("errors.stackLimitsCorrupt.title"),
+        id: STACK_LIMITS_CORRUPT_NOTIFICATION_ID,
         message: tRef.current("errors.stackLimitsCorrupt.message"),
+        title: tRef.current("errors.stackLimitsCorrupt.title"),
       });
     }
   }, []);
@@ -81,8 +81,8 @@ export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
     () =>
       rawStart !== undefined && rawEnd !== undefined
         ? {
-            start: createDeckPosition(rawStart),
             end: createDeckPosition(rawEnd),
+            start: createDeckPosition(rawStart),
           }
         : DEFAULT_STACK_LIMITS,
     [rawStart, rawEnd]
@@ -96,10 +96,10 @@ export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
       // reminds the user why the control is inert.
       if (corruptRef.current === true) {
         notifications.show({
-          id: STACK_LIMITS_CORRUPT_NOTIFICATION_ID,
           color: "red",
-          title: tRef.current("errors.stackLimitsCorrupt.title"),
+          id: STACK_LIMITS_CORRUPT_NOTIFICATION_ID,
           message: tRef.current("errors.stackLimitsCorrupt.message"),
+          title: tRef.current("errors.stackLimitsCorrupt.title"),
         });
         return;
       }
@@ -107,8 +107,8 @@ export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
         (prev) => ({
           ...prev,
           [stackKey]: {
-            start: newLimits.start,
             end: newLimits.end,
+            start: newLimits.start,
           },
         }),
         {
@@ -118,10 +118,10 @@ export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
           // consistent with what actually reached storage.
           onSuccess: () => {
             eventBus.emit.STACK_LIMITS_CHANGED({
-              start: newLimits.start,
               end: newLimits.end,
               rangeSize: newLimits.end - newLimits.start + 1,
               stackName: stacks[stackKey].name,
+              start: newLimits.start,
             });
           },
         }
@@ -134,9 +134,9 @@ export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
   const full = isFullDeck(limits);
 
   return {
-    limits,
-    setLimits: handleSetLimits,
-    rangeSize,
     isFullDeck: full,
+    limits,
+    rangeSize,
+    setLimits: handleSetLimits,
   };
 };

@@ -7,16 +7,16 @@ import { WhatsNewEntryCard } from "./whats-new-entry-card";
 const baseEntry: WhatsNewEntry = {
   id: "test-entry",
   releasedAt: "2026-06-05T13:30:00Z",
-  type: "feature",
   title: {
-    en: "English title",
-    fr: "Titre français",
-    es: "Título español",
     de: "Deutscher Titel",
+    en: "English title",
+    es: "Título español",
+    fr: "Titre français",
     it: "Titolo italiano",
     nl: "Nederlandse titel",
     pt: "Título português",
   },
+  type: "feature",
 };
 
 describe("WhatsNewEntryCard", () => {
@@ -38,10 +38,10 @@ describe("WhatsNewEntryCard", () => {
     const withBody: WhatsNewEntry = {
       ...baseEntry,
       body: {
-        en: "Body text",
-        fr: "Corps",
-        es: "Cuerpo",
         de: "Textkörper",
+        en: "Body text",
+        es: "Cuerpo",
+        fr: "Corps",
         it: "Corpo",
         nl: "Hoofdtekst",
         pt: "Corpo",

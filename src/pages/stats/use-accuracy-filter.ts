@@ -143,14 +143,14 @@ export const useAccuracyFilter = (
 
   return {
     filter,
-    flashcardSubFilter,
-    spotCheckSubFilter,
+    filteredHistory,
     filterOptions,
+    flashcardSubFilter,
     flashcardSubFilterOptions,
-    spotCheckSubFilterOptions,
     handleFilterChange,
     handleFlashcardSubFilterChange,
     handleSpotCheckSubFilterChange,
-    filteredHistory,
+    spotCheckSubFilter,
+    spotCheckSubFilterOptions,
   };
 };

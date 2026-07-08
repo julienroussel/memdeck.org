@@ -24,8 +24,8 @@ const breadcrumbSchema = buildBreadcrumbSchema("About", ROUTES.about);
 export const About = () => {
   const { t } = useTranslation();
   useDocumentMeta({
-    title: t("about.pageTitle"),
     description: t("about.pageDescription"),
+    title: t("about.pageTitle"),
   });
 
   const handleShare = useCallback(async () => {

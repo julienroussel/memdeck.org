@@ -164,7 +164,7 @@ describe("CardSpread", () => {
 
     const getFirstButton = () => {
       const buttons = screen.getAllByRole("button");
-      const first = buttons[0];
+      const [first] = buttons;
       if (!first) {
         throw new Error("Expected at least one button element");
       }

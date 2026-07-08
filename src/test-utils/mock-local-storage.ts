@@ -2,21 +2,21 @@
 export const createMockLocalStorage = () => {
   const storage = new Map<string, string>();
   const mockLocalStorage = {
-    getItem: (key: string) => storage.get(key) ?? null,
-    setItem: (key: string, value: string) => {
-      storage.set(key, value);
-    },
-    removeItem: (key: string) => {
-      storage.delete(key);
-    },
     clear: () => storage.clear(),
-    get length() {
-      return storage.size;
-    },
+    getItem: (key: string) => storage.get(key) ?? null,
     key: (index: number) => {
       const keys = [...storage.keys()];
       return keys[index] ?? null;
     },
+    get length() {
+      return storage.size;
+    },
+    removeItem: (key: string) => {
+      storage.delete(key);
+    },
+    setItem: (key: string, value: string) => {
+      storage.set(key, value);
+    },
   } satisfies Storage;
-  return { storage, mockLocalStorage };
+  return { mockLocalStorage, storage };
 };

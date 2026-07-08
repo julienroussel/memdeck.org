@@ -54,17 +54,17 @@ export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
             {t("home.switchStackHint")}
           </Text>
         </Text>
-        {isFullDeck && (
+        {isFullDeck ? (
           <Text c="dimmed" mt="xs" size="sm">
             {t("home.rangeHint")}
           </Text>
-        )}
+        ) : null}
       </div>
 
       <div>
         <Title order={2}>{t("home.quickStart")}</Title>
         <Space h="sm" />
-        <SimpleGrid cols={{ base: 2, sm: 3, md: 6 }}>
+        <SimpleGrid cols={{ base: 2, md: 6, sm: 3 }}>
           <Button
             component={Link}
             leftSection={<IconCards aria-hidden="true" size={18} />}

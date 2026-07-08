@@ -98,12 +98,12 @@ export const FlashcardActiveRound = ({
       </span>
       <Grid.Col span={12}>
         <Space h="xl" />
-        {timerEnabled && (
+        {timerEnabled ? (
           <TimerDisplay
             timeRemaining={timeRemaining}
             timerDuration={timerDuration}
           />
-        )}
+        ) : null}
         <FlashcardCardDisplay
           card={card}
           isNeighborMode={isNeighborMode}

@@ -81,14 +81,14 @@ export const useFlashcardGame = (
   const [state, dispatch] = useReducer(
     gameReducer,
     {
-      stackOrder,
-      timerDuration: timerSettings.duration,
+      limits,
       mode,
       neighborDirection,
-      limits,
+      stackOrder,
+      timerDuration: timerSettings.duration,
     },
     ({
-      stackOrder,
+      stackOrder: so,
       timerDuration,
       mode: m,
       neighborDirection: nd,
@@ -96,17 +96,17 @@ export const useFlashcardGame = (
     }) =>
       m === "neighbor"
         ? createInitialState({
-            stackOrder,
-            timerDuration,
             flashcardMode: m,
-            neighborDirection: nd,
             limits: l,
+            neighborDirection: nd,
+            stackOrder: so,
+            timerDuration,
           })
         : createInitialState({
-            stackOrder,
-            timerDuration,
             flashcardMode: m,
             limits: l,
+            stackOrder: so,
+            timerDuration,
           })
   );
 
@@ -136,23 +136,23 @@ export const useFlashcardGame = (
     dispatch(
       mode === "neighbor"
         ? {
-            type: "RESET_GAME",
             payload: {
+              flashcardMode: mode,
+              limits,
+              neighborDirection,
               stackOrder,
               timerDuration: timerSettings.duration,
-              flashcardMode: mode,
-              neighborDirection,
-              limits,
             },
+            type: "RESET_GAME",
           }
         : {
-            type: "RESET_GAME",
             payload: {
-              stackOrder,
-              timerDuration: timerSettings.duration,
               flashcardMode: mode,
               limits,
+              stackOrder,
+              timerDuration: timerSettings.duration,
             },
+            type: "RESET_GAME",
           }
     );
   }
@@ -171,8 +171,8 @@ export const useFlashcardGame = (
         limitsRef.current
       );
       return {
-        newCard: result.card,
         newAnswerCard: result.answerCard,
+        newCard: result.card,
         newChoices: result.choices,
         newDisplay: "card",
         newResolvedDirection: result.resolvedDirection,
@@ -187,8 +187,8 @@ export const useFlashcardGame = (
         ? getRandomDisplayMode()
         : displayRef.current;
     return {
-      newCard,
       newAnswerCard: newCard,
+      newCard,
       newChoices,
       newDisplay,
       newResolvedDirection: null,
@@ -197,26 +197,26 @@ export const useFlashcardGame = (
 
   const createTimeoutAction = useCallback(() => {
     const payload = generateNextRound();
-    return { type: "TIMEOUT" as const, payload };
+    return { payload, type: "TIMEOUT" as const };
   }, [generateNextRound]);
 
   const handleTimeout = useCallback(() => {
     notifications.show({
-      color: "red",
-      title: t("flashcard.timesUp"),
-      message: t("flashcard.movingToNext"),
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+      color: "red",
+      message: t("flashcard.movingToNext"),
+      title: t("flashcard.timesUp"),
     });
     eventBus.emit.FLASHCARD_ANSWER({ correct: false, stackName });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
   }, [stackName, t]);
 
   useGameTimer({
-    timerSettings,
-    timeRemaining: state.timeRemaining,
-    dispatch,
     createTimeoutAction,
+    dispatch,
     onTimeout: handleTimeout,
+    timeRemaining: state.timeRemaining,
+    timerSettings,
   });
 
   const submitAnswer = useCallback(
@@ -225,7 +225,7 @@ export const useFlashcardGame = (
 
       if (correct) {
         const payload = generateNextRound();
-        dispatch({ type: "CORRECT_ANSWER", payload });
+        dispatch({ payload, type: "CORRECT_ANSWER" });
         onAnswerRef.current?.({ correct: true, questionAdvanced: true });
       } else {
         notifications.show(buildWrongAnswerNotification(t));
@@ -257,30 +257,30 @@ export const useFlashcardGame = (
       : String(currentAnswerCard.index);
 
     notifications.show({
-      color: "yellow",
-      title: t("flashcard.revealTitle"),
-      message: revealMessage,
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+      color: "yellow",
+      message: revealMessage,
+      title: t("flashcard.revealTitle"),
     });
 
     const payload = generateNextRound();
-    dispatch({ type: "REVEAL_ANSWER", payload });
+    dispatch({ payload, type: "REVEAL_ANSWER" });
     analytics.trackFeatureUsed("Reveal Answer - Flashcard");
     eventBus.emit.FLASHCARD_ANSWER({ correct: false, stackName });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
   }, [stackName, generateNextRound, t, formatCardName]);
 
   return {
-    score: { successes: state.successes, fails: state.fails },
-    card: state.card,
     answerCard: state.answerCard,
+    card: state.card,
     choices: state.choices,
-    shouldShowCard,
-    timeRemaining: state.timeRemaining,
-    timerDuration: state.timerDuration,
     isNeighborMode: mode === "neighbor",
     resolvedDirection: state.resolvedDirection,
-    submitAnswer,
     revealAnswer,
+    score: { fails: state.fails, successes: state.successes },
+    shouldShowCard,
+    submitAnswer,
+    timeRemaining: state.timeRemaining,
+    timerDuration: state.timerDuration,
   };
 };

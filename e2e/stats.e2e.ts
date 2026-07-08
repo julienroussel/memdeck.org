@@ -52,17 +52,17 @@ test.describe("Statistics Page", () => {
   ) {
     await page.goto("/");
     await page.evaluate(
-      ({ sessions, allTimeStats }) => {
+      ({ seededSessions, seededAllTimeStats }) => {
         localStorage.setItem(
           "memdeck-app-session-history",
-          JSON.stringify(sessions)
+          JSON.stringify(seededSessions)
         );
         localStorage.setItem(
           "memdeck-app-all-time-stats",
-          JSON.stringify(allTimeStats)
+          JSON.stringify(seededAllTimeStats)
         );
       },
-      { sessions, allTimeStats }
+      { seededAllTimeStats: allTimeStats, seededSessions: sessions }
     );
     await page.goto("/stats");
     await page.waitForLoadState("networkidle");
@@ -72,28 +72,28 @@ test.describe("Statistics Page", () => {
     overrides: Partial<SessionSeed> & { id: string }
   ): SessionSeed {
     return {
-      mode: "flashcard",
-      stackKey: "mnemonica",
-      config: { type: "structured", totalQuestions: 10 },
-      startedAt: new Date("2026-02-10T10:00:00Z").toISOString(),
-      endedAt: new Date("2026-02-10T10:05:00Z").toISOString(),
-      durationSeconds: 300,
-      successes: 8,
-      fails: 2,
-      questionsCompleted: 10,
       accuracy: 0.8,
       bestStreak: 5,
+      config: { totalQuestions: 10, type: "structured" },
+      durationSeconds: 300,
+      endedAt: new Date("2026-02-10T10:05:00Z").toISOString(),
+      fails: 2,
+      mode: "flashcard",
+      questionsCompleted: 10,
+      stackKey: "mnemonica",
+      startedAt: new Date("2026-02-10T10:00:00Z").toISOString(),
+      successes: 8,
       ...overrides,
     };
   }
 
   function makeStats(overrides?: Partial<StatsSeed>): StatsSeed {
     return {
-      totalSessions: 1,
-      totalQuestions: 10,
-      totalSuccesses: 8,
-      totalFails: 2,
       globalBestStreak: 5,
+      totalFails: 2,
+      totalQuestions: 10,
+      totalSessions: 1,
+      totalSuccesses: 8,
       ...overrides,
     };
   }
@@ -149,9 +149,9 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
-          id: "test-session-1",
           durationSeconds: 330,
           endedAt: new Date("2026-02-10T10:05:30Z").toISOString(),
+          id: "test-session-1",
         }),
       ],
       { "flashcard:mnemonica": makeStats() }
@@ -179,8 +179,8 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
-          id: "exploration-session-1",
           flashcardMode: "numberonly",
+          id: "exploration-session-1",
         }),
       ],
       { "flashcard:mnemonica": makeStats() }
@@ -210,43 +210,43 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
-          id: "test-1",
-          successes: 9,
-          fails: 1,
           accuracy: 0.9,
           bestStreak: 7,
+          fails: 1,
+          id: "test-1",
+          successes: 9,
         }),
         makeSession({
+          accuracy: 0.7,
+          bestStreak: 4,
+          durationSeconds: 480,
+          endedAt: new Date("2026-02-10T11:08:00Z").toISOString(),
+          fails: 3,
           id: "test-2",
           mode: "acaan",
           startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
-          endedAt: new Date("2026-02-10T11:08:00Z").toISOString(),
-          durationSeconds: 480,
           successes: 7,
-          fails: 3,
-          accuracy: 0.7,
-          bestStreak: 4,
         }),
         makeSession({
+          durationSeconds: 360,
+          endedAt: new Date("2026-02-10T12:06:00Z").toISOString(),
           id: "test-3",
           stackKey: "aronson",
           startedAt: new Date("2026-02-10T12:00:00Z").toISOString(),
-          endedAt: new Date("2026-02-10T12:06:00Z").toISOString(),
-          durationSeconds: 360,
         }),
       ],
       {
-        "flashcard:mnemonica": makeStats({
-          totalSuccesses: 9,
-          totalFails: 1,
-          globalBestStreak: 7,
-        }),
         "acaan:mnemonica": makeStats({
-          totalSuccesses: 7,
-          totalFails: 3,
           globalBestStreak: 4,
+          totalFails: 3,
+          totalSuccesses: 7,
         }),
         "flashcard:aronson": makeStats(),
+        "flashcard:mnemonica": makeStats({
+          globalBestStreak: 7,
+          totalFails: 1,
+          totalSuccesses: 9,
+        }),
       }
     );
 
@@ -275,34 +275,34 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
-          id: "flash-1",
-          successes: 9,
-          fails: 1,
           accuracy: 0.9,
           bestStreak: 7,
+          fails: 1,
+          id: "flash-1",
+          successes: 9,
         }),
         makeSession({
+          accuracy: 0.6,
+          bestStreak: 3,
+          durationSeconds: 480,
+          endedAt: new Date("2026-02-10T11:08:00Z").toISOString(),
+          fails: 4,
           id: "acaan-1",
           mode: "acaan",
           startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
-          endedAt: new Date("2026-02-10T11:08:00Z").toISOString(),
-          durationSeconds: 480,
           successes: 6,
-          fails: 4,
-          accuracy: 0.6,
-          bestStreak: 3,
         }),
       ],
       {
-        "flashcard:mnemonica": makeStats({
-          totalSuccesses: 9,
-          totalFails: 1,
-          globalBestStreak: 7,
-        }),
         "acaan:mnemonica": makeStats({
-          totalSuccesses: 6,
-          totalFails: 4,
           globalBestStreak: 3,
+          totalFails: 4,
+          totalSuccesses: 6,
+        }),
+        "flashcard:mnemonica": makeStats({
+          globalBestStreak: 7,
+          totalFails: 1,
+          totalSuccesses: 9,
         }),
       }
     );
@@ -328,10 +328,10 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
+          durationSeconds: 345,
+          endedAt: new Date("2026-02-10T14:35:45Z").toISOString(),
           id: "test-session-1",
           startedAt: new Date("2026-02-10T14:30:00Z").toISOString(),
-          endedAt: new Date("2026-02-10T14:35:45Z").toISOString(),
-          durationSeconds: 345,
         }),
       ],
       { "flashcard:mnemonica": makeStats() }
@@ -367,34 +367,34 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
-          id: "mnem-1",
-          successes: 9,
-          fails: 1,
           accuracy: 0.9,
           bestStreak: 7,
+          fails: 1,
+          id: "mnem-1",
+          successes: 9,
         }),
         makeSession({
+          accuracy: 0.7,
+          bestStreak: 4,
+          durationSeconds: 360,
+          endedAt: new Date("2026-02-10T11:06:00Z").toISOString(),
+          fails: 3,
           id: "aron-1",
           stackKey: "aronson",
           startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
-          endedAt: new Date("2026-02-10T11:06:00Z").toISOString(),
-          durationSeconds: 360,
           successes: 7,
-          fails: 3,
-          accuracy: 0.7,
-          bestStreak: 4,
         }),
       ],
       {
-        "flashcard:mnemonica": makeStats({
-          totalSuccesses: 9,
-          totalFails: 1,
-          globalBestStreak: 7,
-        }),
         "flashcard:aronson": makeStats({
-          totalSuccesses: 7,
-          totalFails: 3,
           globalBestStreak: 4,
+          totalFails: 3,
+          totalSuccesses: 7,
+        }),
+        "flashcard:mnemonica": makeStats({
+          globalBestStreak: 7,
+          totalFails: 1,
+          totalSuccesses: 9,
         }),
       }
     );
@@ -433,18 +433,18 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
-          id: "persist-test-1",
-          successes: 10,
-          fails: 0,
           accuracy: 1.0,
           bestStreak: 10,
+          fails: 0,
+          id: "persist-test-1",
+          successes: 10,
         }),
       ],
       {
         "flashcard:mnemonica": makeStats({
-          totalSuccesses: 10,
-          totalFails: 0,
           globalBestStreak: 10,
+          totalFails: 0,
+          totalSuccesses: 10,
         }),
       }
     );
@@ -468,40 +468,40 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
-          id: "high-acc",
-          successes: 9,
-          fails: 1,
           accuracy: 0.9,
           bestStreak: 7,
+          fails: 1,
+          id: "high-acc",
+          successes: 9,
         }),
         makeSession({
-          id: "mid-acc",
-          startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
-          endedAt: new Date("2026-02-10T11:06:00Z").toISOString(),
-          durationSeconds: 360,
-          successes: 6,
-          fails: 4,
           accuracy: 0.6,
           bestStreak: 4,
+          durationSeconds: 360,
+          endedAt: new Date("2026-02-10T11:06:00Z").toISOString(),
+          fails: 4,
+          id: "mid-acc",
+          startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
+          successes: 6,
         }),
         makeSession({
-          id: "low-acc",
-          startedAt: new Date("2026-02-10T12:00:00Z").toISOString(),
-          endedAt: new Date("2026-02-10T12:07:00Z").toISOString(),
-          durationSeconds: 420,
-          successes: 3,
-          fails: 7,
           accuracy: 0.3,
           bestStreak: 2,
+          durationSeconds: 420,
+          endedAt: new Date("2026-02-10T12:07:00Z").toISOString(),
+          fails: 7,
+          id: "low-acc",
+          startedAt: new Date("2026-02-10T12:00:00Z").toISOString(),
+          successes: 3,
         }),
       ],
       {
         "flashcard:mnemonica": makeStats({
-          totalSessions: 3,
-          totalQuestions: 30,
-          totalSuccesses: 18,
-          totalFails: 12,
           globalBestStreak: 7,
+          totalFails: 12,
+          totalQuestions: 30,
+          totalSessions: 3,
+          totalSuccesses: 18,
         }),
       }
     );
@@ -521,9 +521,16 @@ test.describe("Statistics Page", () => {
   }) => {
     // Pre-populate with more than 20 sessions (PAGE_SIZE = 20)
     const sessions: SessionSeed[] = [];
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 25; i += 1) {
       sessions.push(
         makeSession({
+          endedAt: new Date(
+            2026,
+            1,
+            10,
+            10 + Math.floor(i / 6),
+            ((i * 10) % 60) + 5
+          ).toISOString(),
           id: `session-${i}`,
           startedAt: new Date(
             2026,
@@ -532,24 +539,17 @@ test.describe("Statistics Page", () => {
             10 + Math.floor(i / 6),
             (i * 10) % 60
           ).toISOString(),
-          endedAt: new Date(
-            2026,
-            1,
-            10,
-            10 + Math.floor(i / 6),
-            ((i * 10) % 60) + 5
-          ).toISOString(),
         })
       );
     }
 
     await seedAndNavigate(page, sessions, {
       "flashcard:mnemonica": makeStats({
-        totalSessions: 25,
-        totalQuestions: 250,
-        totalSuccesses: 200,
-        totalFails: 50,
         globalBestStreak: 15,
+        totalFails: 50,
+        totalQuestions: 250,
+        totalSessions: 25,
+        totalSuccesses: 200,
       }),
     });
 
@@ -571,20 +571,20 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
-          id: "duration-test",
-          endedAt: new Date("2026-02-10T10:03:25Z").toISOString(),
-          durationSeconds: 205, // 3 minutes 25 seconds
-          successes: 10,
-          fails: 0,
           accuracy: 1.0,
           bestStreak: 10,
+          durationSeconds: 205, // 3 minutes 25 seconds
+          endedAt: new Date("2026-02-10T10:03:25Z").toISOString(),
+          fails: 0,
+          id: "duration-test",
+          successes: 10,
         }),
       ],
       {
         "flashcard:mnemonica": makeStats({
-          totalSuccesses: 10,
-          totalFails: 0,
           globalBestStreak: 10,
+          totalFails: 0,
+          totalSuccesses: 10,
         }),
       }
     );
@@ -618,45 +618,45 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
+          endedAt: new Date("2026-02-08T10:05:00Z").toISOString(),
           id: "agg-1",
           startedAt: new Date("2026-02-08T10:00:00Z").toISOString(),
-          endedAt: new Date("2026-02-08T10:05:00Z").toISOString(),
         }),
         makeSession({
+          accuracy: 0.9,
+          bestStreak: 7,
+          durationSeconds: 360,
+          endedAt: new Date("2026-02-09T10:06:00Z").toISOString(),
+          fails: 1,
           id: "agg-2",
           stackKey: "aronson",
           startedAt: new Date("2026-02-09T10:00:00Z").toISOString(),
-          endedAt: new Date("2026-02-09T10:06:00Z").toISOString(),
-          durationSeconds: 360,
           successes: 9,
-          fails: 1,
-          accuracy: 0.9,
-          bestStreak: 7,
         }),
         makeSession({
+          accuracy: 0.7,
+          bestStreak: 4,
+          durationSeconds: 480,
+          endedAt: new Date("2026-02-10T10:08:00Z").toISOString(),
+          fails: 3,
           id: "agg-3",
           mode: "acaan",
           startedAt: new Date("2026-02-10T10:00:00Z").toISOString(),
-          endedAt: new Date("2026-02-10T10:08:00Z").toISOString(),
-          durationSeconds: 480,
           successes: 7,
-          fails: 3,
-          accuracy: 0.7,
-          bestStreak: 4,
         }),
       ],
       {
-        "flashcard:mnemonica": makeStats(),
-        "flashcard:aronson": makeStats({
-          totalSuccesses: 9,
-          totalFails: 1,
-          globalBestStreak: 7,
-        }),
         "acaan:mnemonica": makeStats({
-          totalSuccesses: 7,
-          totalFails: 3,
           globalBestStreak: 4,
+          totalFails: 3,
+          totalSuccesses: 7,
         }),
+        "flashcard:aronson": makeStats({
+          globalBestStreak: 7,
+          totalFails: 1,
+          totalSuccesses: 9,
+        }),
+        "flashcard:mnemonica": makeStats(),
       }
     );
 
@@ -682,18 +682,18 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
-          id: "flash-only",
-          successes: 9,
-          fails: 1,
           accuracy: 0.9,
           bestStreak: 7,
+          fails: 1,
+          id: "flash-only",
+          successes: 9,
         }),
       ],
       {
         "flashcard:mnemonica": makeStats({
-          totalSuccesses: 9,
-          totalFails: 1,
           globalBestStreak: 7,
+          totalFails: 1,
+          totalSuccesses: 9,
         }),
       }
     );
@@ -737,22 +737,22 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
-          id: "pos-1",
-          flashcardMode: "cardonly",
-          successes: 9,
-          fails: 1,
           accuracy: 0.9,
           bestStreak: 7,
+          fails: 1,
+          flashcardMode: "cardonly",
+          id: "pos-1",
+          successes: 9,
         }),
         makeSession({
-          id: "neigh-1",
-          flashcardMode: "neighbor",
-          startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
-          endedAt: new Date("2026-02-10T11:05:00Z").toISOString(),
-          successes: 7,
-          fails: 3,
           accuracy: 0.7,
           bestStreak: 4,
+          endedAt: new Date("2026-02-10T11:05:00Z").toISOString(),
+          fails: 3,
+          flashcardMode: "neighbor",
+          id: "neigh-1",
+          startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
+          successes: 7,
         }),
       ],
       { "flashcard:mnemonica": makeStats({ totalSessions: 2 }) }
@@ -788,22 +788,22 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
-          id: "pos-sub-1",
-          flashcardMode: "bothmodes",
-          successes: 9,
-          fails: 1,
           accuracy: 0.9,
           bestStreak: 7,
+          fails: 1,
+          flashcardMode: "bothmodes",
+          id: "pos-sub-1",
+          successes: 9,
         }),
         makeSession({
-          id: "neigh-sub-1",
-          flashcardMode: "neighbor",
-          startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
-          endedAt: new Date("2026-02-10T11:05:00Z").toISOString(),
-          successes: 6,
-          fails: 4,
           accuracy: 0.6,
           bestStreak: 3,
+          endedAt: new Date("2026-02-10T11:05:00Z").toISOString(),
+          fails: 4,
+          flashcardMode: "neighbor",
+          id: "neigh-sub-1",
+          startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
+          successes: 6,
         }),
       ],
       { "flashcard:mnemonica": makeStats({ totalSessions: 2 }) }
@@ -844,31 +844,31 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
-          id: "reset-1",
-          flashcardMode: "neighbor",
-          successes: 8,
-          fails: 2,
           accuracy: 0.8,
           bestStreak: 5,
+          fails: 2,
+          flashcardMode: "neighbor",
+          id: "reset-1",
+          successes: 8,
         }),
         makeSession({
+          accuracy: 0.7,
+          bestStreak: 4,
+          endedAt: new Date("2026-02-10T11:05:00Z").toISOString(),
+          fails: 3,
           id: "reset-2",
           mode: "acaan",
           startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
-          endedAt: new Date("2026-02-10T11:05:00Z").toISOString(),
           successes: 7,
-          fails: 3,
-          accuracy: 0.7,
-          bestStreak: 4,
         }),
       ],
       {
-        "flashcard:mnemonica": makeStats(),
         "acaan:mnemonica": makeStats({
-          totalSuccesses: 7,
-          totalFails: 3,
           globalBestStreak: 4,
+          totalFails: 3,
+          totalSuccesses: 7,
         }),
+        "flashcard:mnemonica": makeStats(),
       }
     );
 
@@ -904,22 +904,22 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
-          id: "label-1",
-          flashcardMode: "neighbor",
-          successes: 8,
-          fails: 2,
           accuracy: 0.8,
           bestStreak: 5,
+          fails: 2,
+          flashcardMode: "neighbor",
+          id: "label-1",
+          successes: 8,
         }),
         makeSession({
-          id: "label-2",
-          flashcardMode: "cardonly",
-          startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
-          endedAt: new Date("2026-02-10T11:05:00Z").toISOString(),
-          successes: 9,
-          fails: 1,
           accuracy: 0.9,
           bestStreak: 7,
+          endedAt: new Date("2026-02-10T11:05:00Z").toISOString(),
+          fails: 1,
+          flashcardMode: "cardonly",
+          id: "label-2",
+          startedAt: new Date("2026-02-10T11:00:00Z").toISOString(),
+          successes: 9,
         }),
       ],
       { "flashcard:mnemonica": makeStats({ totalSessions: 2 }) }
@@ -937,12 +937,12 @@ test.describe("Statistics Page", () => {
       page,
       [
         makeSession({
+          accuracy: 0.8,
+          bestStreak: 5,
+          fails: 2,
           id: "legacy-1",
           // No flashcardMode — simulates a legacy record
           successes: 8,
-          fails: 2,
-          accuracy: 0.8,
-          bestStreak: 5,
         }),
       ],
       { "flashcard:mnemonica": makeStats() }

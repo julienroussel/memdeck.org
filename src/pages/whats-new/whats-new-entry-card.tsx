@@ -5,15 +5,15 @@ import type { SupportedLanguage } from "../../i18n/supported-languages";
 import { formatReleaseDate } from "../../utils/format-release-date";
 
 const TYPE_LABEL_KEYS = {
-  stack: "whatsNew.typeStack",
   feature: "whatsNew.typeFeature",
   fix: "whatsNew.typeFix",
+  stack: "whatsNew.typeStack",
 } as const satisfies Record<WhatsNewType, string>;
 
 const TYPE_COLORS = {
-  stack: "grape",
   feature: "blue",
   fix: "teal",
+  stack: "grape",
 } as const satisfies Record<WhatsNewType, string>;
 
 type WhatsNewEntryCardProps = {

@@ -62,9 +62,9 @@ export const App = () => {
     <AppShell
       header={{ height: 60 }}
       navbar={{
-        width: 300,
         breakpoint: "sm",
-        collapsed: { mobile: !opened, desktop: !opened },
+        collapsed: { desktop: !opened, mobile: !opened },
+        width: 300,
       }}
       padding="md"
     >

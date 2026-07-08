@@ -50,15 +50,15 @@ const reportPriorSessionFinalizeFailure = (
     reason === "corrupt" || reason === "corrupt-prior-state";
   notifications.show({
     color: isUnrecoverable ? "red" : "yellow",
-    title: t(
-      isUnrecoverable
-        ? "errors.sessionStorageCorrupt.title"
-        : "errors.sessionSaveFailed.title"
-    ),
     message: t(
       isUnrecoverable
         ? "errors.sessionStorageCorrupt.message"
         : "errors.sessionSaveFailed.message"
+    ),
+    title: t(
+      isUnrecoverable
+        ? "errors.sessionStorageCorrupt.title"
+        : "errors.sessionSaveFailed.title"
     ),
   });
 };
@@ -125,7 +125,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
   const tRef = useRef(t);
   tRef.current = t;
   const { mode, stackKey, autoStart = false, timed = false } = options;
-  const stackLimits = options.stackLimits;
+  const { stackLimits } = options;
   const stackLimitsRef = useRef(stackLimits);
   stackLimitsRef.current = stackLimits;
   const flashcardMode =
@@ -176,7 +176,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
       }
       const result = finalizeSession(session);
       if (!result.ok) {
-        return { status: "write-failed", reason: result.reason };
+        return { reason: result.reason, status: "write-failed" };
       }
       finalizedIdsRef.current.add(session.id);
       return { status: "finalized", summary: result.summary };
@@ -309,15 +309,15 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
       finalizedIdsRef.current.add(session.id);
       notifications.show({
         color: "red",
-        title: tRef.current("errors.sessionStorageCorrupt.title"),
         message: tRef.current("errors.sessionStorageCorrupt.message"),
+        title: tRef.current("errors.sessionStorageCorrupt.title"),
       });
       return;
     }
     notifications.show({
       color: "red",
-      title: tRef.current("errors.sessionSaveFailed.title"),
       message: tRef.current("errors.sessionSaveFailed.message"),
+      title: tRef.current("errors.sessionSaveFailed.title"),
     });
     // Leave phase: "active" intact so the user can retry Stop. The pending ref
     // has been cleared above, so this effect won't loop.
@@ -358,8 +358,8 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
     markLastSaveFailedNotificationShown(breadcrumb.failedAt);
     notifications.show({
       color: "yellow",
-      title: tRef.current("errors.lastSaveFailed.title"),
       message: tRef.current("errors.lastSaveFailed.message"),
+      title: tRef.current("errors.lastSaveFailed.title"),
     });
   }, []);
 
@@ -384,16 +384,16 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
       requestedFinalizationIdsRef.current.clear();
 
       const baseSession: ActiveSessionBase = {
-        id: crypto.randomUUID(),
-        stackKey,
+        bestStreak: 0,
         config,
+        currentStreak: 0,
+        fails: 0,
+        id: crypto.randomUUID(),
+        questionsCompleted: 0,
+        stackKey,
+        stackLimits: stackLimitsRef.current,
         startedAt: new Date().toISOString(),
         successes: 0,
-        fails: 0,
-        questionsCompleted: 0,
-        currentStreak: 0,
-        bestStreak: 0,
-        stackLimits: stackLimitsRef.current,
         timed,
       };
 
@@ -401,8 +401,8 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
       if (mode === "flashcard") {
         session = {
           ...baseSession,
-          mode: "flashcard" as const,
           flashcardMode: flashcardMode ?? "bothmodes",
+          mode: "flashcard" as const,
         };
       } else if (mode === "spotcheck") {
         session = {
@@ -413,15 +413,15 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
       } else if (mode === "distance") {
         session = {
           ...baseSession,
-          mode: "distance" as const,
-          distanceMode: distanceMode ?? "both",
           distanceConvention: distanceConvention ?? "cyclic",
+          distanceMode: distanceMode ?? "both",
+          mode: "distance" as const,
         };
       } else {
         session = { ...baseSession, mode: "acaan" as const };
       }
       setStatus({ phase: "active", session });
-      eventBus.emit.SESSION_STARTED({ mode, config });
+      eventBus.emit.SESSION_STARTED({ config, mode });
     },
     [
       mode,
@@ -480,7 +480,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
   );
 
   const stopSession = useCallback(() => {
-    const current = statusRef.current;
+    const { current } = statusRef;
     if (current.phase !== "active") {
       return;
     }
@@ -532,24 +532,24 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
   }, [autoStart, status.phase, startSession]);
 
   useSessionAutoSave({
+    requestFinalization,
+    setStatus,
     stackKey,
     statusRef,
-    setStatus,
     tryFinalizeSession,
-    requestFinalization,
   });
 
   const activeSession = deriveActiveSession(status);
   const isStructuredSession = deriveIsStructuredSession(activeSession);
 
   return {
-    status,
-    startSession,
-    handleAnswer,
-    startNewSession,
-    isStructuredSession,
     activeSession,
-    stopSession,
     dismissSummary,
+    handleAnswer,
+    isStructuredSession,
+    startNewSession,
+    startSession,
+    status,
+    stopSession,
   };
 };

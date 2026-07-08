@@ -31,21 +31,21 @@ const breadcrumbSchema = buildBreadcrumbSchema("Spot Check", ROUTES.spotCheck);
 
 const MODE_INSTRUCTION_LABELS = {
   missing: "spotCheck.identifyMissing",
-  swapped: "spotCheck.identifySwapped",
   moved: "spotCheck.identifyMoved",
+  swapped: "spotCheck.identifySwapped",
 } as const satisfies Record<SpotCheckMode, SpotCheckI18nKey>;
 
 const MODE_DISPLAY_LABELS = {
   missing: "spotCheck.modeMissing",
-  swapped: "spotCheck.modeSwapped",
   moved: "spotCheck.modeMoved",
+  swapped: "spotCheck.modeSwapped",
 } as const satisfies Record<SpotCheckMode, SpotCheckI18nKey>;
 
 export const SpotCheck = () => {
   const { t } = useTranslation();
   useDocumentMeta({
-    title: t("spotCheck.pageTitle"),
     description: t("spotCheck.pageDescription"),
+    title: t("spotCheck.pageTitle"),
   });
   useCardImagePreload();
   const { stackKey, stackOrder, stackName } = useRequiredStack();
@@ -59,8 +59,8 @@ export const SpotCheck = () => {
   } = useSpotCheckSettings();
 
   const deepLinkPending = useSuggestionDeepLink({
-    tryHandlers: [tryHandler(isSpotCheckMode, handleModeChange)],
     onTimed: () => handleTimerEnabledChange(true),
+    tryHandlers: [tryHandler(isSpotCheckMode, handleModeChange)],
   });
 
   const { limits, rangeSize } = useStackLimits(stackKey);
@@ -75,10 +75,10 @@ export const SpotCheck = () => {
     stopSession,
     dismissSummary,
   } = useSession({
-    mode: "spotcheck",
-    stackKey,
-    spotCheckMode: mode,
     autoStart: !deepLinkPending,
+    mode: "spotcheck",
+    spotCheckMode: mode,
+    stackKey,
     stackLimits: limits,
     timed: timerSettings.enabled,
   });
@@ -131,12 +131,12 @@ export const SpotCheck = () => {
         </span>
         <div>
           <Space h="md" />
-          {timerSettings.enabled && (
+          {timerSettings.enabled ? (
             <TimerDisplay
               timeRemaining={timeRemaining}
               timerDuration={timerDuration}
             />
-          )}
+          ) : null}
           <Text c="dimmed" fw={500} size="sm" ta="center">
             {t(MODE_INSTRUCTION_LABELS[mode])}
           </Text>

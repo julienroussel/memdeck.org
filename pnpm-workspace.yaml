@@ -1,6 +1,13 @@
-ignoredBuiltDependencies:
-  - esbuild
+# Disable pnpm's supply-chain install delay. minimumReleaseAge (pnpm v11 default
+# 1440 = 24h) rejects packages published within the cutoff window, which
+# conflicts with Dependabot: same-day bumps would fail `pnpm install` in CI and
+# break auto-merge. 0 = no delay (the pnpm <v11 default).
+minimumReleaseAge: 0
 
-onlyBuiltDependencies:
-  - '@swc/core'
-  - lefthook
+# Build-script approval. pnpm v11 removed onlyBuiltDependencies /
+# ignoredBuiltDependencies in favour of this allowBuilds map: true lets the
+# dependency's install/build scripts run, false blocks them. strictDepBuilds
+# (default true) fails the install on any unreviewed build script.
+allowBuilds:
+  esbuild: false
+  lefthook: true

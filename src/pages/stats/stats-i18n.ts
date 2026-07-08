@@ -5,8 +5,8 @@ import type { TrainingMode } from "../../types/session";
 export type StatsI18nKey = `stats.${keyof (typeof en)["stats"] & string}`;
 
 export const MODE_LABELS = {
-  flashcard: "stats.modeFlashcard",
   acaan: "stats.modeAcaan",
-  spotcheck: "stats.modeSpotCheck",
   distance: "stats.modeDistance",
+  flashcard: "stats.modeFlashcard",
+  spotcheck: "stats.modeSpotCheck",
 } as const satisfies Record<TrainingMode, StatsI18nKey>;

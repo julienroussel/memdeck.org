@@ -19,40 +19,40 @@ import { useTranslation } from "react-i18next";
 
 const REASONS = [
   {
-    titleKey: "home.whyNotAiAccuracy",
+    color: "green",
     descKey: "home.whyNotAiAccuracyDesc",
     icon: IconShieldCheck,
-    color: "green",
+    titleKey: "home.whyNotAiAccuracy",
   },
   {
-    titleKey: "home.whyNotAiSpeed",
+    color: "yellow",
     descKey: "home.whyNotAiSpeedDesc",
     icon: IconBolt,
-    color: "yellow",
+    titleKey: "home.whyNotAiSpeed",
   },
   {
-    titleKey: "home.whyNotAiOffline",
+    color: "blue",
     descKey: "home.whyNotAiOfflineDesc",
     icon: IconWifi,
-    color: "blue",
+    titleKey: "home.whyNotAiOffline",
   },
   {
-    titleKey: "home.whyNotAiVisual",
+    color: "violet",
     descKey: "home.whyNotAiVisualDesc",
     icon: IconEye,
-    color: "violet",
+    titleKey: "home.whyNotAiVisual",
   },
   {
-    titleKey: "home.whyNotAiProgress",
+    color: "cyan",
     descKey: "home.whyNotAiProgressDesc",
     icon: IconChartLine,
-    color: "cyan",
+    titleKey: "home.whyNotAiProgress",
   },
   {
-    titleKey: "home.whyNotAiFree",
+    color: "orange",
     descKey: "home.whyNotAiFreeDesc",
     icon: IconCoin,
-    color: "orange",
+    titleKey: "home.whyNotAiFree",
   },
 ] as const;
 

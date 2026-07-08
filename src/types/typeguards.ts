@@ -22,15 +22,15 @@ export type CardSpreadProps = CardSpreadCardsProps | CardSpreadNumbersProps;
 export const cardItems = (
   data: PlayingCard[]
 ): { type: "cards"; data: PlayingCard[] } => ({
-  type: "cards",
   data,
+  type: "cards",
 });
 
 export const numberItems = (
   data: number[]
 ): { type: "numbers"; data: number[] } => ({
-  type: "numbers",
   data,
+  type: "numbers",
 });
 
 export const isPlayingCard = (

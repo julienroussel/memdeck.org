@@ -26,8 +26,8 @@ import { MODE_LABELS } from "./stats-i18n";
 // than on every render. Each item's `mode` is a TrainingMode, so every item
 // lands in exactly one group and the four groups cover all TOTAL_SUGGESTIONS.
 const ITEMS_BY_MODE = TRAINING_MODES.map((mode) => ({
-  mode,
   items: SUGGESTION_CATALOG.filter((item) => item.mode === mode),
+  mode,
 }));
 
 const ICON_SIZE = 18;

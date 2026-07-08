@@ -18,11 +18,7 @@ import { Link, useLocation } from "react-router";
 import { ROUTES } from "../constants";
 import { useUnseenWhatsNew } from "../hooks/use-unseen-whats-new";
 
-export const NavLinks = memo(function NavLinks({
-  onClick,
-}: {
-  onClick: () => void;
-}) {
+export const NavLinks = memo(({ onClick }: { onClick: () => void }) => {
   const location = useLocation();
   const { t } = useTranslation();
   const { hasUnseen } = useUnseenWhatsNew();
@@ -169,3 +165,5 @@ export const NavLinks = memo(function NavLinks({
     </>
   );
 });
+
+NavLinks.displayName = "NavLinks";

@@ -15,8 +15,8 @@ describe("getRangeSize", () => {
   it("returns correct size for partial range", () => {
     expect(
       getRangeSize({
-        start: createDeckPosition(1),
         end: createDeckPosition(10),
+        start: createDeckPosition(1),
       })
     ).toBe(10);
   });
@@ -24,8 +24,8 @@ describe("getRangeSize", () => {
   it("returns 1 for single-card range", () => {
     expect(
       getRangeSize({
-        start: createDeckPosition(5),
         end: createDeckPosition(5),
+        start: createDeckPosition(5),
       })
     ).toBe(1);
   });
@@ -39,8 +39,8 @@ describe("isFullDeck", () => {
   it("returns false for partial range", () => {
     expect(
       isFullDeck({
-        start: createDeckPosition(1),
         end: createDeckPosition(20),
+        start: createDeckPosition(1),
       })
     ).toBe(false);
   });
@@ -48,8 +48,8 @@ describe("isFullDeck", () => {
   it("returns false when start is not 1", () => {
     expect(
       isFullDeck({
-        start: createDeckPosition(2),
         end: createDeckPosition(52),
+        start: createDeckPosition(2),
       })
     ).toBe(false);
   });
@@ -61,7 +61,7 @@ describe("isStackLimitsRecord", () => {
   });
 
   it("returns true for valid record", () => {
-    expect(isStackLimitsRecord({ mnemonica: { start: 1, end: 20 } })).toBe(
+    expect(isStackLimitsRecord({ mnemonica: { end: 20, start: 1 } })).toBe(
       true
     );
   });
@@ -75,31 +75,31 @@ describe("isStackLimitsRecord", () => {
   });
 
   it("returns false for invalid entry", () => {
-    expect(isStackLimitsRecord({ mnemonica: { start: 0, end: 20 } })).toBe(
+    expect(isStackLimitsRecord({ mnemonica: { end: 20, start: 0 } })).toBe(
       false
     );
   });
 
   it("returns false when start > end", () => {
-    expect(isStackLimitsRecord({ mnemonica: { start: 30, end: 10 } })).toBe(
+    expect(isStackLimitsRecord({ mnemonica: { end: 10, start: 30 } })).toBe(
       false
     );
   });
 
   it("returns false for out-of-range values", () => {
-    expect(isStackLimitsRecord({ mnemonica: { start: 1, end: 53 } })).toBe(
+    expect(isStackLimitsRecord({ mnemonica: { end: 53, start: 1 } })).toBe(
       false
     );
   });
 
   it("returns false for non-integer values", () => {
-    expect(isStackLimitsRecord({ mnemonica: { start: 1.5, end: 20 } })).toBe(
+    expect(isStackLimitsRecord({ mnemonica: { end: 20, start: 1.5 } })).toBe(
       false
     );
   });
 
   it("returns false for an unknown stack key", () => {
-    expect(isStackLimitsRecord({ unknownStack: { start: 1, end: 20 } })).toBe(
+    expect(isStackLimitsRecord({ unknownStack: { end: 20, start: 1 } })).toBe(
       false
     );
   });

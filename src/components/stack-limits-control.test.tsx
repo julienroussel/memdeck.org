@@ -7,13 +7,13 @@ import { createDeckPosition } from "../types/stacks";
 import { StackLimitsControl } from "./stack-limits-control";
 
 const fullLimits: StackLimits = {
-  start: createDeckPosition(1),
   end: createDeckPosition(DECK_SIZE),
+  start: createDeckPosition(1),
 };
 
 const partialLimits: StackLimits = {
-  start: createDeckPosition(5),
   end: createDeckPosition(20),
+  start: createDeckPosition(5),
 };
 
 describe("StackLimitsControl", () => {
@@ -41,8 +41,8 @@ describe("StackLimitsControl", () => {
     );
 
     expect(handleChange).toHaveBeenCalledWith({
-      start: createDeckPosition(1),
       end: createDeckPosition(13),
+      start: createDeckPosition(1),
     });
   });
 
@@ -50,8 +50,8 @@ describe("StackLimitsControl", () => {
     render(
       <StackLimitsControl
         limits={{
-          start: createDeckPosition(1),
           end: createDeckPosition(26),
+          start: createDeckPosition(1),
         }}
         onLimitsChange={vi.fn()}
       />
@@ -101,8 +101,8 @@ describe("StackLimitsControl", () => {
     fireEvent.keyUp(startThumb, { key: "ArrowRight" });
 
     expect(handleChange).toHaveBeenCalledWith({
-      start: createDeckPosition(6),
       end: createDeckPosition(20),
+      start: createDeckPosition(6),
     });
   });
 });

@@ -31,8 +31,8 @@ export const StackLimitsControl = ({
   const handleSliderChangeEnd = useCallback(
     (value: [number, number]) => {
       onLimitsChange({
-        start: createDeckPosition(value[0]),
         end: createDeckPosition(value[1]),
+        start: createDeckPosition(value[0]),
       });
     },
     [onLimitsChange]
@@ -41,8 +41,8 @@ export const StackLimitsControl = ({
   const handlePresetClick = useCallback(
     (preset: number) => {
       onLimitsChange({
-        start: createDeckPosition(1),
         end: createDeckPosition(preset),
+        start: createDeckPosition(1),
       });
     },
     [onLimitsChange]
@@ -59,9 +59,9 @@ export const StackLimitsControl = ({
   const description = sliderIsFull
     ? t("stackLimits.fullDeck")
     : t("stackLimits.description", {
-        start: sliderValue[0],
-        end: sliderValue[1],
         count: sliderRangeSize,
+        end: sliderValue[1],
+        start: sliderValue[0],
       });
 
   return (

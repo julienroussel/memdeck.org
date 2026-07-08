@@ -16,48 +16,48 @@ import { DistanceActiveRound } from "./distance-active-round";
 import type { PlayableDistanceRound } from "./distance-game-reducer";
 
 const promptCard: PlayingCardPosition = {
-  index: createDeckPosition(1),
   card: FourOfClubs,
+  index: createDeckPosition(1),
 };
 
 const answerCard: PlayingCardPosition = {
-  index: createDeckPosition(2),
   card: TwoOfHearts,
+  index: createDeckPosition(2),
 };
 
 const cardChoiceA: PlayingCardPosition = {
-  index: createDeckPosition(3),
   card: ThreeOfClubs,
+  index: createDeckPosition(3),
 };
 const cardChoiceB: PlayingCardPosition = {
-  index: createDeckPosition(4),
   card: AceOfSpades,
+  index: createDeckPosition(4),
 };
 const cardChoiceC: PlayingCardPosition = {
-  index: createDeckPosition(5),
   card: FiveOfSpades,
+  index: createDeckPosition(5),
 };
 
 const computeRound: PlayableDistanceRound = {
+  answerCard,
+  choices: { data: [1, 2, 3, 4, 5], kind: "numbers" },
   display: "compute",
   expectedDistance: 3,
   offset: null,
-  answerCard,
-  choices: { kind: "numbers", data: [1, 2, 3, 4, 5] },
 };
 
 const applyRound: PlayableDistanceRound = {
+  answerCard,
+  choices: {
+    data: [answerCard, cardChoiceA, cardChoiceB, cardChoiceC, promptCard],
+    kind: "cards",
+  },
   display: "apply",
   expectedDistance: null,
   offset: 5,
-  answerCard,
-  choices: {
-    kind: "cards",
-    data: [answerCard, cardChoiceA, cardChoiceB, cardChoiceC, promptCard],
-  },
 };
 
-const noTimerSettings: TimerSettings = { enabled: false, duration: 30 };
+const noTimerSettings: TimerSettings = { duration: 30, enabled: false };
 
 // DistanceActiveRound emits Grid.Col children, which require a Grid ancestor
 // from Mantine. Wrap every render in a Grid so the components mount cleanly.

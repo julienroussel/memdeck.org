@@ -40,7 +40,7 @@ export const TimerSettingsControl = ({
         label={t("timer.timedMode")}
         onChange={handleTimerToggle}
       />
-      {timerSettings.enabled && (
+      {timerSettings.enabled ? (
         <Group gap="xs">
           <Text id={durationLabelId} size="sm">
             {t("timer.timeLimit")}
@@ -53,7 +53,7 @@ export const TimerSettingsControl = ({
             value={String(timerSettings.duration)}
           />
         </Group>
-      )}
+      ) : null}
     </Stack>
   );
 };

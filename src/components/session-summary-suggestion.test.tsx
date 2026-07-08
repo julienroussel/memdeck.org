@@ -13,15 +13,15 @@ import type { FeatureSuggestion } from "../types/discovery";
 import { SessionSummarySuggestion } from "./session-summary-suggestion";
 
 const suggestion: FeatureSuggestion = {
+  deepLink: { param: "try", value: "neighbor" },
+  i18n: { titleKey: "discovery.flashcardNeighborTitle" },
+  icon: IconCards,
   id: "flashcard-neighbor",
-  mode: "flashcard",
-  isUsed: () => false,
   isApplicable: () => true,
+  isUsed: () => false,
+  mode: "flashcard",
   priority: 2,
   route: ROUTES.flashcard,
-  deepLink: { param: "try", value: "neighbor" },
-  icon: IconCards,
-  i18n: { titleKey: "discovery.flashcardNeighborTitle" },
 };
 
 const mockAccept = vi.fn();
@@ -55,10 +55,10 @@ beforeEach(() => {
   mockTrackShown.mockReset();
   lastOptions = undefined;
   hookValue = {
-    nextSuggestion: suggestion,
     accept: mockAccept,
     dismiss: mockDismiss,
     exploredCount: 2,
+    nextSuggestion: suggestion,
     totalCount: 13,
   };
 });

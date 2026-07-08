@@ -41,15 +41,15 @@ describe("isFlashcardSubFilter", () => {
 
 describe("useAccuracyFilter", () => {
   const flashcardNeighbor = makeSessionRecord({
+    flashcardMode: "neighbor",
     id: "fc-neighbor",
     mode: "flashcard",
-    flashcardMode: "neighbor",
   });
 
   const flashcardPosition = makeSessionRecord({
+    flashcardMode: "cardonly",
     id: "fc-position",
     mode: "flashcard",
-    flashcardMode: "cardonly",
   });
 
   const acaanSession = makeSessionRecord({

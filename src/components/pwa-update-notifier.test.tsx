@@ -13,7 +13,7 @@ vi.stubGlobal("__COMMIT_HASH__", "abc1234");
 
 // The gating tests use the real data module's newest entry id. Narrow here so
 // the assumption (the changelog is non-empty) is explicit and typed.
-const latestEntry = WHATS_NEW_ENTRIES[0];
+const [latestEntry] = WHATS_NEW_ENTRIES;
 if (!latestEntry) {
   throw new Error("WHATS_NEW_ENTRIES must be non-empty for these tests");
 }
@@ -26,25 +26,25 @@ vi.mock("virtual:pwa-register/react", () => ({
 }));
 
 vi.mock("@mantine/notifications", () => ({
-  notifications: { show: vi.fn(), hide: vi.fn() },
+  notifications: { hide: vi.fn(), show: vi.fn() },
 }));
 
 const mockTrackFeatureUsed = vi.fn();
 const mockTrackError = vi.fn();
 vi.mock("../services/analytics", () => ({
   analytics: {
-    trackFeatureUsed: (...args: unknown[]) => mockTrackFeatureUsed(...args),
     trackError: (...args: unknown[]) => mockTrackError(...args),
+    trackFeatureUsed: (...args: unknown[]) => mockTrackFeatureUsed(...args),
   },
 }));
 
 const mockReportLocalDbCorruption = vi.fn();
 const mockHandleLocalDbWriteFailed = vi.fn();
 vi.mock("../utils/localstorage-telemetry", () => ({
-  reportLocalDbCorruption: (...args: unknown[]) =>
-    mockReportLocalDbCorruption(...args),
   handleLocalDbWriteFailed: (...args: unknown[]) =>
     mockHandleLocalDbWriteFailed(...args),
+  reportLocalDbCorruption: (...args: unknown[]) =>
+    mockReportLocalDbCorruption(...args),
 }));
 
 const { mockLocalStorage } = createMockLocalStorage();
@@ -82,9 +82,9 @@ describe("PwaUpdateNotifier", () => {
     expect(notifications.show).toHaveBeenCalledOnce();
     expect(notifications.show).toHaveBeenCalledWith(
       expect.objectContaining({
-        id: "pwa-update",
-        color: "teal",
         autoClose: false,
+        color: "teal",
+        id: "pwa-update",
         title: "Updated",
         withCloseButton: true,
       })

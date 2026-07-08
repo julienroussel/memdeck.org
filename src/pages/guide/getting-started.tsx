@@ -9,14 +9,14 @@ import { cardItems } from "../../types/typeguards";
 import { SectionHeading } from "./section-heading";
 
 const STACK_ITEMS = [
-  { key: "mnemonica", i18nKey: "guide.gettingStarted.stacks.tamariz" },
-  { key: "aronson", i18nKey: "guide.gettingStarted.stacks.aronson" },
-  { key: "memorandum", i18nKey: "guide.gettingStarted.stacks.memorandum" },
-  { key: "redford", i18nKey: "guide.gettingStarted.stacks.redford" },
-  { key: "particle", i18nKey: "guide.gettingStarted.stacks.particle" },
-  { key: "elephant", i18nKey: "guide.gettingStarted.stacks.elephant" },
-  { key: "infinity", i18nKey: "guide.gettingStarted.stacks.infinity" },
-  { key: "intuitiva", i18nKey: "guide.gettingStarted.stacks.intuitiva" },
+  { i18nKey: "guide.gettingStarted.stacks.tamariz", key: "mnemonica" },
+  { i18nKey: "guide.gettingStarted.stacks.aronson", key: "aronson" },
+  { i18nKey: "guide.gettingStarted.stacks.memorandum", key: "memorandum" },
+  { i18nKey: "guide.gettingStarted.stacks.redford", key: "redford" },
+  { i18nKey: "guide.gettingStarted.stacks.particle", key: "particle" },
+  { i18nKey: "guide.gettingStarted.stacks.elephant", key: "elephant" },
+  { i18nKey: "guide.gettingStarted.stacks.infinity", key: "infinity" },
+  { i18nKey: "guide.gettingStarted.stacks.intuitiva", key: "intuitiva" },
 ] as const satisfies readonly { key: StackKey; i18nKey: string }[];
 
 export const GettingStarted = () => {

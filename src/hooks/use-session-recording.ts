@@ -24,9 +24,9 @@ export const useSessionRecording = ({
         phase: "active",
         session: {
           ...prev.session,
-          successes: prev.session.successes + 1,
-          currentStreak: newStreak,
           bestStreak: Math.max(prev.session.bestStreak, newStreak),
+          currentStreak: newStreak,
+          successes: prev.session.successes + 1,
         },
       };
     });
@@ -41,8 +41,8 @@ export const useSessionRecording = ({
         phase: "active",
         session: {
           ...prev.session,
-          fails: prev.session.fails + 1,
           currentStreak: 0,
+          fails: prev.session.fails + 1,
         },
       };
     });

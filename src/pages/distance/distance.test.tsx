@@ -12,14 +12,14 @@ let capturedTimerCalls: CapturedTimerOpts[] = [];
 
 vi.mock("../../hooks/use-game-timer", () => ({
   timerReducerCases: {
-    TICK: (s: { timeRemaining: number }) => ({
-      ...s,
-      timeRemaining: Math.max(0, s.timeRemaining - 1),
-    }),
     RESET_TIMER: (
       s: { timeRemaining: number; timerDuration: number },
       duration: number
     ) => ({ ...s, timeRemaining: duration, timerDuration: duration }),
+    TICK: (s: { timeRemaining: number }) => ({
+      ...s,
+      timeRemaining: Math.max(0, s.timeRemaining - 1),
+    }),
   },
   useGameTimer: vi.fn((opts: CapturedTimerOpts) => {
     capturedTimerCalls.push(opts);
@@ -34,8 +34,8 @@ vi.mock("../../services/event-bus", () => ({
   eventBus: {
     emit: {
       DISTANCE_ANSWER: vi.fn(),
-      DISTANCE_MODE_CHANGED: vi.fn(),
       DISTANCE_CONVENTION_CHANGED: vi.fn(),
+      DISTANCE_MODE_CHANGED: vi.fn(),
     },
   },
 }));
@@ -53,10 +53,10 @@ vi.mock("../../hooks/use-document-meta", () => ({
 
 vi.mock("../../hooks/use-selected-stack", () => ({
   useRequiredStack: () => ({
-    stackKey: "mnemonica",
     stack: stacks.mnemonica,
-    stackOrder: stacks.mnemonica.order,
+    stackKey: "mnemonica",
     stackName: stacks.mnemonica.name,
+    stackOrder: stacks.mnemonica.order,
   }),
 }));
 
@@ -64,15 +64,15 @@ const RANGE_TOO_SMALL_REGEX = /range too small/i;
 
 // Range that is < MIN_DISTANCE_RANGE so the page disables the timer.
 const tooSmallLimits = {
-  start: createDeckPosition(1),
   end: createDeckPosition(3),
+  start: createDeckPosition(1),
 };
 
 // Range that is well above MIN_DISTANCE_RANGE so the page mounts the
 // active round and prompt UI.
 const validLimits = {
-  start: createDeckPosition(1),
   end: createDeckPosition(20),
+  start: createDeckPosition(1),
 };
 
 type StackLimitsResult = {
@@ -90,28 +90,28 @@ vi.mock("../../hooks/use-stack-limits", () => ({
 
 vi.mock("./use-distance-settings", () => ({
   useDistanceSettings: () => ({
+    convention: "cyclic",
+    handleConventionChange: vi.fn(),
+    handleModeChange: vi.fn(),
+    handleTimerEnabledChange: vi.fn(),
     // The user has the timer enabled in settings — the page must override
     // it because the range is too small to play.
     mode: "compute",
-    convention: "cyclic",
-    timerSettings: { enabled: true, duration: 15 },
     setTimerDuration: vi.fn(),
-    handleModeChange: vi.fn(),
-    handleConventionChange: vi.fn(),
-    handleTimerEnabledChange: vi.fn(),
+    timerSettings: { duration: 15, enabled: true },
   }),
 }));
 
 vi.mock("../../hooks/use-session", () => ({
   useSession: () => ({
-    status: { phase: "idle" },
-    startSession: vi.fn(),
-    handleAnswer: vi.fn(),
-    startNewSession: vi.fn(),
-    isStructuredSession: false,
     activeSession: null,
-    stopSession: vi.fn(),
     dismissSummary: vi.fn(),
+    handleAnswer: vi.fn(),
+    isStructuredSession: false,
+    startNewSession: vi.fn(),
+    startSession: vi.fn(),
+    status: { phase: "idle" },
+    stopSession: vi.fn(),
   }),
 }));
 
@@ -126,22 +126,22 @@ vi.mock("../../components/reveal-button", () => ({
   RevealButton: () => null,
 }));
 vi.mock("../../components/json-ld", () => ({
-  JsonLd: () => null,
   buildBreadcrumbSchema: () => ({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [],
   }),
+  JsonLd: () => null,
 }));
 
 beforeEach(() => {
   capturedTimerCalls = [];
   // Default to the too-small range; happy-path test overrides per-case.
   mockUseStackLimits.mockReturnValue({
-    limits: tooSmallLimits,
-    setLimits: vi.fn(),
-    rangeSize: 3,
     isFullDeck: false,
+    limits: tooSmallLimits,
+    rangeSize: 3,
+    setLimits: vi.fn(),
   });
 });
 
@@ -179,10 +179,10 @@ describe("Distance — effectiveTimerSettings", () => {
 describe("Distance — happy path with a valid range", () => {
   it("mounts DistanceActiveRound (prompt card visible) and does NOT render the rangeTooSmall alert", async () => {
     mockUseStackLimits.mockReturnValue({
-      limits: validLimits,
-      setLimits: vi.fn(),
-      rangeSize: 20,
       isFullDeck: false,
+      limits: validLimits,
+      rangeSize: 20,
+      setLimits: vi.fn(),
     });
     const { Distance } = await import("./distance");
     render(<Distance />);

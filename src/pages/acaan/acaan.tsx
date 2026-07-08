@@ -33,8 +33,8 @@ export const Acaan = () => {
   const { t } = useTranslation();
   const formatCardName = useFormatCardName();
   useDocumentMeta({
-    title: t("acaan.pageTitle"),
     description: t("acaan.pageDescription"),
+    title: t("acaan.pageTitle"),
   });
   useCardImagePreload();
   const { stackKey, stackOrder, stackName } = useRequiredStack();
@@ -55,9 +55,9 @@ export const Acaan = () => {
     stopSession,
     dismissSummary,
   } = useSession({
+    autoStart: !deepLinkPending,
     mode: "acaan",
     stackKey,
-    autoStart: !deepLinkPending,
     timed: timerSettings.enabled,
   });
 
@@ -120,12 +120,12 @@ export const Acaan = () => {
         </Grid.Col>
         <Grid.Col span={12}>
           <Space h="xl" />
-          {timerSettings.enabled && (
+          {timerSettings.enabled ? (
             <TimerDisplay
               timeRemaining={timeRemaining}
               timerDuration={timerDuration}
             />
-          )}
+          ) : null}
           <Group align="center" gap="xl" justify="center">
             <Image
               alt={formatCardName(scenario.card)}

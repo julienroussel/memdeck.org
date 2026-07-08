@@ -308,10 +308,10 @@ test.describe("Stack Limits — emit and corrupt-lock", () => {
       .poll(() => page.evaluate(() => window.__capturedStackLimitsChanges))
       .toEqual([
         {
-          start: 1,
           end: 13,
           rangeSize: 13,
           stackName: "Tamariz",
+          start: 1,
         },
       ]);
   });

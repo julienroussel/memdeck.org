@@ -15,8 +15,8 @@ export const WhatsNew = () => {
   const { markLatestSeen } = useUnseenWhatsNew();
 
   useDocumentMeta({
-    title: t("whatsNew.pageTitle"),
     description: t("whatsNew.pageDescription"),
+    title: t("whatsNew.pageTitle"),
   });
 
   // Opening the page clears the nav "New" badge (marks the newest id seen).

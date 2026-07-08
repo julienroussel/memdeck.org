@@ -14,13 +14,13 @@ const APPLY_LABEL_REGEX = /Apply offset \+3 to Four of Clubs/;
 const APPLY_OFFSET_5_REGEX = /Apply offset 5 to Four of Clubs/;
 
 const promptCard: PlayingCardPosition = {
-  index: createDeckPosition(1),
   card: FourOfClubs,
+  index: createDeckPosition(1),
 };
 
 const targetCard: PlayingCardPosition = {
-  index: createDeckPosition(2),
   card: TwoOfHearts,
+  index: createDeckPosition(2),
 };
 
 describe("DistancePromptDisplay — compute mode", () => {

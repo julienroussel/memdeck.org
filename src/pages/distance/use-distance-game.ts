@@ -77,11 +77,11 @@ export const useDistanceGame = (
   const [state, dispatch] = useReducer(
     gameReducer,
     {
+      convention,
+      distanceMode: mode,
+      limits,
       stackOrder,
       timerDuration: timerSettings.duration,
-      distanceMode: mode,
-      convention,
-      limits,
     },
     createInitialState
   );
@@ -113,14 +113,14 @@ export const useDistanceGame = (
     prevConventionRef.current = convention;
     prevLimitsRef.current = limits;
     dispatch({
-      type: "RESET_GAME",
       payload: {
+        convention,
+        distanceMode: mode,
+        limits,
         stackOrder,
         timerDuration: timerSettings.duration,
-        distanceMode: mode,
-        convention,
-        limits,
       },
+      type: "RESET_GAME",
     });
   }
 
@@ -142,26 +142,26 @@ export const useDistanceGame = (
 
   const createTimeoutAction = useCallback(() => {
     const payload = generateNextRound();
-    return { type: "TIMEOUT" as const, payload };
+    return { payload, type: "TIMEOUT" as const };
   }, [generateNextRound]);
 
   const handleTimeout = useCallback(() => {
     notifications.show({
-      color: "red",
-      title: t("distance.timesUp"),
-      message: t("distance.movingToNext"),
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+      color: "red",
+      message: t("distance.movingToNext"),
+      title: t("distance.timesUp"),
     });
     eventBus.emit.DISTANCE_ANSWER({ correct: false, stackName });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
   }, [stackName, t]);
 
   useGameTimer({
-    timerSettings,
-    timeRemaining: state.timeRemaining,
-    dispatch,
     createTimeoutAction,
+    dispatch,
     onTimeout: handleTimeout,
+    timeRemaining: state.timeRemaining,
+    timerSettings,
   });
 
   const submitAnswer = useCallback(
@@ -170,7 +170,7 @@ export const useDistanceGame = (
 
       if (correct) {
         const payload = generateNextRound();
-        dispatch({ type: "CORRECT_ANSWER", payload });
+        dispatch({ payload, type: "CORRECT_ANSWER" });
         onAnswerRef.current?.({ correct: true, questionAdvanced: true });
       } else {
         notifications.show(buildWrongAnswerNotification(t));
@@ -196,27 +196,27 @@ export const useDistanceGame = (
         : String(round.expectedDistance);
 
     notifications.show({
-      color: "yellow",
-      title: t("distance.revealTitle"),
-      message: revealMessage,
       autoClose: NOTIFICATION_CLOSE_TIMEOUT,
+      color: "yellow",
+      message: revealMessage,
+      title: t("distance.revealTitle"),
     });
 
     const payload = generateNextRound();
-    dispatch({ type: "REVEAL_ANSWER", payload });
+    dispatch({ payload, type: "REVEAL_ANSWER" });
     analytics.trackFeatureUsed("Reveal Answer - Distance");
     eventBus.emit.DISTANCE_ANSWER({ correct: false, stackName });
     onAnswerRef.current?.({ correct: false, questionAdvanced: true });
   }, [stackName, generateNextRound, t, formatCardName]);
 
   return {
-    score: { successes: state.successes, fails: state.fails },
     card: state.card,
-    round: state,
     convention: state.convention,
+    revealAnswer,
+    round: state,
+    score: { fails: state.fails, successes: state.successes },
+    submitAnswer,
     timeRemaining: state.timeRemaining,
     timerDuration: state.timerDuration,
-    submitAnswer,
-    revealAnswer,
   };
 };

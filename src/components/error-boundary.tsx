@@ -16,11 +16,11 @@ const ErrorFallback = ({
       <Text c="dimmed" maw={400} ta="center">
         An unexpected error occurred. Please try again or refresh the page.
       </Text>
-      {import.meta.env.DEV && (
+      {import.meta.env.DEV ? (
         <Text c="red" ff="monospace" size="sm">
           {error instanceof Error ? error.message : String(error)}
         </Text>
-      )}
+      ) : null}
       <Button onClick={resetErrorBoundary} variant="light">
         Try again
       </Button>

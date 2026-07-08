@@ -13,7 +13,7 @@ describe("shuffle", () => {
     const items = [1, 2, 3, 4, 5];
     const result = shuffle(items);
 
-    expect(result.sort()).toEqual(items.sort());
+    expect(result.sort((a, b) => a - b)).toEqual(items.sort((a, b) => a - b));
   });
 
   it("does not mutate the original array", () => {
@@ -53,7 +53,12 @@ describe("shuffle", () => {
     const result = shuffle(items);
 
     expect(result).toHaveLength(4);
-    expect(result.sort()).toEqual(["a", "b", "c", "d"]);
+    expect(result.sort((a, b) => a.localeCompare(b))).toEqual([
+      "a",
+      "b",
+      "c",
+      "d",
+    ]);
   });
 
   it("works with object arrays", () => {
@@ -122,7 +127,7 @@ describe("shuffle", () => {
     const results = new Set<string>();
 
     // Run shuffle multiple times and collect unique orderings
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i += 1) {
       const result = shuffle(items);
       results.add(JSON.stringify(result));
     }

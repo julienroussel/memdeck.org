@@ -42,83 +42,83 @@ const CATEGORY_LABELS = {
 
 const primaryResources = [
   {
-    title: "Mnemonica",
     author: "Juan Tamariz",
+    category: "book",
     descriptionKey: "resources.descriptions.mnemonica",
     link: "https://www.vanishingincmagic.com/card-magic/mnemonica/",
-    category: "book",
+    title: "Mnemonica",
   },
   {
-    title: "The Aronson Approach",
     author: "Simon Aronson",
+    category: "book",
     descriptionKey: "resources.descriptions.aronsonApproach",
     link: "https://www.vanishingincmagic.com/card-magic/the-aronson-approach/",
-    category: "book",
+    title: "The Aronson Approach",
   },
   {
-    title: "Bound to Please",
     author: "Simon Aronson",
+    category: "book",
     descriptionKey: "resources.descriptions.boundToPlease",
     link: "https://www.vanishingincmagic.com/card-magic/bound-to-please/",
-    category: "book",
+    title: "Bound to Please",
   },
   {
-    title: "Memories Are Made of This",
     author: "Simon Aronson",
+    category: "pdf",
     descriptionKey: "resources.descriptions.memoriesAreMade",
     link: "http://simonaronson.com/Memories%20Are%20Made%20of%20This.pdf",
-    category: "pdf",
+    title: "Memories Are Made of This",
   },
 ] as const satisfies readonly PrimaryResource[];
 
 const otherResources = [
   {
-    title: "The Magic Rainbow",
     author: "Juan Tamariz",
-    link: "https://www.vanishingincmagic.com/magic-theory/tamariz-magic-rainbow/",
     descriptionKey: "resources.descriptions.magicRainbow",
+    link: "https://www.vanishingincmagic.com/magic-theory/tamariz-magic-rainbow/",
+    title: "The Magic Rainbow",
   },
   {
-    title: "In Order To Amaze",
     author: "Pit Hartling",
-    link: "https://pithartling.com/shop/#in-order-to-amaze",
     descriptionKey: "resources.descriptions.inOrderToAmaze",
+    link: "https://pithartling.com/shop/#in-order-to-amaze",
+    title: "In Order To Amaze",
   },
   {
-    title: "Memorandum",
     author: "Woody Aragón",
-    link: "https://www.vanishingincmagic.com/card-magic/memorandum/",
     descriptionKey: "resources.descriptions.memorandum",
+    link: "https://www.vanishingincmagic.com/card-magic/memorandum/",
+    title: "Memorandum",
   },
   {
-    title: "Temporarily Out of Order",
     author: "Patrick Redford",
-    link: "https://www.murphysmagic.com/product.aspx?id=59497",
     descriptionKey: "resources.descriptions.temporarilyOutOfOrder",
+    link: "https://www.murphysmagic.com/product.aspx?id=59497",
+    title: "Temporarily Out of Order",
   },
   {
-    title: "Applesauce",
     author: "Patrick Redford",
-    link: "https://patrickredford.com/product/applesauce/",
     descriptionKey: "resources.descriptions.applesauce",
+    link: "https://patrickredford.com/product/applesauce/",
+    title: "Applesauce",
   },
   {
-    title: "Sleightly Out of Order",
     author: "Patrick Redford",
-    link: "https://patrickredford.com/product/sleightly-out-of-order/",
     descriptionKey: "resources.descriptions.sleightlyOutOfOrder",
+    link: "https://patrickredford.com/product/sleightly-out-of-order/",
+    title: "Sleightly Out of Order",
   },
   {
-    title: "Particle System",
     author: "Joshua Jay",
-    link: "https://www.vanishingincmagic.com/magic-books/particle-system/",
     descriptionKey: "resources.descriptions.particleSystem",
+    link: "https://www.vanishingincmagic.com/magic-books/particle-system/",
+    title: "Particle System",
   },
   {
-    title: "Conjuring Archive",
     author: "Denis Behr",
-    link: "https://www.conjuringarchive.com/tree/635",
     descriptionKey: "resources.descriptions.conjuringArchive",
+    link: "https://www.conjuringarchive.com/tree/635",
+    title: "Conjuring Archive",
   },
 ] as const satisfies readonly Resource[];
 
@@ -130,19 +130,19 @@ const allResources: readonly Resource[] = [
 const itemListSchema = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  name: "Memorized Deck Resources",
   description:
     "Curated books and resources for memorized deck magic, including Mnemonica by Tamariz and The Aronson Approach.",
   itemListElement: allResources.map((resource, index) => ({
     "@type": "ListItem",
-    position: index + 1,
     item: {
       "@type": "Book",
-      name: resource.title,
       author: { "@type": "Person", name: resource.author },
+      name: resource.title,
       url: resource.link,
     },
+    position: index + 1,
   })),
+  name: "Memorized Deck Resources",
 };
 
 const breadcrumbSchema = buildBreadcrumbSchema("Resources", ROUTES.resources);
@@ -204,8 +204,8 @@ const ResourceListItem = ({ resource }: ResourceListItemProps) => {
 export const Resources = () => {
   const { t } = useTranslation();
   useDocumentMeta({
-    title: t("resources.pageTitle"),
     description: t("resources.pageDescription"),
+    title: t("resources.pageTitle"),
   });
 
   return (

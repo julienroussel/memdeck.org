@@ -26,6 +26,16 @@ export const createColorSchemeManager = (
   let hasReportedFailure = false;
 
   return {
+    clear: () => {
+      // Mirrors useLocalDb.removeValue in src/utils/localstorage.ts: remove
+      // failures are not surfaced — no caller wires success/failure through
+      // this path.
+      try {
+        window.localStorage.removeItem(key);
+      } catch {
+        // intentional: see comment above.
+      }
+    },
     get: (defaultValue) => {
       try {
         const stored = window.localStorage.getItem(key);
@@ -67,16 +77,6 @@ export const createColorSchemeManager = (
       if (handleStorageEvent) {
         window.removeEventListener("storage", handleStorageEvent);
         handleStorageEvent = null;
-      }
-    },
-    clear: () => {
-      // Mirrors useLocalDb.removeValue in src/utils/localstorage.ts: remove
-      // failures are not surfaced — no caller wires success/failure through
-      // this path.
-      try {
-        window.localStorage.removeItem(key);
-      } catch {
-        // intentional: see comment above.
       }
     },
   };

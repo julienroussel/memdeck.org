@@ -26,14 +26,14 @@ type FixedSizeArray<N extends number, T> = N extends 0
 export type Stack = FixedSizeArray<52, PlayingCard>;
 
 export const stacks = {
-  mnemonica,
   aronson,
-  memorandum,
-  redford,
-  particle,
   elephant,
   infinity,
   intuitiva,
+  memorandum,
+  mnemonica,
+  particle,
+  redford,
 } as const;
 
 export type StackKey = keyof typeof stacks;
@@ -103,8 +103,8 @@ export const getRandomPlayingCard = (
   const randomOffset = Math.floor(Math.random() * rangeSize);
   const zeroBasedIndex = limits.start - 1 + randomOffset;
   return {
-    index: createDeckPosition(zeroBasedIndex + 1),
     card: getCardAt(stack, zeroBasedIndex),
+    index: createDeckPosition(zeroBasedIndex + 1),
   };
 };
 
@@ -125,7 +125,7 @@ export const getUniqueRandomCard = (
 ): PlayingCardPosition => {
   const existingIndices = new Set(existingChoices.map((c) => c.index));
 
-  for (let attempt = 0; attempt < MAX_RANDOM_ATTEMPTS; attempt++) {
+  for (let attempt = 0; attempt < MAX_RANDOM_ATTEMPTS; attempt += 1) {
     const randomCard = getRandomPlayingCard(stack, limits);
     if (!existingIndices.has(randomCard.index)) {
       return randomCard;
@@ -133,10 +133,10 @@ export const getUniqueRandomCard = (
   }
 
   // Fallback: linear search within range
-  for (let i = limits.start - 1; i < limits.end; i++) {
+  for (let i = limits.start - 1; i < limits.end; i += 1) {
     const index = createDeckPosition(i + 1);
     if (!existingIndices.has(index)) {
-      return { index, card: getCardAt(stack, i) };
+      return { card: getCardAt(stack, i), index };
     }
   }
 

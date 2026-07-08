@@ -6,7 +6,7 @@ import { timerReducerCases, useGameTimer } from "./use-game-timer";
 describe("timerReducerCases", () => {
   describe("TICK", () => {
     it("decrements timeRemaining by 1", () => {
-      const state = { timeRemaining: 10, other: "data" };
+      const state = { other: "data", timeRemaining: 10 };
       const result = timerReducerCases.TICK(state);
 
       expect(result.timeRemaining).toBe(9);
@@ -29,25 +29,25 @@ describe("timerReducerCases", () => {
 
     it("preserves other state properties", () => {
       const state = {
+        name: "test",
+        score: 100,
         timeRemaining: 15,
         timerDuration: 30,
-        score: 100,
-        name: "test",
       };
       const result = timerReducerCases.TICK(state);
 
       expect(result).toEqual({
+        name: "test",
+        score: 100,
         timeRemaining: 14,
         timerDuration: 30,
-        score: 100,
-        name: "test",
       });
     });
   });
 
   describe("RESET_TIMER", () => {
     it("updates both timeRemaining and timerDuration", () => {
-      const state = { timeRemaining: 5, timerDuration: 15, other: "data" };
+      const state = { other: "data", timeRemaining: 5, timerDuration: 15 };
       const result = timerReducerCases.RESET_TIMER(state, 30);
 
       expect(result.timeRemaining).toBe(30);
@@ -65,18 +65,18 @@ describe("timerReducerCases", () => {
 
     it("preserves other state properties", () => {
       const state = {
+        name: "test",
+        score: 100,
         timeRemaining: 5,
         timerDuration: 15,
-        score: 100,
-        name: "test",
       };
       const result = timerReducerCases.RESET_TIMER(state, 30);
 
       expect(result).toEqual({
+        name: "test",
+        score: 100,
         timeRemaining: 30,
         timerDuration: 30,
-        score: 100,
-        name: "test",
       });
     });
   });
@@ -102,11 +102,11 @@ describe("useGameTimer hook effects", () => {
     renderHook(
       ({ enabled, duration, timeRemaining, onTimeout }: HookProps) =>
         useGameTimer({
-          timerSettings: { enabled, duration },
-          timeRemaining,
-          dispatch: mockDispatch,
           createTimeoutAction: mockCreateTimeoutAction,
+          dispatch: mockDispatch,
           onTimeout,
+          timeRemaining,
+          timerSettings: { duration, enabled },
         }),
       { initialProps: props }
     );
@@ -122,50 +122,50 @@ describe("useGameTimer hook effects", () => {
 
   describe("duration sync effect", () => {
     it("dispatches RESET_TIMER with the initial duration", () => {
-      renderTimerHook({ enabled: true, duration: 30, timeRemaining: 30 });
+      renderTimerHook({ duration: 30, enabled: true, timeRemaining: 30 });
 
       expect(mockDispatch).toHaveBeenCalledWith({
-        type: "RESET_TIMER",
         payload: { duration: 30 },
+        type: "RESET_TIMER",
       });
     });
 
     it("dispatches RESET_TIMER when duration changes", () => {
       const { rerender } = renderTimerHook({
-        enabled: true,
         duration: 30,
+        enabled: true,
         timeRemaining: 30,
       });
       mockDispatch.mockClear();
 
-      rerender({ enabled: true, duration: 15, timeRemaining: 30 });
+      rerender({ duration: 15, enabled: true, timeRemaining: 30 });
 
       expect(mockDispatch).toHaveBeenCalledWith({
-        type: "RESET_TIMER",
         payload: { duration: 15 },
+        type: "RESET_TIMER",
       });
     });
 
     it("does not re-run duration sync effect when only enabled changes", () => {
       const { rerender } = renderTimerHook({
-        enabled: false,
         duration: 30,
+        enabled: false,
         timeRemaining: 30,
       });
       mockDispatch.mockClear();
 
-      rerender({ enabled: true, duration: 30, timeRemaining: 30 });
+      rerender({ duration: 30, enabled: true, timeRemaining: 30 });
 
       expect(mockDispatch).not.toHaveBeenCalledWith({
-        type: "RESET_TIMER",
         payload: { duration: 30 },
+        type: "RESET_TIMER",
       });
     });
   });
 
   describe("timer tick effect", () => {
     it("dispatches TICK after 1 second when timer is enabled and time remaining is positive", () => {
-      renderTimerHook({ enabled: true, duration: 30, timeRemaining: 30 });
+      renderTimerHook({ duration: 30, enabled: true, timeRemaining: 30 });
       mockDispatch.mockClear();
 
       act(() => {
@@ -176,7 +176,7 @@ describe("useGameTimer hook effects", () => {
     });
 
     it("does not dispatch TICK when timer is disabled", () => {
-      renderTimerHook({ enabled: false, duration: 30, timeRemaining: 30 });
+      renderTimerHook({ duration: 30, enabled: false, timeRemaining: 30 });
       mockDispatch.mockClear();
 
       act(() => {
@@ -187,7 +187,7 @@ describe("useGameTimer hook effects", () => {
     });
 
     it("does not dispatch TICK when timeRemaining is 0", () => {
-      renderTimerHook({ enabled: true, duration: 30, timeRemaining: 0 });
+      renderTimerHook({ duration: 30, enabled: true, timeRemaining: 0 });
       mockDispatch.mockClear();
 
       act(() => {
@@ -198,7 +198,7 @@ describe("useGameTimer hook effects", () => {
     });
 
     it("does not dispatch TICK when timeRemaining is negative", () => {
-      renderTimerHook({ enabled: true, duration: 30, timeRemaining: -1 });
+      renderTimerHook({ duration: 30, enabled: true, timeRemaining: -1 });
       mockDispatch.mockClear();
 
       act(() => {
@@ -210,8 +210,8 @@ describe("useGameTimer hook effects", () => {
 
     it("clears timeout on unmount", () => {
       const { unmount } = renderTimerHook({
-        enabled: true,
         duration: 30,
+        enabled: true,
         timeRemaining: 30,
       });
       mockDispatch.mockClear();
@@ -227,8 +227,8 @@ describe("useGameTimer hook effects", () => {
 
     it("dispatches TICK repeatedly as timeRemaining decrements", () => {
       const { rerender } = renderTimerHook({
-        enabled: true,
         duration: 10,
+        enabled: true,
         timeRemaining: 3,
       });
       mockDispatch.mockClear();
@@ -241,7 +241,7 @@ describe("useGameTimer hook effects", () => {
       mockDispatch.mockClear();
 
       // Simulate timeRemaining decrement via re-render
-      rerender({ enabled: true, duration: 10, timeRemaining: 2 });
+      rerender({ duration: 10, enabled: true, timeRemaining: 2 });
       mockDispatch.mockClear();
 
       // Second tick
@@ -252,7 +252,7 @@ describe("useGameTimer hook effects", () => {
       mockDispatch.mockClear();
 
       // Simulate timeRemaining decrement via re-render
-      rerender({ enabled: true, duration: 10, timeRemaining: 1 });
+      rerender({ duration: 10, enabled: true, timeRemaining: 1 });
       mockDispatch.mockClear();
 
       // Third tick
@@ -265,58 +265,58 @@ describe("useGameTimer hook effects", () => {
 
   describe("timer timeout effect", () => {
     it("dispatches timeout action when timer reaches 0 and is enabled", () => {
-      renderTimerHook({ enabled: true, duration: 30, timeRemaining: 0 });
+      renderTimerHook({ duration: 30, enabled: true, timeRemaining: 0 });
 
       expect(mockDispatch).toHaveBeenCalledWith({ type: "TIMEOUT" });
     });
 
     it("calls onTimeout callback when timer reaches 0 and is enabled", () => {
       renderTimerHook({
-        enabled: true,
         duration: 30,
-        timeRemaining: 0,
+        enabled: true,
         onTimeout: mockOnTimeout,
+        timeRemaining: 0,
       });
 
       expect(mockOnTimeout).toHaveBeenCalledOnce();
     });
 
     it("does not dispatch timeout action when timer is disabled even if time is 0", () => {
-      renderTimerHook({ enabled: false, duration: 30, timeRemaining: 0 });
+      renderTimerHook({ duration: 30, enabled: false, timeRemaining: 0 });
 
       expect(mockDispatch).not.toHaveBeenCalledWith({ type: "TIMEOUT" });
     });
 
     it("does not call onTimeout when timer is disabled even if time is 0", () => {
       renderTimerHook({
-        enabled: false,
         duration: 30,
-        timeRemaining: 0,
+        enabled: false,
         onTimeout: mockOnTimeout,
+        timeRemaining: 0,
       });
 
       expect(mockOnTimeout).not.toHaveBeenCalled();
     });
 
     it("does not dispatch timeout action when timeRemaining is positive", () => {
-      renderTimerHook({ enabled: true, duration: 30, timeRemaining: 1 });
+      renderTimerHook({ duration: 30, enabled: true, timeRemaining: 1 });
 
       expect(mockDispatch).not.toHaveBeenCalledWith({ type: "TIMEOUT" });
     });
 
     it("does not call onTimeout when timeRemaining is positive", () => {
       renderTimerHook({
-        enabled: true,
         duration: 30,
-        timeRemaining: 1,
+        enabled: true,
         onTimeout: mockOnTimeout,
+        timeRemaining: 1,
       });
 
       expect(mockOnTimeout).not.toHaveBeenCalled();
     });
 
     it("handles onTimeout being undefined", () => {
-      renderTimerHook({ enabled: true, duration: 30, timeRemaining: 0 });
+      renderTimerHook({ duration: 30, enabled: true, timeRemaining: 0 });
 
       // Should not throw
       expect(mockDispatch).toHaveBeenCalledWith({ type: "TIMEOUT" });
@@ -339,11 +339,11 @@ describe("useGameTimer hook effects", () => {
 
       renderHook(() =>
         useGameTimer({
-          timerSettings: { enabled: true, duration: 30 },
-          timeRemaining: 0,
-          dispatch: orderedDispatch,
           createTimeoutAction: () => ({ type: "TIMEOUT" as const }),
+          dispatch: orderedDispatch,
           onTimeout: orderedOnTimeout,
+          timeRemaining: 0,
+          timerSettings: { duration: 30, enabled: true },
         })
       );
 

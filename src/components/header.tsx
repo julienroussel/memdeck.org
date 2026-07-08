@@ -21,16 +21,20 @@ import { analytics } from "../services/analytics";
 import { PwaInstallPrompt } from "./pwa-install-prompt";
 
 const homeLinkStyle: React.CSSProperties = {
-  textDecoration: "none",
   color: "inherit",
+  textDecoration: "none",
 };
+
+const renderHomeLinkRoot = (props: React.ComponentPropsWithoutRef<"a">) => (
+  <Link {...props} style={homeLinkStyle} to="/" />
+);
 
 type HeaderProps = {
   opened: boolean;
   toggle: () => void;
 };
 
-export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
+export const Header = memo(({ opened, toggle }: HeaderProps) => {
   const { setColorScheme, colorScheme } = useMantineColorScheme();
   const { t } = useTranslation();
   const { eligible, install, dismiss } = usePwaInstall();
@@ -68,12 +72,7 @@ export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
             opened={opened}
             size="sm"
           />
-          <Group
-            gap="sm"
-            renderRoot={(props) => (
-              <Link {...props} style={homeLinkStyle} to="/" />
-            )}
-          >
+          <Group gap="sm" renderRoot={renderHomeLinkRoot}>
             <Image
               alt=""
               darkHidden
@@ -98,7 +97,7 @@ export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
           </Group>
         </Group>
         <Group>
-          {eligible && (
+          {eligible ? (
             <Indicator color="red" processing size={8}>
               <ActionIcon
                 aria-label={t("pwaInstall.install")}
@@ -109,7 +108,7 @@ export const Header = memo(function Header({ opened, toggle }: HeaderProps) {
                 <IconDownload size={20} />
               </ActionIcon>
             </Indicator>
-          )}
+          ) : null}
           <Switch
             aria-label={t("header.toggleColorScheme")}
             checked={colorScheme === "light"}

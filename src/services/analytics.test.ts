@@ -37,8 +37,8 @@ const originalLocation = window.location;
 
 const setHostname = (hostname: string) => {
   Object.defineProperty(window, "location", {
-    value: { ...originalLocation, hostname },
     configurable: true,
+    value: { ...originalLocation, hostname },
     writable: true,
   });
 };
@@ -57,8 +57,8 @@ describe("analytics", () => {
 
   afterAll(() => {
     Object.defineProperty(window, "location", {
-      value: originalLocation,
       configurable: true,
+      value: originalLocation,
       writable: true,
     });
   });
@@ -76,8 +76,8 @@ describe("analytics", () => {
       eventBus.emit.STACK_SELECTED({ stackName: "Mnemonica" });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Stack",
         action: "Selected",
+        category: "Stack",
         label: "Mnemonica",
       });
     });
@@ -86,8 +86,8 @@ describe("analytics", () => {
       eventBus.emit.FLASHCARD_MODE_CHANGED({ mode: "cardonly" });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Flashcard",
         action: "Mode Changed",
+        category: "Flashcard",
         label: "cardonly",
       });
     });
@@ -96,8 +96,8 @@ describe("analytics", () => {
       eventBus.emit.ACAAN_ANSWER({ correct: true, stackName: "Mnemonica" });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "ACAAN",
         action: "Correct Answer",
+        category: "ACAAN",
         label: "Mnemonica",
       });
     });
@@ -106,8 +106,8 @@ describe("analytics", () => {
       eventBus.emit.ACAAN_ANSWER({ correct: false, stackName: "Aronson" });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "ACAAN",
         action: "Wrong Answer",
+        category: "ACAAN",
         label: "Aronson",
       });
     });
@@ -116,8 +116,8 @@ describe("analytics", () => {
       eventBus.emit.FLASHCARD_ANSWER({ correct: true, stackName: "Mnemonica" });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Flashcard",
         action: "Correct Answer",
+        category: "Flashcard",
         label: "Mnemonica",
       });
     });
@@ -126,34 +126,34 @@ describe("analytics", () => {
       eventBus.emit.FLASHCARD_ANSWER({ correct: false, stackName: "Aronson" });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Flashcard",
         action: "Wrong Answer",
+        category: "Flashcard",
         label: "Aronson",
       });
     });
 
     it("tracks SESSION_STARTED for structured session via event bus", () => {
       eventBus.emit.SESSION_STARTED({
+        config: { totalQuestions: 20, type: "structured" },
         mode: "flashcard",
-        config: { type: "structured", totalQuestions: 20 },
       });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Session",
         action: "Started",
+        category: "Session",
         label: "flashcard (20q)",
       });
     });
 
     it("tracks SESSION_STARTED for open session via event bus", () => {
       eventBus.emit.SESSION_STARTED({
-        mode: "acaan",
         config: { type: "open" },
+        mode: "acaan",
       });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Session",
         action: "Started",
+        category: "Session",
         label: "acaan (open)",
       });
     });
@@ -162,23 +162,23 @@ describe("analytics", () => {
       eventBus.emit.NEIGHBOR_DIRECTION_CHANGED({ direction: "before" });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Settings",
         action: "Neighbor Direction Changed",
+        category: "Settings",
         label: "before",
       });
     });
 
     it("tracks SESSION_COMPLETED with accuracy via event bus", () => {
       eventBus.emit.SESSION_COMPLETED({
-        mode: "flashcard",
         accuracy: 0.92,
+        mode: "flashcard",
         questionsCompleted: 10,
         saved: true,
       });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Session",
         action: "Completed",
+        category: "Session",
         label: "flashcard",
         value: 92,
       });
@@ -186,15 +186,15 @@ describe("analytics", () => {
 
     it("tracks SESSION_COMPLETED with rounded accuracy via event bus", () => {
       eventBus.emit.SESSION_COMPLETED({
-        mode: "acaan",
         accuracy: 0.333,
+        mode: "acaan",
         questionsCompleted: 6,
         saved: true,
       });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Session",
         action: "Completed",
+        category: "Session",
         label: "acaan",
         value: 33,
       });
@@ -202,15 +202,15 @@ describe("analytics", () => {
 
     it("tracks SESSION_COMPLETED with action='Save Failed' when saved=false", () => {
       eventBus.emit.SESSION_COMPLETED({
-        mode: "flashcard",
         accuracy: 0.5,
+        mode: "flashcard",
         questionsCompleted: 4,
         saved: false,
       });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Session",
         action: "Save Failed",
+        category: "Session",
         label: "flashcard",
         value: 50,
       });
@@ -223,8 +223,8 @@ describe("analytics", () => {
       });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Spot Check",
         action: "Correct Answer",
+        category: "Spot Check",
         label: "Mnemonica",
       });
     });
@@ -236,8 +236,8 @@ describe("analytics", () => {
       });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Spot Check",
         action: "Wrong Answer",
+        category: "Spot Check",
         label: "Aronson",
       });
     });
@@ -246,8 +246,8 @@ describe("analytics", () => {
       eventBus.emit.SPOT_CHECK_MODE_CHANGED({ mode: "missing" });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Spot Check",
         action: "Mode Changed",
+        category: "Spot Check",
         label: "missing",
       });
     });
@@ -256,8 +256,8 @@ describe("analytics", () => {
       eventBus.emit.DISTANCE_ANSWER({ correct: true, stackName: "Mnemonica" });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Distance",
         action: "Correct Answer",
+        category: "Distance",
         label: "Mnemonica",
       });
     });
@@ -266,8 +266,8 @@ describe("analytics", () => {
       eventBus.emit.DISTANCE_ANSWER({ correct: false, stackName: "Aronson" });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Distance",
         action: "Wrong Answer",
+        category: "Distance",
         label: "Aronson",
       });
     });
@@ -276,8 +276,8 @@ describe("analytics", () => {
       eventBus.emit.DISTANCE_MODE_CHANGED({ mode: "compute" });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Distance",
         action: "Mode Changed",
+        category: "Distance",
         label: "compute",
       });
     });
@@ -286,23 +286,23 @@ describe("analytics", () => {
       eventBus.emit.DISTANCE_CONVENTION_CHANGED({ convention: "signed" });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Distance",
         action: "Convention Changed",
+        category: "Distance",
         label: "signed",
       });
     });
 
     it("tracks STACK_LIMITS_CHANGED event via event bus with the per-stack range label", () => {
       eventBus.emit.STACK_LIMITS_CHANGED({
-        start: 1,
         end: 20,
         rangeSize: 20,
         stackName: "Mnemonica",
+        start: 1,
       });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Settings",
         action: "Stack Range Changed",
+        category: "Settings",
         label: "Mnemonica (1-20)",
       });
     });
@@ -330,8 +330,8 @@ describe("analytics", () => {
       expect(mockEvent).toHaveBeenCalledTimes(2);
       expect(mockEvent).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          category: "Error",
           action: "Error",
+          category: "Error",
           label: "ga-down",
         })
       );
@@ -373,16 +373,16 @@ describe("analytics", () => {
         captured[0]();
         expect(mockEvent).toHaveBeenLastCalledWith(
           expect.objectContaining({
-            category: "Error",
             action: "Error",
+            category: "Error",
             label: "first-throw",
           })
         );
         captured[1]();
         expect(mockEvent).toHaveBeenLastCalledWith(
           expect.objectContaining({
-            category: "Error",
             action: "Error",
+            category: "Error",
             label: "second-throw",
           })
         );
@@ -471,15 +471,15 @@ describe("analytics", () => {
     it("sends LCP metric with rounded value", () => {
       analytics.initialize();
 
-      const lcpCallback = mockOnLCP.mock.calls[0][0];
+      const [[lcpCallback]] = mockOnLCP.mock.calls;
 
       lcpCallback({ id: "v1-123", name: "LCP", value: 2534.5 });
 
       expect(mockSend).toHaveBeenCalledWith({
-        eventCategory: "Web Vitals",
         eventAction: "LCP",
-        eventValue: 2535,
+        eventCategory: "Web Vitals",
         eventLabel: "v1-123",
+        eventValue: 2535,
         nonInteraction: true,
       });
     });
@@ -487,15 +487,15 @@ describe("analytics", () => {
     it("sends INP metric with rounded value", () => {
       analytics.initialize();
 
-      const inpCallback = mockOnINP.mock.calls[0][0];
+      const [[inpCallback]] = mockOnINP.mock.calls;
 
       inpCallback({ id: "v1-456", name: "INP", value: 128.7 });
 
       expect(mockSend).toHaveBeenCalledWith({
-        eventCategory: "Web Vitals",
         eventAction: "INP",
-        eventValue: 129,
+        eventCategory: "Web Vitals",
         eventLabel: "v1-456",
+        eventValue: 129,
         nonInteraction: true,
       });
     });
@@ -503,15 +503,15 @@ describe("analytics", () => {
     it("sends CLS metric with value multiplied by 1000", () => {
       analytics.initialize();
 
-      const clsCallback = mockOnCLS.mock.calls[0][0];
+      const [[clsCallback]] = mockOnCLS.mock.calls;
 
       clsCallback({ id: "v1-789", name: "CLS", value: 0.125 });
 
       expect(mockSend).toHaveBeenCalledWith({
-        eventCategory: "Web Vitals",
         eventAction: "CLS",
-        eventValue: 125,
+        eventCategory: "Web Vitals",
         eventLabel: "v1-789",
+        eventValue: 125,
         nonInteraction: true,
       });
     });
@@ -519,15 +519,15 @@ describe("analytics", () => {
     it("handles CLS value of 0", () => {
       analytics.initialize();
 
-      const clsCallback = mockOnCLS.mock.calls[0][0];
+      const [[clsCallback]] = mockOnCLS.mock.calls;
 
       clsCallback({ id: "v1-000", name: "CLS", value: 0 });
 
       expect(mockSend).toHaveBeenCalledWith({
-        eventCategory: "Web Vitals",
         eventAction: "CLS",
-        eventValue: 0,
+        eventCategory: "Web Vitals",
         eventLabel: "v1-000",
+        eventValue: 0,
         nonInteraction: true,
       });
     });
@@ -535,7 +535,7 @@ describe("analytics", () => {
     it("rounds CLS value correctly", () => {
       analytics.initialize();
 
-      const clsCallback = mockOnCLS.mock.calls[0][0];
+      const [[clsCallback]] = mockOnCLS.mock.calls;
 
       clsCallback({ id: "v1-abc", name: "CLS", value: 0.0876 });
 
@@ -549,7 +549,7 @@ describe("analytics", () => {
     it("handles large LCP values", () => {
       analytics.initialize();
 
-      const lcpCallback = mockOnLCP.mock.calls[0][0];
+      const [[lcpCallback]] = mockOnLCP.mock.calls;
 
       lcpCallback({ id: "v1-large", name: "LCP", value: 10_000.4 });
 
@@ -566,8 +566,8 @@ describe("analytics", () => {
       analytics.trackEvent("TestCategory", "TestAction");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "TestCategory",
         action: "TestAction",
+        category: "TestCategory",
         label: undefined,
       });
     });
@@ -576,8 +576,8 @@ describe("analytics", () => {
       analytics.trackEvent("TestCategory", "TestAction", "TestLabel");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "TestCategory",
         action: "TestAction",
+        category: "TestCategory",
         label: "TestLabel",
       });
     });
@@ -588,8 +588,8 @@ describe("analytics", () => {
       analytics.trackStackSelected("Mnemonica");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Stack",
         action: "Selected",
+        category: "Stack",
         label: "Mnemonica",
       });
     });
@@ -598,8 +598,8 @@ describe("analytics", () => {
       analytics.trackStackSelected("Aronson");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Stack",
         action: "Selected",
+        category: "Stack",
         label: "Aronson",
       });
     });
@@ -610,8 +610,8 @@ describe("analytics", () => {
       analytics.trackFlashcardAnswer(true, "Mnemonica");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Flashcard",
         action: "Correct Answer",
+        category: "Flashcard",
         label: "Mnemonica",
       });
     });
@@ -620,8 +620,8 @@ describe("analytics", () => {
       analytics.trackFlashcardAnswer(false, "Mnemonica");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Flashcard",
         action: "Wrong Answer",
+        category: "Flashcard",
         label: "Mnemonica",
       });
     });
@@ -642,8 +642,8 @@ describe("analytics", () => {
       analytics.trackFlashcardModeChanged("cardonly");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Flashcard",
         action: "Mode Changed",
+        category: "Flashcard",
         label: "cardonly",
       });
     });
@@ -652,8 +652,8 @@ describe("analytics", () => {
       analytics.trackFlashcardModeChanged("numberonly");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Flashcard",
         action: "Mode Changed",
+        category: "Flashcard",
         label: "numberonly",
       });
     });
@@ -662,8 +662,8 @@ describe("analytics", () => {
       analytics.trackFlashcardModeChanged("bothmodes");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Flashcard",
         action: "Mode Changed",
+        category: "Flashcard",
         label: "bothmodes",
       });
     });
@@ -674,8 +674,8 @@ describe("analytics", () => {
       analytics.trackNeighborDirectionChanged("before");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Settings",
         action: "Neighbor Direction Changed",
+        category: "Settings",
         label: "before",
       });
     });
@@ -684,8 +684,8 @@ describe("analytics", () => {
       analytics.trackNeighborDirectionChanged("after");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Settings",
         action: "Neighbor Direction Changed",
+        category: "Settings",
         label: "after",
       });
     });
@@ -694,8 +694,8 @@ describe("analytics", () => {
       analytics.trackNeighborDirectionChanged("random");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Settings",
         action: "Neighbor Direction Changed",
+        category: "Settings",
         label: "random",
       });
     });
@@ -706,8 +706,8 @@ describe("analytics", () => {
       analytics.trackFeatureUsed("ACAAN");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Feature",
         action: "Used",
+        category: "Feature",
         label: "ACAAN",
       });
     });
@@ -716,8 +716,8 @@ describe("analytics", () => {
       analytics.trackFeatureUsed("Shuffle");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Feature",
         action: "Used",
+        category: "Feature",
         label: "Shuffle",
       });
     });
@@ -726,8 +726,8 @@ describe("analytics", () => {
       analytics.trackFeatureUsed("Toolbox");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Feature",
         action: "Used",
+        category: "Feature",
         label: "Toolbox",
       });
     });
@@ -738,8 +738,8 @@ describe("analytics", () => {
       analytics.trackAcaanAnswer(true, "Mnemonica");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "ACAAN",
         action: "Correct Answer",
+        category: "ACAAN",
         label: "Mnemonica",
       });
     });
@@ -748,8 +748,8 @@ describe("analytics", () => {
       analytics.trackAcaanAnswer(false, "Aronson");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "ACAAN",
         action: "Wrong Answer",
+        category: "ACAAN",
         label: "Aronson",
       });
     });
@@ -760,8 +760,8 @@ describe("analytics", () => {
       analytics.trackSpotCheckAnswer(true, "Mnemonica");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Spot Check",
         action: "Correct Answer",
+        category: "Spot Check",
         label: "Mnemonica",
       });
     });
@@ -770,8 +770,8 @@ describe("analytics", () => {
       analytics.trackSpotCheckAnswer(false, "Aronson");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Spot Check",
         action: "Wrong Answer",
+        category: "Spot Check",
         label: "Aronson",
       });
     });
@@ -782,8 +782,8 @@ describe("analytics", () => {
       analytics.trackSpotCheckModeChanged("missing");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Spot Check",
         action: "Mode Changed",
+        category: "Spot Check",
         label: "missing",
       });
     });
@@ -792,8 +792,8 @@ describe("analytics", () => {
       analytics.trackSpotCheckModeChanged("swapped");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Spot Check",
         action: "Mode Changed",
+        category: "Spot Check",
         label: "swapped",
       });
     });
@@ -802,8 +802,8 @@ describe("analytics", () => {
       analytics.trackSpotCheckModeChanged("moved");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Spot Check",
         action: "Mode Changed",
+        category: "Spot Check",
         label: "moved",
       });
     });
@@ -814,8 +814,8 @@ describe("analytics", () => {
       analytics.trackDistanceAnswer(true, "Mnemonica");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Distance",
         action: "Correct Answer",
+        category: "Distance",
         label: "Mnemonica",
       });
     });
@@ -824,8 +824,8 @@ describe("analytics", () => {
       analytics.trackDistanceAnswer(false, "Aronson");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Distance",
         action: "Wrong Answer",
+        category: "Distance",
         label: "Aronson",
       });
     });
@@ -837,8 +837,8 @@ describe("analytics", () => {
         analytics.trackDistanceModeChanged(mode);
 
         expect(mockEvent).toHaveBeenCalledWith({
-          category: "Distance",
           action: "Mode Changed",
+          category: "Distance",
           label: mode,
         });
       });
@@ -851,8 +851,8 @@ describe("analytics", () => {
         analytics.trackDistanceConventionChanged(convention);
 
         expect(mockEvent).toHaveBeenCalledWith({
-          category: "Distance",
           action: "Convention Changed",
+          category: "Distance",
           label: convention,
         });
       });
@@ -862,13 +862,13 @@ describe("analytics", () => {
   describe("trackSessionStarted", () => {
     it("sends session started event for structured session", () => {
       analytics.trackSessionStarted("flashcard", {
-        type: "structured",
         totalQuestions: 10,
+        type: "structured",
       });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Session",
         action: "Started",
+        category: "Session",
         label: "flashcard (10q)",
       });
     });
@@ -877,8 +877,8 @@ describe("analytics", () => {
       analytics.trackSessionStarted("acaan", { type: "open" });
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Session",
         action: "Started",
+        category: "Session",
         label: "acaan (open)",
       });
     });
@@ -889,8 +889,8 @@ describe("analytics", () => {
       analytics.trackSessionCompleted("flashcard", 0.85, true);
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Session",
         action: "Completed",
+        category: "Session",
         label: "flashcard",
         value: 85,
       });
@@ -900,8 +900,8 @@ describe("analytics", () => {
       analytics.trackSessionCompleted("acaan", 0.666, true);
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Session",
         action: "Completed",
+        category: "Session",
         label: "acaan",
         value: 67,
       });
@@ -911,8 +911,8 @@ describe("analytics", () => {
       analytics.trackSessionCompleted("distance", 0.5, false);
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Session",
         action: "Save Failed",
+        category: "Session",
         label: "distance",
         value: 50,
       });
@@ -924,8 +924,8 @@ describe("analytics", () => {
       analytics.trackShareClicked("nav", "shared");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Share",
         action: "Clicked",
+        category: "Share",
         label: "nav:shared",
       });
     });
@@ -934,8 +934,8 @@ describe("analytics", () => {
       analytics.trackShareClicked("about", "copied");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Share",
         action: "Clicked",
+        category: "Share",
         label: "about:copied",
       });
     });
@@ -944,8 +944,8 @@ describe("analytics", () => {
       analytics.trackShareClicked("nudge", "failed");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Share",
         action: "Clicked",
+        category: "Share",
         label: "nudge:failed",
       });
     });
@@ -956,8 +956,8 @@ describe("analytics", () => {
       analytics.trackShareNudgeDismissed();
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Share",
         action: "Nudge Dismissed",
+        category: "Share",
       });
     });
   });
@@ -967,8 +967,8 @@ describe("analytics", () => {
       analytics.trackFeatureSuggestionShown("mode-spotcheck", "home");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Feature Discovery",
         action: "Suggestion Shown",
+        category: "Feature Discovery",
         label: "mode-spotcheck:home",
       });
     });
@@ -979,8 +979,8 @@ describe("analytics", () => {
       analytics.trackFeatureSuggestionAccepted("distance-signed", "summary");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Feature Discovery",
         action: "Suggestion Accepted",
+        category: "Feature Discovery",
         label: "distance-signed:summary",
       });
     });
@@ -991,8 +991,8 @@ describe("analytics", () => {
       analytics.trackFeatureSuggestionDismissed("flashcard-neighbor", "stats");
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Feature Discovery",
         action: "Suggestion Dismissed",
+        category: "Feature Discovery",
         label: "flashcard-neighbor:stats",
       });
     });
@@ -1005,8 +1005,8 @@ describe("analytics", () => {
       analytics.trackError(error);
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Error",
         action: "TypeError",
+        category: "Error",
         label: "Cannot read property 'foo' of undefined",
       });
     });
@@ -1017,9 +1017,9 @@ describe("analytics", () => {
       analytics.trackError(error);
 
       expect(mockSend).toHaveBeenCalledWith({
-        hitType: "exception",
         exDescription: "Error: Test error",
         exFatal: false,
+        hitType: "exception",
       });
     });
 
@@ -1030,9 +1030,9 @@ describe("analytics", () => {
       analytics.trackError(error, componentStack);
 
       expect(mockSend).toHaveBeenCalledWith({
-        hitType: "exception",
         exDescription: "Error: Component error | at MyComponent (app.tsx:10)",
         exFatal: false,
+        hitType: "exception",
       });
     });
 
@@ -1043,9 +1043,9 @@ describe("analytics", () => {
       analytics.trackError(error, longStack);
 
       expect(mockSend).toHaveBeenCalledWith({
-        hitType: "exception",
         exDescription: `Error: Error | ${"a".repeat(100)}`,
         exFatal: false,
+        hitType: "exception",
       });
     });
 
@@ -1073,14 +1073,14 @@ describe("analytics", () => {
       analytics.trackError(error);
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Error",
         action: "ReferenceError",
+        category: "Error",
         label: "x is not defined",
       });
       expect(mockSend).toHaveBeenCalledWith({
-        hitType: "exception",
         exDescription: "ReferenceError: x is not defined",
         exFatal: false,
+        hitType: "exception",
       });
     });
 
@@ -1090,14 +1090,14 @@ describe("analytics", () => {
       analytics.trackError(error);
 
       expect(mockEvent).toHaveBeenCalledWith({
-        category: "Error",
         action: "Error",
+        category: "Error",
         label: "Failed at [path]",
       });
       expect(mockSend).toHaveBeenCalledWith({
-        hitType: "exception",
         exDescription: "Error: Failed at [path]",
         exFatal: false,
+        hitType: "exception",
       });
     });
 
@@ -1109,9 +1109,9 @@ describe("analytics", () => {
       analytics.trackError(error);
 
       expect(mockSend).toHaveBeenCalledWith({
-        hitType: "exception",
         exDescription: "SyntaxError: Unexpected token x in JSON",
         exFatal: false,
+        hitType: "exception",
       });
     });
   });
@@ -1161,8 +1161,8 @@ describe("analytics", () => {
 
     it("does not track session started", () => {
       analytics.trackSessionStarted("flashcard", {
-        type: "structured",
         totalQuestions: 10,
+        type: "structured",
       });
 
       expect(mockEvent).not.toHaveBeenCalled();

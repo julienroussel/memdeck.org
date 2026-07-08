@@ -106,12 +106,12 @@ export const DistanceActiveRound = ({
       </span>
       <Grid.Col span={12}>
         <Space h="xl" />
-        {timerSettings.enabled && (
+        {timerSettings.enabled ? (
           <TimerDisplay
             timeRemaining={timeRemaining}
             timerDuration={timerDuration}
           />
-        )}
+        ) : null}
         {round.display === "compute" ? (
           <DistancePromptDisplay
             display="compute"

@@ -41,8 +41,8 @@ try {
 
     const page = await context.newPage();
     await page.goto(`${BASE_URL}${routePath}`, {
-      waitUntil: "networkidle",
       timeout: TIMEOUT,
+      waitUntil: "networkidle",
     });
 
     // Wait for splash screen to be dismissed and content to render
@@ -59,14 +59,14 @@ try {
     const extracted = await page.evaluate(() => {
       const root = document.getElementById("root");
       return {
-        rootInnerHtml: root?.innerHTML ?? "",
-        title: document.title,
-        description:
-          document.querySelector<HTMLMetaElement>('meta[name="description"]')
-            ?.content ?? "",
         canonicalUrl:
           document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
             ?.href ?? "",
+        description:
+          document.querySelector<HTMLMetaElement>('meta[name="description"]')
+            ?.content ?? "",
+        rootInnerHtml: root?.innerHTML ?? "",
+        title: document.title,
       };
     });
 

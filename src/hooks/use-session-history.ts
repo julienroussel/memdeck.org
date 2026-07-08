@@ -54,7 +54,7 @@ export const useSessionHistory = (): UseSessionHistoryResult => {
     history,
     historyStatus,
     sessionsByMode,
-    sessionsByStack,
     sessionsByModeAndStack,
+    sessionsByStack,
   };
 };

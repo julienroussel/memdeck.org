@@ -74,8 +74,8 @@ describe("SessionStartControls", () => {
     await user.click(getPresetButton(20));
 
     expect(handleStart).toHaveBeenCalledWith({
-      type: "structured",
       totalQuestions: 20,
+      type: "structured",
     });
   });
 

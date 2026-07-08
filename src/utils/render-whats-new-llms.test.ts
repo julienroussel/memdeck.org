@@ -6,10 +6,10 @@ import { renderWhatsNewForLlms } from "./render-whats-new-llms";
 // The renderer only reads the `en` copy, but the type requires every language;
 // fill them all from one string. No `as` cast — the literal proves full coverage.
 const allLangs = (s: string): Record<SupportedLanguage, string> => ({
-  en: s,
-  fr: s,
-  es: s,
   de: s,
+  en: s,
+  es: s,
+  fr: s,
   it: s,
   nl: s,
   pt: s,
@@ -24,8 +24,8 @@ const makeEntry = (
   const entry: WhatsNewEntry = {
     id: releasedAt,
     releasedAt,
-    type,
     title: allLangs(en),
+    type,
   };
   if (bodyEn) {
     entry.body = allLangs(bodyEn);

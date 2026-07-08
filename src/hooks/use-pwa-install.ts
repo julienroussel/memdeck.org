@@ -15,7 +15,7 @@ import {
 } from "../utils/localstorage-telemetry";
 
 interface BeforeInstallPromptEvent extends Event {
-  prompt(): Promise<void>;
+  prompt: () => Promise<void>;
 }
 
 const isUnknownArray = (value: unknown): value is unknown[] =>
@@ -126,5 +126,5 @@ export const usePwaInstall = (): UsePwaInstallResult => {
     setEligible(false);
   }, [dismissedAt, setDismissedAt, setPermanentlyDismissed]);
 
-  return { eligible, install, dismiss };
+  return { dismiss, eligible, install };
 };

@@ -8,7 +8,7 @@ import { formatCardName } from "../../utils/card-formatting";
 import { computeDistance } from "../../utils/distance";
 import { useDistanceGame } from "./use-distance-game";
 
-const defaultTimerSettings: TimerSettings = { enabled: false, duration: 15 };
+const defaultTimerSettings: TimerSettings = { duration: 15, enabled: false };
 
 vi.mock("@mantine/notifications", () => ({
   notifications: { show: vi.fn() },
@@ -22,24 +22,10 @@ vi.mock("../../hooks/use-game-timer", () => {
   };
   let capturedOpts: TimerOpts | undefined;
   return {
-    timerReducerCases: {
-      TICK: (state: { timeRemaining: number }) => ({
-        ...state,
-        timeRemaining: Math.max(0, state.timeRemaining - 1),
-      }),
-      RESET_TIMER: (
-        state: { timeRemaining: number; timerDuration: number },
-        duration: number
-      ) => ({
-        ...state,
-        timeRemaining: duration,
-        timerDuration: duration,
-      }),
-    },
-    useGameTimer: vi.fn((opts: TimerOpts) => {
-      capturedOpts = opts;
-    }),
     __getCapturedOnTimeout: () => capturedOpts?.onTimeout,
+    __resetCapturedOnTimeout: () => {
+      capturedOpts = undefined;
+    },
     __triggerTimeout: () => {
       // Mirrors the real hook's order: side effects then dispatch.
       capturedOpts?.onTimeout?.();
@@ -48,9 +34,23 @@ vi.mock("../../hooks/use-game-timer", () => {
         capturedOpts.dispatch(action);
       }
     },
-    __resetCapturedOnTimeout: () => {
-      capturedOpts = undefined;
+    timerReducerCases: {
+      RESET_TIMER: (
+        state: { timeRemaining: number; timerDuration: number },
+        duration: number
+      ) => ({
+        ...state,
+        timeRemaining: duration,
+        timerDuration: duration,
+      }),
+      TICK: (state: { timeRemaining: number }) => ({
+        ...state,
+        timeRemaining: Math.max(0, state.timeRemaining - 1),
+      }),
     },
+    useGameTimer: vi.fn((opts: TimerOpts) => {
+      capturedOpts = opts;
+    }),
   };
 });
 
@@ -87,7 +87,7 @@ describe("useDistanceGame initial state", () => {
         DEFAULT_STACK_LIMITS
       )
     );
-    expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+    expect(result.current.score).toEqual({ fails: 0, successes: 0 });
   });
 
   it("starts in compute display when mode is compute", () => {
@@ -101,7 +101,7 @@ describe("useDistanceGame initial state", () => {
         DEFAULT_STACK_LIMITS
       )
     );
-    const round = result.current.round;
+    const { round } = result.current;
     expect(round.display).toBe("compute");
     if (round.display === "compute") {
       expect(round.choices.kind).toBe("numbers");
@@ -119,7 +119,7 @@ describe("useDistanceGame initial state", () => {
         DEFAULT_STACK_LIMITS
       )
     );
-    const round = result.current.round;
+    const { round } = result.current;
     expect(round.display).toBe("apply");
     if (round.display === "apply") {
       expect(round.choices.kind).toBe("cards");
@@ -145,7 +145,7 @@ describe("useDistanceGame submitAnswer", () => {
       )
     );
 
-    const round = result.current.round;
+    const { round } = result.current;
     if (round.display !== "compute") {
       throw new Error("expected a compute round in compute mode");
     }
@@ -222,7 +222,7 @@ describe("useDistanceGame submitAnswer", () => {
       )
     );
 
-    const round = result.current.round;
+    const { round } = result.current;
     if (round.display !== "apply") {
       throw new Error("expected an apply round in apply mode");
     }
@@ -262,7 +262,7 @@ describe("useDistanceGame submitAnswer", () => {
       )
     );
 
-    const round = result.current.round;
+    const { round } = result.current;
     if (round.display !== "apply") {
       throw new Error("expected an apply round in apply mode");
     }
@@ -311,7 +311,7 @@ describe("useDistanceGame revealAnswer", () => {
         DEFAULT_STACK_LIMITS
       )
     );
-    const round = result.current.round;
+    const { round } = result.current;
     if (round.display !== "compute") {
       throw new Error("expected a compute round in compute mode");
     }
@@ -344,7 +344,7 @@ describe("useDistanceGame revealAnswer", () => {
         DEFAULT_STACK_LIMITS
       )
     );
-    const round = result.current.round;
+    const { round } = result.current;
     if (round.display !== "apply") {
       throw new Error("expected an apply round in apply mode");
     }
@@ -398,7 +398,7 @@ describe("useDistanceGame timeout flow", () => {
         stackName,
         "compute",
         "cyclic",
-        { enabled: true, duration: 10 },
+        { duration: 10, enabled: true },
         DEFAULT_STACK_LIMITS,
         { onAnswer }
       )
@@ -433,7 +433,7 @@ describe("useDistanceGame timeout flow", () => {
         stackName,
         "compute",
         "cyclic",
-        { enabled: true, duration: 10 },
+        { duration: 10, enabled: true },
         DEFAULT_STACK_LIMITS
       )
     );
@@ -472,8 +472,8 @@ describe("useDistanceGame reset on prop change", () => {
 
     // Cyclic convention only generates positive distances (1..N-1) — sample
     // a handful of cyclic rounds to anchor the invariant.
-    for (let i = 0; i < 20; i++) {
-      const round = result.current.round;
+    for (let i = 0; i < 20; i += 1) {
+      const { round } = result.current;
       if (round.display === "compute") {
         for (const v of round.choices.data) {
           expect(v).toBeGreaterThanOrEqual(1);
@@ -489,8 +489,8 @@ describe("useDistanceGame reset on prop change", () => {
     // observe the convention's distinguishing feature: at least one
     // round must surface a negative value in its numeric choices.
     let sawNegative = false;
-    for (let i = 0; i < 30; i++) {
-      const round = result.current.round;
+    for (let i = 0; i < 30; i += 1) {
+      const { round } = result.current;
       if (
         round.display === "compute" &&
         round.choices.data.some((v) => v < 0)
@@ -522,8 +522,8 @@ describe("useDistanceGame reset on prop change", () => {
 
     rerender({
       limits: {
-        start: createDeckPosition(1),
         end: createDeckPosition(6),
+        start: createDeckPosition(1),
       },
     });
     expect(result.current.score.successes).toBe(0);
@@ -534,7 +534,7 @@ describe("useDistanceGame reset on prop change", () => {
 
   it("resets when stack changes (score zeroes out, card drawn from new stack)", () => {
     type Props = { stack: Stack; name: string };
-    const initialProps: Props = { stack: testStack, name: stackName };
+    const initialProps: Props = { name: stackName, stack: testStack };
     const { result, rerender } = renderHook(
       ({ stack, name }: Props) =>
         useDistanceGame(
@@ -555,9 +555,9 @@ describe("useDistanceGame reset on prop change", () => {
 
     const cardBeforeStackChange = result.current.card.card;
 
-    rerender({ stack: stacks.aronson.order, name: stacks.aronson.name });
+    rerender({ name: stacks.aronson.name, stack: stacks.aronson.order });
 
-    expect(result.current.score).toEqual({ successes: 0, fails: 0 });
+    expect(result.current.score).toEqual({ fails: 0, successes: 0 });
     const { index, card } = result.current.card;
     expect(stacks.aronson.order[index - 1]).toBe(card);
 
@@ -572,7 +572,7 @@ describe("useDistanceGame reset on prop change", () => {
     // sticky on the old prompt).
     const observedCards = new Set<string>();
     observedCards.add(`${card.suit}-${card.rank}`);
-    for (let i = 0; i < 40 && observedCards.size < 2; i++) {
+    for (let i = 0; i < 40 && observedCards.size < 2; i += 1) {
       act(() => {
         result.current.revealAnswer();
       });

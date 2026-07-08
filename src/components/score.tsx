@@ -4,7 +4,7 @@ import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import type { GameScore } from "../types/game";
 
-export const Score = memo(function Score({ fails, successes }: GameScore) {
+export const Score = memo(({ fails, successes }: GameScore) => {
   const { t } = useTranslation();
   const total = successes + fails;
 
@@ -46,3 +46,5 @@ export const Score = memo(function Score({ fails, successes }: GameScore) {
     </Group>
   );
 });
+
+Score.displayName = "Score";

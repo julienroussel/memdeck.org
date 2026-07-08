@@ -8,8 +8,8 @@ import type { Stack } from "../../types/stacks";
 const THUMBNAIL_WIDTH = 32;
 const THUMBNAIL_HEIGHT = Math.round(THUMBNAIL_WIDTH * CARD_ASPECT_RATIO);
 const CARD_CELL_STYLE = {
-  display: "flex",
   alignItems: "center",
+  display: "flex",
   gap: 6,
 } as const;
 
@@ -27,11 +27,11 @@ export const buildSpellingSteps = (
 ): SpellingStep[] => {
   const letters = cardName.split("").filter((ch) => ch !== " ");
   return letters.map((letter, i) => ({
+    card: i < stackOrder.length ? stackOrder[i] : undefined,
+    isLast: i === letters.length - 1,
     key: `${letter}-${i}`,
     letter,
     position: i + 1,
-    card: i < stackOrder.length ? stackOrder[i] : undefined,
-    isLast: i === letters.length - 1,
   }));
 };
 
@@ -70,14 +70,14 @@ export const SpellingDetail = ({
           >
             <Table.Td>
               {step.letter}
-              {step.isLast && (
+              {step.isLast ? (
                 <>
                   {" "}
                   <Badge size="xs" variant="light">
                     {t("toolbox.spelling.landsOn")}
                   </Badge>
                 </>
-              )}
+              ) : null}
             </Table.Td>
             <Table.Td>{step.position}</Table.Td>
             <Table.Td>

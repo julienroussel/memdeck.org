@@ -9,7 +9,7 @@ describe("getRandomDisplayMode", () => {
 
   it("returns both modes across many calls", () => {
     const results = new Set<DisplayMode>();
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i += 1) {
       results.add(getRandomDisplayMode());
     }
     expect(results.has("card")).toBe(true);

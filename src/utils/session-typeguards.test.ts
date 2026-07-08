@@ -86,17 +86,17 @@ describe("isSessionRecord", () => {
   it("returns false for acaan record with flashcardMode present", () => {
     const badRecord = {
       ...makeRecord(),
-      mode: "acaan",
       flashcardMode: "neighbor",
+      mode: "acaan",
     };
     expect(isSessionRecord(badRecord)).toBe(false);
   });
 
   it("returns true for a valid distance record with mode and convention", () => {
     const record = makeRecord({
-      mode: "distance",
-      distanceMode: "compute",
       distanceConvention: "cyclic",
+      distanceMode: "compute",
+      mode: "distance",
     });
     expect(isSessionRecord(record)).toBe(true);
   });
@@ -110,8 +110,8 @@ describe("isSessionRecord", () => {
   it("returns false for a distance record with invalid distanceMode", () => {
     const badRecord = {
       ...makeRecord(),
-      mode: "distance",
       distanceMode: "bogus",
+      mode: "distance",
     };
     expect(isSessionRecord(badRecord)).toBe(false);
   });
@@ -119,8 +119,8 @@ describe("isSessionRecord", () => {
   it("returns false for a distance record with invalid distanceConvention", () => {
     const badRecord = {
       ...makeRecord(),
-      mode: "distance",
       distanceConvention: "weird",
+      mode: "distance",
     };
     expect(isSessionRecord(badRecord)).toBe(false);
   });
@@ -129,21 +129,21 @@ describe("isSessionRecord", () => {
     const arr = [
       makeRecord({ mode: "flashcard" }),
       makeRecord({
-        mode: "distance",
-        distanceMode: "apply",
         distanceConvention: "signed",
+        distanceMode: "apply",
+        mode: "distance",
       }),
     ];
     expect(isSessionRecordArray(arr)).toBe(true);
   });
 
   it("returns true when stackLimits is a valid object", () => {
-    const record = { ...makeRecord(), stackLimits: { start: 1, end: 20 } };
+    const record = { ...makeRecord(), stackLimits: { end: 20, start: 1 } };
     expect(isSessionRecord(record)).toBe(true);
   });
 
   it("returns false when stackLimits has a non-number start", () => {
-    const record = { ...makeRecord(), stackLimits: { start: "bad", end: 20 } };
+    const record = { ...makeRecord(), stackLimits: { end: 20, start: "bad" } };
     expect(isSessionRecord(record)).toBe(false);
   });
 
@@ -153,17 +153,17 @@ describe("isSessionRecord", () => {
   });
 
   it("returns false when stackLimits.start is less than 1", () => {
-    const record = { ...makeRecord(), stackLimits: { start: 0, end: 20 } };
+    const record = { ...makeRecord(), stackLimits: { end: 20, start: 0 } };
     expect(isSessionRecord(record)).toBe(false);
   });
 
   it("returns false when stackLimits.start is greater than stackLimits.end", () => {
-    const record = { ...makeRecord(), stackLimits: { start: 30, end: 10 } };
+    const record = { ...makeRecord(), stackLimits: { end: 10, start: 30 } };
     expect(isSessionRecord(record)).toBe(false);
   });
 
   it("returns false when stackLimits.end exceeds deck size", () => {
-    const record = { ...makeRecord(), stackLimits: { start: 1, end: 53 } };
+    const record = { ...makeRecord(), stackLimits: { end: 53, start: 1 } };
     expect(isSessionRecord(record)).toBe(false);
   });
 
@@ -173,7 +173,7 @@ describe("isSessionRecord", () => {
   });
 
   it("returns false when stackLimits has non-integer end", () => {
-    const record = { ...makeRecord(), stackLimits: { start: 1, end: 20.5 } };
+    const record = { ...makeRecord(), stackLimits: { end: 20.5, start: 1 } };
     expect(isSessionRecord(record)).toBe(false);
   });
 

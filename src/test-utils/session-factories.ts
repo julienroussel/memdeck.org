@@ -10,18 +10,18 @@ export const makeSessionRecord = (
   overrides: Partial<SessionRecord> = {}
 ): SessionRecord =>
   ({
-    id: "test-id",
-    mode: "flashcard",
-    stackKey: "mnemonica",
-    config: { type: "structured", totalQuestions: 10 },
-    startedAt: "2025-01-01T00:00:00.000Z",
-    endedAt: "2025-01-01T00:05:00.000Z",
-    durationSeconds: 300,
-    successes: 8,
-    fails: 2,
-    questionsCompleted: 10,
     accuracy: 0.8,
     bestStreak: 5,
+    config: { totalQuestions: 10, type: "structured" },
+    durationSeconds: 300,
+    endedAt: "2025-01-01T00:05:00.000Z",
+    fails: 2,
+    id: "test-id",
+    mode: "flashcard",
+    questionsCompleted: 10,
+    stackKey: "mnemonica",
+    startedAt: "2025-01-01T00:00:00.000Z",
+    successes: 8,
     ...overrides,
   }) as SessionRecord;
 
@@ -31,17 +31,17 @@ export const makeActiveSession = (
   overrides: Partial<ActiveSession> = {}
 ): ActiveSession =>
   ({
+    bestStreak: 0,
+    config: { type: "open" },
+    currentStreak: 0,
+    fails: 0,
+    flashcardMode: "bothmodes",
     id: "test-session",
     mode: "flashcard",
-    flashcardMode: "bothmodes",
+    questionsCompleted: 0,
     stackKey: "mnemonica",
-    config: { type: "open" },
     startedAt: "2025-01-01T00:00:00.000Z",
     successes: 0,
-    fails: 0,
-    questionsCompleted: 0,
-    currentStreak: 0,
-    bestStreak: 0,
     timed: false,
     ...overrides,
   }) as ActiveSession;
@@ -53,13 +53,13 @@ export const makeSummary = (
   overrides: Partial<SessionSummary> = {}
 ): SessionSummary =>
   ({
-    record: makeSessionRecord({
-      id: "test-record",
-      config: { type: "open" },
-    }),
     encouragement: { key: "session.encouragement.consistent" },
     isAccuracyImprovement: false,
     isNewGlobalBestStreak: false,
     previousAverageAccuracy: null,
+    record: makeSessionRecord({
+      config: { type: "open" },
+      id: "test-record",
+    }),
     ...overrides,
   }) as SessionSummary;

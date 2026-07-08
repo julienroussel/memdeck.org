@@ -7,9 +7,9 @@ beforeEach(() => {
   reloadMock.mockClear();
   sessionStorage.clear();
   Object.defineProperty(window, "location", {
-    value: { pathname: "/flashcard", search: "", reload: reloadMock },
-    writable: true,
     configurable: true,
+    value: { pathname: "/flashcard", reload: reloadMock, search: "" },
+    writable: true,
   });
 });
 
@@ -118,13 +118,13 @@ describe("lazyWithReload", () => {
     const { lazyWithReload } = await import("./lazy-with-reload");
 
     Object.defineProperty(window, "location", {
+      configurable: true,
       value: {
         pathname: "/flashcard",
-        search: "?chunk-reloaded=1",
         reload: reloadMock,
+        search: "?chunk-reloaded=1",
       },
       writable: true,
-      configurable: true,
     });
 
     const result = lazyWithReload(() =>

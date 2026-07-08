@@ -13,8 +13,8 @@ const defaultProps: {
 } = {
   mode: "cardonly",
   neighborDirection: "before",
-  onModeChange: vi.fn(),
   onDirectionChange: vi.fn(),
+  onModeChange: vi.fn(),
 };
 
 describe("FlashcardModeSelector", () => {

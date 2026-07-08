@@ -41,10 +41,10 @@ for (const line of raw ? raw.split("\n") : []) {
   }
   const parsed = cleanCommitSubject(rest.join("|"));
   if (!parsed) {
-    skipped++;
+    skipped += 1;
     continue;
   }
-  candidates.push({ hash: hash.slice(0, 7), date, ...parsed });
+  candidates.push({ date, hash: hash.slice(0, 7), ...parsed });
 }
 
 const boundary = latest

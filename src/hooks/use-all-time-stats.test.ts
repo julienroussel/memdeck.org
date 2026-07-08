@@ -5,11 +5,11 @@ import type { AllTimeStats, AllTimeStatsEntry } from "../types/session";
 const makeEntry = (
   overrides: Partial<AllTimeStatsEntry> = {}
 ): AllTimeStatsEntry => ({
-  totalSessions: 0,
-  totalQuestions: 0,
-  totalSuccesses: 0,
-  totalFails: 0,
   globalBestStreak: 0,
+  totalFails: 0,
+  totalQuestions: 0,
+  totalSessions: 0,
+  totalSuccesses: 0,
   ...overrides,
 });
 
@@ -86,26 +86,26 @@ describe("useAllTimeStats", () => {
   describe("getStats", () => {
     it("returns the correct entry for a specific mode and stack combination", () => {
       const stats: AllTimeStats = {
-        "flashcard:mnemonica": makeEntry({
-          totalSessions: 10,
-          totalQuestions: 100,
-          totalSuccesses: 80,
-          totalFails: 20,
-          globalBestStreak: 15,
+        "acaan:mnemonica": makeEntry({
+          globalBestStreak: 6,
+          totalFails: 5,
+          totalQuestions: 30,
+          totalSessions: 3,
+          totalSuccesses: 25,
         }),
         "flashcard:aronson": makeEntry({
-          totalSessions: 5,
-          totalQuestions: 50,
-          totalSuccesses: 40,
-          totalFails: 10,
           globalBestStreak: 8,
+          totalFails: 10,
+          totalQuestions: 50,
+          totalSessions: 5,
+          totalSuccesses: 40,
         }),
-        "acaan:mnemonica": makeEntry({
-          totalSessions: 3,
-          totalQuestions: 30,
-          totalSuccesses: 25,
-          totalFails: 5,
-          globalBestStreak: 6,
+        "flashcard:mnemonica": makeEntry({
+          globalBestStreak: 15,
+          totalFails: 20,
+          totalQuestions: 100,
+          totalSessions: 10,
+          totalSuccesses: 80,
         }),
       };
 
@@ -136,26 +136,26 @@ describe("useAllTimeStats", () => {
   describe("getStatsByMode", () => {
     it("aggregates all stacks for a given mode", () => {
       const stats: AllTimeStats = {
-        "flashcard:mnemonica": makeEntry({
-          totalSessions: 10,
-          totalQuestions: 100,
-          totalSuccesses: 80,
-          totalFails: 20,
-          globalBestStreak: 15,
+        "acaan:mnemonica": makeEntry({
+          globalBestStreak: 6,
+          totalFails: 5,
+          totalQuestions: 30,
+          totalSessions: 3,
+          totalSuccesses: 25,
         }),
         "flashcard:aronson": makeEntry({
-          totalSessions: 5,
-          totalQuestions: 50,
-          totalSuccesses: 40,
-          totalFails: 10,
           globalBestStreak: 8,
+          totalFails: 10,
+          totalQuestions: 50,
+          totalSessions: 5,
+          totalSuccesses: 40,
         }),
-        "acaan:mnemonica": makeEntry({
-          totalSessions: 3,
-          totalQuestions: 30,
-          totalSuccesses: 25,
-          totalFails: 5,
-          globalBestStreak: 6,
+        "flashcard:mnemonica": makeEntry({
+          globalBestStreak: 15,
+          totalFails: 20,
+          totalQuestions: 100,
+          totalSessions: 10,
+          totalSuccesses: 80,
         }),
       };
 
@@ -166,11 +166,11 @@ describe("useAllTimeStats", () => {
       const entry = result.current.getStatsByMode("flashcard");
 
       expect(entry).toEqual({
-        totalSessions: 15,
-        totalQuestions: 150,
-        totalSuccesses: 120,
-        totalFails: 30,
         globalBestStreak: 15,
+        totalFails: 30,
+        totalQuestions: 150,
+        totalSessions: 15,
+        totalSuccesses: 120,
       });
     });
 
@@ -190,17 +190,17 @@ describe("useAllTimeStats", () => {
 
     it("aggregates multiple stacks with best streak as max", () => {
       const stats: AllTimeStats = {
-        "flashcard:mnemonica": makeEntry({
-          totalSessions: 5,
-          globalBestStreak: 20,
-        }),
         "flashcard:aronson": makeEntry({
-          totalSessions: 3,
           globalBestStreak: 15,
+          totalSessions: 3,
         }),
         "flashcard:memorandum": makeEntry({
-          totalSessions: 2,
           globalBestStreak: 25,
+          totalSessions: 2,
+        }),
+        "flashcard:mnemonica": makeEntry({
+          globalBestStreak: 20,
+          totalSessions: 5,
         }),
       };
 
@@ -218,26 +218,26 @@ describe("useAllTimeStats", () => {
   describe("getStatsByStack", () => {
     it("aggregates all modes for a given stack", () => {
       const stats: AllTimeStats = {
-        "flashcard:mnemonica": makeEntry({
-          totalSessions: 10,
-          totalQuestions: 100,
-          totalSuccesses: 80,
-          totalFails: 20,
-          globalBestStreak: 15,
-        }),
         "acaan:mnemonica": makeEntry({
-          totalSessions: 5,
-          totalQuestions: 50,
-          totalSuccesses: 40,
-          totalFails: 10,
           globalBestStreak: 8,
+          totalFails: 10,
+          totalQuestions: 50,
+          totalSessions: 5,
+          totalSuccesses: 40,
         }),
         "flashcard:aronson": makeEntry({
-          totalSessions: 3,
-          totalQuestions: 30,
-          totalSuccesses: 25,
-          totalFails: 5,
           globalBestStreak: 6,
+          totalFails: 5,
+          totalQuestions: 30,
+          totalSessions: 3,
+          totalSuccesses: 25,
+        }),
+        "flashcard:mnemonica": makeEntry({
+          globalBestStreak: 15,
+          totalFails: 20,
+          totalQuestions: 100,
+          totalSessions: 10,
+          totalSuccesses: 80,
         }),
       };
 
@@ -248,11 +248,11 @@ describe("useAllTimeStats", () => {
       const entry = result.current.getStatsByStack("mnemonica");
 
       expect(entry).toEqual({
-        totalSessions: 15,
-        totalQuestions: 150,
-        totalSuccesses: 120,
-        totalFails: 30,
         globalBestStreak: 15,
+        totalFails: 30,
+        totalQuestions: 150,
+        totalSessions: 15,
+        totalSuccesses: 120,
       });
     });
 
@@ -272,13 +272,13 @@ describe("useAllTimeStats", () => {
 
     it("aggregates multiple modes with best streak as max", () => {
       const stats: AllTimeStats = {
-        "flashcard:mnemonica": makeEntry({
-          totalSessions: 8,
-          globalBestStreak: 12,
-        }),
         "acaan:mnemonica": makeEntry({
-          totalSessions: 4,
           globalBestStreak: 18,
+          totalSessions: 4,
+        }),
+        "flashcard:mnemonica": makeEntry({
+          globalBestStreak: 12,
+          totalSessions: 8,
         }),
       };
 
@@ -296,33 +296,33 @@ describe("useAllTimeStats", () => {
   describe("getGlobalStats", () => {
     it("aggregates all entries across all modes and stacks", () => {
       const stats: AllTimeStats = {
-        "flashcard:mnemonica": makeEntry({
-          totalSessions: 10,
-          totalQuestions: 100,
-          totalSuccesses: 80,
-          totalFails: 20,
-          globalBestStreak: 15,
-        }),
-        "flashcard:aronson": makeEntry({
-          totalSessions: 5,
-          totalQuestions: 50,
-          totalSuccesses: 40,
-          totalFails: 10,
-          globalBestStreak: 12,
+        "acaan:aronson": makeEntry({
+          globalBestStreak: 6,
+          totalFails: 5,
+          totalQuestions: 20,
+          totalSessions: 2,
+          totalSuccesses: 15,
         }),
         "acaan:mnemonica": makeEntry({
-          totalSessions: 3,
-          totalQuestions: 30,
-          totalSuccesses: 25,
-          totalFails: 5,
           globalBestStreak: 8,
-        }),
-        "acaan:aronson": makeEntry({
-          totalSessions: 2,
-          totalQuestions: 20,
-          totalSuccesses: 15,
           totalFails: 5,
-          globalBestStreak: 6,
+          totalQuestions: 30,
+          totalSessions: 3,
+          totalSuccesses: 25,
+        }),
+        "flashcard:aronson": makeEntry({
+          globalBestStreak: 12,
+          totalFails: 10,
+          totalQuestions: 50,
+          totalSessions: 5,
+          totalSuccesses: 40,
+        }),
+        "flashcard:mnemonica": makeEntry({
+          globalBestStreak: 15,
+          totalFails: 20,
+          totalQuestions: 100,
+          totalSessions: 10,
+          totalSuccesses: 80,
         }),
       };
 
@@ -333,11 +333,11 @@ describe("useAllTimeStats", () => {
       const entry = result.current.getGlobalStats();
 
       expect(entry).toEqual({
-        totalSessions: 20,
-        totalQuestions: 200,
-        totalSuccesses: 160,
-        totalFails: 40,
         globalBestStreak: 15,
+        totalFails: 40,
+        totalQuestions: 200,
+        totalSessions: 20,
+        totalSuccesses: 160,
       });
     });
 

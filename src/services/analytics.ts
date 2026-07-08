@@ -19,10 +19,10 @@ const isEnabled = () => window.location.hostname === PRODUCTION_HOSTNAME;
 
 const trackWebVital = ({ id, name, value }: Metric) => {
   ReactGA.send({
-    eventCategory: "Web Vitals",
     eventAction: name,
-    eventValue: Math.round(name === "CLS" ? value * 1000 : value),
+    eventCategory: "Web Vitals",
     eventLabel: id,
+    eventValue: Math.round(name === "CLS" ? value * 1000 : value),
     nonInteraction: true,
   });
 };
@@ -179,94 +179,14 @@ export const analytics = {
     subscribeToEvents();
   },
 
-  trackPageView: (path: string) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.send({ hitType: "pageview", page: path });
-  },
-
-  trackEvent: (category: string, action: string, label?: string) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({ category, action, label });
-  },
-
-  trackStackSelected: (stackName: string) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
-      category: "Stack",
-      action: "Selected",
-      label: stackName,
-    });
-  },
-
-  trackFlashcardAnswer: (correct: boolean, stackName: string) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
-      category: "Flashcard",
-      action: correct ? "Correct Answer" : "Wrong Answer",
-      label: stackName,
-    });
-  },
-
-  trackFlashcardModeChanged: (mode: FlashcardMode) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
-      category: "Flashcard",
-      action: "Mode Changed",
-      label: mode,
-    });
-  },
-
-  trackNeighborDirectionChanged: (direction: NeighborDirection) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
-      category: "Settings",
-      action: "Neighbor Direction Changed",
-      label: direction,
-    });
-  },
-
   trackAcaanAnswer: (correct: boolean, stackName: string) => {
     if (!isEnabled()) {
       return;
     }
     ReactGA.event({
+      action: correct ? "Correct Answer" : "Wrong Answer",
       category: "ACAAN",
-      action: correct ? "Correct Answer" : "Wrong Answer",
       label: stackName,
-    });
-  },
-
-  trackSpotCheckAnswer: (correct: boolean, stackName: string) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
-      category: "Spot Check",
-      action: correct ? "Correct Answer" : "Wrong Answer",
-      label: stackName,
-    });
-  },
-
-  trackSpotCheckModeChanged: (mode: SpotCheckMode) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
-      category: "Spot Check",
-      action: "Mode Changed",
-      label: mode,
     });
   },
 
@@ -275,20 +195,9 @@ export const analytics = {
       return;
     }
     ReactGA.event({
-      category: "Distance",
       action: correct ? "Correct Answer" : "Wrong Answer",
-      label: stackName,
-    });
-  },
-
-  trackDistanceModeChanged: (mode: DistanceMode) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
       category: "Distance",
-      action: "Mode Changed",
-      label: mode,
+      label: stackName,
     });
   },
 
@@ -297,101 +206,20 @@ export const analytics = {
       return;
     }
     ReactGA.event({
-      category: "Distance",
       action: "Convention Changed",
+      category: "Distance",
       label: convention,
     });
   },
 
-  trackSessionStarted: (mode: TrainingMode, config: SessionConfig) => {
+  trackDistanceModeChanged: (mode: DistanceMode) => {
     if (!isEnabled()) {
       return;
     }
     ReactGA.event({
-      category: "Session",
-      action: "Started",
-      label: formatSessionLabel(mode, config),
-    });
-  },
-
-  trackSessionCompleted: (
-    mode: TrainingMode,
-    accuracy: number,
-    saved: boolean
-  ) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
-      category: "Session",
-      action: saved ? "Completed" : "Save Failed",
+      action: "Mode Changed",
+      category: "Distance",
       label: mode,
-      value: Math.round(accuracy * 100),
-    });
-  },
-
-  trackFeatureUsed: (feature: string) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
-      category: "Feature",
-      action: "Used",
-      label: feature,
-    });
-  },
-
-  trackShareClicked: (source: ShareSource, result: ShareResult) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
-      category: "Share",
-      action: "Clicked",
-      label: `${source}:${result}`,
-    });
-  },
-
-  trackShareNudgeDismissed: () => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
-      category: "Share",
-      action: "Nudge Dismissed",
-    });
-  },
-
-  trackFeatureSuggestionShown: (id: string, surface: DiscoverySurface) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
-      category: "Feature Discovery",
-      action: "Suggestion Shown",
-      label: `${id}:${surface}`,
-    });
-  },
-
-  trackFeatureSuggestionAccepted: (id: string, surface: DiscoverySurface) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
-      category: "Feature Discovery",
-      action: "Suggestion Accepted",
-      label: `${id}:${surface}`,
-    });
-  },
-
-  trackFeatureSuggestionDismissed: (id: string, surface: DiscoverySurface) => {
-    if (!isEnabled()) {
-      return;
-    }
-    ReactGA.event({
-      category: "Feature Discovery",
-      action: "Suggestion Dismissed",
-      label: `${id}:${surface}`,
     });
   },
 
@@ -411,17 +239,189 @@ export const analytics = {
       // absolute paths leak environment info.
       const scrubbedMessage = scrubErrorMessage(error.message);
       ReactGA.event({
-        category: "Error",
         action: error.name,
+        category: "Error",
         label: scrubbedMessage,
       });
       ReactGA.send({
-        hitType: "exception",
         exDescription: `${error.name}: ${scrubbedMessage}${componentStack ? ` | ${componentStack.slice(0, 100)}` : ""}`,
         exFatal: false,
+        hitType: "exception",
       });
     } catch {
       // Analytics MUST NOT break user-facing flows.
     }
+  },
+
+  trackEvent: (category: string, action: string, label?: string) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({ action, category, label });
+  },
+
+  trackFeatureSuggestionAccepted: (id: string, surface: DiscoverySurface) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: "Suggestion Accepted",
+      category: "Feature Discovery",
+      label: `${id}:${surface}`,
+    });
+  },
+
+  trackFeatureSuggestionDismissed: (id: string, surface: DiscoverySurface) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: "Suggestion Dismissed",
+      category: "Feature Discovery",
+      label: `${id}:${surface}`,
+    });
+  },
+
+  trackFeatureSuggestionShown: (id: string, surface: DiscoverySurface) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: "Suggestion Shown",
+      category: "Feature Discovery",
+      label: `${id}:${surface}`,
+    });
+  },
+
+  trackFeatureUsed: (feature: string) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: "Used",
+      category: "Feature",
+      label: feature,
+    });
+  },
+
+  trackFlashcardAnswer: (correct: boolean, stackName: string) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: correct ? "Correct Answer" : "Wrong Answer",
+      category: "Flashcard",
+      label: stackName,
+    });
+  },
+
+  trackFlashcardModeChanged: (mode: FlashcardMode) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: "Mode Changed",
+      category: "Flashcard",
+      label: mode,
+    });
+  },
+
+  trackNeighborDirectionChanged: (direction: NeighborDirection) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: "Neighbor Direction Changed",
+      category: "Settings",
+      label: direction,
+    });
+  },
+
+  trackPageView: (path: string) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.send({ hitType: "pageview", page: path });
+  },
+
+  trackSessionCompleted: (
+    mode: TrainingMode,
+    accuracy: number,
+    saved: boolean
+  ) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: saved ? "Completed" : "Save Failed",
+      category: "Session",
+      label: mode,
+      value: Math.round(accuracy * 100),
+    });
+  },
+
+  trackSessionStarted: (mode: TrainingMode, config: SessionConfig) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: "Started",
+      category: "Session",
+      label: formatSessionLabel(mode, config),
+    });
+  },
+
+  trackShareClicked: (source: ShareSource, result: ShareResult) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: "Clicked",
+      category: "Share",
+      label: `${source}:${result}`,
+    });
+  },
+
+  trackShareNudgeDismissed: () => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: "Nudge Dismissed",
+      category: "Share",
+    });
+  },
+
+  trackSpotCheckAnswer: (correct: boolean, stackName: string) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: correct ? "Correct Answer" : "Wrong Answer",
+      category: "Spot Check",
+      label: stackName,
+    });
+  },
+
+  trackSpotCheckModeChanged: (mode: SpotCheckMode) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: "Mode Changed",
+      category: "Spot Check",
+      label: mode,
+    });
+  },
+
+  trackStackSelected: (stackName: string) => {
+    if (!isEnabled()) {
+      return;
+    }
+    ReactGA.event({
+      action: "Selected",
+      category: "Stack",
+      label: stackName,
+    });
   },
 };

@@ -45,5 +45,5 @@ export const getNeighborCard = (
   const neighborZeroBased = limits.start - 1 + neighborInRange;
   const neighborIndex = createDeckPosition(neighborZeroBased + 1);
   const neighborCard: PlayingCard = getCardAt(stack, neighborZeroBased);
-  return { index: neighborIndex, card: neighborCard };
+  return { card: neighborCard, index: neighborIndex };
 };

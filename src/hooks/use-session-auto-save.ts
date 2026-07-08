@@ -50,7 +50,7 @@ export const useSessionAutoSave = ({
   useEffect(() => {
     if (prevStackKeyRef.current !== stackKey) {
       prevStackKeyRef.current = stackKey;
-      const current = statusRef.current;
+      const { current } = statusRef;
       if (current.phase !== "active") {
         return;
       }
@@ -76,7 +76,7 @@ export const useSessionAutoSave = ({
   // notification for the same failure.
   useEffect(() => {
     const handleBeforeUnloadEvent = () => {
-      const current = statusRef.current;
+      const { current } = statusRef;
       if (
         current.phase !== "active" ||
         !meetsMinimumSaveThreshold(current.session)
@@ -104,7 +104,7 @@ export const useSessionAutoSave = ({
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnloadEvent);
-      const current = statusRef.current;
+      const { current } = statusRef;
       if (
         current.phase !== "active" ||
         !meetsMinimumSaveThreshold(current.session)
@@ -123,15 +123,15 @@ export const useSessionAutoSave = ({
         const tNow = tRef.current;
         notifications.show({
           color: isUnrecoverable ? "red" : "yellow",
-          title: tNow(
-            isUnrecoverable
-              ? "errors.sessionStorageCorrupt.title"
-              : "errors.sessionSaveFailed.title"
-          ),
           message: tNow(
             isUnrecoverable
               ? "errors.sessionStorageCorrupt.message"
               : "errors.sessionSaveFailed.message"
+          ),
+          title: tNow(
+            isUnrecoverable
+              ? "errors.sessionStorageCorrupt.title"
+              : "errors.sessionSaveFailed.title"
           ),
         });
       }

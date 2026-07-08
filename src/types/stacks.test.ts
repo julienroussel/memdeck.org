@@ -16,7 +16,7 @@ const fullDeck = DEFAULT_STACK_LIMITS;
 
 describe("createDeckPosition", () => {
   it("returns a branded DeckPosition for valid integers 1-52", () => {
-    for (let i = 1; i <= DECK_SIZE; i++) {
+    for (let i = 1; i <= DECK_SIZE; i += 1) {
       const position = createDeckPosition(i);
       expect(position).toBe(i);
     }
@@ -85,7 +85,7 @@ describe("getCardAt", () => {
   });
 
   it("returns the correct card for every valid index", () => {
-    for (let i = 0; i < DECK_SIZE; i++) {
+    for (let i = 0; i < DECK_SIZE; i += 1) {
       const card = getCardAt(testStack, i);
       expect(card).toBe(testStack[i]);
     }
@@ -143,9 +143,9 @@ describe("getUniqueRandomCard", () => {
 
   it("returns a card not in existingChoices", () => {
     const existingChoices: PlayingCardPosition[] = [
-      { index: createDeckPosition(1), card: testStack[0] },
-      { index: createDeckPosition(2), card: testStack[1] },
-      { index: createDeckPosition(3), card: testStack[2] },
+      { card: testStack[0], index: createDeckPosition(1) },
+      { card: testStack[1], index: createDeckPosition(2) },
+      { card: testStack[2], index: createDeckPosition(3) },
     ];
 
     const result = getUniqueRandomCard(testStack, existingChoices, fullDeck);
@@ -159,7 +159,7 @@ describe("getUniqueRandomCard", () => {
     vi.spyOn(Math, "random").mockReturnValue(0);
 
     const existingChoices: PlayingCardPosition[] = [
-      { index: createDeckPosition(1), card: testStack[0] },
+      { card: testStack[0], index: createDeckPosition(1) },
     ];
 
     const result = getUniqueRandomCard(testStack, existingChoices, fullDeck);
@@ -174,10 +174,10 @@ describe("getUniqueRandomCard", () => {
     vi.spyOn(Math, "random").mockReturnValue(0);
 
     const existingChoices: PlayingCardPosition[] = [];
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 10; i += 1) {
       existingChoices.push({
-        index: createDeckPosition(i),
         card: testStack[i - 1],
+        index: createDeckPosition(i),
       });
     }
 
@@ -191,10 +191,10 @@ describe("getUniqueRandomCard", () => {
 
   it("throws error when all cards are already selected", () => {
     const allCards: PlayingCardPosition[] = [];
-    for (let i = 1; i <= DECK_SIZE; i++) {
+    for (let i = 1; i <= DECK_SIZE; i += 1) {
       allCards.push({
-        index: createDeckPosition(i),
         card: testStack[i - 1],
+        index: createDeckPosition(i),
       });
     }
 
@@ -207,10 +207,10 @@ describe("getUniqueRandomCard", () => {
     vi.spyOn(Math, "random").mockReturnValue(0);
 
     const existingChoices: PlayingCardPosition[] = [];
-    for (let i = 1; i <= DECK_SIZE - 1; i++) {
+    for (let i = 1; i <= DECK_SIZE - 1; i += 1) {
       existingChoices.push({
-        index: createDeckPosition(i),
         card: testStack[i - 1],
+        index: createDeckPosition(i),
       });
     }
 
@@ -225,7 +225,7 @@ describe("getUniqueRandomCard", () => {
   it("returns unique cards across multiple calls", () => {
     const results: PlayingCardPosition[] = [];
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 10; i += 1) {
       const result = getUniqueRandomCard(testStack, results, fullDeck);
       results.push(result);
     }
@@ -239,12 +239,12 @@ describe("getUniqueRandomCard", () => {
 
 describe("getRandomPlayingCard with partial range", () => {
   const partialLimits = {
-    start: createDeckPosition(10),
     end: createDeckPosition(20),
+    start: createDeckPosition(10),
   };
 
   it("only returns cards within the specified range across many iterations", () => {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i += 1) {
       const result = getRandomPlayingCard(testStack, partialLimits);
       expect(result.index).toBeGreaterThanOrEqual(10);
       expect(result.index).toBeLessThanOrEqual(20);
@@ -271,16 +271,16 @@ describe("getRandomPlayingCard with partial range", () => {
 
 describe("getUniqueRandomCard with partial range", () => {
   const partialLimits = {
-    start: createDeckPosition(5),
     end: createDeckPosition(8),
+    start: createDeckPosition(5),
   };
 
   it("throws when all cards in a partial range are already selected", () => {
     const allInRange: PlayingCardPosition[] = [];
-    for (let i = partialLimits.start; i <= partialLimits.end; i++) {
+    for (let i: number = partialLimits.start; i <= partialLimits.end; i += 1) {
       allInRange.push({
-        index: createDeckPosition(i),
         card: testStack[i - 1],
+        index: createDeckPosition(i),
       });
     }
 
@@ -291,8 +291,8 @@ describe("getUniqueRandomCard with partial range", () => {
 
   it("returns a card within the partial range that is not already selected", () => {
     const existing: PlayingCardPosition[] = [
-      { index: createDeckPosition(5), card: testStack[4] },
-      { index: createDeckPosition(6), card: testStack[5] },
+      { card: testStack[4], index: createDeckPosition(5) },
+      { card: testStack[5], index: createDeckPosition(6) },
     ];
 
     const result = getUniqueRandomCard(testStack, existing, partialLimits);

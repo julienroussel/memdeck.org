@@ -86,18 +86,18 @@ describe("cssVarCounterStyle", () => {
 
   describe("formula verification: --i = index + 1 - size + offset", () => {
     it.each([
-      { index: 0, size: 5, offset: 0, expected: -4 },
-      { index: 1, size: 5, offset: 0, expected: -3 },
-      { index: 2, size: 5, offset: 0, expected: -2 },
-      { index: 3, size: 5, offset: 0, expected: -1 },
-      { index: 4, size: 5, offset: 0, expected: 0 },
-      { index: 0, size: 3, offset: 1, expected: -1 },
-      { index: 1, size: 3, offset: 1, expected: 0 },
-      { index: 2, size: 3, offset: 1, expected: 1 },
-      { index: 0, size: 1, offset: 0, expected: 0 },
-      { index: 0, size: 10, offset: 5, expected: -4 },
-      { index: 9, size: 10, offset: 0, expected: 0 },
-      { index: 25, size: 52, offset: 0, expected: -26 },
+      { expected: -4, index: 0, offset: 0, size: 5 },
+      { expected: -3, index: 1, offset: 0, size: 5 },
+      { expected: -2, index: 2, offset: 0, size: 5 },
+      { expected: -1, index: 3, offset: 0, size: 5 },
+      { expected: 0, index: 4, offset: 0, size: 5 },
+      { expected: -1, index: 0, offset: 1, size: 3 },
+      { expected: 0, index: 1, offset: 1, size: 3 },
+      { expected: 1, index: 2, offset: 1, size: 3 },
+      { expected: 0, index: 0, offset: 0, size: 1 },
+      { expected: -4, index: 0, offset: 5, size: 10 },
+      { expected: 0, index: 9, offset: 0, size: 10 },
+      { expected: -26, index: 25, offset: 0, size: 52 },
     ])("index=$index, size=$size, offset=$offset -> --i=$expected", ({
       index,
       size,
@@ -113,7 +113,7 @@ describe("cssVarCounterStyle", () => {
   describe("card spread use case", () => {
     it("generates correct sequence for 5-card spread", () => {
       const results: (number | string)[] = [];
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 5; i += 1) {
         results.push(cssVarCounterStyle(i, 5, 0)["--i"]);
       }
 
@@ -122,7 +122,7 @@ describe("cssVarCounterStyle", () => {
 
     it("generates correct sequence for 5-card spread with offset", () => {
       const results: (number | string)[] = [];
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 5; i += 1) {
         results.push(cssVarCounterStyle(i, 5, 2)["--i"]);
       }
 
@@ -134,7 +134,7 @@ describe("cssVarCounterStyle", () => {
       const offset = Math.floor(size / 2);
       const results: (number | string)[] = [];
 
-      for (let i = 0; i < size; i++) {
+      for (let i = 0; i < size; i += 1) {
         results.push(cssVarCounterStyle(i, size, offset)["--i"]);
       }
 

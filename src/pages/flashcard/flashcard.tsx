@@ -27,8 +27,8 @@ const breadcrumbSchema = buildBreadcrumbSchema("Flashcard", ROUTES.flashcard);
 export const Flashcard = () => {
   const { t } = useTranslation();
   useDocumentMeta({
-    title: t("flashcard.pageTitle"),
     description: t("flashcard.pageDescription"),
+    title: t("flashcard.pageTitle"),
   });
   useCardImagePreload();
   const { stackKey, stackOrder, stackName } = useRequiredStack();
@@ -44,8 +44,8 @@ export const Flashcard = () => {
   } = useFlashcardSettings();
 
   const deepLinkPending = useSuggestionDeepLink({
-    tryHandlers: [tryHandler(isFlashcardMode, handleModeChange)],
     onTimed: () => handleTimerEnabledChange(true),
+    tryHandlers: [tryHandler(isFlashcardMode, handleModeChange)],
   });
 
   const { limits, rangeSize } = useStackLimits(stackKey);
@@ -60,10 +60,10 @@ export const Flashcard = () => {
     stopSession,
     dismissSummary,
   } = useSession({
+    autoStart: !deepLinkPending,
+    flashcardMode: mode,
     mode: "flashcard",
     stackKey,
-    flashcardMode: mode,
-    autoStart: !deepLinkPending,
     stackLimits: limits,
     timed: timerSettings.enabled,
   });

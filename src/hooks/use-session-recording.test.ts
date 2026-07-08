@@ -11,7 +11,7 @@ const useTestHarness = (initialSession: ActiveSession) => {
     session: initialSession,
   });
   const recording = useSessionRecording({ setStatus });
-  return { status, recording };
+  return { recording, status };
 };
 
 // Replaces the prior `as { phase: "active"; session: ActiveSession }` cast
@@ -34,7 +34,7 @@ describe("useSessionRecording", () => {
         result.current.recording.recordCorrect();
       });
 
-      const status = result.current.status;
+      const { status } = result.current;
       assertActive(status);
       expect(status.session.successes).toBe(1);
       expect(status.session.currentStreak).toBe(1);
@@ -42,14 +42,14 @@ describe("useSessionRecording", () => {
 
     it("updates bestStreak when the current streak exceeds the previous best", () => {
       const { result } = renderHook(() =>
-        useTestHarness(makeActiveSession({ currentStreak: 4, bestStreak: 4 }))
+        useTestHarness(makeActiveSession({ bestStreak: 4, currentStreak: 4 }))
       );
 
       act(() => {
         result.current.recording.recordCorrect();
       });
 
-      const status = result.current.status;
+      const { status } = result.current;
       assertActive(status);
       expect(status.session.currentStreak).toBe(5);
       expect(status.session.bestStreak).toBe(5);
@@ -57,14 +57,14 @@ describe("useSessionRecording", () => {
 
     it("does not lower bestStreak when currentStreak is below it", () => {
       const { result } = renderHook(() =>
-        useTestHarness(makeActiveSession({ currentStreak: 0, bestStreak: 10 }))
+        useTestHarness(makeActiveSession({ bestStreak: 10, currentStreak: 0 }))
       );
 
       act(() => {
         result.current.recording.recordCorrect();
       });
 
-      const status = result.current.status;
+      const { status } = result.current;
       assertActive(status);
       expect(status.session.currentStreak).toBe(1);
       expect(status.session.bestStreak).toBe(10);
@@ -81,7 +81,7 @@ describe("useSessionRecording", () => {
         result.current.recording.recordIncorrect();
       });
 
-      const status = result.current.status;
+      const { status } = result.current;
       assertActive(status);
       expect(status.session.fails).toBe(1);
       expect(status.session.currentStreak).toBe(0);
@@ -89,14 +89,14 @@ describe("useSessionRecording", () => {
 
     it("preserves bestStreak when resetting currentStreak", () => {
       const { result } = renderHook(() =>
-        useTestHarness(makeActiveSession({ currentStreak: 5, bestStreak: 8 }))
+        useTestHarness(makeActiveSession({ bestStreak: 8, currentStreak: 5 }))
       );
 
       act(() => {
         result.current.recording.recordIncorrect();
       });
 
-      const status = result.current.status;
+      const { status } = result.current;
       assertActive(status);
       expect(status.session.currentStreak).toBe(0);
       expect(status.session.bestStreak).toBe(8);
@@ -111,7 +111,7 @@ describe("useSessionRecording", () => {
         result.current.recording.recordQuestionAdvanced();
       });
 
-      const status = result.current.status;
+      const { status } = result.current;
       assertActive(status);
       expect(status.session.questionsCompleted).toBe(1);
     });
@@ -130,7 +130,7 @@ describe("useSessionRecording", () => {
         result.current.recording.recordQuestionAdvanced();
       });
 
-      const status = result.current.status;
+      const { status } = result.current;
       assertActive(status);
       expect(status.session.successes).toBe(1);
       expect(status.session.currentStreak).toBe(1);
@@ -160,7 +160,7 @@ describe("useSessionRecording", () => {
         result.current.recording.recordQuestionAdvanced();
       });
 
-      const status = result.current.status;
+      const { status } = result.current;
       assertActive(status);
       expect(status.session.successes).toBe(1);
       expect(status.session.currentStreak).toBe(1);
@@ -209,7 +209,7 @@ describe("useSessionRecording", () => {
       const { result } = renderHook(() => {
         const [status, setStatus] = useState<SessionPhase>({ phase: "idle" });
         const recording = useSessionRecording({ setStatus });
-        return { status, recording };
+        return { recording, status };
       });
 
       act(() => {
@@ -223,7 +223,7 @@ describe("useSessionRecording", () => {
       const { result } = renderHook(() => {
         const [status, setStatus] = useState<SessionPhase>({ phase: "idle" });
         const recording = useSessionRecording({ setStatus });
-        return { status, recording };
+        return { recording, status };
       });
 
       act(() => {
@@ -237,7 +237,7 @@ describe("useSessionRecording", () => {
       const { result } = renderHook(() => {
         const [status, setStatus] = useState<SessionPhase>({ phase: "idle" });
         const recording = useSessionRecording({ setStatus });
-        return { status, recording };
+        return { recording, status };
       });
 
       act(() => {

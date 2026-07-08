@@ -13,8 +13,8 @@ const SAME_CARD_REGEX = /same card/i;
 const EMPTY_RANGE_REGEX = /empty range/;
 
 const limitsOf = (start: number, end: number): StackLimits => ({
-  start: createDeckPosition(start),
   end: createDeckPosition(end),
+  start: createDeckPosition(start),
 });
 
 const FULL = limitsOf(1, 52);
@@ -138,8 +138,8 @@ describe("applyOffset", () => {
   });
 
   it("round-trips with computeDistance under cyclic convention", () => {
-    for (let from = 0; from < 52; from++) {
-      for (let offset = 1; offset < 52; offset++) {
+    for (let from = 0; from < 52; from += 1) {
+      for (let offset = 1; offset < 52; offset += 1) {
         const { zeroBased: to } = applyOffset(from, offset, FULL);
         expect(computeDistance(from, to, "cyclic", FULL)).toBe(offset);
       }
@@ -148,8 +148,8 @@ describe("applyOffset", () => {
 
   it("round-trips with computeDistance under signed convention (modulo cycle)", () => {
     const range = limitsOf(1, 13); // cycleSize 13 (odd)
-    for (let from = 0; from < 13; from++) {
-      for (let offset = -6; offset <= 6; offset++) {
+    for (let from = 0; from < 13; from += 1) {
+      for (let offset = -6; offset <= 6; offset += 1) {
         if (offset === 0) {
           continue;
         }
@@ -252,7 +252,7 @@ describe("pickComputeDistractors", () => {
     // would indicate the Fisher-Yates pass over each bucket regressed.
     const orderings = new Map<string, number>();
     const TIE_PAIR = new Set([-1, 3]);
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 200; i += 1) {
       const result = pickComputeDistractors(1, "signed", 6, 4);
       // Find the positions of the two tied values to record their order.
       const seq = result.filter((v) => TIE_PAIR.has(v)).join(",");
@@ -267,13 +267,13 @@ describe("pickComputeDistractors", () => {
 describe("pickRandomOffset", () => {
   it("returns a value from the convention's valid set", () => {
     const valid = new Set(getValidDistanceRange("cyclic", 13));
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i += 1) {
       expect(valid.has(pickRandomOffset("cyclic", 13))).toBe(true);
     }
   });
 
   it("never returns 0 under signed convention", () => {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i += 1) {
       expect(pickRandomOffset("signed", 13)).not.toBe(0);
     }
   });
@@ -290,7 +290,7 @@ describe("pickRandomOffset", () => {
     // test above.
     let sawNegative = false;
     let sawPositive = false;
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 200; i += 1) {
       const v = pickRandomOffset("signed", 6);
       if (v < 0) {
         sawNegative = true;

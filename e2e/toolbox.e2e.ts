@@ -31,7 +31,7 @@ test.describe("Toolbox Page", () => {
 
     // Verify page title is visible
     await expect(
-      page.getByRole("heading", { name: "Toolbox", level: 1 })
+      page.getByRole("heading", { level: 1, name: "Toolbox" })
     ).toBeVisible();
 
     // Verify Stack Lookup section is present in the accordion
@@ -92,7 +92,7 @@ test.describe("Toolbox Page", () => {
       // Should render correctly
       await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
       await expect(
-        page.getByRole("heading", { name: "Toolbox", level: 1 })
+        page.getByRole("heading", { level: 1, name: "Toolbox" })
       ).toBeVisible();
 
       // Verify stack persisted
@@ -125,7 +125,7 @@ test.describe("Toolbox Page", () => {
     // Should still be on toolbox (not redirected)
     await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
     await expect(
-      page.getByRole("heading", { name: "Toolbox", level: 1 })
+      page.getByRole("heading", { level: 1, name: "Toolbox" })
     ).toBeVisible();
   });
 
@@ -259,7 +259,7 @@ test.describe("Toolbox Page", () => {
 
     // Should be back on toolbox
     await expect(
-      page.getByRole("heading", { name: "Toolbox", level: 1 })
+      page.getByRole("heading", { level: 1, name: "Toolbox" })
     ).toBeVisible();
 
     // Use browser forward button to return to home

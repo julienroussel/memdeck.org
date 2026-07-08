@@ -34,7 +34,6 @@ const systemColorScheme = getSystemColorScheme();
 const colorSchemeManager = createColorSchemeManager(COLOR_SCHEME_LSK);
 
 const theme = createTheme({
-  primaryColor: "blue",
   colors: {
     blue: [
       "#e7f5ff",
@@ -49,16 +48,19 @@ const theme = createTheme({
       "#1864ab",
     ],
   },
+  primaryColor: "blue",
   primaryShade: 8,
 });
 
 const cssVariablesResolver: CSSVariablesResolver = () => ({
-  variables: {},
+  dark: {},
   light: {
     "--mantine-color-dimmed": "#495057",
   },
-  dark: {},
+  variables: {},
 });
+
+const reloadPage = () => window.location.reload();
 
 const RootErrorFallback = ({ error }: { error: unknown }) => (
   <Center h="100vh" p="md">
@@ -67,12 +69,12 @@ const RootErrorFallback = ({ error }: { error: unknown }) => (
       <Text c="dimmed" maw={400} ta="center">
         A critical error occurred. Please refresh the page to continue.
       </Text>
-      {import.meta.env.DEV && (
+      {import.meta.env.DEV ? (
         <Text c="red" ff="monospace" size="sm">
           {error instanceof Error ? error.message : String(error)}
         </Text>
-      )}
-      <Button onClick={() => window.location.reload()} variant="light">
+      ) : null}
+      <Button onClick={reloadPage} variant="light">
         Refresh Page
       </Button>
     </Stack>
@@ -83,15 +85,15 @@ const OuterErrorFallback = ({ error }: { error: unknown }) => (
   <div
     role="alert"
     style={{
-      display: "flex",
       alignItems: "center",
-      justifyContent: "center",
-      height: "100vh",
-      padding: "1rem",
-      fontFamily: "system-ui, sans-serif",
-      textAlign: "center",
-      color: "#212529",
       backgroundColor: "#ffffff",
+      color: "#212529",
+      display: "flex",
+      fontFamily: "system-ui, sans-serif",
+      height: "100vh",
+      justifyContent: "center",
+      padding: "1rem",
+      textAlign: "center",
     }}
   >
     <div>
@@ -99,7 +101,7 @@ const OuterErrorFallback = ({ error }: { error: unknown }) => (
       <p style={{ color: "#868e96", maxWidth: 400 }}>
         A critical error occurred. Please refresh the page to continue.
       </p>
-      {import.meta.env.DEV && (
+      {import.meta.env.DEV ? (
         <pre
           style={{
             color: "#c92a2a",
@@ -113,16 +115,16 @@ const OuterErrorFallback = ({ error }: { error: unknown }) => (
         >
           {error instanceof Error ? error.message : String(error)}
         </pre>
-      )}
+      ) : null}
       <button
-        onClick={() => window.location.reload()}
+        onClick={reloadPage}
         style={{
-          padding: "0.5rem 1rem",
+          background: "transparent",
           border: "1px solid #dee2e6",
           borderRadius: 4,
-          background: "transparent",
           cursor: "pointer",
           fontSize: "0.875rem",
+          padding: "0.5rem 1rem",
         }}
         type="button"
       >

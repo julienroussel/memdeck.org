@@ -32,8 +32,8 @@ export const FlashcardModeSelector = ({
   const primaryData = useMemo(
     () =>
       PRIMARY_MODE_OPTIONS.map((opt) => ({
-        value: opt.value,
         label: t(opt.labelKey),
+        value: opt.value,
       })),
     [t]
   );
@@ -41,8 +41,8 @@ export const FlashcardModeSelector = ({
   const positionSubModeData = useMemo(
     () =>
       POSITION_SUB_MODE_OPTIONS.map((opt) => ({
-        value: opt.value,
         label: t(opt.labelKey),
+        value: opt.value,
       })),
     [t]
   );
@@ -50,8 +50,8 @@ export const FlashcardModeSelector = ({
   const neighborDirectionData = useMemo(
     () =>
       NEIGHBOR_DIRECTION_OPTIONS.map((opt) => ({
-        value: opt.value,
         label: t(opt.labelKey),
+        value: opt.value,
       })),
     [t]
   );

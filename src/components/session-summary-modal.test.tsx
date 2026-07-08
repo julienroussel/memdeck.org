@@ -43,18 +43,18 @@ describe("SessionSummaryModal", () => {
   describe("statistics display", () => {
     const summary = makeSummary({
       record: {
-        id: "test",
-        mode: "flashcard",
-        stackKey: "mnemonica",
-        config: { type: "open" },
-        startedAt: "2025-01-01T00:00:00.000Z",
-        endedAt: "2025-01-01T00:05:00.000Z",
-        durationSeconds: 300,
-        successes: 8,
-        fails: 2,
-        questionsCompleted: 10,
         accuracy: 0.8,
         bestStreak: 5,
+        config: { type: "open" },
+        durationSeconds: 300,
+        endedAt: "2025-01-01T00:05:00.000Z",
+        fails: 2,
+        id: "test",
+        mode: "flashcard",
+        questionsCompleted: 10,
+        stackKey: "mnemonica",
+        startedAt: "2025-01-01T00:00:00.000Z",
+        successes: 8,
       },
     });
 
@@ -104,18 +104,18 @@ describe("SessionSummaryModal", () => {
     it("formats short durations correctly (under 1 minute)", () => {
       const shortSession = makeSummary({
         record: {
-          id: "test",
-          mode: "flashcard",
-          stackKey: "mnemonica",
-          config: { type: "open" },
-          startedAt: "2025-01-01T00:00:00.000Z",
-          endedAt: "2025-01-01T00:00:45.000Z",
-          durationSeconds: 45,
-          successes: 3,
-          fails: 1,
-          questionsCompleted: 4,
           accuracy: 0.75,
           bestStreak: 2,
+          config: { type: "open" },
+          durationSeconds: 45,
+          endedAt: "2025-01-01T00:00:45.000Z",
+          fails: 1,
+          id: "test",
+          mode: "flashcard",
+          questionsCompleted: 4,
+          stackKey: "mnemonica",
+          startedAt: "2025-01-01T00:00:00.000Z",
+          successes: 3,
         },
       });
 
@@ -127,18 +127,18 @@ describe("SessionSummaryModal", () => {
     it("displays 100% accuracy when all answers are correct", () => {
       const perfectSession = makeSummary({
         record: {
-          id: "test",
-          mode: "flashcard",
-          stackKey: "mnemonica",
-          config: { type: "open" },
-          startedAt: "2025-01-01T00:00:00.000Z",
-          endedAt: "2025-01-01T00:01:00.000Z",
-          durationSeconds: 60,
-          successes: 10,
-          fails: 0,
-          questionsCompleted: 10,
           accuracy: 1.0,
           bestStreak: 10,
+          config: { type: "open" },
+          durationSeconds: 60,
+          endedAt: "2025-01-01T00:01:00.000Z",
+          fails: 0,
+          id: "test",
+          mode: "flashcard",
+          questionsCompleted: 10,
+          stackKey: "mnemonica",
+          startedAt: "2025-01-01T00:00:00.000Z",
+          successes: 10,
         },
       });
 
@@ -223,8 +223,8 @@ describe("SessionSummaryModal", () => {
     it("renders the previous accuracy badge when accuracy has improved", () => {
       renderModal(
         makeSummary({
-          previousAverageAccuracy: 0.6,
           isAccuracyImprovement: true,
+          previousAverageAccuracy: 0.6,
         })
       );
 
@@ -234,8 +234,8 @@ describe("SessionSummaryModal", () => {
     it("renders the previous accuracy badge when accuracy has not improved", () => {
       renderModal(
         makeSummary({
-          previousAverageAccuracy: 0.85,
           isAccuracyImprovement: false,
+          previousAverageAccuracy: 0.85,
         })
       );
 
@@ -245,8 +245,8 @@ describe("SessionSummaryModal", () => {
     it("renders previous accuracy of 0% correctly", () => {
       renderModal(
         makeSummary({
-          previousAverageAccuracy: 0,
           isAccuracyImprovement: true,
+          previousAverageAccuracy: 0,
         })
       );
 

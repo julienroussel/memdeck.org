@@ -65,11 +65,11 @@ export const TrainingHeader = ({
           <Title className="trainingHeaderTitle" order={1}>
             {title}
           </Title>
-          {subtitle && (
+          {subtitle ? (
             <Text c="dimmed" fs="italic" size="xs">
               {subtitle}
             </Text>
-          )}
+          ) : null}
         </Stack>
         <Group gap="xs" wrap="nowrap">
           {!isStructuredSession && (
@@ -129,9 +129,9 @@ export const TrainingHeader = ({
           </Popover>
         </Group>
       </Group>
-      {isStructuredSession && activeSession && (
+      {isStructuredSession && activeSession ? (
         <SessionBanner onStop={onStopSession} session={activeSession} />
-      )}
+      ) : null}
     </>
   );
 };

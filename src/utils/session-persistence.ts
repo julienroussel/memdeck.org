@@ -25,18 +25,18 @@ export const buildSessionRecord = (session: ActiveSession): SessionRecord => {
   );
 
   const baseRecord = {
-    id: session.id,
-    stackKey: session.stackKey,
-    config: session.config,
-    startedAt: session.startedAt,
-    endedAt,
-    durationSeconds,
-    successes: session.successes,
-    fails: session.fails,
-    questionsCompleted: session.questionsCompleted,
     accuracy: calculateAccuracy(session.successes, session.fails),
     bestStreak: session.bestStreak,
+    config: session.config,
+    durationSeconds,
+    endedAt,
+    fails: session.fails,
+    id: session.id,
+    questionsCompleted: session.questionsCompleted,
+    stackKey: session.stackKey,
     stackLimits: session.stackLimits,
+    startedAt: session.startedAt,
+    successes: session.successes,
     timed: session.timed,
   };
 
@@ -44,8 +44,8 @@ export const buildSessionRecord = (session: ActiveSession): SessionRecord => {
     case "flashcard":
       return {
         ...baseRecord,
-        mode: "flashcard" as const,
         flashcardMode: session.flashcardMode,
+        mode: "flashcard" as const,
       };
     case "spotcheck":
       return {
@@ -56,9 +56,9 @@ export const buildSessionRecord = (session: ActiveSession): SessionRecord => {
     case "distance":
       return {
         ...baseRecord,
-        mode: "distance" as const,
-        distanceMode: session.distanceMode,
         distanceConvention: session.distanceConvention,
+        distanceMode: session.distanceMode,
+        mode: "distance" as const,
       };
     case "acaan":
       return { ...baseRecord, mode: "acaan" as const };
@@ -99,8 +99,8 @@ const probeSessionHistory = ():
     return { status: "corrupt" };
   }
   return {
-    status: "ready",
     history: probe.status === "valid" ? probe.value : [],
+    status: "ready",
   };
 };
 
@@ -118,8 +118,8 @@ const probeAllTimeStats = ():
     return { status: "corrupt" };
   }
   return {
-    status: "ready",
     stats: probe.status === "valid" ? probe.value : {},
+    status: "ready",
   };
 };
 
@@ -190,11 +190,11 @@ export const computeSessionSummary = (
   );
 
   return {
-    record,
     encouragement,
     isAccuracyImprovement,
     isNewGlobalBestStreak,
     previousAverageAccuracy,
+    record,
   };
 };
 
@@ -277,8 +277,8 @@ export const finalizeSession = (
   const statsProbe = probeAllTimeStats();
   if (historyProbe.status === "corrupt" || statsProbe.status === "corrupt") {
     eventBus.emit.SESSION_COMPLETED({
-      mode: record.mode,
       accuracy: record.accuracy,
+      mode: record.mode,
       questionsCompleted: record.questionsCompleted,
       saved: false,
     });
@@ -314,11 +314,11 @@ export const finalizeSession = (
   const nextAllTimeStats: AllTimeStats = {
     ...prevAllTimeStats,
     [key]: {
-      totalSessions: entry.totalSessions + 1,
-      totalQuestions: entry.totalQuestions + record.questionsCompleted,
-      totalSuccesses: entry.totalSuccesses + record.successes,
-      totalFails: entry.totalFails + record.fails,
       globalBestStreak: Math.max(entry.globalBestStreak, record.bestStreak),
+      totalFails: entry.totalFails + record.fails,
+      totalQuestions: entry.totalQuestions + record.questionsCompleted,
+      totalSessions: entry.totalSessions + 1,
+      totalSuccesses: entry.totalSuccesses + record.successes,
     },
   };
 
@@ -337,8 +337,8 @@ export const finalizeSession = (
 
   const emitCompleted = (saved: boolean) => {
     eventBus.emit.SESSION_COMPLETED({
-      mode: record.mode,
       accuracy: record.accuracy,
+      mode: record.mode,
       questionsCompleted: record.questionsCompleted,
       saved,
     });
@@ -382,8 +382,8 @@ const serializePayloads = (
 ): SerializedPayloads | null => {
   try {
     return {
-      nextHistoryStr: JSON.stringify(nextHistory),
       nextAllTimeStr: JSON.stringify(nextAllTimeStats),
+      nextHistoryStr: JSON.stringify(nextHistory),
       prevHistoryStr: JSON.stringify(prevHistory),
     };
   } catch (error) {

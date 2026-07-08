@@ -18,9 +18,9 @@ import { WhyDedicatedTool } from "./why-dedicated-tool";
 const howToSchema = {
   "@context": "https://schema.org",
   "@type": "HowTo",
-  name: "How to Practice a Memorized Deck with MemDeck",
   description:
     "Step-by-step guide to mastering a memorized deck of cards using MemDeck's training tools.",
+  name: "How to Practice a Memorized Deck with MemDeck",
   step: [
     {
       "@type": "HowToStep",
@@ -61,8 +61,8 @@ export const Guide = () => {
   const { t } = useTranslation();
 
   useDocumentMeta({
-    title: t("guide.pageTitle"),
     description: t("guide.pageDescription"),
+    title: t("guide.pageTitle"),
   });
 
   return (

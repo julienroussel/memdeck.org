@@ -26,17 +26,17 @@ function session(
   extra: Record<string, unknown>
 ): Record<string, unknown> {
   return {
-    id,
-    stackKey: "mnemonica",
-    config: { type: "structured", totalQuestions: 10 },
-    startedAt: "2026-02-10T10:00:00.000Z",
-    endedAt: "2026-02-10T10:05:00.000Z",
-    durationSeconds: 300,
-    successes: 8,
-    fails: 2,
-    questionsCompleted: 10,
     accuracy: 0.8,
     bestStreak: 5,
+    config: { totalQuestions: 10, type: "structured" },
+    durationSeconds: 300,
+    endedAt: "2026-02-10T10:05:00.000Z",
+    fails: 2,
+    id,
+    questionsCompleted: 10,
+    stackKey: "mnemonica",
+    startedAt: "2026-02-10T10:00:00.000Z",
+    successes: 8,
     ...extra,
   };
 }
@@ -48,7 +48,7 @@ function session(
 // flashcard-neighbor the next one.
 const ALL_WHOLE_MODES_SEED: Seed = {
   sessions: [
-    session("s0", { mode: "flashcard", flashcardMode: "cardonly" }),
+    session("s0", { flashcardMode: "cardonly", mode: "flashcard" }),
     session("s1", { mode: "spotcheck", spotCheckMode: "missing" }),
     session("s2", { mode: "distance" }),
     session("s3", { mode: "acaan" }),
@@ -72,11 +72,11 @@ async function seedDiscoveryState(page: Page, seed: Seed) {
       "memdeck-app-all-time-stats",
       JSON.stringify({
         "flashcard:mnemonica": {
-          totalSessions: data.totalSessions,
-          totalQuestions: data.totalSessions * 10,
-          totalSuccesses: data.totalSessions * 8,
-          totalFails: data.totalSessions * 2,
           globalBestStreak: 5,
+          totalFails: data.totalSessions * 2,
+          totalQuestions: data.totalSessions * 10,
+          totalSessions: data.totalSessions,
+          totalSuccesses: data.totalSessions * 8,
         },
       })
     );
@@ -115,7 +115,7 @@ async function completeQuestionsThenLeave(
   headingName: string
 ) {
   const reveal = page.getByRole("button", { name: "Reveal answer" });
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < count; i += 1) {
     await expect(reveal).toBeVisible();
     await reveal.click();
   }
@@ -158,8 +158,8 @@ test.describe("Feature Discovery — Next Challenge card", () => {
     await seedAndOpenHome(page, {
       sessions: [0, 1, 2, 3].map((index) =>
         session(`seed-${index}`, {
-          mode: "flashcard",
           flashcardMode: "cardonly",
+          mode: "flashcard",
         })
       ),
       totalSessions: 4,
@@ -358,7 +358,7 @@ test.describe("Feature Discovery — post-session summary surface (#698)", () =>
   // post-completion read (5) trips the share nudge and suppresses the suggestion.
   const SUMMARY_SEED: Seed = {
     sessions: [0, 1, 2].map((index) =>
-      session(`seed-${index}`, { mode: "flashcard", flashcardMode: "cardonly" })
+      session(`seed-${index}`, { flashcardMode: "cardonly", mode: "flashcard" })
     ),
     totalSessions: 3,
   };

@@ -22,48 +22,48 @@ type MetaEntry = {
 const META_ENTRIES: readonly MetaEntry[] = [
   {
     kind: "meta",
+    resolve: (v) => v.description,
     selector: 'meta[name="description"]',
-    resolve: (v) => v.description,
   },
   {
     kind: "meta",
+    resolve: (v) => v.fullTitle,
     selector: 'meta[name="title"]',
-    resolve: (v) => v.fullTitle,
   },
   {
     kind: "meta",
+    resolve: (v) => v.fullTitle,
     selector: 'meta[property="og:title"]',
-    resolve: (v) => v.fullTitle,
   },
   {
     kind: "meta",
+    resolve: (v) => v.description,
     selector: 'meta[property="og:description"]',
-    resolve: (v) => v.description,
   },
   {
     kind: "meta",
+    resolve: (v) => v.canonicalUrl,
     selector: 'meta[property="og:url"]',
-    resolve: (v) => v.canonicalUrl,
   },
   {
     kind: "meta",
+    resolve: (v) => v.canonicalUrl,
     selector: 'meta[name="twitter:url"]',
-    resolve: (v) => v.canonicalUrl,
   },
   {
     kind: "meta",
-    selector: 'meta[name="twitter:title"]',
     resolve: (v) => v.fullTitle,
+    selector: 'meta[name="twitter:title"]',
   },
   {
     kind: "meta",
-    selector: 'meta[name="twitter:description"]',
     resolve: (v) => v.description,
+    selector: 'meta[name="twitter:description"]',
   },
   {
     kind: "link",
-    selector: 'link[rel="canonical"]',
     resolve: (v) => v.canonicalUrl,
+    selector: 'link[rel="canonical"]',
   },
 ];
 
@@ -113,9 +113,9 @@ export const useDocumentMeta = ({ title, description }: DocumentMeta) => {
 
   useEffect(() => {
     const values: MetaValues = {
-      fullTitle: formatTitle(title),
-      description,
       canonicalUrl: buildCanonicalUrl(pathname),
+      description,
+      fullTitle: formatTitle(title),
     };
 
     const prevTitle = document.title;

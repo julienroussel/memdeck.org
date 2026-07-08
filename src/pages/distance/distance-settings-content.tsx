@@ -36,8 +36,8 @@ export const DistanceSettingsContent = ({
   const modeData = useMemo(
     () =>
       DISTANCE_MODE_OPTIONS.map((opt) => ({
-        value: opt.value,
         label: t(opt.labelKey),
+        value: opt.value,
       })),
     [t]
   );
@@ -45,8 +45,8 @@ export const DistanceSettingsContent = ({
   const conventionData = useMemo(
     () =>
       DISTANCE_CONVENTION_OPTIONS.map((opt) => ({
-        value: opt.value,
         label: t(opt.labelKey),
+        value: opt.value,
       })),
     [t]
   );

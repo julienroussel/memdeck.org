@@ -23,10 +23,10 @@ export const getSpellingData = (
         ? stackOrder[letterCount - 1]
         : undefined;
     return {
-      position: index + 1,
       card,
-      letterCount,
-      landingCard,
       isSelfSpelling: landingCard === card,
+      landingCard,
+      letterCount,
+      position: index + 1,
     };
   });

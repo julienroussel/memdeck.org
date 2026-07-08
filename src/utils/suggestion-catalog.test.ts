@@ -6,40 +6,40 @@ import { SUGGESTION_CATALOG, TOTAL_SUGGESTIONS } from "./suggestion-catalog";
 
 /** A fresh all-false usage object, so each case can flip exactly one flag. */
 const noUsage = (): UsageFlags => ({
-  modes: { flashcard: false, acaan: false, spotcheck: false, distance: false },
-  flashcardModes: {
-    cardonly: false,
-    bothmodes: false,
-    numberonly: false,
-    neighbor: false,
-  },
-  spotCheckModes: { missing: false, swapped: false, moved: false },
-  distanceModes: { compute: false, apply: false, both: false },
   distanceConventions: { cyclic: false, signed: false },
-  timedModes: {
-    flashcard: false,
-    acaan: false,
-    spotcheck: false,
-    distance: false,
+  distanceModes: { apply: false, both: false, compute: false },
+  flashcardModes: {
+    bothmodes: false,
+    cardonly: false,
+    neighbor: false,
+    numberonly: false,
   },
+  modes: { acaan: false, distance: false, flashcard: false, spotcheck: false },
   mostUsedMode: null,
+  spotCheckModes: { missing: false, moved: false, swapped: false },
+  timedModes: {
+    acaan: false,
+    distance: false,
+    flashcard: false,
+    spotcheck: false,
+  },
 });
 
 const allFalse: UsageFlags = noUsage();
 
 const allTrue: UsageFlags = {
-  modes: { flashcard: true, acaan: true, spotcheck: true, distance: true },
-  flashcardModes: {
-    cardonly: true,
-    bothmodes: true,
-    numberonly: true,
-    neighbor: true,
-  },
-  spotCheckModes: { missing: true, swapped: true, moved: true },
-  distanceModes: { compute: true, apply: true, both: true },
   distanceConventions: { cyclic: true, signed: true },
-  timedModes: { flashcard: true, acaan: true, spotcheck: true, distance: true },
+  distanceModes: { apply: true, both: true, compute: true },
+  flashcardModes: {
+    bothmodes: true,
+    cardonly: true,
+    neighbor: true,
+    numberonly: true,
+  },
+  modes: { acaan: true, distance: true, flashcard: true, spotcheck: true },
   mostUsedMode: "flashcard",
+  spotCheckModes: { missing: true, moved: true, swapped: true },
+  timedModes: { acaan: true, distance: true, flashcard: true, spotcheck: true },
 };
 
 /**
@@ -206,20 +206,20 @@ describe("SUGGESTION_CATALOG", () => {
     // the wrong parent (e.g. a spotcheck item requiring modes.flashcard).
     const parents: { mode: TrainingMode; gatedIds: string[] }[] = [
       {
-        mode: "flashcard",
         gatedIds: [
           "flashcard-numberonly",
           "flashcard-neighbor",
           "flashcard-timed",
         ],
+        mode: "flashcard",
       },
       {
-        mode: "spotcheck",
         gatedIds: ["spotcheck-swapped", "spotcheck-moved", "spotcheck-timed"],
+        mode: "spotcheck",
       },
       {
-        mode: "distance",
         gatedIds: ["distance-apply", "distance-signed", "distance-timed"],
+        mode: "distance",
       },
     ];
     for (const { mode, gatedIds } of parents) {

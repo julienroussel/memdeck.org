@@ -130,8 +130,8 @@ describe("useDocumentMeta", () => {
     renderHook(
       () =>
         useDocumentMeta({
-          title: "Flashcard Training",
           description: "Test description",
+          title: "Flashcard Training",
         }),
       { wrapper }
     );
@@ -147,8 +147,8 @@ describe("useDocumentMeta", () => {
     renderHook(
       () =>
         useDocumentMeta({
-          title: "Stats",
           description: "Stats page description",
+          title: "Stats",
         }),
       { wrapper }
     );
@@ -173,8 +173,8 @@ describe("useDocumentMeta", () => {
     const { unmount } = renderHook(
       () =>
         useDocumentMeta({
-          title: "Guide",
           description: "Test description",
+          title: "Guide",
         }),
       { wrapper }
     );
@@ -194,8 +194,8 @@ describe("useDocumentMeta", () => {
     const { unmount } = renderHook(
       () =>
         useDocumentMeta({
-          title: "Stats",
           description: "Stats page description",
+          title: "Stats",
         }),
       { wrapper }
     );

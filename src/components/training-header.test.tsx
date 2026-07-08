@@ -6,15 +6,15 @@ import { makeActiveSession } from "../test-utils/session-factories";
 import { TrainingHeader } from "./training-header";
 
 const defaultProps = {
-  title: "Flashcard",
-  settingsTooltip: "Flashcard settings",
+  activeSession: null,
+  isStructuredSession: false,
+  onStartSession: vi.fn(),
+  onStopSession: vi.fn(),
+  score: { fails: 1, successes: 3 },
   sessionTooltip: "Start a session",
   settingsContent: <div data-testid="settings-content">Settings</div>,
-  score: { successes: 3, fails: 1 },
-  isStructuredSession: false,
-  activeSession: null,
-  onStopSession: vi.fn(),
-  onStartSession: vi.fn(),
+  settingsTooltip: "Flashcard settings",
+  title: "Flashcard",
 };
 
 describe("TrainingHeader", () => {
@@ -42,7 +42,7 @@ describe("TrainingHeader", () => {
       <TrainingHeader
         {...defaultProps}
         isStructuredSession={false}
-        score={{ successes: 5, fails: 2 }}
+        score={{ fails: 2, successes: 5 }}
       />
     );
 
@@ -56,7 +56,7 @@ describe("TrainingHeader", () => {
         {...defaultProps}
         activeSession={makeActiveSession()}
         isStructuredSession={true}
-        score={{ successes: 5, fails: 2 }}
+        score={{ fails: 2, successes: 5 }}
       />
     );
 
@@ -70,7 +70,7 @@ describe("TrainingHeader", () => {
 
   it("shows SessionBanner when isStructuredSession is true and activeSession is non-null", () => {
     const session = makeActiveSession({
-      config: { type: "structured", totalQuestions: 20 },
+      config: { totalQuestions: 20, type: "structured" },
       questionsCompleted: 5,
     });
 
@@ -157,15 +157,15 @@ describe("TrainingHeader", () => {
 
     // Mantine Popover dropdown may stay hidden in JSDOM; use hidden option to find the button
     const presetButton = screen.getByRole("button", {
-      name: "Start 10 question session",
       hidden: true,
+      name: "Start 10 question session",
     });
     fireEvent.click(presetButton);
 
     expect(handleStartSession).toHaveBeenCalledOnce();
     expect(handleStartSession).toHaveBeenCalledWith({
-      type: "structured",
       totalQuestions: 10,
+      type: "structured",
     });
   });
 });
