@@ -1246,17 +1246,12 @@ describe("scrubErrorMessage", () => {
     expect(scrubErrorMessage(input)).toBe("Failed at [path]");
   });
 
-  it.each([
-    "/home",
-    "/var",
-    "/tmp",
-    "/private",
-    "/opt",
-    "/etc",
-    "/root",
-  ])("replaces absolute paths under %s with [path]", (prefix) => {
-    expect(scrubErrorMessage(`err at ${prefix}/x`)).toBe("err at [path]");
-  });
+  it.each(["/home", "/var", "/tmp", "/private", "/opt", "/etc", "/root"])(
+    "replaces absolute paths under %s with [path]",
+    (prefix) => {
+      expect(scrubErrorMessage(`err at ${prefix}/x`)).toBe("err at [path]");
+    }
+  );
 
   it("leaves benign error messages unchanged", () => {
     expect(scrubErrorMessage("Failed to fetch")).toBe("Failed to fetch");

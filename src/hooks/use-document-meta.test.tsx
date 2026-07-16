@@ -16,14 +16,12 @@ describe("formatTitle", () => {
     );
   });
 
-  it.each([
-    "Flashcard Training",
-    "Guide",
-    "Stats",
-    "ACAAN Training",
-  ])('formats "%s" as "<title> | MemDeck"', (title) => {
-    expect(formatTitle(title)).toBe(`${title} | MemDeck`);
-  });
+  it.each(["Flashcard Training", "Guide", "Stats", "ACAAN Training"])(
+    'formats "%s" as "<title> | MemDeck"',
+    (title) => {
+      expect(formatTitle(title)).toBe(`${title} | MemDeck`);
+    }
+  );
 });
 
 describe("buildCanonicalUrl", () => {
@@ -31,14 +29,12 @@ describe("buildCanonicalUrl", () => {
     expect(buildCanonicalUrl("/")).toBe("https://memdeck.org/");
   });
 
-  it.each([
-    "/flashcard",
-    "/guide",
-    "/acaan",
-    "/stats",
-  ])("builds canonical URL for %s with trailing slash", (path) => {
-    expect(buildCanonicalUrl(path)).toBe(`https://memdeck.org${path}/`);
-  });
+  it.each(["/flashcard", "/guide", "/acaan", "/stats"])(
+    "builds canonical URL for %s with trailing slash",
+    (path) => {
+      expect(buildCanonicalUrl(path)).toBe(`https://memdeck.org${path}/`);
+    }
+  );
 
   it("does not double trailing slash for paths that already end with /", () => {
     expect(buildCanonicalUrl("/flashcard/")).toBe(

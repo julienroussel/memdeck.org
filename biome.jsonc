@@ -10,17 +10,63 @@
         "useConsistentTypeDefinitions": "off"
       },
       "suspicious": {
-        // Type-aware rule whose cross-module inference is unreliable in this
-        // repo: every diagnostic it currently emits is a false positive — it
-        // reports demonstrably reachable discriminated-union switch cases as
-        // dead (session-breadcrumbs.ts's probe.status switch,
-        // use-spot-check-game.ts's ps.mode switch) and a reassigned `let` as
-        // always-falsy (localstorage.test.ts's `throwOnNext`). On the pinned
-        // biome 2.5.2 these surface as false diagnostics; biome 2.5.3
-        // additionally panics in module_resolver on the same files
-        // (biomejs/biome#7355, #7324). Keep off until upstream type resolution
-        // is trustworthy; re-check when bumping biome.
-        "noUnnecessaryConditions": "off"
+        // Both rules below are off because biome's cross-module type
+        // inference is unreliable in this repo. They are two INDEPENDENT
+        // triggers, so neither override substitutes for the other, and they
+        // now have DIFFERENT fates: useArraySortCompare is fixed upstream and
+        // can go on the next bump, noUnnecessaryConditions cannot. Details on
+        // each below. Everything here was verified on 2026-07-16 against
+        // biome 2.5.2/2.5.3/2.5.4 and a source build of main (f0a67f2e).
+        //
+        // KEEP OFF. Type-aware rule that misreports this repo's code: it reads
+        // demonstrably reachable discriminated-union branches as dead and a
+        // reassigned `let` as always-falsy (localstorage.test.ts's
+        // `throwOnNext`). On 2.5.2 these surface as false diagnostics; 2.5.3
+        // and 2.5.4 additionally panic in module_resolver (#7355, #7324), and
+        // 2.5.4 still emits 6 false positives despite #10940 being closed as
+        // "fixed in 2.5.4".
+        // On main the panic is gone and the switch-case false positives
+        // (session-breadcrumbs.ts, use-spot-check-game.ts) are fixed, but 4
+        // false positives remain: localstorage.test.ts's `throwOnNext` (x3)
+        // plus a NEW one at guide/getting-started.tsx:26, where `stack ? ... :
+        // null` is flagged even though useSelectedStack returns a union with a
+        // real `stack: null` branch. That one was previously hidden because
+        // the panic dropped the file from linting. So the port in #10933 does
+        // NOT cure this rule. Upstream tracking: #10704 (open,
+        // S-Bug-confirmed). Re-check when that closes, not on the next bump.
+        "noUnnecessaryConditions": "off",
+        // Off since biome 2.5.3, and this one is a coverage trap rather than
+        // noise. Measured on this repo (2026-07-16), default config:
+        //   2.5.2 -> 0 panics, 425 files   (rule enabled and harmless)
+        //   2.5.3 -> 14 panics, 411 files  (regression lands here)
+        //   2.5.4 -> 10 panics, 415 files  (#10891 helps, does not cure)
+        // We skipped 2.5.3, so this surfaced on the 2.5.2 -> 2.5.4 bump; the
+        // rule itself panics from 2.5.3 on. It panics at
+        // biome_module_graph/src/js_module_info/module_resolver.rs:500
+        // ("index out of bounds"). Panics are INTERNAL diagnostics that do
+        // NOT fail the exit code: biome silently DROPS each panicking file
+        // from the run (425 files linted -> 415) and still exits 0, so real
+        // violations in those 10 files go unreported while CI stays green.
+        // Verified by planting `debugger;` in header.tsx: uncaught with this
+        // rule on, caught with it off. Deterministic; RAYON_NUM_THREADS=1
+        // does not help, so it is not the race in #10953.
+        // Cost of disabling is near-nil: 13 of 14 sort sites already pass a
+        // comparator, and the lone bare .sort() (i18n/locales.test.ts) sorts
+        // strings.
+        //
+        // FIXED UPSTREAM -> DELETE THIS OVERRIDE ON THE FIRST RELEASE > 2.5.4.
+        // #10933 (merged 2026-07-16, after the 2.5.4 cut) ported this rule off
+        // the legacy inference engine onto the Salsa one, which sidesteps the
+        // bad index. Verified against a source build of main (f0a67f2e) with
+        // the rule FORCED ON over this whole repo: 425 files, 0 panics, 0
+        // findings. So deleting this line should be a no-op beyond restoring
+        // coverage; if it is not, the rule found something real.
+        // Note the underlying bug is NOT fixed: module_resolver.rs:500 still
+        // indexes `type_id_map` with an out-of-range id, and noFloatingPromises
+        // still panics on main (open draft PR #10917 ports that rule too). We
+        // just no longer touch that path. Nothing to report upstream; do not
+        // file an issue for this.
+        "useArraySortCompare": "off"
       }
     }
   },

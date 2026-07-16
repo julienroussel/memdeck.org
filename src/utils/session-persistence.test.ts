@@ -451,30 +451,31 @@ describe("finalizeSession", () => {
     { failingCall: 1, label: "nextHistory" },
     { failingCall: 2, label: "nextAllTimeStats" },
     { failingCall: 3, label: "prevHistory" },
-  ])("returns { ok: false, reason: 'serialize-failed' } when JSON.stringify throws on call $failingCall ($label)", ({
-    failingCall,
-  }) => {
-    // serialize-failed is distinct from write-failed so triage can split a
-    // bad payload (cyclic ref, BigInt) from a quota or permissions issue.
-    const originalStringify = JSON.stringify;
-    let callCount = 0;
-    const stringifySpy = vi
-      .spyOn(JSON, "stringify")
-      .mockImplementation((value, replacer, space) => {
-        callCount += 1;
-        if (callCount === failingCall) {
-          throw new TypeError("circular reference");
-        }
-        return originalStringify(value, replacer, space);
-      });
+  ])(
+    "returns { ok: false, reason: 'serialize-failed' } when JSON.stringify throws on call $failingCall ($label)",
+    ({ failingCall }) => {
+      // serialize-failed is distinct from write-failed so triage can split a
+      // bad payload (cyclic ref, BigInt) from a quota or permissions issue.
+      const originalStringify = JSON.stringify;
+      let callCount = 0;
+      const stringifySpy = vi
+        .spyOn(JSON, "stringify")
+        .mockImplementation((value, replacer, space) => {
+          callCount += 1;
+          if (callCount === failingCall) {
+            throw new TypeError("circular reference");
+          }
+          return originalStringify(value, replacer, space);
+        });
 
-    const session = makeSession();
-    const result = finalizeSession(session);
+      const session = makeSession();
+      const result = finalizeSession(session);
 
-    expect(result).toEqual({ ok: false, reason: "serialize-failed" });
+      expect(result).toEqual({ ok: false, reason: "serialize-failed" });
 
-    stringifySpy.mockRestore();
-  });
+      stringifySpy.mockRestore();
+    }
+  );
 
   it("returns { ok: false, reason: 'corrupt-prior-state' } and refuses to overwrite when stored history fails validation", () => {
     // Simulate corrupt prior history (e.g. partial write or schema drift after

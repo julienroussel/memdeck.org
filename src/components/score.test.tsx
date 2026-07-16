@@ -69,16 +69,16 @@ describe("Score", () => {
     { fails: 1, successes: 1 },
     { fails: 1, successes: 2 },
     { fails: 2, successes: 2 },
-  ])("throttles announcements between milestones (fails=$fails, successes=$successes)", ({
-    fails,
-    successes,
-  }) => {
-    // Aria-live is throttled to first answer + every 5th total to avoid
-    // screen-reader overload during fast-paced training. Totals 2, 3, and 4
-    // must NOT produce an announcement.
-    render(<Score fails={fails} successes={successes} />);
+  ])(
+    "throttles announcements between milestones (fails=$fails, successes=$successes)",
+    ({ fails, successes }) => {
+      // Aria-live is throttled to first answer + every 5th total to avoid
+      // screen-reader overload during fast-paced training. Totals 2, 3, and 4
+      // must NOT produce an announcement.
+      render(<Score fails={fails} successes={successes} />);
 
-    const liveRegion = getLiveRegion();
-    expect(liveRegion).toHaveTextContent("");
-  });
+      const liveRegion = getLiveRegion();
+      expect(liveRegion).toHaveTextContent("");
+    }
+  );
 });

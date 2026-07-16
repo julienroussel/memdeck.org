@@ -53,15 +53,14 @@ describe("createColorSchemeManager", () => {
   });
 
   describe("get", () => {
-    it.each([
-      "light",
-      "dark",
-      "auto",
-    ] as const)("returns stored value when it is %s", (scheme) => {
-      store[KEY] = scheme;
-      const manager = createColorSchemeManager(KEY);
-      expect(manager.get("light")).toBe(scheme);
-    });
+    it.each(["light", "dark", "auto"] as const)(
+      "returns stored value when it is %s",
+      (scheme) => {
+        store[KEY] = scheme;
+        const manager = createColorSchemeManager(KEY);
+        expect(manager.get("light")).toBe(scheme);
+      }
+    );
 
     it("returns defaultValue when the key is absent", () => {
       const manager = createColorSchemeManager(KEY);

@@ -6,19 +6,12 @@ describe("isDistanceMode", () => {
     expect(isDistanceMode(v)).toBe(true);
   });
 
-  it.each([
-    null,
-    undefined,
-    0,
-    1,
-    true,
-    false,
-    {},
-    [],
-    "",
-  ])("rejects the non-string / non-mode value %p", (v) => {
-    expect(isDistanceMode(v)).toBe(false);
-  });
+  it.each([null, undefined, 0, 1, true, false, {}, [], ""])(
+    "rejects the non-string / non-mode value %p",
+    (v) => {
+      expect(isDistanceMode(v)).toBe(false);
+    }
+  );
 
   it("rejects an unrelated string", () => {
     expect(isDistanceMode("foo")).toBe(false);
@@ -35,19 +28,12 @@ describe("isDistanceConvention", () => {
     expect(isDistanceConvention(v)).toBe(true);
   });
 
-  it.each([
-    null,
-    undefined,
-    0,
-    1,
-    true,
-    false,
-    {},
-    [],
-    "",
-  ])("rejects the non-string / non-convention value %p", (v) => {
-    expect(isDistanceConvention(v)).toBe(false);
-  });
+  it.each([null, undefined, 0, 1, true, false, {}, [], ""])(
+    "rejects the non-string / non-convention value %p",
+    (v) => {
+      expect(isDistanceConvention(v)).toBe(false);
+    }
+  );
 
   it("rejects an unrelated string", () => {
     expect(isDistanceConvention("foo")).toBe(false);
