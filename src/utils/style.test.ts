@@ -98,16 +98,14 @@ describe("cssVarCounterStyle", () => {
       { expected: -4, index: 0, offset: 5, size: 10 },
       { expected: 0, index: 9, offset: 0, size: 10 },
       { expected: -26, index: 25, offset: 0, size: 52 },
-    ])("index=$index, size=$size, offset=$offset -> --i=$expected", ({
-      index,
-      size,
-      offset,
-      expected,
-    }) => {
-      const result = cssVarCounterStyle(index, size, offset);
+    ])(
+      "index=$index, size=$size, offset=$offset -> --i=$expected",
+      ({ index, size, offset, expected }) => {
+        const result = cssVarCounterStyle(index, size, offset);
 
-      expect(result["--i"]).toBe(expected);
-    });
+        expect(result["--i"]).toBe(expected);
+      }
+    );
   });
 
   describe("card spread use case", () => {

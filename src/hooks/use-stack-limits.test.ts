@@ -246,25 +246,25 @@ describe("useStackLimits", () => {
   // Parametrized over two stacks so a regression in the `stacks[stackKey].name`
   // lookup (e.g. swapping the indexer with `stackKey` itself) can't survive by
   // coincidentally matching the hardcoded literal.
-  it.each([
-    "mnemonica",
-    "aronson",
-  ] as const)("emits STACK_LIMITS_CHANGED with the correct payload when setLimits succeeds (%s)", (stackKey) => {
-    const { result } = renderHook(() => useStackLimits(stackKey));
+  it.each(["mnemonica", "aronson"] as const)(
+    "emits STACK_LIMITS_CHANGED with the correct payload when setLimits succeeds (%s)",
+    (stackKey) => {
+      const { result } = renderHook(() => useStackLimits(stackKey));
 
-    result.current.setLimits({
-      end: createDeckPosition(25),
-      start: createDeckPosition(5),
-    });
+      result.current.setLimits({
+        end: createDeckPosition(25),
+        start: createDeckPosition(5),
+      });
 
-    expect(mockEmitStackLimitsChanged).toHaveBeenCalledTimes(1);
-    expect(mockEmitStackLimitsChanged).toHaveBeenCalledWith({
-      end: 25,
-      rangeSize: 21,
-      stackName: stacks[stackKey].name,
-      start: 5,
-    });
-  });
+      expect(mockEmitStackLimitsChanged).toHaveBeenCalledTimes(1);
+      expect(mockEmitStackLimitsChanged).toHaveBeenCalledWith({
+        end: 25,
+        rangeSize: 21,
+        stackName: stacks[stackKey].name,
+        start: 5,
+      });
+    }
+  );
 
   it("re-shows the id-deduped corruption notice when the corrupt-lock refuses a write", () => {
     mockProbeStoredValue.mockReturnValue({
