@@ -165,7 +165,11 @@ export const Provider = () => (
           {/* Inside the router so toast messages can render react-router <Link>s
               (e.g. the PWA update toast's "See What's New" link). Mantine portals
               to a fixed DOM target regardless of React-tree position. */}
-          <Notifications />
+          {/* bottom-left, not Mantine's bottom-right default: RevealButton is
+              an Affix in that corner, and a toast landing on top of it pauses
+              its own autoClose while hovered, so a parked cursor keeps the
+              toast up and blocks every later click. */}
+          <Notifications position="bottom-left" />
           <FocusOnNavigate />
           <App />
         </BrowserRouter>
