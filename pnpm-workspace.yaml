@@ -10,4 +10,7 @@ minimumReleaseAge: 0
 # (default true) fails the install on any unreviewed build script.
 allowBuilds:
   esbuild: false
-  lefthook: true
+  # false, not true: lefthook's postinstall runs `lefthook install -f`, which
+  # would write hook stubs into the global core.hooksPath dir. See
+  # .claude/rules/git-hooks.md. The `prepare` script installs hooks instead.
+  lefthook: false
