@@ -1,6 +1,21 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite/biome/core", "ultracite/biome/react"],
+  "files": {
+    // Third-party card artwork from tekeye.uk (see README.md), Inkscape
+    // exports nobody here authors. Biome's SVG surface is new and moving:
+    // 2.5.7 rewrote all 52 style attributes (#771), 2.5.8 lints them and
+    // flags -inkscape-font-specification plus a missing generic font fallback
+    // (228 errors). The font metadata is inert in any case: every glyph is an
+    // outlined <path> and no card file has a <text> element. Keep the folder
+    // out of scope rather than chase each new rule.
+    //
+    // Exclusions here take the bare folder form. The extended ultracite config
+    // already has a catch-all, so a leading "**" trips
+    // lint/suspicious/noBiomeFirstException, and since Biome 2.2.0 a trailing
+    // "/**" trips lint/suspicious/useBiomeIgnoreFolder.
+    "includes": ["!public/cards"]
+  },
   "javascript": {
     "globals": ["__COMMIT_HASH__"]
   },

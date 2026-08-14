@@ -43,7 +43,7 @@ A `/verify` slash command exists (`.claude/commands/verify.md`) that runs steps 
 # Start development server
 pnpm run dev
 
-# Run linter (Ultracite — a Biome preset; no biome.json exists)
+# Run linter (Ultracite — a Biome preset; project config in biome.jsonc)
 pnpm run lint
 
 # Type checking
@@ -188,6 +188,7 @@ This project uses **Ultracite** (a Biome preset) for formatting and linting.
 
 ## Configuration Files
 
+- **biome.jsonc**: Linter/formatter config. Extends `ultracite/biome/core` and `ultracite/biome/react`, then layers the project's rule overrides on top. Every override carries a comment explaining why; keep that up when adding one. `public/cards` is excluded from Biome entirely (third-party artwork, see the comment there)
 - **knip.json**: Dependency and export checker config. Ignores `@biomejs/biome` and `globals`
 - **tsconfig.json**: Project references to `tsconfig.app.json` and `tsconfig.node.json`
 - **vite.config.ts**: Vite config (React plugin, VitePWA with manifest, locale chunk splitting, vendor chunks). Not "minimal" — touch with care; changes here require `pnpm run build` in the Definition of Done.
