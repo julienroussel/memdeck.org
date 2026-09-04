@@ -15,6 +15,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
 
 vi.mock("react", () => ({
@@ -142,11 +143,14 @@ describe("lazyWithReload", () => {
   it("falls back to URL param when sessionStorage.setItem throws", async () => {
     const { lazyWithReload } = await import("./lazy-with-reload");
 
-    vi.spyOn(
-      Object.getPrototypeOf(sessionStorage),
-      "setItem"
-    ).mockImplementation(() => {
-      throw new DOMException("QuotaExceededError");
+    // happy-dom's Storage is a Proxy that binds its own methods onto the
+    // instance, so a prototype spy is shadowed and an instance spy cannot be
+    // restored. Swap the whole global for a stub the test fully controls.
+    vi.stubGlobal("sessionStorage", {
+      getItem: () => null,
+      setItem: () => {
+        throw new DOMException("QuotaExceededError");
+      },
     });
 
     const result = lazyWithReload(() =>
