@@ -66,6 +66,25 @@ export default defineConfig({
     exclude: ["node_modules", "dist"],
     globals: false,
     include: ["src/**/*.test.{ts,tsx}"],
+    // Set explicitly to reject Vitest's `isolate: false` performance hint, and
+    // to suppress it (hints are not printed for options set explicitly).
+    // Measured 2026-09-07, `vitest run`, median of 3 warm runs:
+    //   threads + isolate      12.6s   128/128 pass
+    //   vmThreads               4.6s   6 tests fail in 3 files
+    //   threads + no-isolate    2.3s   2-8 files fail, a DIFFERENT set each run
+    // `isolate: false` shares the module registry and globals across files in a
+    // worker, and this suite leans on `vi.mock` (45 files) and `vi.stubGlobal`
+    // (11 files); the resulting failures are non-deterministic even on a single
+    // sequential worker, so they would land in CI as flakes, not as a bounded
+    // fix. Worth re-testing on a future Vitest bump: 5.0.0 landed here one
+    // commit ago, and the shared-registry mocking behaviour may change.
+    // `vmThreads` keeps per-file isolation and is genuinely faster, but its VM
+    // realm has its own `Error`, so happy-dom's `DOMException` is not
+    // `instanceof Error` inside it. `src/` has 18 `instanceof Error` guards
+    // (localstorage-telemetry, session-breadcrumbs, provider, error-boundary,
+    // analytics...) that silently take the wrong branch under it; only 6 tests
+    // were watching. That is a test-fidelity loss, not 6 tests to fix.
+    isolate: true,
     // Worker threads instead of the default child-process forks: measured
     // ~13% faster on the full suite (12.4s -> 10.8s locally) with the same
     // per-file isolation. Nothing here needs process-level isolation.
