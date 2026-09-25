@@ -23,6 +23,10 @@ export default defineConfig({
 
   webServer: {
     command: process.env.CI ? "pnpm run preview" : "pnpm run dev",
+    // Without a terminal, pnpm 12.6+ runs the script in its own process group
+    // (pnpm/pnpm#15119), so the default SIGKILL leaves vite running and the
+    // test run never exits. SIGTERM is relayed by pnpm to that group.
+    gracefulShutdown: { signal: "SIGTERM", timeout: 5000 },
     reuseExistingServer: !process.env.CI,
     url: baseURL,
   },
