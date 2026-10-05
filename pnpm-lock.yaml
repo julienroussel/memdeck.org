@@ -222,8 +222,8 @@ importers:
         specifier: 14.6.7
         version: 14.6.7(@testing-library/dom@10.4.1)
       '@types/node':
-        specifier: 26.6.3
-        version: 26.6.3
+        specifier: 26.6.4
+        version: 26.6.4
       '@types/react':
         specifier: 19.3.0
         version: 19.3.0
@@ -232,7 +232,7 @@ importers:
         version: 19.3.0(@types/react@19.3.0)
       '@vitejs/plugin-react':
         specifier: 6.1.1
-        version: 6.1.1(vite@8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))
+        version: 6.1.1(vite@8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))
       '@vitest/coverage-v8':
         specifier: 5.0.3
         version: 5.0.3(vitest@5.0.3)
@@ -262,7 +262,7 @@ importers:
         version: 7.0.1(postcss@8.5.28)
       sharp:
         specifier: 0.35.5
-        version: 0.35.5(@types/node@26.6.3)
+        version: 0.35.5(@types/node@26.6.4)
       typescript:
         specifier: 7.0.2
         version: 7.0.2
@@ -271,13 +271,13 @@ importers:
         version: 7.12.2(@biomejs/biome@2.5.15)
       vite:
         specifier: 8.3.2
-        version: 8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0)
+        version: 8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0)
       vite-plugin-pwa:
         specifier: 1.3.0
-        version: 1.3.0(supports-color@7.2.0)(vite@8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))(workbox-build@7.4.1(@types/babel__core@7.20.5)(supports-color@7.2.0))(workbox-window@7.4.1)
+        version: 1.3.0(supports-color@7.2.0)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))(workbox-build@7.4.1(@types/babel__core@7.20.5)(supports-color@7.2.0))(workbox-window@7.4.1)
       vitest:
         specifier: 5.0.3
-        version: 5.0.3(@types/node@26.6.3)(@vitest/coverage-v8@5.0.3)(happy-dom@20.14.5)(vite@8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))
+        version: 5.0.3(@types/node@26.6.4)(@vitest/coverage-v8@5.0.3)(happy-dom@20.14.5)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))
       workbox-window:
         specifier: 7.4.1
         version: 7.4.1
@@ -1947,8 +1947,8 @@ packages:
   '@types/node@26.4.1':
     resolution: {integrity: sha512-k97ENvZWtvA6yqz5/FS6a7duDgOPEeOQOc2iKS/nY6mX6qJUKtLnWzQS+Xj6tXweyj6ZcTAK2Qecetnvi9nCLA==}
 
-  '@types/node@26.6.3':
-    resolution: {integrity: sha512-dsqMQQoeTLqu9wynDD00q573mNzso3IdQOAfHRJqLCcmCFPoGo9A1bDpUcv/9tnKpErQWv9uKeGfl37EIS02Yg==}
+  '@types/node@26.6.4':
+    resolution: {integrity: sha512-ldVPDCzj7fsaGZrLB0NuHuTvJcsNasysBAqMolr/cgxrLd1xbqxIr3XJiPnHHJUCxj5sNF1vnRj9aWnrVh5Jcg==}
 
   '@types/react-dom@19.3.0':
     resolution: {integrity: sha512-ZI7bU42mZXXKHn/qNLEw2IrbiINU7X5+vfgdixBHkCNpYWXjKgfQ/P+uyGb5CjOLB9UcnTeg3rylQtV2hym44Q==}
@@ -6409,7 +6409,7 @@ snapshots:
       picocolors: 1.1.1
       redent: 3.0.0
     optionalDependencies:
-      vitest: 5.0.3(@types/node@26.6.3)(@vitest/coverage-v8@5.0.3)(happy-dom@20.14.5)(vite@8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))
+      vitest: 5.0.3(@types/node@26.6.4)(@vitest/coverage-v8@5.0.3)(happy-dom@20.14.5)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))
 
   '@testing-library/react@16.3.3(@testing-library/dom@10.4.1)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
@@ -6479,7 +6479,7 @@ snapshots:
     dependencies:
       undici-types: 8.3.0
 
-  '@types/node@26.6.3':
+  '@types/node@26.6.4':
     dependencies:
       undici-types: 8.9.0
 
@@ -6499,7 +6499,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/yauzl@2.10.3':
     dependencies:
@@ -6566,10 +6566,10 @@ snapshots:
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
 
-  '@vitejs/plugin-react@6.1.1(vite@8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))':
+  '@vitejs/plugin-react@6.1.1(vite@8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0)
+      vite: 8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0)
 
   '@vitest/coverage-v8@5.0.3(vitest@5.0.3)':
     dependencies:
@@ -6581,7 +6581,7 @@ snapshots:
       obug: 2.1.4
       std-env: 4.2.0
       tinyrainbow: 3.1.1
-      vitest: 5.0.3(@types/node@26.6.3)(@vitest/coverage-v8@5.0.3)(happy-dom@20.14.5)(vite@8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))
+      vitest: 5.0.3(@types/node@26.6.4)(@vitest/coverage-v8@5.0.3)(happy-dom@20.14.5)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))
 
   '@vitest/istanbul-lib-coverage@1.0.1': {}
 
@@ -6589,14 +6589,14 @@ snapshots:
     dependencies:
       '@vitest/istanbul-lib-coverage': 1.0.1
 
-  '@vitest/mocker@5.0.3(vite@8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))':
+  '@vitest/mocker@5.0.3(vite@8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       '@vitest/spy': 5.0.3
       estree-walker: 3.0.3
       magic-string: 1.2.3
     optionalDependencies:
-      vite: 8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0)
+      vite: 8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0)
 
   '@vitest/spy@5.0.3': {}
 
@@ -6814,7 +6814,7 @@ snapshots:
 
   buffer-image-size@0.6.4:
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   bytes@3.1.2: {}
 
@@ -7559,7 +7559,7 @@ snapshots:
 
   happy-dom@20.14.5:
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
       '@types/whatwg-mimetype': 3.0.2
       '@types/ws': 8.18.1
       buffer-image-size: 0.6.4
@@ -8814,7 +8814,7 @@ snapshots:
 
   setprototypeof@1.2.0: {}
 
-  sharp@0.35.5(@types/node@26.6.3):
+  sharp@0.35.5(@types/node@26.6.4):
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
@@ -8845,7 +8845,7 @@ snapshots:
       '@img/sharp-win32-arm64': 0.35.5
       '@img/sharp-win32-ia32': 0.35.5
       '@img/sharp-win32-x64': 0.35.5
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   shebang-command@2.0.0:
     dependencies:
@@ -9338,18 +9338,18 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite-plugin-pwa@1.3.0(supports-color@7.2.0)(vite@8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))(workbox-build@7.4.1(@types/babel__core@7.20.5)(supports-color@7.2.0))(workbox-window@7.4.1):
+  vite-plugin-pwa@1.3.0(supports-color@7.2.0)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))(workbox-build@7.4.1(@types/babel__core@7.20.5)(supports-color@7.2.0))(workbox-window@7.4.1):
     dependencies:
       debug: 4.4.3(supports-color@7.2.0)
       pretty-bytes: 6.1.1
       tinyglobby: 0.2.16
-      vite: 8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0)
+      vite: 8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0)
       workbox-build: 7.4.1(@types/babel__core@7.20.5)(supports-color@7.2.0)
       workbox-window: 7.4.1
     transitivePeerDependencies:
       - supports-color
 
-  vite@8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0):
+  vite@8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
@@ -9357,7 +9357,7 @@ snapshots:
       rolldown: 1.2.11
       tinyglobby: 0.2.17
     optionalDependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
       esbuild: 0.27.2
       fsevents: 2.3.3
       jiti: 2.7.0
@@ -9365,10 +9365,10 @@ snapshots:
       terser: 5.48.0
       yaml: 2.9.0
 
-  vitest@5.0.3(@types/node@26.6.3)(@vitest/coverage-v8@5.0.3)(happy-dom@20.14.5)(vite@8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0)):
+  vitest@5.0.3(@types/node@26.6.4)(@vitest/coverage-v8@5.0.3)(happy-dom@20.14.5)(vite@8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0)):
     dependencies:
       '@types/chai': 5.2.3
-      '@vitest/mocker': 5.0.3(vite@8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))
+      '@vitest/mocker': 5.0.3(vite@8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0))
       chai: 6.2.2
       es-module-lexer: 2.3.2
       expect-type: 1.4.0
@@ -9379,10 +9379,10 @@ snapshots:
       tinybench: 6.1.4
       tinyexec: 1.3.1
       tinyglobby: 0.2.17
-      vite: 8.3.2(@types/node@26.6.3)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0)
+      vite: 8.3.2(@types/node@26.6.4)(esbuild@0.27.2)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.28))(terser@5.48.0)(yaml@2.9.0)
       why-is-node-running: 3.2.1
     optionalDependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
       '@vitest/coverage-v8': 5.0.3(vitest@5.0.3)
       happy-dom: 20.14.5
     transitivePeerDependencies:
