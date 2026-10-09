@@ -29,37 +29,58 @@ export default defineConfig({
       reporter: ["text", "json", "html"],
       reportsDirectory: "./coverage",
       thresholds: {
-        branches: 40,
-        functions: 40,
+        branches: 87,
+        functions: 86,
         // Global thresholds - UI components lower overall coverage
-        lines: 55,
-        // Per-glob thresholds — set just below current values as a ratchet.
+        lines: 91,
+        // Ratchet rule, global and per-glob: each threshold is the largest
+        // integer strictly below the measured value (measured 2026-10-02), so
+        // 97.4 gives 97 and 100 gives 99. A glob is checked against the
+        // aggregate of its matching files (perFile is off), not per file.
         // Raise them as coverage improves; never lower without justification.
+        "src/components/**/use-*.ts": {
+          branches: 97,
+          functions: 99,
+          lines: 98,
+          statements: 98,
+        },
         "src/hooks/**/*.ts": {
-          branches: 60,
-          functions: 90,
-          lines: 85,
-          statements: 85,
+          branches: 92,
+          functions: 99,
+          lines: 97,
+          statements: 97,
+        },
+        "src/i18n/*.ts": {
+          branches: 82,
+          functions: 99,
+          lines: 92,
+          statements: 92,
+        },
+        "src/pages/**/*.ts": {
+          branches: 93,
+          functions: 98,
+          lines: 96,
+          statements: 96,
         },
         "src/services/**/*.ts": {
-          branches: 85,
-          functions: 90,
-          lines: 90,
-          statements: 90,
+          branches: 91,
+          functions: 99,
+          lines: 97,
+          statements: 98,
         },
         "src/types/*.ts": {
-          branches: 70,
-          functions: 80,
-          lines: 85,
-          statements: 85,
+          branches: 98,
+          functions: 99,
+          lines: 98,
+          statements: 98,
         },
         "src/utils/**/*.ts": {
-          branches: 70,
-          functions: 90,
-          lines: 90,
-          statements: 90,
+          branches: 92,
+          functions: 98,
+          lines: 97,
+          statements: 97,
         },
-        statements: 55,
+        statements: 90,
       },
     },
     environment: "happy-dom",

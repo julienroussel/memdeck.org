@@ -101,7 +101,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Hooks**: Custom hooks in `src/hooks/` (e.g., `useSelectedStack`, `usePwaInstall`, `useDocumentMeta`)
 - **Utils**: Utility functions in `src/utils/` (e.g., `card-selection`, `card-formatting`, `format-release-date`, `localstorage`, `share`, `is-pwa`) — mostly pure, though a few modules carry deliberate side effects (telemetry, persistence, notifications), e.g. `localstorage-telemetry`, `session-persistence`, `lazy-with-reload`
 - **Data**: Typed content modules in `src/data/` (e.g., `whats-new.ts` — the curated changelog; all 7 languages enforced at compile time via `Record<SupportedLanguage, string>`)
-- **Services**: `src/services/analytics.ts` — Google Analytics 4 integration with event tracking. Only initialized when `window.location.hostname === "memdeck.org"` — local dev, preview deployments, and e2e runs are **silent** (no GA events fired). Don't treat "GA didn't log locally" as a bug. Tracks flashcard/spot-check/ACAAN/distance answers, session completions, share actions, web vitals, and errors
+- **Services**: `src/services/analytics.ts` — Google Analytics 4 integration with event tracking. Only initialized when `window.location.hostname === "memdeck.org"` — local dev, preview deployments, and e2e runs are **silent** (no GA events fired). Don't treat "GA didn't log locally" as a bug. On that hostname it also waits for the visitor's consent: `AnalyticsConsent` (`src/components/analytics-consent.tsx`) shows the prompt only there, persists the choice under `ANALYTICS_CONSENT_LSK`, and calls `analytics.initialize()` only once it is `"granted"`. Every tracker is a no-op until then, so nothing is sent before consent. Tracks flashcard/spot-check/ACAAN/distance answers, session completions, share actions, web vitals, and errors
 - **i18n**: `src/i18n/` — 7 languages (en, fr, es, de, it, nl, pt) using `react-i18next`. Locale files are lazy-loaded as separate chunks. Type-safe keys derived from the English locale
 - **State**: Primarily local component state with localStorage persistence
 
@@ -154,7 +154,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Correct dependency arrays** in `useEffect`, `useMemo`, `useCallback`.
 - **Use semantic HTML and ARIA attributes** for accessibility. Prefer `<button>`, `<nav>`, etc. over divs with roles.
 - **Use position-based keys in `CardSpread`** (`spread_${index}`). Data-based keys (e.g., `card_${suit}_${rank}`) cause all DOM nodes to be destroyed and recreated when switching between card and number items, producing visible flicker.
-- **Memoize the `items` prop you pass to `CardSpread`.** Inline allocations like `<CardSpread items={cardItems(choices.map(...))} />` defeat the component's `React.memo` because the prop has fresh identity each render — and CardSpread re-renders 52 children on every parent tick. Wrap in `useMemo` keyed on the source data (`flashcard.tsx:102-109` is the canonical pattern). Verified across flashcard, distance, and spot-check consumers in the 2026-05-25 audit.
+- **Memoize the `items` prop you pass to `CardSpread`.** Inline allocations like `<CardSpread items={cardItems(choices.map(...))} />` defeat the component's `React.memo` because the prop has fresh identity each render — and CardSpread re-renders 52 children on every parent tick. Wrap in `useMemo` keyed on the source data (the `numberChoices` and `cardChoices` memos in `flashcard.tsx` are the canonical pattern). Verified across flashcard, distance, and spot-check consumers in the 2026-05-25 audit.
 
 ## Testing Standards
 
@@ -164,7 +164,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 - **Run `pnpm run test:coverage` before committing** so the per-directory ratchets in `vitest.config.ts` are enforced.
 - **E2E tests** live in `e2e/` and use Playwright. Use them for user journey validation.
 - Don't use `.only` or `.skip` in committed code.
-- **Coverage has per-directory ratchets** (in `vitest.config.ts`): `src/hooks/**` requires lines ≥ 85%, `src/utils/**` ≥ 90%, `src/types/*.ts` ≥ 85%, `src/services/**` ≥ 90%. Global floor is lines ≥ 55%. `pnpm run test:coverage` enforces them; raise them over time, never lower without justification.
+- **Coverage has ratchets** in `vitest.config.ts`: global thresholds plus per-glob ones for `src/components/**/use-*.ts`, `src/hooks/**/*.ts`, `src/i18n/*.ts`, `src/pages/**/*.ts`, `src/services/**/*.ts`, `src/types/*.ts` and `src/utils/**/*.ts`. Each threshold is the largest integer below measured coverage; that file holds the exact values. `pnpm run test:coverage` enforces them; raise them over time, never lower without justification.
 
 ## Code Organization
 

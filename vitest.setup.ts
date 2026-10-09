@@ -5,9 +5,7 @@ import { afterEach } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { i18nConfig } from "./src/i18n/config";
 
-i18n
-  .use(initReactI18next)
-  .init({ ...i18nConfig, initImmediate: false, showSupportNotice: false });
+i18n.use(initReactI18next).init({ ...i18nConfig, initAsync: false });
 
 // globals: false is set in vitest.config.ts, so @testing-library/react cannot
 // detect the global afterEach to register auto-cleanup. Register it explicitly.
