@@ -45,3 +45,4 @@ tasks/
 .claude/audit-*
 .claude/*.lock
 .claude/review-*.json
+.claude/health.json
