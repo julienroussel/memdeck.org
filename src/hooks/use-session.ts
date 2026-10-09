@@ -1,5 +1,11 @@
 import { notifications } from "@mantine/notifications";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { eventBus } from "../services/event-bus";
 import type { DistanceConvention, DistanceMode } from "../types/distance";
@@ -23,13 +29,14 @@ import {
   readLastSaveFailedBreadcrumb,
 } from "../utils/session-breadcrumbs";
 import {
+  checkpointSession,
   type FinalizeFailureReason,
   finalizeSession,
+  type SessionCheckpoint,
 } from "../utils/session-persistence";
 import {
   applyAnswerOutcome,
   deriveActiveSession,
-  deriveIsStructuredSession,
   meetsMinimumSaveThreshold,
 } from "../utils/session-phase";
 import { useSessionAutoSave } from "./use-session-auto-save";
@@ -91,7 +98,6 @@ type UseSessionResult = {
   startSession: (config: SessionConfig) => void;
   handleAnswer: (outcome: AnswerOutcome) => void;
   startNewSession: () => void;
-  isStructuredSession: boolean;
   activeSession: ActiveSession | null;
   stopSession: () => void;
   dismissSummary: () => void;
@@ -113,6 +119,12 @@ export type TryFinalizeSessionResult =
   | { status: "duplicate" }
   | { status: "write-failed"; reason: FinalizeFailureReason };
 
+/** Result of `trySaveCheckpoint`, the in-progress save made on page hide. */
+export type TrySaveCheckpointResult =
+  | { status: "saved" }
+  | { status: "duplicate" }
+  | { status: "write-failed"; reason: FinalizeFailureReason };
+
 export const useSession = (options: UseSessionOptions): UseSessionResult => {
   const { t } = useTranslation();
   // Hold the latest `t` in a ref so the flush and breadcrumb effects' deps
@@ -122,12 +134,22 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
   // pending-finalization queue) and re-fire the mount breadcrumb check
   // (already latched, but the ref keeps the intent explicit and the dep
   // list mount-only). Mirrors the pattern in use-session-auto-save.ts.
+  //
+  // Every latest-value ref in this hook is synced in a layout effect rather
+  // than during render: a render React discards (a transition interrupted by
+  // a newer navigation) must not leak its values into handlers or the unmount
+  // cleanup. Layout effects run before every passive effect in the tree, so
+  // the effects below, and useSessionAutoSave's, always read committed values.
   const tRef = useRef(t);
-  tRef.current = t;
+  useLayoutEffect(() => {
+    tRef.current = t;
+  }, [t]);
   const { mode, stackKey, autoStart = false, timed = false } = options;
   const { stackLimits } = options;
   const stackLimitsRef = useRef(stackLimits);
-  stackLimitsRef.current = stackLimits;
+  useLayoutEffect(() => {
+    stackLimitsRef.current = stackLimits;
+  }, [stackLimits]);
   const flashcardMode =
     options.mode === "flashcard" ? options.flashcardMode : undefined;
   const spotCheckMode =
@@ -138,10 +160,17 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
     options.mode === "distance" ? options.distanceConvention : undefined;
   const [status, setStatus] = useState<SessionPhase>({ phase: "idle" });
   const statusRef = useRef(status);
-  statusRef.current = status;
+  useLayoutEffect(() => {
+    statusRef.current = status;
+  }, [status]);
 
   const pendingFinalizationRef = useRef<ActiveSession | null>(null);
   const finalizedIdsRef = useRef<Set<string>>(new Set());
+  // Last successful checkpoint per session id (see trySaveCheckpoint). Every
+  // later save of that id passes it on, so the session stays one history
+  // record and is counted once in all-time stats. Replaced only on success: a
+  // failed save leaves the older one, whose delta then covers the gap.
+  const checkpointsRef = useRef<Map<string, SessionCheckpoint>>(new Map());
   // Tracks session ids the auto-finalize effect has already requested
   // finalization for, so unrelated status changes (e.g. a limits-merge
   // re-render after the threshold has been crossed) don't re-fire. The
@@ -174,12 +203,39 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
       if (finalizedIdsRef.current.has(session.id)) {
         return { status: "duplicate" };
       }
-      const result = finalizeSession(session);
+      const result = finalizeSession(
+        session,
+        checkpointsRef.current.get(session.id)
+      );
       if (!result.ok) {
         return { reason: result.reason, status: "write-failed" };
       }
       finalizedIdsRef.current.add(session.id);
+      checkpointsRef.current.delete(session.id);
       return { status: "finalized", summary: result.summary };
+    },
+    []
+  );
+
+  /**
+   * Saves the active session without ending it, for the page-hide path: the
+   * page may be killed while hidden, or come back and carry on with the same
+   * session. A no-op once the id is finalized.
+   */
+  const trySaveCheckpoint = useCallback(
+    (session: ActiveSession): TrySaveCheckpointResult => {
+      if (finalizedIdsRef.current.has(session.id)) {
+        return { status: "duplicate" };
+      }
+      const result = checkpointSession(
+        session,
+        checkpointsRef.current.get(session.id)
+      );
+      if (!result.ok) {
+        return { reason: result.reason, status: "write-failed" };
+      }
+      checkpointsRef.current.set(session.id, result.checkpoint);
+      return { status: "saved" };
     },
     []
   );
@@ -265,11 +321,10 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
   // tryFinalizeSession) so we can distinguish "already finalized" from
   // "persistence failed" via the discriminated FinalizeSessionResult, and only
   // transition to the summary phase on a successful write. On failure we
-  // surface a Mantine notification so the user knows the session wasn't saved
-  // — and we KEEP `phase: "active"` so the user can retry Stop after clearing
-  // storage. A `corrupt` reason (rollback failed → on-disk inconsistency) is
-  // additionally reported via analytics so we have observability on a state
-  // the user cannot self-recover from without clearing storage.
+  // surface a Mantine notification so the user knows the session wasn't saved.
+  // A recoverable failure KEEPS `phase: "active"` so the user can retry Stop
+  // after clearing storage; an unrecoverable one (corrupt / corrupt-prior-state)
+  // ends the session, see below.
   useEffect(() => {
     // `flushTick` is purely a trigger — value is irrelevant. The early return
     // also keeps the dep list satisfied (linter requires a usage, not just an
@@ -285,9 +340,13 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
     if (finalizedIdsRef.current.has(session.id)) {
       return;
     }
-    const result = finalizeSession(session);
+    const result = finalizeSession(
+      session,
+      checkpointsRef.current.get(session.id)
+    );
     if (result.ok) {
       finalizedIdsRef.current.add(session.id);
+      checkpointsRef.current.delete(session.id);
       setStatus({ phase: "summary", summary: result.summary });
       return;
     }
@@ -298,8 +357,9 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
     // write failures aggregate with `useLocalDb`'s. Distinct copy per reason
     // still drives the user-facing message:
     //  - corrupt / corrupt-prior-state: retry won't help; tell user to clear
-    //    storage. Mark the session id as finalized so we don't re-show the
-    //    notification on every Stop click.
+    //    storage. Mark the session id as finalized so no other path retries
+    //    it, and return to idle: a session left active here would make every
+    //    later Stop a silent no-op, so the session could never end.
     //  - serialize-failed / write-failed: keep phase: "active" so the user
     //    can retry Stop after clearing space.
     reportSessionPersistenceFailed(result.reason, "useSession:flush");
@@ -312,6 +372,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
         message: tRef.current("errors.sessionStorageCorrupt.message"),
         title: tRef.current("errors.sessionStorageCorrupt.title"),
       });
+      setStatus({ phase: "idle" });
       return;
     }
     notifications.show({
@@ -381,6 +442,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
       }
 
       finalizedIdsRef.current.clear();
+      checkpointsRef.current.clear();
       requestedFinalizationIdsRef.current.clear();
 
       const baseSession: ActiveSessionBase = {
@@ -531,22 +593,64 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
     }
   }, [autoStart, status.phase, startSession]);
 
+  // A session records one variant (sub-mode, convention, timed), copied in by
+  // startSession. Changing any of them mid-session would otherwise save every
+  // question under the variant the session started with, so the new variant
+  // would stay unexplored in Feature Discovery. Restart instead: startSession
+  // saves the current session under its own variant (when it meets the save
+  // threshold) and starts a fresh one with the same config under the new one.
+  // A structured session therefore restarts at 0 of N in the new variant.
+  // Changes while idle (a deep-link preselect) need no restart.
+  const prevVariantRef = useRef({
+    distanceConvention,
+    distanceMode,
+    flashcardMode,
+    spotCheckMode,
+    timed,
+  });
+  useEffect(() => {
+    const prev = prevVariantRef.current;
+    const variantChanged =
+      prev.flashcardMode !== flashcardMode ||
+      prev.spotCheckMode !== spotCheckMode ||
+      prev.distanceMode !== distanceMode ||
+      prev.distanceConvention !== distanceConvention ||
+      prev.timed !== timed;
+    prevVariantRef.current = {
+      distanceConvention,
+      distanceMode,
+      flashcardMode,
+      spotCheckMode,
+      timed,
+    };
+    if (!variantChanged || statusRef.current.phase !== "active") {
+      return;
+    }
+    startSession(statusRef.current.session.config);
+  }, [
+    flashcardMode,
+    spotCheckMode,
+    distanceMode,
+    distanceConvention,
+    timed,
+    startSession,
+  ]);
+
   useSessionAutoSave({
     requestFinalization,
     setStatus,
     stackKey,
     statusRef,
     tryFinalizeSession,
+    trySaveCheckpoint,
   });
 
   const activeSession = deriveActiveSession(status);
-  const isStructuredSession = deriveIsStructuredSession(activeSession);
 
   return {
     activeSession,
     dismissSummary,
     handleAnswer,
-    isStructuredSession,
     startNewSession,
     startSession,
     status,

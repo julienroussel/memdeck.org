@@ -21,11 +21,8 @@ vi.mock("../services/analytics", () => ({
 }));
 
 let mockIsMobile: boolean | undefined = true;
-// Partial mock: only `useMediaQuery` is stubbed. Everything else
-// (including `readLocalStorageValue`, used by `getStoredValue` for the
-// SESSION_HISTORY_LSK read in `hasCompletedSession`) is forwarded to the
-// real `@mantine/hooks` so it works against the `vi.stubGlobal("localStorage", ...)`
-// mock declared below.
+// Partial mock: only `useMediaQuery` is stubbed. Everything else is
+// forwarded to the real `@mantine/hooks`.
 vi.mock("@mantine/hooks", async () => {
   const actual =
     await vi.importActual<typeof import("@mantine/hooks")>("@mantine/hooks");
@@ -94,6 +91,38 @@ describe("usePwaInstall", () => {
     withSession();
     const { result } = renderHook(() => usePwaInstall());
     expect(result.current.eligible).toBe(true);
+  });
+
+  it("becomes eligible when the first session is saved after mount", () => {
+    const { result } = renderHook(() => usePwaInstall());
+    expect(result.current.eligible).toBe(false);
+
+    act(() => {
+      withSession();
+      window.dispatchEvent(
+        new StorageEvent("storage", { key: SESSION_HISTORY_LSK })
+      );
+    });
+
+    expect(result.current.eligible).toBe(true);
+  });
+
+  it.each([
+    ["has no prompt", {}],
+    ["has a non-callable prompt", { prompt: "not-a-function" }],
+  ])("ignores a beforeinstallprompt event that %s", (_label, extra) => {
+    withSession();
+    const { result } = renderHook(() => usePwaInstall());
+
+    const event = new Event("beforeinstallprompt", { cancelable: true });
+    Object.assign(event, extra);
+    window.dispatchEvent(event);
+
+    let nativeUsed = true;
+    act(() => {
+      nativeUsed = result.current.install();
+    });
+    expect(nativeUsed).toBe(false);
   });
 
   it("install returns true and uses native prompt when available", () => {

@@ -11,11 +11,21 @@ import { act, renderHook } from "@testing-library/react";
 import { createElement, type ReactNode, StrictMode } from "react";
 import { MemoryRouter, useNavigate } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  ALL_TIME_STATS_LSK,
+  LAST_SAVE_FAILED_LSK,
+  SESSION_HISTORY_LSK,
+} from "../constants";
 import type { DistanceConvention, DistanceMode } from "../types/distance";
-import { isFlashcardMode } from "../types/flashcard";
-import type { ActiveSession } from "../types/session";
+import { type FlashcardMode, isFlashcardMode } from "../types/flashcard";
+import type {
+  ActiveSession,
+  AllTimeStats,
+  SessionRecord,
+} from "../types/session";
 import { DEFAULT_STACK_LIMITS, type StackLimits } from "../types/stack-limits";
 import { createDeckPosition, type StackKey } from "../types/stacks";
+import type { SessionCheckpoint } from "../utils/session-persistence";
 // Imported via the `use-session` re-export — pins the public type surface of
 // the hook (status phase) as the contract these tests assert against.
 import type { SessionPhase } from "./use-session";
@@ -70,7 +80,10 @@ type MockFinalizeResult =
         | "corrupt-prior-state";
     };
 const mockFinalizeSession = vi.fn(
-  (session: ActiveSession): MockFinalizeResult => {
+  (
+    session: ActiveSession,
+    _checkpoint?: SessionCheckpoint
+  ): MockFinalizeResult => {
     const record = mockBuildSessionRecord(session);
     mockSaveSessionRecord(record);
     const history = mockReadSessionHistory();
@@ -92,7 +105,8 @@ vi.mock("../utils/session-persistence", async () => {
   >("../utils/session-persistence");
   return {
     ...actual,
-    finalizeSession: (session: ActiveSession) => mockFinalizeSession(session),
+    finalizeSession: (session: ActiveSession, checkpoint?: SessionCheckpoint) =>
+      mockFinalizeSession(session, checkpoint),
   };
 });
 
@@ -118,14 +132,19 @@ const mockReadBreadcrumb = vi.fn();
 const mockClearBreadcrumb = vi.fn();
 const mockHasNotifShown = vi.fn();
 const mockMarkNotifShown = vi.fn();
+const mockWriteBreadcrumb = vi.fn();
+const mockClearBreadcrumbForSession = vi.fn();
 vi.mock("../utils/session-breadcrumbs", () => ({
   clearLastSaveFailedBreadcrumb: () => mockClearBreadcrumb(),
+  clearLastSaveFailedBreadcrumbForSession: (sessionId: string) =>
+    mockClearBreadcrumbForSession(sessionId),
   hasLastSaveFailedNotificationBeenShown: (failedAt: string) =>
     mockHasNotifShown(failedAt),
   markLastSaveFailedNotificationShown: (failedAt: string) =>
     mockMarkNotifShown(failedAt),
   readLastSaveFailedBreadcrumb: () => mockReadBreadcrumb(),
-  writeLastSaveFailedBreadcrumb: vi.fn(),
+  writeLastSaveFailedBreadcrumb: (...args: unknown[]) =>
+    mockWriteBreadcrumb(...args),
 }));
 
 vi.mock("react-i18next", () => ({
@@ -134,6 +153,14 @@ vi.mock("react-i18next", () => ({
 
 // Dynamic imports after mocks are wired up (vi.mock is hoisted above these)
 const { useSession } = await import("./use-session");
+const { buildSessionRecord } = await import("../utils/session-persistence");
+const { finalizeSession: actualFinalizeSession } = await vi.importActual<
+  typeof import("../utils/session-persistence")
+>("../utils/session-persistence");
+const { deriveFeatureUsage } = await import("../utils/feature-usage");
+const actualBreadcrumbs = await vi.importActual<
+  typeof import("../utils/session-breadcrumbs")
+>("../utils/session-breadcrumbs");
 
 type SessionRenderProps = {
   mode?: "flashcard" | "acaan";
@@ -212,7 +239,6 @@ describe("useSession hook", () => {
 
     expect(result.current.status.phase).toBe("idle");
     expect(result.current.activeSession).toBeNull();
-    expect(result.current.isStructuredSession).toBe(false);
   });
 
   it("transitions from idle to active when startSession is called", () => {
@@ -546,7 +572,7 @@ describe("useSession hook", () => {
           mode: props.mode ?? "flashcard",
           stackKey: props.stackKey ?? "mnemonica",
         }),
-      { initialProps: {} as SessionRenderProps }
+      { initialProps: {} }
     );
 
     act(() => {
@@ -701,8 +727,8 @@ describe("useSession hook", () => {
         }),
       {
         initialProps: {
-          distanceConvention: "signed" as DistanceConvention,
-          distanceMode: "compute" as DistanceMode,
+          distanceConvention: "signed",
+          distanceMode: "compute",
         },
       }
     );
@@ -974,10 +1000,9 @@ describe("useSession hook", () => {
         }),
         "useSession:flush"
       );
-      // Phase stays active but the session id was added to finalizedIds so
-      // a Stop retry doesn't re-show the notification — the user must clear
-      // storage to recover.
-      expect(result.current.status.phase).toBe("active");
+      // Retry cannot help, so the session ends rather than leaving a Stop
+      // control that silently does nothing.
+      expect(result.current.status.phase).toBe("idle");
     });
 
     it("shows the corrupt-storage notification when finalize returns corrupt-prior-state (refused to overwrite)", () => {
@@ -1007,6 +1032,30 @@ describe("useSession hook", () => {
         }),
         "useSession:flush"
       );
+    });
+
+    it("ends the session after a corrupt-prior-state failure so Stop is never a silent no-op", () => {
+      mockFinalizeSession.mockReturnValueOnce({
+        ok: false,
+        reason: "corrupt-prior-state",
+      });
+      const { result } = renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
+
+      runStopFlow(result);
+
+      expect(result.current.status).toEqual({ phase: "idle" });
+      expect(result.current.activeSession).toBeNull();
+      expect(mockNotificationsShow).toHaveBeenCalledOnce();
+
+      // A second Stop has no active session to act on and must not retry the
+      // corrupt write.
+      act(() => {
+        result.current.stopSession();
+      });
+      expect(result.current.status).toEqual({ phase: "idle" });
+      expect(mockFinalizeSession).toHaveBeenCalledOnce();
     });
 
     it("reports analytics on serialize-failed but uses the generic notification (recoverable bucket)", () => {
@@ -1310,6 +1359,539 @@ describe("useSession hook", () => {
       expect(mockFinalizeSession.mock.calls.length).toBe(
         finalizeCallsAfterStop
       );
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // Variant change mid-session (sub-mode, timed)
+  // -----------------------------------------------------------------------
+
+  describe("variant change mid-session", () => {
+    const answerQuestions = (
+      result: { current: ReturnType<typeof useSession> },
+      count: number
+    ) => {
+      for (let i = 0; i < count; i += 1) {
+        act(() => {
+          result.current.handleAnswer({
+            correct: true,
+            questionAdvanced: true,
+          });
+        });
+      }
+    };
+
+    const cardOnlyProps: { flashcardMode: FlashcardMode } = {
+      flashcardMode: "cardonly",
+    };
+
+    const savedRecords = () =>
+      mockFinalizeSession.mock.calls.map(([session]) =>
+        buildSessionRecord(session)
+      );
+
+    it("saves the questions answered in the first flashcard sub-mode under it and continues in a new session under the second", () => {
+      const { result, rerender } = renderHook(
+        ({ flashcardMode }: { flashcardMode: FlashcardMode }) =>
+          useSession({
+            autoStart: true,
+            flashcardMode,
+            mode: "flashcard",
+            stackKey: "mnemonica",
+          }),
+        { initialProps: cardOnlyProps }
+      );
+
+      answerQuestions(result, 3);
+      rerender({ flashcardMode: "neighbor" });
+
+      const { status } = result.current;
+      assertPhase(status, "active");
+      expect(status.session).toMatchObject({
+        flashcardMode: "neighbor",
+        questionsCompleted: 0,
+      });
+
+      answerQuestions(result, 4);
+      act(() => {
+        result.current.stopSession();
+      });
+
+      const records = savedRecords();
+      expect(records).toEqual([
+        expect.objectContaining({
+          flashcardMode: "cardonly",
+          questionsCompleted: 3,
+        }),
+        expect.objectContaining({
+          flashcardMode: "neighbor",
+          questionsCompleted: 4,
+        }),
+      ]);
+      const usage = deriveFeatureUsage(records);
+      expect(usage.flashcardModes.cardonly).toBe(true);
+      expect(usage.flashcardModes.neighbor).toBe(true);
+    });
+
+    it("saves the untimed questions as untimed and continues timed after the timer is turned on", () => {
+      const { result, rerender } = renderHook(
+        ({ timed }: { timed: boolean }) =>
+          useSession({
+            autoStart: true,
+            mode: "flashcard",
+            stackKey: "mnemonica",
+            timed,
+          }),
+        { initialProps: { timed: false } }
+      );
+
+      answerQuestions(result, 3);
+      rerender({ timed: true });
+      answerQuestions(result, 3);
+      act(() => {
+        result.current.stopSession();
+      });
+
+      const records = savedRecords();
+      expect(records).toEqual([
+        expect.objectContaining({ questionsCompleted: 3, timed: false }),
+        expect.objectContaining({ questionsCompleted: 3, timed: true }),
+      ]);
+      expect(deriveFeatureUsage(records).timedModes.flashcard).toBe(true);
+    });
+
+    it("drops a below-threshold session and restarts under the new sub-mode", () => {
+      const { result, rerender } = renderHook(
+        ({ flashcardMode }: { flashcardMode: FlashcardMode }) =>
+          useSession({
+            autoStart: true,
+            flashcardMode,
+            mode: "flashcard",
+            stackKey: "mnemonica",
+          }),
+        { initialProps: cardOnlyProps }
+      );
+
+      answerQuestions(result, 1);
+      rerender({ flashcardMode: "numberonly" });
+
+      expect(mockFinalizeSession).not.toHaveBeenCalled();
+      expect(result.current.activeSession).toMatchObject({
+        flashcardMode: "numberonly",
+        questionsCompleted: 0,
+      });
+    });
+
+    it("does not start a session when the variant changes while idle", () => {
+      const { result, rerender } = renderHook(
+        ({ flashcardMode }: { flashcardMode: FlashcardMode }) =>
+          useSession({
+            flashcardMode,
+            mode: "flashcard",
+            stackKey: "mnemonica",
+          }),
+        { initialProps: cardOnlyProps }
+      );
+
+      rerender({ flashcardMode: "neighbor" });
+
+      expect(result.current.status).toEqual({ phase: "idle" });
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // Save when the page is hidden
+  // -----------------------------------------------------------------------
+
+  describe("save when the page is hidden", () => {
+    let visibility: DocumentVisibilityState;
+    let visibilitySpy: { mockRestore: () => void };
+
+    beforeEach(() => {
+      visibility = "visible";
+      visibilitySpy = vi
+        .spyOn(document, "visibilityState", "get")
+        .mockImplementation(() => visibility);
+    });
+
+    afterEach(() => {
+      visibilitySpy.mockRestore();
+    });
+
+    // happy-dom ignores the `persisted` init field, so pin it on the event.
+    const pageHideEvent = (persisted: boolean) => {
+      const event = new PageTransitionEvent("pagehide");
+      Object.defineProperty(event, "persisted", { value: persisted });
+      return event;
+    };
+
+    const setVisibility = (next: DocumentVisibilityState) => {
+      visibility = next;
+      document.dispatchEvent(new Event("visibilitychange"));
+    };
+
+    const answerQuestions = (
+      result: { current: ReturnType<typeof useSession> },
+      count: number
+    ) => {
+      for (let i = 0; i < count; i += 1) {
+        act(() => {
+          result.current.handleAnswer({
+            correct: true,
+            questionAdvanced: true,
+          });
+        });
+      }
+    };
+
+    // Real persistence for this block: what matters is what lands on disk
+    // (one record, counted once), which a mocked finalizeSession cannot show.
+    // checkpointSession is already the real one (see the vi.mock above).
+    beforeEach(() => {
+      localStorage.clear();
+      mockFinalizeSession.mockImplementation(actualFinalizeSession);
+    });
+
+    // clearAllMocks keeps implementations, so restore the default one here.
+    afterEach(() => {
+      mockFinalizeSession.mockReset();
+    });
+
+    const readHistory = (): SessionRecord[] =>
+      JSON.parse(localStorage.getItem(SESSION_HISTORY_LSK) ?? "[]");
+
+    const readEntry = () => {
+      const stats: AllTimeStats = JSON.parse(
+        localStorage.getItem(ALL_TIME_STATS_LSK) ?? "{}"
+      );
+      return stats["flashcard:mnemonica"];
+    };
+
+    it("hide, return, then Stop saves one record with the combined count, counted once", () => {
+      const { result } = renderHook(() =>
+        useSession({
+          autoStart: true,
+          mode: "flashcard",
+          stackKey: "mnemonica",
+        })
+      );
+      answerQuestions(result, 3);
+      const sessionId = result.current.activeSession?.id;
+      mockEventBusEmit.SESSION_STARTED.mockClear();
+
+      act(() => {
+        setVisibility("hidden");
+      });
+
+      // Saved, but still the same running session for the user.
+      expect(readHistory()).toHaveLength(1);
+      const { status } = result.current;
+      assertPhase(status, "active");
+      expect(status.session.id).toBe(sessionId);
+      expect(status.session.questionsCompleted).toBe(3);
+      expect(mockEventBusEmit.SESSION_STARTED).not.toHaveBeenCalled();
+      expect(mockEventBusEmit.SESSION_COMPLETED).not.toHaveBeenCalled();
+
+      act(() => {
+        setVisibility("visible");
+      });
+      // A post-return tail under the 3-question minimum still counts.
+      answerQuestions(result, 2);
+      act(() => {
+        result.current.stopSession();
+      });
+
+      expect(result.current.status.phase).toBe("summary");
+      const history = readHistory();
+      expect(history).toHaveLength(1);
+      expect(history[0]).toMatchObject({
+        id: sessionId,
+        questionsCompleted: 5,
+      });
+      expect(readEntry()).toMatchObject({
+        totalQuestions: 5,
+        totalSessions: 1,
+        totalSuccesses: 5,
+      });
+      expect(mockEventBusEmit.SESSION_COMPLETED).toHaveBeenCalledOnce();
+    });
+
+    it("hide, then the page is killed, leaves one record with the counts at hide time", () => {
+      const { result } = renderHook(() =>
+        useSession({
+          autoStart: true,
+          mode: "flashcard",
+          stackKey: "mnemonica",
+        })
+      );
+      answerQuestions(result, 4);
+
+      act(() => {
+        setVisibility("hidden");
+      });
+      // Killed: no further event, no unmount (unmount would finalize).
+
+      expect(readHistory()).toHaveLength(1);
+      expect(readHistory()[0]).toMatchObject({ questionsCompleted: 4 });
+      expect(readEntry()).toMatchObject({
+        totalQuestions: 4,
+        totalSessions: 1,
+      });
+    });
+
+    it("two hides then Stop save one record, counted once", () => {
+      const { result } = renderHook(() =>
+        useSession({
+          autoStart: true,
+          mode: "flashcard",
+          stackKey: "mnemonica",
+        })
+      );
+      answerQuestions(result, 3);
+      act(() => {
+        setVisibility("hidden");
+      });
+      act(() => {
+        setVisibility("visible");
+      });
+      answerQuestions(result, 2);
+      act(() => {
+        setVisibility("hidden");
+      });
+      act(() => {
+        setVisibility("visible");
+      });
+      answerQuestions(result, 1);
+      act(() => {
+        result.current.stopSession();
+      });
+
+      expect(readHistory()).toHaveLength(1);
+      expect(readHistory()[0]).toMatchObject({ questionsCompleted: 6 });
+      expect(readEntry()).toMatchObject({
+        totalQuestions: 6,
+        totalSessions: 1,
+      });
+    });
+
+    it("saves once when visibilitychange, pagehide and beforeunload all fire for one exit", () => {
+      const { result } = renderHook(() =>
+        useSession({
+          autoStart: true,
+          mode: "flashcard",
+          stackKey: "mnemonica",
+        })
+      );
+      answerQuestions(result, 3);
+
+      act(() => {
+        setVisibility("hidden");
+        window.dispatchEvent(new Event("pagehide"));
+        window.dispatchEvent(new Event("beforeunload"));
+      });
+
+      expect(mockFinalizeSession).toHaveBeenCalledOnce();
+      // The hide's checkpoint and the exit's final save are one record.
+      expect(readHistory()).toHaveLength(1);
+      expect(readEntry()).toMatchObject({
+        totalQuestions: 3,
+        totalSessions: 1,
+      });
+    });
+
+    it("does not save a below-threshold open session on hide", () => {
+      const { result } = renderHook(() =>
+        useSession({
+          autoStart: true,
+          mode: "flashcard",
+          stackKey: "mnemonica",
+        })
+      );
+      answerQuestions(result, 2);
+
+      act(() => {
+        setVisibility("hidden");
+      });
+
+      expect(mockFinalizeSession).not.toHaveBeenCalled();
+    });
+
+    it("saves a structured session on a mere hide and keeps it running unchanged", () => {
+      const { result } = renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
+      act(() => {
+        result.current.startSession({ totalQuestions: 10, type: "structured" });
+      });
+      answerQuestions(result, 4);
+      const before = result.current.activeSession;
+
+      act(() => {
+        setVisibility("hidden");
+      });
+      // Killed here: the structured session is on disk anyway.
+
+      expect(result.current.activeSession).toBe(before);
+      expect(readHistory()).toHaveLength(1);
+      expect(readHistory()[0]).toMatchObject({
+        config: { totalQuestions: 10, type: "structured" },
+        questionsCompleted: 4,
+      });
+      expect(readEntry()).toMatchObject({
+        totalQuestions: 4,
+        totalSessions: 1,
+      });
+    });
+
+    it("a structured session saved on hide and then completed is one record, counted once", () => {
+      const { result } = renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
+      act(() => {
+        result.current.startSession({ totalQuestions: 5, type: "structured" });
+      });
+      answerQuestions(result, 3);
+      act(() => {
+        setVisibility("hidden");
+      });
+      act(() => {
+        setVisibility("visible");
+      });
+      answerQuestions(result, 2);
+
+      expect(result.current.status.phase).toBe("summary");
+      expect(readHistory()).toHaveLength(1);
+      expect(readEntry()).toMatchObject({
+        totalQuestions: 5,
+        totalSessions: 1,
+      });
+    });
+
+    it("saves a structured session on a pagehide that is not entering bfcache", () => {
+      const { result } = renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
+      act(() => {
+        result.current.startSession({ totalQuestions: 10, type: "structured" });
+      });
+      answerQuestions(result, 4);
+
+      act(() => {
+        window.dispatchEvent(pageHideEvent(false));
+      });
+
+      expect(mockFinalizeSession).toHaveBeenCalledOnce();
+      expect(mockFinalizeSession.mock.calls[0]?.[0]).toMatchObject({
+        questionsCompleted: 4,
+      });
+    });
+
+    it("saves a structured session on a pagehide entering bfcache without ending it", () => {
+      const { result } = renderHook(() =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica" })
+      );
+      act(() => {
+        result.current.startSession({ totalQuestions: 10, type: "structured" });
+      });
+      answerQuestions(result, 4);
+
+      act(() => {
+        window.dispatchEvent(pageHideEvent(true));
+      });
+
+      expect(mockFinalizeSession).not.toHaveBeenCalled();
+      expect(readHistory()).toHaveLength(1);
+      expect(result.current.status.phase).toBe("active");
+    });
+
+    describe("last-save-failed breadcrumb", () => {
+      // Real breadcrumb writes and clears, so the test sees what the next
+      // mount would read.
+      beforeEach(() => {
+        mockWriteBreadcrumb.mockImplementation(
+          actualBreadcrumbs.writeLastSaveFailedBreadcrumb
+        );
+        mockClearBreadcrumbForSession.mockImplementation(
+          actualBreadcrumbs.clearLastSaveFailedBreadcrumbForSession
+        );
+      });
+
+      afterEach(() => {
+        mockWriteBreadcrumb.mockReset();
+        mockClearBreadcrumbForSession.mockReset();
+      });
+
+      // Fails only the history write, so the breadcrumb write still lands.
+      const failHistoryWrites = () => {
+        const originalSetItem = localStorage.setItem.bind(localStorage);
+        return vi
+          .spyOn(localStorage, "setItem")
+          .mockImplementation((key: string, value: string) => {
+            if (key === SESSION_HISTORY_LSK) {
+              throw new DOMException("quota exceeded", "QuotaExceededError");
+            }
+            originalSetItem(key, value);
+          });
+      };
+
+      const readBreadcrumb = (): unknown =>
+        JSON.parse(localStorage.getItem(LAST_SAVE_FAILED_LSK) ?? "null");
+
+      it("clears the breadcrumb of a failed hide save once Stop saves the session", () => {
+        const { result } = renderHook(() =>
+          useSession({
+            autoStart: true,
+            mode: "flashcard",
+            stackKey: "mnemonica",
+          })
+        );
+        answerQuestions(result, 3);
+        const sessionId = result.current.activeSession?.id;
+        const writes = failHistoryWrites();
+
+        act(() => {
+          setVisibility("hidden");
+        });
+        writes.mockRestore();
+
+        expect(readBreadcrumb()).toMatchObject({ sessionId });
+
+        act(() => {
+          setVisibility("visible");
+        });
+        act(() => {
+          result.current.stopSession();
+        });
+
+        expect(result.current.status.phase).toBe("summary");
+        expect(readHistory()).toHaveLength(1);
+        expect(localStorage.getItem(LAST_SAVE_FAILED_LSK)).toBeNull();
+      });
+
+      it("keeps the breadcrumb of a failed hide save when the page is then killed", () => {
+        const { result } = renderHook(() =>
+          useSession({
+            autoStart: true,
+            mode: "flashcard",
+            stackKey: "mnemonica",
+          })
+        );
+        answerQuestions(result, 3);
+        const sessionId = result.current.activeSession?.id;
+        const writes = failHistoryWrites();
+
+        act(() => {
+          setVisibility("hidden");
+        });
+        writes.mockRestore();
+        // Killed: no further event, no unmount (unmount would finalize).
+
+        expect(readHistory()).toHaveLength(0);
+        expect(readBreadcrumb()).toMatchObject({
+          reason: "write-failed",
+          sessionId,
+        });
+      });
     });
   });
 });

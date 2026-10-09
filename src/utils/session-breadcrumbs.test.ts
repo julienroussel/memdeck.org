@@ -4,6 +4,7 @@ import { analytics } from "../services/analytics";
 import { createMockLocalStorage } from "../test-utils/mock-local-storage";
 import {
   clearLastSaveFailedBreadcrumb,
+  clearLastSaveFailedBreadcrumbForSession,
   hasLastSaveFailedNotificationBeenShown,
   markLastSaveFailedNotificationShown,
   readLastSaveFailedBreadcrumb,
@@ -36,10 +37,11 @@ afterEach(() => {
 
 describe("session-breadcrumbs", () => {
   it("round-trips a write-failed breadcrumb through write and read", () => {
-    writeLastSaveFailedBreadcrumb("write-failed");
+    writeLastSaveFailedBreadcrumb("write-failed", "session-a");
     const breadcrumb = readLastSaveFailedBreadcrumb();
     expect(breadcrumb).not.toBeNull();
     expect(breadcrumb?.reason).toBe("write-failed");
+    expect(breadcrumb?.sessionId).toBe("session-a");
     expect(typeof breadcrumb?.failedAt).toBe("string");
     // failedAt is a valid ISO timestamp, not in the future
     const parsed =
@@ -52,7 +54,7 @@ describe("session-breadcrumbs", () => {
   });
 
   it("clears a previously written breadcrumb", () => {
-    writeLastSaveFailedBreadcrumb("corrupt-prior-state");
+    writeLastSaveFailedBreadcrumb("corrupt-prior-state", "session-a");
     expect(readLastSaveFailedBreadcrumb()).not.toBeNull();
     clearLastSaveFailedBreadcrumb();
     expect(readLastSaveFailedBreadcrumb()).toBeNull();
@@ -76,7 +78,7 @@ describe("session-breadcrumbs", () => {
       "corrupt",
       "corrupt-prior-state",
     ] as const) {
-      writeLastSaveFailedBreadcrumb(reason);
+      writeLastSaveFailedBreadcrumb(reason, "session-a");
       expect(readLastSaveFailedBreadcrumb()?.reason).toBe(reason);
     }
   });
@@ -86,7 +88,9 @@ describe("session-breadcrumbs", () => {
     mockLocalStorage.setItem = vi.fn(() => {
       throw new DOMException("quota exceeded", "QuotaExceededError");
     });
-    expect(() => writeLastSaveFailedBreadcrumb("write-failed")).not.toThrow();
+    expect(() =>
+      writeLastSaveFailedBreadcrumb("write-failed", "session-a")
+    ).not.toThrow();
     mockLocalStorage.setItem = original;
   });
 
@@ -109,7 +113,7 @@ describe("session-breadcrumbs", () => {
       throw failure;
     });
 
-    writeLastSaveFailedBreadcrumb("write-failed");
+    writeLastSaveFailedBreadcrumb("write-failed", "session-a");
 
     expect(trackErrorSpy).toHaveBeenCalledTimes(1);
     expect(trackErrorSpy).toHaveBeenCalledWith(
@@ -131,9 +135,13 @@ describe("session-breadcrumbs", () => {
 
     expect(result).toBeNull();
     expect(trackErrorSpy).toHaveBeenCalledTimes(1);
-    const [errArg, contextArg] = trackErrorSpy.mock.calls[0];
+    const [trackErrorCall] = trackErrorSpy.mock.calls;
+    if (!trackErrorCall) {
+      throw new Error("Expected trackError to be called");
+    }
+    const [errArg, contextArg] = trackErrorCall;
     expect(errArg).toBeInstanceOf(Error);
-    expect((errArg as Error).message).toContain("corrupt");
+    expect(errArg.message).toContain("corrupt");
     expect(contextArg).toBe("readLastSaveFailedBreadcrumb");
 
     trackErrorSpy.mockRestore();
@@ -167,7 +175,7 @@ describe("session-breadcrumbs", () => {
       throw new Error("removeItem blocked");
     });
     // Pre-seed the breadcrumb so the read would otherwise return a value.
-    writeLastSaveFailedBreadcrumb("write-failed");
+    writeLastSaveFailedBreadcrumb("write-failed", "session-a");
     expect(readLastSaveFailedBreadcrumb()).not.toBeNull();
 
     clearLastSaveFailedBreadcrumb();
@@ -257,10 +265,46 @@ describe("session-breadcrumbs", () => {
       throw new DOMException("quota exceeded", "QuotaExceededError");
     });
 
-    expect(() => writeLastSaveFailedBreadcrumb("write-failed")).not.toThrow();
+    expect(() =>
+      writeLastSaveFailedBreadcrumb("write-failed", "session-a")
+    ).not.toThrow();
 
     mockLocalStorage.setItem = original;
     trackErrorSpy.mockRestore();
+  });
+
+  describe("clearLastSaveFailedBreadcrumbForSession", () => {
+    it("clears the breadcrumb written for the saved session", () => {
+      writeLastSaveFailedBreadcrumb("write-failed", "session-a");
+      clearLastSaveFailedBreadcrumbForSession("session-a");
+      expect(storage.has(LAST_SAVE_FAILED_LSK)).toBe(false);
+    });
+
+    it("keeps the breadcrumb of a different session", () => {
+      writeLastSaveFailedBreadcrumb("write-failed", "session-a");
+      clearLastSaveFailedBreadcrumbForSession("session-b");
+      expect(readLastSaveFailedBreadcrumb()?.sessionId).toBe("session-a");
+    });
+
+    it("keeps a breadcrumb written without a session id, which still reads as valid", () => {
+      const legacy = {
+        failedAt: "2025-01-01T00:00:00.000Z",
+        reason: "corrupt",
+      };
+      storage.set(LAST_SAVE_FAILED_LSK, JSON.stringify(legacy));
+      clearLastSaveFailedBreadcrumbForSession("session-a");
+      expect(readLastSaveFailedBreadcrumb()).toEqual(legacy);
+    });
+
+    it("leaves a corrupt breadcrumb untouched and unreported for the mount check", () => {
+      const trackErrorSpy = vi
+        .spyOn(analytics, "trackError")
+        .mockImplementation(() => undefined);
+      storage.set(LAST_SAVE_FAILED_LSK, "{not valid json");
+      clearLastSaveFailedBreadcrumbForSession("session-a");
+      expect(storage.get(LAST_SAVE_FAILED_LSK)).toBe("{not valid json");
+      expect(trackErrorSpy).not.toHaveBeenCalled();
+    });
   });
 
   describe("hasLastSaveFailedNotificationBeenShown / markLastSaveFailedNotificationShown", () => {

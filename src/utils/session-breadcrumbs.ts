@@ -3,13 +3,15 @@ import { analytics } from "../services/analytics";
 import { probeStoredValue } from "./localstorage";
 
 /**
- * "Last session save failed" breadcrumb. Set by the auto-save path on
- * unmount/beforeunload — when the page is closing so no notification can be
- * shown. Read on the next session start so the user is told their previous
- * session wasn't saved. Cleared as soon as it's surfaced.
+ * "Last session save failed" breadcrumb. Set by the auto-save path when a save
+ * on page exit or hide fails, as no notification can be relied on then. Read on
+ * the next session start so the user is told their previous session wasn't
+ * saved. Cleared as soon as it's surfaced, or when a later save of the same
+ * session succeeds (`clearLastSaveFailedBreadcrumbForSession`).
  *
  * The shape carries the failure reason so triage can distinguish a quota
- * write-failure from a corruption refusal.
+ * write-failure from a corruption refusal. `sessionId` is absent on
+ * breadcrumbs written before it was added.
  */
 type LastSaveFailedBreadcrumb = {
   reason:
@@ -18,6 +20,7 @@ type LastSaveFailedBreadcrumb = {
     | "corrupt"
     | "corrupt-prior-state";
   failedAt: string;
+  sessionId?: string;
 };
 
 const isReason = (
@@ -36,15 +39,18 @@ const isLastSaveFailedBreadcrumb = (
   "reason" in value &&
   "failedAt" in value &&
   isReason(value.reason) &&
-  typeof value.failedAt === "string";
+  typeof value.failedAt === "string" &&
+  (!("sessionId" in value) || typeof value.sessionId === "string");
 
 export const writeLastSaveFailedBreadcrumb = (
-  reason: LastSaveFailedBreadcrumb["reason"]
+  reason: LastSaveFailedBreadcrumb["reason"],
+  sessionId: string
 ): void => {
   try {
     const breadcrumb: LastSaveFailedBreadcrumb = {
       failedAt: new Date().toISOString(),
       reason,
+      sessionId,
     };
     localStorage.setItem(LAST_SAVE_FAILED_LSK, JSON.stringify(breadcrumb));
   } catch (error) {
@@ -150,6 +156,27 @@ export const clearLastSaveFailedBreadcrumb = (): void => {
         // intentionally empty
       }
     }
+  }
+};
+
+/**
+ * Clears the breadcrumb once the session it was written for has been saved
+ * after all (a later checkpoint or the final save), so the next mount does not
+ * report a save that succeeded. Only an exact id match clears: a breadcrumb for
+ * another session, or one without an id (always from an earlier mount), still
+ * describes a lost session and is left for the mount check. Probes directly
+ * rather than through `readLastSaveFailedBreadcrumb`, which purges and reports
+ * an unreadable blob: that stays the mount check's job.
+ */
+export const clearLastSaveFailedBreadcrumbForSession = (
+  sessionId: string
+): void => {
+  const probe = probeStoredValue(
+    LAST_SAVE_FAILED_LSK,
+    isLastSaveFailedBreadcrumb
+  );
+  if (probe.status === "valid" && probe.value.sessionId === sessionId) {
+    clearLastSaveFailedBreadcrumb();
   }
 };
 

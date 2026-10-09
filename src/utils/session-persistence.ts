@@ -7,11 +7,13 @@ import { eventBus } from "../services/event-bus";
 import type {
   ActiveSession,
   AllTimeStats,
+  AllTimeStatsEntry,
   Encouragement,
   SessionRecord,
   SessionSummary,
 } from "../types/session";
-import { probeStoredValue } from "./localstorage";
+import { dispatchKeyChange, probeStoredValue } from "./localstorage";
+import { clearLastSaveFailedBreadcrumbForSession } from "./session-breadcrumbs";
 import { calculateAccuracy } from "./session-formatting";
 import { createEmptyStatsEntry, statsKey } from "./session-stats";
 import { isAllTimeStats, isSessionRecordArray } from "./session-typeguards";
@@ -235,6 +237,22 @@ export type FinalizeSessionResult =
   | { ok: false; reason: FinalizeFailureReason };
 
 /**
+ * What a checkpoint save (`checkpointSession`) of a still-running session left
+ * on disk. `record` is the record it wrote, so a later save of the same id adds
+ * only what changed since then to the all-time stats. `baselineEntry` is the
+ * stats entry from before the session's first save, so the end-of-session
+ * summary still compares against the state the session started from.
+ */
+export type SessionCheckpoint = {
+  record: SessionRecord;
+  baselineEntry: AllTimeStatsEntry | undefined;
+};
+
+type CheckpointSessionResult =
+  | { ok: true; checkpoint: SessionCheckpoint }
+  | { ok: false; reason: FinalizeFailureReason };
+
+/**
  * Finalizes an active session: persists it atomically and returns a summary.
  *
  * Atomicity (best-effort): serializes both payloads in memory, writes history
@@ -246,17 +264,18 @@ export type FinalizeSessionResult =
  * return `{ ok: false, reason: 'corrupt' }` so callers can surface the
  * inconsistency to the user.
  *
- * Dedupe: in-mount retry safety lives upstream in `use-session.ts` via
- * `finalizedIdsRef`. Here we only avoid duplicating the history entry — if
- * `prevHistory[0].id === record.id` we skip the prepend but still write the
- * stats increment, so a retry after a `corrupt` failure (where history wrote
- * but stats did not) repairs the stats. Worst case is a cross-tab
- * finalize-twice race that double-increments stats by 1 for that record;
- * strictly better than silently dropping the increment.
+ * Upsert: a history entry with the same id is replaced, never duplicated.
+ * When `checkpoint` is given (the session was saved earlier by
+ * `checkpointSession`), the stats get only the difference since that save and
+ * the session is not counted again. Without it, the record's full counts are
+ * added even if its id is already in history, so a retry after a `corrupt`
+ * failure (where history wrote but stats did not) repairs the stats. In-mount
+ * retry safety lives upstream in `use-session.ts` via `finalizedIdsRef`.
+ * Worst case is a cross-tab finalize-twice race that double-increments stats
+ * by 1 for that record; strictly better than silently dropping the increment.
  *
  * Summary semantics: the summary compares the new record against the PREVIOUS
- * stats (pre-update). We compute it from the in-memory snapshots read before
- * any write, which preserves the existing contract regardless of write order.
+ * stats (pre-update), or against the checkpoint's baseline when there is one.
  *
  * SESSION_COMPLETED is emitted in both success and failure paths with a
  * `saved` flag so telemetry can distinguish completed-and-saved from
@@ -264,10 +283,87 @@ export type FinalizeSessionResult =
  * `saved=false` case to a `Save Failed` GA action).
  */
 export const finalizeSession = (
-  session: ActiveSession
+  session: ActiveSession,
+  checkpoint?: SessionCheckpoint
 ): FinalizeSessionResult => {
   const record = buildSessionRecord(session);
+  const result = saveRecord(record, checkpoint);
+  eventBus.emit.SESSION_COMPLETED({
+    accuracy: record.accuracy,
+    mode: record.mode,
+    questionsCompleted: record.questionsCompleted,
+    saved: result.ok,
+  });
+  if (!result.ok) {
+    return result;
+  }
+  const key = statsKey(record.mode, record.stackKey);
+  const summaryStats: AllTimeStats =
+    checkpoint === undefined
+      ? result.prevAllTimeStats
+      : { ...result.prevAllTimeStats, [key]: checkpoint.baselineEntry };
+  return {
+    ok: true,
+    summary: computeSessionSummary(record, result.prevHistory, summaryStats),
+  };
+};
 
+/**
+ * Saves a session that is still running (the page was hidden and may be
+ * killed without another event) under its own id, with the same refusal,
+ * rollback and upsert rules as `finalizeSession`. Emits no SESSION_COMPLETED:
+ * the session has not ended. Pass the previous checkpoint of the same session
+ * so its stats are not counted twice, and hand the returned one to the next
+ * save of this session.
+ */
+export const checkpointSession = (
+  session: ActiveSession,
+  previous?: SessionCheckpoint
+): CheckpointSessionResult => {
+  const record = buildSessionRecord(session);
+  const result = saveRecord(record, previous);
+  if (!result.ok) {
+    return result;
+  }
+  const baselineEntry =
+    previous === undefined
+      ? result.prevAllTimeStats[statsKey(record.mode, record.stackKey)]
+      : previous.baselineEntry;
+  return { checkpoint: { baselineEntry, record }, ok: true };
+};
+
+// Adds `record` to a stats entry. With `previous` (an earlier save of the same
+// session), only what changed since then is added and the session is not
+// counted again. Counts within a session only grow, so the deltas are >= 0.
+const addRecordToStatsEntry = (
+  entry: AllTimeStatsEntry | undefined,
+  record: SessionRecord,
+  previous: SessionRecord | undefined
+): AllTimeStatsEntry => {
+  const base = entry ?? createEmptyStatsEntry();
+  return {
+    globalBestStreak: Math.max(base.globalBestStreak, record.bestStreak),
+    totalFails: base.totalFails + record.fails - (previous?.fails ?? 0),
+    totalQuestions:
+      base.totalQuestions +
+      record.questionsCompleted -
+      (previous?.questionsCompleted ?? 0),
+    totalSessions: base.totalSessions + (previous === undefined ? 1 : 0),
+    totalSuccesses:
+      base.totalSuccesses + record.successes - (previous?.successes ?? 0),
+  };
+};
+
+type SaveRecordResult =
+  | { ok: true; prevHistory: SessionRecord[]; prevAllTimeStats: AllTimeStats }
+  | { ok: false; reason: FinalizeFailureReason };
+
+// Upserts `record` into history and adds it to the all-time stats, returning
+// the state read before the write for the caller's summary or baseline.
+const saveRecord = (
+  record: SessionRecord,
+  checkpoint: SessionCheckpoint | undefined
+): SaveRecordResult => {
   // Refuse to overwrite corrupt prior state. If we collapsed corruption into
   // `[]`/`{}` here, the next write would prepend `record` onto the empty
   // default and the user would lose every prior session/stats irreversibly.
@@ -276,72 +372,30 @@ export const finalizeSession = (
   const historyProbe = probeSessionHistory();
   const statsProbe = probeAllTimeStats();
   if (historyProbe.status === "corrupt" || statsProbe.status === "corrupt") {
-    eventBus.emit.SESSION_COMPLETED({
-      accuracy: record.accuracy,
-      mode: record.mode,
-      questionsCompleted: record.questionsCompleted,
-      saved: false,
-    });
     return { ok: false, reason: "corrupt-prior-state" };
   }
 
   const prevHistory = historyProbe.history;
   const prevAllTimeStats = statsProbe.stats;
 
-  // History dedupe: if the prior persisted history already starts with this
-  // record's id, skip the prepend so a retry doesn't duplicate the entry. We
-  // still proceed with the stats write — that's how a retry after a prior
-  // `corrupt` failure repairs the stats. (Per-record stats dedupe is not
-  // tracked at this layer; in-mount retry is guarded upstream by
-  // `finalizedIdsRef` in `use-session.ts`.)
-  const key = statsKey(record.mode, record.stackKey);
-  const prevStatsEntry = prevAllTimeStats[key];
-  const historyAlreadyContainsRecord = prevHistory[0]?.id === record.id;
-
-  const nextHistory = historyAlreadyContainsRecord
-    ? [...prevHistory]
-    : [record, ...prevHistory];
+  // The record ended last, so it goes first; an earlier entry with its id
+  // (a checkpoint, or a retry after a `corrupt` failure) is replaced.
+  const nextHistory = [
+    record,
+    ...prevHistory.filter((r) => r.id !== record.id),
+  ];
   if (nextHistory.length > MAX_SESSION_HISTORY) {
     nextHistory.length = MAX_SESSION_HISTORY;
   }
 
-  // Build new all-time stats. The "previous" entry for summary purposes is
-  // always the on-disk one — when stats are missing or empty (e.g. a prior
-  // `corrupt` failure left history written but stats unwritten), creating
-  // from `createEmptyStatsEntry()` and incrementing yields the correct
-  // first-session counts.
-  const entry = prevStatsEntry ?? createEmptyStatsEntry();
+  const key = statsKey(record.mode, record.stackKey);
   const nextAllTimeStats: AllTimeStats = {
     ...prevAllTimeStats,
-    [key]: {
-      globalBestStreak: Math.max(entry.globalBestStreak, record.bestStreak),
-      totalFails: entry.totalFails + record.fails,
-      totalQuestions: entry.totalQuestions + record.questionsCompleted,
-      totalSessions: entry.totalSessions + 1,
-      totalSuccesses: entry.totalSuccesses + record.successes,
-    },
-  };
-
-  // Compute summary against PREVIOUS state (pre-write) — preserves existing
-  // "is this a new best?" semantics. In the corrupt-recovery case the record
-  // is already at prevHistory[0]; exclude it so the rolling average reflects
-  // the prior history.
-  const summaryPrevHistory = historyAlreadyContainsRecord
-    ? prevHistory.slice(1)
-    : prevHistory;
-  const summary = computeSessionSummary(
-    record,
-    summaryPrevHistory,
-    prevAllTimeStats
-  );
-
-  const emitCompleted = (saved: boolean) => {
-    eventBus.emit.SESSION_COMPLETED({
-      accuracy: record.accuracy,
-      mode: record.mode,
-      questionsCompleted: record.questionsCompleted,
-      saved,
-    });
+    [key]: addRecordToStatsEntry(
+      prevAllTimeStats[key],
+      record,
+      checkpoint?.record
+    ),
   };
 
   const serialized = serializePayloads(
@@ -350,16 +404,17 @@ export const finalizeSession = (
     prevHistory
   );
   if (serialized === null) {
-    emitCompleted(false);
     return { ok: false, reason: "serialize-failed" };
   }
 
   const writeResult = persistSerialized(serialized);
-  emitCompleted(writeResult.ok);
-  if (writeResult.ok) {
-    return { ok: true, summary };
+  if (!writeResult.ok) {
+    return writeResult;
   }
-  return { ok: false, reason: writeResult.reason };
+  // A failed save of this session on page hide left a breadcrumb; this save
+  // supersedes it.
+  clearLastSaveFailedBreadcrumbForSession(record.id);
+  return { ok: true, prevAllTimeStats, prevHistory };
 };
 
 type SerializedPayloads = {
@@ -412,6 +467,23 @@ const safeSetItem = (key: string, value: string): boolean => {
   }
 };
 
+// Tells same-tab `useLocalDb` subscribers (stats, discovery, share nudge, PWA
+// install prompt) that `key` changed; the native `storage` event only reaches
+// other tabs. The write has already persisted, so a throw here must not turn
+// into a save failure, as in `useLocalDb`'s setter.
+const announceKeyChange = (key: string): void => {
+  try {
+    dispatchKeyChange(key);
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn(
+        `[localStorage] dispatchKeyChange threw for "${key}":`,
+        error
+      );
+    }
+  }
+};
+
 type PersistResult =
   | { ok: true }
   | { ok: false; reason: "write-failed" | "corrupt" };
@@ -420,12 +492,20 @@ type PersistResult =
 // If the rollback itself fails, the on-disk state is inconsistent and the
 // caller is told via `reason: 'corrupt'` so it can surface that to the user
 // (and emit a single GA event with operational context).
+//
+// Once the history write succeeds, every branch announces history: the
+// rollback writes re-serialized bytes, which need not match what was there,
+// and a failed rollback leaves the new history on disk. Stats are announced
+// only when their write succeeded. Announcing after the writes settle means a
+// subscriber never re-reads history ahead of the matching stats.
 const persistSerialized = (serialized: SerializedPayloads): PersistResult => {
   if (!safeSetItem(SESSION_HISTORY_LSK, serialized.nextHistoryStr)) {
     return { ok: false, reason: "write-failed" };
   }
 
   if (safeSetItem(ALL_TIME_STATS_LSK, serialized.nextAllTimeStr)) {
+    announceKeyChange(SESSION_HISTORY_LSK);
+    announceKeyChange(ALL_TIME_STATS_LSK);
     return { ok: true };
   }
 
@@ -444,7 +524,9 @@ const persistSerialized = (serialized: SerializedPayloads): PersistResult => {
         rollbackError
       );
     }
+    announceKeyChange(SESSION_HISTORY_LSK);
     return { ok: false, reason: "corrupt" };
   }
+  announceKeyChange(SESSION_HISTORY_LSK);
   return { ok: false, reason: "write-failed" };
 };
