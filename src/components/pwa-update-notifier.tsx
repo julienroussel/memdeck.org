@@ -56,6 +56,16 @@ export const PwaUpdateNotifier = () => {
 
   useRegisterSW({
     immediate: true,
+    // A failed registration (workbox-window import or `register()` rejection)
+    // silently disables offline support and the autoUpdate flow, so report it.
+    onRegisterError(error: unknown) {
+      const wrapped =
+        error instanceof Error
+          ? new Error(error.message, { cause: error })
+          : new Error("unknown", { cause: error });
+      wrapped.name = "PwaRegisterFailed";
+      analytics.trackError(wrapped);
+    },
     onRegisteredSW(_swUrl, registration) {
       if (registration) {
         if (intervalRef.current) {

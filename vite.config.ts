@@ -170,7 +170,13 @@ export default defineConfig({
         // Locale chunks are lazy-loaded on demand; splash PNGs are only
         // used by iOS — exclude both from precaching.
         globIgnores: ["assets/locale-*.js", "splash/*.png"],
-        globPatterns: ["**/*.{js,css,html,webp}", "cards/*.svg"],
+        // Card faces plus the blank card only: the four card backs in
+        // public/cards (blue, blue2, red, red2) are unused by the app.
+        globPatterns: [
+          "**/*.{js,css,html,webp}",
+          "cards/{clubs,diamonds,hearts,spades}_*.svg",
+          "cards/blank_card.svg",
+        ],
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/\.(?:txt|xml|json|webmanifest)$/],
         runtimeCaching: [

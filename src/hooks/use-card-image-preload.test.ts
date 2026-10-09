@@ -36,7 +36,16 @@ const removeRequestIdleCallback = (): void => {
   Reflect.deleteProperty(window, "requestIdleCallback");
 };
 
+// happy-dom has no `navigator.serviceWorker`; these install one per test.
+const defineServiceWorker = (descriptor: PropertyDescriptor): void => {
+  Object.defineProperty(navigator, "serviceWorker", {
+    configurable: true,
+    ...descriptor,
+  });
+};
+
 afterEach(() => {
+  Reflect.deleteProperty(navigator, "serviceWorker");
   // Unmount before unstubbing so the hook's effect cleanup still sees the
   // stubbed cancelIdleCallback/clearTimeout globals it captured.
   cleanup();
@@ -105,5 +114,52 @@ describe("useCardImagePreload", () => {
     vi.advanceTimersByTime(10);
 
     expect(createdImages).toHaveLength(0);
+  });
+
+  describe("service worker gating", () => {
+    const runPreload = (): void => {
+      stubIdleCallbacks();
+      vi.stubGlobal("Image", FakeImage);
+      renderHook(() => useCardImagePreload());
+      capturedIdleCallback?.();
+    };
+
+    it("skips the preload on a first visit, when the page is not SW-controlled", () => {
+      // The SW install precaches every face; preloading too would fetch twice.
+      defineServiceWorker({ value: { controller: null } });
+
+      runPreload();
+
+      expect(requestIdleCallbackMock).not.toHaveBeenCalled();
+      expect(createdImages).toHaveLength(0);
+    });
+
+    it("preloads all 52 faces when the page is SW-controlled (served from the precache)", () => {
+      defineServiceWorker({ value: { controller: {} } });
+
+      runPreload();
+
+      expect(createdImages).toHaveLength(52);
+    });
+
+    it("preloads all 52 faces when service workers are unsupported", () => {
+      defineServiceWorker({ value: undefined });
+
+      runPreload();
+
+      expect(createdImages).toHaveLength(52);
+    });
+
+    it("preloads all 52 faces when accessing navigator.serviceWorker throws", () => {
+      defineServiceWorker({
+        get: () => {
+          throw new DOMException("The operation is insecure.", "SecurityError");
+        },
+      });
+
+      runPreload();
+
+      expect(createdImages).toHaveLength(52);
+    });
   });
 });

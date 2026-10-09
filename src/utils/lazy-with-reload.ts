@@ -5,11 +5,36 @@ import { isStaleChunkError } from "./stale-chunk";
 
 const CHUNK_RELOADED_PARAM = "chunk-reloaded";
 
+// A successful load ends the recovery, so clear its guard: left in place, it
+// would turn the next stale-chunk error on this path (a later deploy in a
+// long-lived tab or PWA window) into the error page instead of a reload.
+function clearReloadGuard<M>(module: M): M {
+  try {
+    sessionStorage.removeItem(`${CHUNK_RELOAD_SSK}${window.location.pathname}`);
+  } catch {
+    // sessionStorage unavailable: the URL-param guard below applies instead
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.has(CHUNK_RELOADED_PARAM)) {
+    params.delete(CHUNK_RELOADED_PARAM);
+    const query = params.toString();
+    const search = query ? `?${query}` : "";
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${window.location.pathname}${search}${window.location.hash}`
+    );
+  }
+
+  return module;
+}
+
 export function lazyWithReload<T extends ComponentType<unknown>>(
   factory: () => Promise<{ default: T }>
 ): LazyExoticComponent<T> {
   return lazy(() =>
-    factory().catch((error: unknown) => {
+    factory().then(clearReloadGuard, (error: unknown) => {
       if (!isStaleChunkError(error)) {
         throw error;
       }

@@ -301,6 +301,23 @@ describe("PwaUpdateNotifier", () => {
     vi.useRealTimers();
   });
 
+  it("tracks PwaRegisterFailed analytics error when service worker registration fails", () => {
+    mockUseRegisterSW.mockImplementation((options?: RegisterSWOptions) => {
+      options?.onRegisterError?.(new Error("SecurityError: register denied"));
+      return {};
+    });
+
+    render(<PwaUpdateNotifier />);
+
+    expect(mockTrackError).toHaveBeenCalledOnce();
+    expect(mockTrackError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "SecurityError: register denied",
+        name: "PwaRegisterFailed",
+      })
+    );
+  });
+
   it("reports corruption when localStorage.getItem throws (Safari ITP)", () => {
     const originalGetItem = mockLocalStorage.getItem;
     mockLocalStorage.getItem = vi.fn(() => {
