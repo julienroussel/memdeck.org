@@ -6,6 +6,7 @@ import { AppShell, ScrollArea } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { useCallback, useEffect, useRef } from "react";
 import { useLocation } from "react-router";
+import { AnalyticsConsent } from "./components/analytics-consent";
 import { ErrorBoundary } from "./components/error-boundary";
 import { Header } from "./components/header";
 import { NavFooter } from "./components/nav-footer";
@@ -38,19 +39,6 @@ export const App = () => {
     }
   }, [close]);
   const location = useLocation();
-  const initializedRef = useRef(false);
-
-  useEffect(() => {
-    if (initializedRef.current) {
-      return;
-    }
-    initializedRef.current = true;
-    if ("requestIdleCallback" in window) {
-      requestIdleCallback(() => analytics.initialize());
-    } else {
-      setTimeout(() => analytics.initialize(), 1);
-    }
-  }, []);
 
   useEffect(() => {
     analytics.trackPageView(location.pathname);
@@ -85,6 +73,7 @@ export const App = () => {
           <Routes />
         </ErrorBoundary>
       </AppShell.Main>
+      <AnalyticsConsent />
     </AppShell>
   );
 };

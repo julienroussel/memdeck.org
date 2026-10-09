@@ -65,6 +65,7 @@ const stackName = stacks.mnemonica.name;
 
 beforeEach(async () => {
   const timerModule = await import("../../hooks/use-game-timer");
+  // The vi.mock factory adds this test-only export; the real module's type lacks it.
   (
     timerModule as unknown as { __resetCapturedOnTimeout: () => void }
   ).__resetCapturedOnTimeout();
@@ -385,6 +386,7 @@ describe("useDistanceGame timeout flow", () => {
     const { notifications } = vi.mocked(await import("@mantine/notifications"));
     const { eventBus } = vi.mocked(await import("../../services/event-bus"));
     const timerModule = vi.mocked(await import("../../hooks/use-game-timer"));
+    // The vi.mock factory adds this test-only export; the real module's type lacks it.
     const getCapturedOnTimeout = (
       timerModule as unknown as {
         __getCapturedOnTimeout: () => (() => void) | undefined;
@@ -423,6 +425,7 @@ describe("useDistanceGame timeout flow", () => {
 
   it("dispatches the timeout action: fails increments and the card advances", async () => {
     const timerModule = vi.mocked(await import("../../hooks/use-game-timer"));
+    // The vi.mock factory adds this test-only export; the real module's type lacks it.
     const triggerTimeout = (
       timerModule as unknown as { __triggerTimeout: () => void }
     ).__triggerTimeout;

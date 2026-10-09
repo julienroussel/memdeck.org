@@ -46,6 +46,7 @@ describe("ROUTES", () => {
 
   it("only lists valid ROUTES URLs in lighthouserc.json", () => {
     const configPath = join(import.meta.dirname, "..", "lighthouserc.json");
+    // Untyped JSON from disk; the test asserts on the fields it reads.
     const config = JSON.parse(readFileSync(configPath, "utf-8")) as {
       ci: { collect: { url: readonly string[] } };
     };

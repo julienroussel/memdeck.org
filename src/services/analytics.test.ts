@@ -15,6 +15,7 @@ type WebVitalCallback = (metric: WebVitalMetric) => void;
 const mockInitialize = vi.fn();
 const mockSend = vi.fn();
 const mockEvent = vi.fn();
+const mockGtag = vi.fn();
 const mockOnCLS = vi.fn<(callback: WebVitalCallback) => void>();
 const mockOnINP = vi.fn<(callback: WebVitalCallback) => void>();
 const mockOnLCP = vi.fn<(callback: WebVitalCallback) => void>();
@@ -24,6 +25,7 @@ vi.mock("react-ga4", () => ({
     initialize = (id: string) => mockInitialize(id);
     send = (data: unknown) => mockSend(data);
     event = (data: unknown) => mockEvent(data);
+    gtag = (...args: unknown[]) => mockGtag(...args);
   },
 }));
 
@@ -43,7 +45,9 @@ const setHostname = (hostname: string) => {
   });
 };
 
-const { analytics, scrubErrorMessage } = await import("./analytics");
+const { analytics, isAnalyticsHost, scrubErrorMessage } = await import(
+  "./analytics"
+);
 const { eventBus } = await import("./event-bus");
 
 describe("analytics", () => {
@@ -370,7 +374,11 @@ describe("analytics", () => {
         // Drain the captured callbacks manually and verify each closed over
         // the correct error — proves they aren't accidentally one queued
         // callback fired twice with stale data.
-        captured[0]();
+        const [firstCallback, secondCallback] = captured;
+        if (!(firstCallback && secondCallback)) {
+          throw new Error("Expected two queued callbacks");
+        }
+        firstCallback();
         expect(mockEvent).toHaveBeenLastCalledWith(
           expect.objectContaining({
             action: "Error",
@@ -378,7 +386,7 @@ describe("analytics", () => {
             label: "first-throw",
           })
         );
-        captured[1]();
+        secondCallback();
         expect(mockEvent).toHaveBeenLastCalledWith(
           expect.objectContaining({
             action: "Error",
@@ -396,6 +404,10 @@ describe("analytics", () => {
   });
 
   describe("initialize", () => {
+    it("reports the production hostname as an analytics host", () => {
+      expect(isAnalyticsHost()).toBe(true);
+    });
+
     it("initializes ReactGA with tracking ID", () => {
       analytics.initialize();
 
@@ -471,7 +483,10 @@ describe("analytics", () => {
     it("sends LCP metric with rounded value", () => {
       analytics.initialize();
 
-      const [[lcpCallback]] = mockOnLCP.mock.calls;
+      const lcpCallback = mockOnLCP.mock.calls[0]?.[0];
+      if (!lcpCallback) {
+        throw new Error("Expected onLCP to register a callback");
+      }
 
       lcpCallback({ id: "v1-123", name: "LCP", value: 2534.5 });
 
@@ -480,6 +495,7 @@ describe("analytics", () => {
         eventCategory: "Web Vitals",
         eventLabel: "v1-123",
         eventValue: 2535,
+        hitType: "event",
         nonInteraction: true,
       });
     });
@@ -487,7 +503,10 @@ describe("analytics", () => {
     it("sends INP metric with rounded value", () => {
       analytics.initialize();
 
-      const [[inpCallback]] = mockOnINP.mock.calls;
+      const inpCallback = mockOnINP.mock.calls[0]?.[0];
+      if (!inpCallback) {
+        throw new Error("Expected onINP to register a callback");
+      }
 
       inpCallback({ id: "v1-456", name: "INP", value: 128.7 });
 
@@ -496,6 +515,7 @@ describe("analytics", () => {
         eventCategory: "Web Vitals",
         eventLabel: "v1-456",
         eventValue: 129,
+        hitType: "event",
         nonInteraction: true,
       });
     });
@@ -503,7 +523,10 @@ describe("analytics", () => {
     it("sends CLS metric with value multiplied by 1000", () => {
       analytics.initialize();
 
-      const [[clsCallback]] = mockOnCLS.mock.calls;
+      const clsCallback = mockOnCLS.mock.calls[0]?.[0];
+      if (!clsCallback) {
+        throw new Error("Expected onCLS to register a callback");
+      }
 
       clsCallback({ id: "v1-789", name: "CLS", value: 0.125 });
 
@@ -512,6 +535,7 @@ describe("analytics", () => {
         eventCategory: "Web Vitals",
         eventLabel: "v1-789",
         eventValue: 125,
+        hitType: "event",
         nonInteraction: true,
       });
     });
@@ -519,7 +543,10 @@ describe("analytics", () => {
     it("handles CLS value of 0", () => {
       analytics.initialize();
 
-      const [[clsCallback]] = mockOnCLS.mock.calls;
+      const clsCallback = mockOnCLS.mock.calls[0]?.[0];
+      if (!clsCallback) {
+        throw new Error("Expected onCLS to register a callback");
+      }
 
       clsCallback({ id: "v1-000", name: "CLS", value: 0 });
 
@@ -528,6 +555,7 @@ describe("analytics", () => {
         eventCategory: "Web Vitals",
         eventLabel: "v1-000",
         eventValue: 0,
+        hitType: "event",
         nonInteraction: true,
       });
     });
@@ -535,7 +563,10 @@ describe("analytics", () => {
     it("rounds CLS value correctly", () => {
       analytics.initialize();
 
-      const [[clsCallback]] = mockOnCLS.mock.calls;
+      const clsCallback = mockOnCLS.mock.calls[0]?.[0];
+      if (!clsCallback) {
+        throw new Error("Expected onCLS to register a callback");
+      }
 
       clsCallback({ id: "v1-abc", name: "CLS", value: 0.0876 });
 
@@ -549,7 +580,10 @@ describe("analytics", () => {
     it("handles large LCP values", () => {
       analytics.initialize();
 
-      const [[lcpCallback]] = mockOnLCP.mock.calls;
+      const lcpCallback = mockOnLCP.mock.calls[0]?.[0];
+      if (!lcpCallback) {
+        throw new Error("Expected onLCP to register a callback");
+      }
 
       lcpCallback({ id: "v1-large", name: "LCP", value: 10_000.4 });
 
@@ -1011,15 +1045,14 @@ describe("analytics", () => {
       });
     });
 
-    it("sends exception hit type", () => {
+    it("sends a GA4 exception event", () => {
       const error = new Error("Test error");
 
       analytics.trackError(error);
 
-      expect(mockSend).toHaveBeenCalledWith({
-        exDescription: "Error: Test error",
-        exFatal: false,
-        hitType: "exception",
+      expect(mockGtag).toHaveBeenCalledWith("event", "exception", {
+        description: "Error: Test error",
+        fatal: false,
       });
     });
 
@@ -1029,10 +1062,9 @@ describe("analytics", () => {
 
       analytics.trackError(error, componentStack);
 
-      expect(mockSend).toHaveBeenCalledWith({
-        exDescription: "Error: Component error | at MyComponent (app.tsx:10)",
-        exFatal: false,
-        hitType: "exception",
+      expect(mockGtag).toHaveBeenCalledWith("event", "exception", {
+        description: "Error: Component error | at MyComponent (app.tsx:10)",
+        fatal: false,
       });
     });
 
@@ -1042,10 +1074,9 @@ describe("analytics", () => {
 
       analytics.trackError(error, longStack);
 
-      expect(mockSend).toHaveBeenCalledWith({
-        exDescription: `Error: Error | ${"a".repeat(100)}`,
-        exFatal: false,
-        hitType: "exception",
+      expect(mockGtag).toHaveBeenCalledWith("event", "exception", {
+        description: `Error: Error | ${"a".repeat(100)}`,
+        fatal: false,
       });
     });
 
@@ -1058,9 +1089,9 @@ describe("analytics", () => {
       expect(() => analytics.trackError(error)).not.toThrow();
     });
 
-    it("does not throw when ReactGA.send throws", () => {
-      mockSend.mockImplementationOnce(() => {
-        throw new Error("ga send failed");
+    it("does not throw when ReactGA.gtag throws", () => {
+      mockGtag.mockImplementationOnce(() => {
+        throw new Error("ga gtag failed");
       });
       const error = new Error("Test error");
 
@@ -1077,14 +1108,13 @@ describe("analytics", () => {
         category: "Error",
         label: "x is not defined",
       });
-      expect(mockSend).toHaveBeenCalledWith({
-        exDescription: "ReferenceError: x is not defined",
-        exFatal: false,
-        hitType: "exception",
+      expect(mockGtag).toHaveBeenCalledWith("event", "exception", {
+        description: "ReferenceError: x is not defined",
+        fatal: false,
       });
     });
 
-    it("scrubs absolute paths from both label and exDescription", () => {
+    it("scrubs absolute paths from both label and exception description", () => {
       const error = new Error("Failed at /Users/julien/dev/app.js:42");
 
       analytics.trackError(error);
@@ -1094,24 +1124,22 @@ describe("analytics", () => {
         category: "Error",
         label: "Failed at [path]",
       });
-      expect(mockSend).toHaveBeenCalledWith({
-        exDescription: "Error: Failed at [path]",
-        exFatal: false,
-        hitType: "exception",
+      expect(mockGtag).toHaveBeenCalledWith("event", "exception", {
+        description: "Error: Failed at [path]",
+        fatal: false,
       });
     });
 
-    it("strips JSON.parse SyntaxError second-line snippets from exDescription", () => {
+    it("strips JSON.parse SyntaxError second-line snippets from exception description", () => {
       const error = new SyntaxError(
         "Unexpected token x in JSON\nat position 5: {bad...}"
       );
 
       analytics.trackError(error);
 
-      expect(mockSend).toHaveBeenCalledWith({
-        exDescription: "SyntaxError: Unexpected token x in JSON",
-        exFatal: false,
-        hitType: "exception",
+      expect(mockGtag).toHaveBeenCalledWith("event", "exception", {
+        description: "SyntaxError: Unexpected token x in JSON",
+        fatal: false,
       });
     });
   });
@@ -1123,6 +1151,10 @@ describe("analytics", () => {
 
     afterAll(() => {
       setHostname("memdeck.org");
+    });
+
+    it("does not report an analytics host", () => {
+      expect(isAnalyticsHost()).toBe(false);
     });
 
     it("does not initialize ReactGA", () => {
@@ -1150,7 +1182,7 @@ describe("analytics", () => {
       analytics.trackError(new Error("test"));
 
       expect(mockEvent).not.toHaveBeenCalled();
-      expect(mockSend).not.toHaveBeenCalled();
+      expect(mockGtag).not.toHaveBeenCalled();
     });
 
     it("does not track ACAAN answers", () => {
@@ -1230,6 +1262,33 @@ describe("analytics", () => {
 
       expect(mockEvent).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe("analytics before initialize (no consent yet)", () => {
+  afterAll(() => {
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: originalLocation,
+      writable: true,
+    });
+  });
+
+  it("makes every tracker a no-op on the production hostname until initialize runs", async () => {
+    setHostname("memdeck.org");
+    vi.clearAllMocks();
+    vi.resetModules();
+    const fresh = await import("./analytics");
+
+    fresh.analytics.trackPageView("/");
+    fresh.analytics.trackEvent("Category", "Action");
+    fresh.analytics.trackFlashcardAnswer(true, "Mnemonica");
+    fresh.analytics.trackError(new Error("boom"));
+
+    expect(mockInitialize).not.toHaveBeenCalled();
+    expect(mockSend).not.toHaveBeenCalled();
+    expect(mockEvent).not.toHaveBeenCalled();
+    expect(mockGtag).not.toHaveBeenCalled();
   });
 });
 

@@ -1,8 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { ROUTES } from "../constants";
 import type { UsageFlags } from "../types/discovery";
+import { isDistanceConvention, isDistanceMode } from "../types/distance";
+import { isFlashcardMode } from "../types/flashcard";
 import type { TrainingMode } from "../types/session";
+import { isSpotCheckMode } from "../types/spot-check";
 import { SUGGESTION_CATALOG, TOTAL_SUGGESTIONS } from "./suggestion-catalog";
+
+/** The guards each mode page passes to `useSuggestionDeepLink` for `?try=`. */
+const TRY_VALUE_GUARDS: Record<TrainingMode, (value: unknown) => boolean> = {
+  acaan: () => false,
+  distance: (value) => isDistanceMode(value) || isDistanceConvention(value),
+  flashcard: isFlashcardMode,
+  spotcheck: isSpotCheckMode,
+};
 
 /** A fresh all-false usage object, so each case can flip exactly one flag. */
 const noUsage = (): UsageFlags => ({
@@ -156,8 +167,12 @@ describe("SUGGESTION_CATALOG", () => {
         // Whole modes just navigate — no preselect.
         expect(suggestion.deepLink).toBeUndefined();
       } else if (suggestion.priority === 2) {
-        // Variants preselect their sub-mode via ?try=.
+        // Variants preselect their sub-mode via ?try=, with a value the target
+        // mode's own guard accepts (the page silently drops anything else).
         expect(suggestion.deepLink?.param).toBe("try");
+        expect(
+          TRY_VALUE_GUARDS[suggestion.mode](suggestion.deepLink?.value)
+        ).toBe(true);
       } else {
         // Timed items (priority 3) carry the ?timed=1 preselect.
         expect(suggestion.deepLink).toEqual({ param: "timed", value: "1" });

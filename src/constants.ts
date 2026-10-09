@@ -104,6 +104,9 @@ export const DISCOVERY_MIN_SESSIONS = 3;
 /** How many further sessions a dismissed suggestion snoozes the whole surface */
 export const DISCOVERY_SNOOZE_SESSIONS = 2;
 
+/** localStorage key for the analytics consent choice. public/404.html reads the same literal. */
+export const ANALYTICS_CONSENT_LSK = "memdeck-app-analytics-consent";
+
 export const STACK_LIMITS_LSK = "memdeck-app-stack-limits";
 export const MIN_FLASHCARD_RANGE = 6;
 export const MIN_SPOT_CHECK_RANGE = 10;
@@ -111,7 +114,7 @@ export const MIN_DISTANCE_RANGE = 6;
 export const RANGE_PRESETS = [13, 26, 39, 52] as const;
 
 /** Canonical route format — leading + trailing slash, so consumers (sitemap, internal links) never trip a 301 redirect. */
-export type RoutePath = "/" | `/${string}/`;
+type RoutePath = "/" | `/${string}/`;
 
 /** All route paths used by the app — shared between routes.tsx and the pre-render script */
 export const ROUTES = {
@@ -129,8 +132,11 @@ export const ROUTES = {
   whatsNew: "/whats-new/",
 } as const satisfies Record<string, RoutePath>;
 
+/** One of the `ROUTES` values: an actual app route, not just any path of `RoutePath` shape. */
+export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];
+
 /**
- * PWA manifest shortcuts. URLs are constrained to `RoutePath` so they always
+ * PWA manifest shortcuts. URLs are constrained to `AppRoute` so they always
  * end with `/` and avoid the 301-redirect that breaks the PWA install context
  * (#582). `vite.config.ts` spreads this into `manifest.shortcuts`, and
  * `src/pwa-shortcuts.test.ts` asserts every URL exists in `ROUTES`.
@@ -164,6 +170,6 @@ export const PWA_SHORTCUTS = [
 ] as const satisfies readonly {
   name: string;
   short_name: string;
-  url: RoutePath;
+  url: AppRoute;
   description: string;
 }[];

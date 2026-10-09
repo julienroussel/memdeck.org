@@ -3,6 +3,7 @@ import type { PlayingCard } from "../../types/playingcard";
 import {
   createDeckPosition,
   type DeckPosition,
+  getCardAt,
   type Stack,
 } from "../../types/stacks";
 
@@ -52,7 +53,7 @@ export const computeSequences = (
     let index = start;
     for (let j = 0; j < cycleLength; j += 1) {
       cycle.push({
-        card: stack[index],
+        card: getCardAt(stack, index),
         position: createDeckPosition(index + 1),
       });
       index = (index + effectiveStep) % DECK_SIZE;

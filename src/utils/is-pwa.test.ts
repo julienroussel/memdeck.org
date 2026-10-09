@@ -7,6 +7,7 @@ beforeEach(() => {
 
 describe("isPwa", () => {
   it("returns false when not in standalone mode", () => {
+    // Partial mock: isPwa reads only `matches`.
     vi.spyOn(window, "matchMedia").mockReturnValue({
       matches: false,
     } as MediaQueryList);
@@ -14,6 +15,7 @@ describe("isPwa", () => {
   });
 
   it("returns true when display-mode is standalone", () => {
+    // Partial mock: isPwa reads only `matches`.
     vi.spyOn(window, "matchMedia").mockReturnValue({
       matches: true,
     } as MediaQueryList);
@@ -21,6 +23,7 @@ describe("isPwa", () => {
   });
 
   it("returns true when navigator.standalone is true (iOS)", () => {
+    // Partial mock: isPwa reads only `matches`.
     vi.spyOn(window, "matchMedia").mockReturnValue({
       matches: false,
     } as MediaQueryList);

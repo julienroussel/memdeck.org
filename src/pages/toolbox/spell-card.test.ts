@@ -40,8 +40,8 @@ describe("getSpellingData", () => {
   });
 
   it("assigns correct 1-based positions", () => {
-    expect(data[0].position).toBe(1);
-    expect(data[51].position).toBe(52);
+    expect(data[0]?.position).toBe(1);
+    expect(data[51]?.position).toBe(52);
   });
 
   it("computes correct letter counts", () => {

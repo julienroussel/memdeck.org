@@ -176,7 +176,7 @@ describe("getUniqueRandomCard", () => {
     const existingChoices: PlayingCardPosition[] = [];
     for (let i = 1; i <= 10; i += 1) {
       existingChoices.push({
-        card: testStack[i - 1],
+        card: getCardAt(testStack, i - 1),
         index: createDeckPosition(i),
       });
     }
@@ -193,7 +193,7 @@ describe("getUniqueRandomCard", () => {
     const allCards: PlayingCardPosition[] = [];
     for (let i = 1; i <= DECK_SIZE; i += 1) {
       allCards.push({
-        card: testStack[i - 1],
+        card: getCardAt(testStack, i - 1),
         index: createDeckPosition(i),
       });
     }
@@ -209,7 +209,7 @@ describe("getUniqueRandomCard", () => {
     const existingChoices: PlayingCardPosition[] = [];
     for (let i = 1; i <= DECK_SIZE - 1; i += 1) {
       existingChoices.push({
-        card: testStack[i - 1],
+        card: getCardAt(testStack, i - 1),
         index: createDeckPosition(i),
       });
     }
@@ -279,7 +279,7 @@ describe("getUniqueRandomCard with partial range", () => {
     const allInRange: PlayingCardPosition[] = [];
     for (let i: number = partialLimits.start; i <= partialLimits.end; i += 1) {
       allInRange.push({
-        card: testStack[i - 1],
+        card: getCardAt(testStack, i - 1),
         index: createDeckPosition(i),
       });
     }

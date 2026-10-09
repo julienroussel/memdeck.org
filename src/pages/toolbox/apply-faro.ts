@@ -22,9 +22,13 @@ const singleFaro = (
   const top = cards.slice(0, HALF);
   const bottom = cards.slice(HALF);
 
-  return top.flatMap((card, i): [PlayingCard, PlayingCard] =>
-    type === "out" ? [card, bottom[i]] : [bottom[i], card]
-  );
+  return top.flatMap((card, i): [PlayingCard, PlayingCard] => {
+    const partner = bottom[i];
+    if (!partner) {
+      throw new Error(`Invalid index: ${i}`);
+    }
+    return type === "out" ? [card, partner] : [partner, card];
+  });
 };
 
 /**
