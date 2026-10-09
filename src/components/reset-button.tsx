@@ -25,7 +25,7 @@ const clearServiceWorkersAndCaches = async () => {
   }
 };
 
-export const resetSettings = async () => {
+export const resetSettings = async (): Promise<void> => {
   try {
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i += 1) {
@@ -45,7 +45,7 @@ export const resetSettings = async () => {
   window.location.reload();
 };
 
-export const resetApp = async () => {
+export const resetApp = async (): Promise<void> => {
   try {
     localStorage.clear();
   } catch {

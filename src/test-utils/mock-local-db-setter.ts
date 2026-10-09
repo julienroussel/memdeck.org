@@ -1,4 +1,4 @@
-import { vi } from "vitest";
+import { type Mock, vi } from "vitest";
 import type { UseLocalDbSetOptions } from "../utils/localstorage";
 
 /**
@@ -14,7 +14,7 @@ import type { UseLocalDbSetOptions } from "../utils/localstorage";
 export const createGatedSetterMock = <T>(
   shouldSucceed: () => boolean,
   onSuccessAssign?: (value: T) => void
-) =>
+): Mock<(value: T, options?: UseLocalDbSetOptions) => void> =>
   vi.fn((value: T, options?: UseLocalDbSetOptions) => {
     if (shouldSucceed()) {
       onSuccessAssign?.(value);

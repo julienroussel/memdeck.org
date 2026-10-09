@@ -1,5 +1,5 @@
 import { Button, RangeSlider, Stack, Text } from "@mantine/core";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DECK_SIZE, MIN_FLASHCARD_RANGE, RANGE_PRESETS } from "../constants";
 import type { StackLimits } from "../types/stack-limits";
@@ -16,20 +16,17 @@ export const StackLimitsControl = ({
 }: StackLimitsControlProps) => {
   const { t } = useTranslation();
 
-  const [sliderValue, setSliderValue] = useState<[number, number]>([
-    limits.start,
-    limits.end,
-  ]);
-
-  useEffect(() => {
-    setSliderValue([limits.start, limits.end]);
-  }, [limits.start, limits.end]);
+  // Holds the in-progress value only while dragging; otherwise the slider
+  // shows `limits`, so a refused or failed write snaps back once the drag ends.
+  const [dragValue, setDragValue] = useState<[number, number] | null>(null);
+  const sliderValue: [number, number] = dragValue ?? [limits.start, limits.end];
 
   const sliderRangeSize = sliderValue[1] - sliderValue[0] + 1;
   const sliderIsFull = sliderValue[0] === 1 && sliderValue[1] === DECK_SIZE;
 
   const handleSliderChangeEnd = useCallback(
     (value: [number, number]) => {
+      setDragValue(null);
       onLimitsChange({
         end: createDeckPosition(value[1]),
         start: createDeckPosition(value[0]),
@@ -88,7 +85,7 @@ export const StackLimitsControl = ({
         max={DECK_SIZE}
         min={1}
         minRange={MIN_FLASHCARD_RANGE}
-        onChange={setSliderValue}
+        onChange={setDragValue}
         onChangeEnd={handleSliderChangeEnd}
         step={1}
         thumbFromLabel={t("stackLimits.thumbStartLabel")}

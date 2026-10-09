@@ -1,5 +1,15 @@
 /** Creates a Map-backed mock localStorage for node test environments */
-export const createMockLocalStorage = () => {
+export const createMockLocalStorage = (): {
+  mockLocalStorage: {
+    clear: () => void;
+    getItem: (key: string) => string | null;
+    key: (index: number) => string | null;
+    readonly length: number;
+    removeItem: (key: string) => void;
+    setItem: (key: string, value: string) => void;
+  };
+  storage: Map<string, string>;
+} => {
   const storage = new Map<string, string>();
   const mockLocalStorage = {
     clear: () => storage.clear(),

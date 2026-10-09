@@ -1,5 +1,5 @@
 import { Accordion, Group, Stack, Text, Title } from "@mantine/core";
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { buildBreadcrumbSchema, JsonLd } from "../../components/json-ld";
 import { ROUTES, TOOLBOX_SECTIONS_LSK } from "../../constants";
@@ -33,14 +33,9 @@ export const Toolbox = () => {
     }
   );
 
-  const openSectionsRef = useRef(openSections);
-  openSectionsRef.current = openSections;
-
   const handleSectionsChange = useCallback(
     (sections: string[]) => {
-      const opened = sections.filter(
-        (s) => !openSectionsRef.current.includes(s)
-      );
+      const opened = sections.filter((s) => !openSections.includes(s));
       setOpenSections(sections, {
         // Gate analytics on a real persisted write so quota / ITP failures
         // don't inflate "Toolbox - X" feature-used counts. Mirrors the
@@ -52,7 +47,7 @@ export const Toolbox = () => {
         },
       });
     },
-    [setOpenSections]
+    [openSections, setOpenSections]
   );
 
   useDocumentMeta({

@@ -30,12 +30,14 @@ export const useGameTimer = <TTimeoutAction extends { type: string }>({
   createTimeoutAction,
   onTimeout,
 }: UseGameTimerOptions<TTimeoutAction>): void => {
-  // Use ref to get latest createTimeoutAction without adding to effect dependencies
+  // Use ref to get latest createTimeoutAction without adding to effect dependencies.
+  // Synced in an effect declared before the timeout effect, not during render.
   const createTimeoutActionRef = useRef(createTimeoutAction);
-  createTimeoutActionRef.current = createTimeoutAction;
-
   const onTimeoutRef = useRef(onTimeout);
-  onTimeoutRef.current = onTimeout;
+  useEffect(() => {
+    createTimeoutActionRef.current = createTimeoutAction;
+    onTimeoutRef.current = onTimeout;
+  }, [createTimeoutAction, onTimeout]);
 
   // Handle timer duration changes from settings
   useEffect(() => {

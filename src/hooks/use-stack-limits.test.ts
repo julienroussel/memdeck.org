@@ -61,6 +61,9 @@ const { analytics } = await import("../services/analytics");
 const mockedTrackError = vi.mocked(analytics.trackError);
 
 beforeEach(() => {
+  // `vi.clearAllMocks` keeps implementations, so a `mockReturnValue` from one
+  // test would leak into the next; `mockReset` restores the pass-through.
+  mockedUseLocalDb.mockReset();
   mockProbeStoredValue.mockReturnValue({ status: "absent" });
   mockSetValueSucceeds = true;
 });
@@ -135,10 +138,11 @@ describe("useStackLimits", () => {
     expect(mockSetValue).toHaveBeenCalledTimes(1);
 
     // The setter is called with a function; invoke it to verify the result
-    const setterFn = mockSetValue.mock.calls[0][0] as (
-      prev: Record<string, unknown>
-    ) => Record<string, unknown>;
-    const updated = setterFn({});
+    const setterFn = mockSetValue.mock.calls[0]?.[0];
+    if (typeof setterFn !== "function") {
+      throw new Error("Expected setLimits to pass an updater function");
+    }
+    const updated: unknown = setterFn({});
     expect(updated).toEqual({ mnemonica: { end: 30, start: 10 } });
   });
 
@@ -178,10 +182,11 @@ describe("useStackLimits", () => {
     };
     result.current.setLimits(newLimits);
 
-    const setterFn = mockSetValue.mock.calls[0][0] as (
-      prev: Record<string, unknown>
-    ) => Record<string, unknown>;
-    const updated = setterFn(existingRecord);
+    const setterFn = mockSetValue.mock.calls[0]?.[0];
+    if (typeof setterFn !== "function") {
+      throw new Error("Expected setLimits to pass an updater function");
+    }
+    const updated: unknown = setterFn(existingRecord);
 
     expect(updated).toEqual({
       aronson: { end: 10, start: 1 },
@@ -230,9 +235,11 @@ describe("useStackLimits", () => {
     renderHook(() => useStackLimits("mnemonica"));
 
     expect(mockedTrackError).toHaveBeenCalledTimes(1);
-    const [errArg] = mockedTrackError.mock.calls[0];
-    expect(errArg).toBeInstanceOf(Error);
-    expect((errArg as Error).message).toBe("stackLimits-corrupt");
+    const errArg = mockedTrackError.mock.calls[0]?.[0];
+    if (!(errArg instanceof Error)) {
+      throw new Error("Expected trackError to be called with an Error");
+    }
+    expect(errArg.message).toBe("stackLimits-corrupt");
   });
 
   it("does not fire trackError when the stored blob is valid or absent", () => {

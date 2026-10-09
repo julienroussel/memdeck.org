@@ -1,5 +1,5 @@
-import { fireEvent, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { DECK_SIZE, RANGE_PRESETS } from "../constants";
 import { render } from "../test-utils";
 import type { StackLimits } from "../types/stack-limits";
@@ -17,6 +17,10 @@ const partialLimits: StackLimits = {
 };
 
 describe("StackLimitsControl", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("renders all preset buttons", () => {
     render(<StackLimitsControl limits={fullLimits} onLimitsChange={vi.fn()} />);
 
@@ -104,5 +108,53 @@ describe("StackLimitsControl", () => {
       end: createDeckPosition(20),
       start: createDeckPosition(6),
     });
+  });
+
+  it("shows the persisted limits again when a keyboard change is refused", () => {
+    // A refused or failed write leaves `limits` unchanged, so no new props
+    // arrive. Mantine fires onChange and onChangeEnd together on keyDown.
+    render(
+      <StackLimitsControl limits={partialLimits} onLimitsChange={vi.fn()} />
+    );
+
+    const startThumb = screen.getByRole("slider", { name: "Start position" });
+    fireEvent.keyDown(startThumb, { key: "ArrowRight" });
+
+    expect(startThumb).toHaveAttribute("aria-valuenow", "5");
+    expect(screen.getByText("Positions 5–20 (16 cards)")).toBeInTheDocument();
+  });
+
+  it("shows the dragged range during a pointer drag and the persisted limits once a refused write ends it", async () => {
+    // happy-dom has no layout; useMove ignores moves on a zero-size track.
+    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(
+      DOMRect.fromRect({ height: 10, width: 510, x: 0, y: 0 })
+    );
+    const handleChange = vi.fn();
+    render(
+      <StackLimitsControl
+        limits={partialLimits}
+        onLimitsChange={handleChange}
+      />
+    );
+
+    const startThumb = screen.getByRole("slider", { name: "Start position" });
+    fireEvent.mouseDown(startThumb, { clientX: 40 });
+    fireEvent.mouseMove(document, { clientX: 90 });
+
+    await waitFor(() => {
+      expect(startThumb).toHaveAttribute("aria-valuenow", "10");
+    });
+    expect(screen.getByText("Positions 10–20 (11 cards)")).toBeInTheDocument();
+
+    fireEvent.mouseUp(document);
+
+    await waitFor(() => {
+      expect(handleChange).toHaveBeenCalledWith({
+        end: createDeckPosition(20),
+        start: createDeckPosition(10),
+      });
+    });
+    expect(startThumb).toHaveAttribute("aria-valuenow", "5");
+    expect(screen.getByText("Positions 5–20 (16 cards)")).toBeInTheDocument();
   });
 });

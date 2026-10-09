@@ -82,10 +82,14 @@ export const useSuggestionDeepLink = ({
   // handlers each render, so reading them through refs keeps the effect's
   // dependency list to the router values only. Application is bounded to once
   // per param appearance by appliedRef, which resets when the params clear.
+  // The refs are synced in a layout effect declared before the applying one,
+  // not during render, so a discarded render cannot leave its handlers behind.
   const tryHandlersRef = useRef(tryHandlers);
-  tryHandlersRef.current = tryHandlers;
   const onTimedRef = useRef(onTimed);
-  onTimedRef.current = onTimed;
+  useLayoutEffect(() => {
+    tryHandlersRef.current = tryHandlers;
+    onTimedRef.current = onTimed;
+  }, [tryHandlers, onTimed]);
   const appliedRef = useRef(false);
 
   useLayoutEffect(() => {

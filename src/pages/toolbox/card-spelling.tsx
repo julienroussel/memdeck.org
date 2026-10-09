@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useFormatCardName } from "../../hooks/use-format-card-name";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useStackLimits } from "../../hooks/use-stack-limits";
+import { filterByRange } from "./filter-by-range";
 import { filterStack } from "./filter-stack";
 import { getSpellingData } from "./spell-card";
 import { SpellingRow } from "./spelling-row";
@@ -26,11 +27,8 @@ export const CardSpelling = () => {
   const visibleEntries = useMemo(() => {
     const filtered = filterStack(stackOrder, query, formatCardName);
     const filteredPositions = new Set(filtered.map((e) => e.position));
-    return spellingData.filter(
-      (e) =>
-        filteredPositions.has(e.position) &&
-        e.position >= limits.start &&
-        e.position <= limits.end
+    return filterByRange(spellingData, limits).filter((e) =>
+      filteredPositions.has(e.position)
     );
   }, [stackOrder, query, formatCardName, spellingData, limits]);
 

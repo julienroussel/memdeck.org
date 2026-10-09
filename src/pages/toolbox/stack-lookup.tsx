@@ -13,6 +13,7 @@ import { CARD_ASPECT_RATIO } from "../../constants";
 import { useFormatCardName } from "../../hooks/use-format-card-name";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useStackLimits } from "../../hooks/use-stack-limits";
+import { filterByRange } from "./filter-by-range";
 import { filterStack } from "./filter-stack";
 
 const THUMBNAIL_WIDTH = 40;
@@ -27,11 +28,8 @@ export const StackLookup = () => {
   const formatCardName = useFormatCardName();
 
   const filtered = useMemo(
-    () =>
-      filterStack(stackOrder, query, formatCardName).filter(
-        ({ position }) => position >= limits.start && position <= limits.end
-      ),
-    [stackOrder, query, formatCardName, limits.start, limits.end]
+    () => filterByRange(filterStack(stackOrder, query, formatCardName), limits),
+    [stackOrder, query, formatCardName, limits]
   );
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
