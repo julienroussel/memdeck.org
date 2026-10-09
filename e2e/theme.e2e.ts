@@ -27,8 +27,7 @@ test.describe("Theme & Color Scheme", () => {
     const themeSwitch = page.locator("input[type='checkbox']").first();
 
     // Default should be light mode (checked)
-    const isChecked = await themeSwitch.isChecked();
-    expect(isChecked).toBeTruthy();
+    await expect(themeSwitch).toBeChecked();
   });
 
   test("should toggle between light and dark theme", async ({ page }) => {
@@ -82,9 +81,7 @@ test.describe("Theme & Color Scheme", () => {
 
     // Verify theme is restored
     const reloadedSwitch = page.locator("input[type='checkbox']").first();
-    const reloadedChecked = await reloadedSwitch.isChecked();
-
-    expect(reloadedChecked).toBe(!initialChecked);
+    await expect(reloadedSwitch).toBeChecked({ checked: !initialChecked });
   });
 
   test("should apply dark theme styles when theme is switched", async ({
@@ -123,21 +120,23 @@ test.describe("Theme & Color Scheme", () => {
 
     // Navigate to resources
     await page.locator("a:has-text('Resources')").first().click();
-    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Memorized Deck Resources" })
+    ).toBeVisible();
 
     // Theme switch should still be unchecked
     const resourcesPageSwitch = page.locator("input[type='checkbox']").first();
-    const resourcesChecked = await resourcesPageSwitch.isChecked();
-    expect(resourcesChecked).toBe(!initialChecked);
+    await expect(resourcesPageSwitch).toBeChecked({ checked: !initialChecked });
 
     // Navigate back to home
     await page.locator("a:has-text('Home')").first().click();
-    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("heading", { name: "Master your memorized deck" })
+    ).toBeVisible();
 
     // Theme should still be dark
     const homeSwitch = page.locator("input[type='checkbox']").first();
-    const homeChecked = await homeSwitch.isChecked();
-    expect(homeChecked).toBe(!initialChecked);
+    await expect(homeSwitch).toBeChecked({ checked: !initialChecked });
   });
 
   test("should toggle theme from any page", async ({ page }) => {
@@ -146,11 +145,12 @@ test.describe("Theme & Color Scheme", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard
     await page.locator("a:has-text('Flashcard')").first().click();
-    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Flashcard" })
+    ).toBeVisible();
 
     // Toggle theme
     const themeSwitch = page.locator("input[type='checkbox']").first();
@@ -166,12 +166,13 @@ test.describe("Theme & Color Scheme", () => {
 
     // Navigate to resources
     await page.locator("a:has-text('Resources')").first().click();
-    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Memorized Deck Resources" })
+    ).toBeVisible();
 
     // Theme should still be dark
     const resourcesSwitch = page.locator("input[type='checkbox']").first();
-    const resourcesChecked = await resourcesSwitch.isChecked();
-    expect(resourcesChecked).toBe(newChecked);
+    await expect(resourcesSwitch).toBeChecked({ checked: newChecked });
   });
 
   test("should have proper contrast in both themes", async ({ page }) => {

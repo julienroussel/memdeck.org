@@ -1,6 +1,8 @@
 import { Button, Group, Table, Text, Title } from "@mantine/core";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { isSupportedLanguage } from "../../i18n/language";
+import type { SupportedLanguage } from "../../i18n/supported-languages";
 import { type DistanceMode, isDistanceMode } from "../../types/distance";
 import type { SessionRecord } from "../../types/session";
 import type { SpotCheckMode } from "../../types/spot-check";
@@ -17,9 +19,9 @@ type StatsHistoryProps = {
   history: SessionRecord[];
 };
 
-export const formatDate = (iso: string): string => {
+export const formatDate = (iso: string, lang: SupportedLanguage): string => {
   const date = new Date(iso);
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(lang, {
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
@@ -61,7 +63,8 @@ const formatModeLabel = (
 };
 
 export const StatsHistory = ({ history }: StatsHistoryProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = isSupportedLanguage(i18n.language) ? i18n.language : "en";
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const visibleHistory = history.slice(0, visibleCount);
@@ -105,7 +108,7 @@ export const StatsHistory = ({ history }: StatsHistoryProps) => {
         <Table.Tbody>
           {visibleHistory.map((record) => (
             <Table.Tr key={record.id}>
-              <Table.Td>{formatDate(record.startedAt)}</Table.Td>
+              <Table.Td>{formatDate(record.startedAt, lang)}</Table.Td>
               <Table.Td>{formatModeLabel(record, t)}</Table.Td>
               <Table.Td visibleFrom="xs">
                 {stacks[record.stackKey]?.name ?? record.stackKey}
@@ -114,13 +117,15 @@ export const StatsHistory = ({ history }: StatsHistoryProps) => {
                 {record.successes}/{record.questionsCompleted}
               </Table.Td>
               <Table.Td ta="center">
-                {toAccuracyPercent(record.accuracy)}%
+                {t("common.percent", {
+                  percent: toAccuracyPercent(record.accuracy),
+                })}
               </Table.Td>
               <Table.Td ta="center" visibleFrom="sm">
                 {record.bestStreak}
               </Table.Td>
               <Table.Td ta="center" visibleFrom="sm">
-                {formatDuration(record.durationSeconds)}
+                {formatDuration(record.durationSeconds, t)}
               </Table.Td>
             </Table.Tr>
           ))}

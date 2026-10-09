@@ -16,6 +16,7 @@ import { FocusOnNavigate } from "./components/focus-on-navigate";
 import { LanguageLoadNotifier } from "./components/language-load-notifier";
 import { PwaUpdateNotifier } from "./components/pwa-update-notifier";
 import { COLOR_SCHEME_LSK } from "./constants";
+import { useSplashRemoval } from "./hooks/use-splash-removal";
 import { analytics } from "./services/analytics";
 import { createColorSchemeManager } from "./utils/color-scheme-manager";
 
@@ -53,86 +54,109 @@ const theme = createTheme({
 });
 
 const cssVariablesResolver: CSSVariablesResolver = () => ({
-  dark: {},
+  dark: {
+    // Mantine's dark-2 default is 4.04:1 on dark-7 and 3.53:1 on dark-6.
+    "--mantine-color-dimmed": "#999999",
+  },
   light: {
     "--mantine-color-dimmed": "#495057",
+    // Mantine's defaults for these fall below 4.5:1 for normal-size text: the
+    // light variant draws shade 9 on shade 1, and filled orange or c="orange"
+    // resolve to shade 8. Light scheme only, so dark-scheme pairs are unchanged.
+    "--mantine-color-green-light-color": "#247434",
+    "--mantine-color-orange-filled": "#c84d0a",
+    "--mantine-color-orange-filled-hover": "#ba470a",
+    "--mantine-color-orange-light-color": "#b03a0c",
+    "--mantine-color-teal-light-color": "#077252",
+    "--mantine-color-yellow-light-color": "#a35400",
   },
   variables: {},
 });
 
 const reloadPage = () => window.location.reload();
 
-const RootErrorFallback = ({ error }: { error: unknown }) => (
-  <Center h="100vh" p="md">
-    <Stack align="center" gap="md">
-      <Title order={2}>Application Error</Title>
-      <Text c="dimmed" maw={400} ta="center">
-        A critical error occurred. Please refresh the page to continue.
-      </Text>
-      {import.meta.env.DEV ? (
-        <Text c="red" ff="monospace" size="sm">
-          {error instanceof Error ? error.message : String(error)}
-        </Text>
-      ) : null}
-      <Button onClick={reloadPage} variant="light">
-        Refresh Page
-      </Button>
-    </Stack>
-  </Center>
-);
+// The fallbacks remove the splash themselves: when App fails on first render
+// its useSplashRemoval effect never runs, and the opaque #splash would cover
+// the fallback.
+const RootErrorFallback = ({ error }: { error: unknown }) => {
+  useSplashRemoval();
 
-const OuterErrorFallback = ({ error }: { error: unknown }) => (
-  <div
-    role="alert"
-    style={{
-      alignItems: "center",
-      backgroundColor: "#ffffff",
-      color: "#212529",
-      display: "flex",
-      fontFamily: "system-ui, sans-serif",
-      height: "100vh",
-      justifyContent: "center",
-      padding: "1rem",
-      textAlign: "center",
-    }}
-  >
-    <div>
-      <h1 style={{ fontSize: "1.5rem", margin: 0 }}>Application Error</h1>
-      <p style={{ color: "#868e96", maxWidth: 400 }}>
-        A critical error occurred. Please refresh the page to continue.
-      </p>
-      {import.meta.env.DEV ? (
-        <pre
+  return (
+    <Center h="100vh" p="md">
+      <Stack align="center" gap="md">
+        <Title order={2}>Application Error</Title>
+        <Text c="dimmed" maw={400} ta="center">
+          A critical error occurred. Please refresh the page to continue.
+        </Text>
+        {import.meta.env.DEV ? (
+          <Text c="red" ff="monospace" size="sm">
+            {error instanceof Error ? error.message : String(error)}
+          </Text>
+        ) : null}
+        <Button onClick={reloadPage} variant="light">
+          Refresh Page
+        </Button>
+      </Stack>
+    </Center>
+  );
+};
+
+const OuterErrorFallback = ({ error }: { error: unknown }) => {
+  useSplashRemoval();
+
+  return (
+    <div
+      role="alert"
+      style={{
+        alignItems: "center",
+        backgroundColor: "#ffffff",
+        color: "#212529",
+        display: "flex",
+        fontFamily: "system-ui, sans-serif",
+        height: "100vh",
+        justifyContent: "center",
+        padding: "1rem",
+        textAlign: "center",
+      }}
+    >
+      <div>
+        <h1 style={{ fontSize: "1.5rem", margin: 0 }}>Application Error</h1>
+        <p style={{ color: "#495057", maxWidth: 400 }}>
+          A critical error occurred. Please refresh the page to continue.
+        </p>
+        {import.meta.env.DEV ? (
+          <pre
+            style={{
+              color: "#c92a2a",
+              fontFamily: "monospace",
+              fontSize: "0.8rem",
+              maxWidth: 500,
+              overflow: "auto",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+            }}
+          >
+            {error instanceof Error ? error.message : String(error)}
+          </pre>
+        ) : null}
+        <button
+          onClick={reloadPage}
           style={{
-            color: "#c92a2a",
-            fontFamily: "monospace",
-            fontSize: "0.8rem",
-            maxWidth: 500,
-            overflow: "auto",
-            whiteSpace: "pre-wrap",
-            wordBreak: "break-word",
+            background: "transparent",
+            border: "1px solid #dee2e6",
+            borderRadius: 4,
+            cursor: "pointer",
+            fontSize: "0.875rem",
+            padding: "0.5rem 1rem",
           }}
+          type="button"
         >
-          {error instanceof Error ? error.message : String(error)}
-        </pre>
-      ) : null}
-      <button
-        onClick={reloadPage}
-        style={{
-          background: "transparent",
-          border: "1px solid #dee2e6",
-          borderRadius: 4,
-          cursor: "pointer",
-          fontSize: "0.875rem",
-          padding: "0.5rem 1rem",
-        }}
-        type="button"
-      >
-        Refresh Page
-      </button>
+          Refresh Page
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const handleOuterError = (error: unknown) => {
   const errorObj = error instanceof Error ? error : new Error(String(error));

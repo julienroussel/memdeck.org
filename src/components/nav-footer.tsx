@@ -65,7 +65,7 @@ export const NavFooter = () => {
         </Anchor>
         <ShareButton />
         <Text c="dimmed" size="xs">
-          <VisuallyHidden>Build version:</VisuallyHidden>
+          <VisuallyHidden>{t("navFooter.buildVersion")}</VisuallyHidden>
           v. <span style={commitHashStyle}>{__COMMIT_HASH__}</span>
         </Text>
         <ResetButton />

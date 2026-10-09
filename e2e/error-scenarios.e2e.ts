@@ -67,10 +67,8 @@ test.describe("Error Scenarios - RequireStack Guard", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // Verify we're on flashcard page
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
@@ -108,17 +106,15 @@ test.describe("Error Scenarios - Invalid localStorage Data", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // App should still load without crashing
     await expect(
       page.getByRole("heading", { name: "Flashcard" })
     ).toBeVisible();
-    const successBadge = page.getByLabel(CORRECT_ANSWERS_PATTERN);
-    const failBadge = page.getByLabel(INCORRECT_ANSWERS_PATTERN);
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
     await expect(successBadge).toBeVisible();
     await expect(failBadge).toBeVisible();
   });
@@ -142,10 +138,8 @@ test.describe("Error Scenarios - Invalid localStorage Data", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("aronson");
-    await page.waitForLoadState("networkidle");
 
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // App should still load without crashing
     await expect(
@@ -169,10 +163,8 @@ test.describe("Error Scenarios - Invalid localStorage Data", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // App should still load with default behavior
     await expect(
@@ -197,10 +189,8 @@ test.describe("Error Scenarios - Invalid localStorage Data", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("redford");
-    await page.waitForLoadState("networkidle");
 
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // App should handle type mismatch gracefully
     await expect(
@@ -224,10 +214,8 @@ test.describe("Error Scenarios - Invalid localStorage Data", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("particle");
-    await page.waitForLoadState("networkidle");
 
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // App should still work with null/undefined values
     await expect(
@@ -254,11 +242,9 @@ test.describe("Error Scenarios - Invalid Stack Key", () => {
     await page.waitForLoadState("networkidle");
 
     // Stack picker should show no selection (empty value)
-    const selectedValue = await page
-      .locator("[data-testid='stack-picker']")
-      .first()
-      .inputValue();
-    expect(selectedValue).toBe("");
+    await expect(
+      page.locator("[data-testid='stack-picker']").first()
+    ).toHaveValue("");
 
     // First-timer message should be visible since no valid stack is selected
     await expect(
@@ -277,11 +263,9 @@ test.describe("Error Scenarios - Invalid Stack Key", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
 
     // Corrupt the stack key
@@ -334,11 +318,9 @@ test.describe("Error Scenarios - Invalid Stack Key", () => {
     await page.waitForLoadState("networkidle");
 
     // Should treat as no valid stack
-    const selectedValue = await page
-      .locator("[data-testid='stack-picker']")
-      .first()
-      .inputValue();
-    expect(selectedValue).toBe("");
+    await expect(
+      page.locator("[data-testid='stack-picker']").first()
+    ).toHaveValue("");
   });
 });
 
@@ -360,7 +342,9 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
 
     // Resources page should load without requiring stack
     await expect(page).toHaveURL(RESOURCES_URL_PATTERN);
-    await expect(page.locator("body")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Memorized Deck Resources" })
+    ).toBeVisible();
   });
 
   test("should handle direct navigation to non-existent route", async ({
@@ -369,15 +353,17 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
     // Navigate to invalid route
     await page.goto("/this-route-does-not-exist");
 
-    // Should show 404 page (all routes are statically pre-rendered)
     await page.waitForLoadState("networkidle");
 
-    // App should still be functional after invalid route
-    await expect(page.locator("body")).toBeVisible();
+    // Both the dev and preview servers fall back to index.html, and the
+    // router's catch-all route redirects to home.
+    await expect(page).toHaveURL(HOME_URL_PATTERN);
+    await expect(
+      page.getByRole("heading", { name: "Master your memorized deck" })
+    ).toBeVisible();
 
     // Navigation should still work
     await page.locator("#main-nav a:has-text('Home')").click();
-    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(HOME_URL_PATTERN);
   });
 
@@ -396,11 +382,9 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
 
     // Navigate to resources
     await page.locator("#main-nav a:has-text('Resources')").click();
-    await page.waitForLoadState("networkidle");
 
     // Press browser back button
     await page.goBack();
-    await page.waitForLoadState("networkidle");
 
     // Should be back on flashcard with no-stack message
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
@@ -421,15 +405,12 @@ test.describe("Error Scenarios - Direct URL Navigation", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
 
     // Go back to home
     await page.goBack();
-    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(HOME_URL_PATTERN);
 
     // Clear stack selection
@@ -474,16 +455,11 @@ test.describe("Error Scenarios - Edge Cases", () => {
       // Don't wait for networkidle - test rapid switching
     }
 
-    // Wait for final state to settle
-    await page.waitForLoadState("networkidle");
-
     // Final selection should be memorandum
-    const selectedValue = await stackPicker.inputValue();
-    expect(selectedValue).toBe("memorandum");
+    await expect(stackPicker).toHaveValue("memorandum");
 
     // Should still be able to navigate to flashcard
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
   });
 
@@ -539,10 +515,8 @@ test.describe("Error Scenarios - Edge Cases", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // App should still function
     await expect(
@@ -574,10 +548,8 @@ test.describe("Error Scenarios - Edge Cases", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("aronson");
-    await page.waitForLoadState("networkidle");
 
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // Should work with default flashcard option
     await expect(
@@ -599,11 +571,9 @@ test.describe("Error Scenarios - Edge Cases", () => {
     await page.waitForLoadState("networkidle");
 
     // Should treat whitespace as invalid stack key
-    const selectedValue = await page
-      .locator("[data-testid='stack-picker']")
-      .first()
-      .inputValue();
-    expect(selectedValue).toBe("");
+    await expect(
+      page.locator("[data-testid='stack-picker']").first()
+    ).toHaveValue("");
   });
 
   test("should handle page reload during active flashcard session", async ({
@@ -617,10 +587,8 @@ test.describe("Error Scenarios - Edge Cases", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // Make some progress
     const cardSpreadItems = page.locator(".cardSpreadCard");
@@ -635,8 +603,8 @@ test.describe("Error Scenarios - Edge Cases", () => {
     await expect(
       page.getByRole("heading", { name: "Flashcard" })
     ).toBeVisible();
-    const successBadge = page.getByLabel(CORRECT_ANSWERS_PATTERN);
-    const failBadge = page.getByLabel(INCORRECT_ANSWERS_PATTERN);
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
     await expect(successBadge).toBeVisible();
     await expect(failBadge).toBeVisible();
   });
@@ -656,7 +624,6 @@ test.describe("Error Scenarios - Edge Cases", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page1.waitForLoadState("networkidle");
 
     // Open second tab and select aronson (overwrites localStorage)
     const page2 = await context.newPage();
@@ -667,31 +634,23 @@ test.describe("Error Scenarios - Edge Cases", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("aronson");
-    await page2.waitForLoadState("networkidle");
 
     // Reload page1 — it should now see aronson since localStorage was overwritten
     await page1.reload();
     await page1.waitForLoadState("networkidle");
 
-    const stack1 = await page1
-      .locator("[data-testid='stack-picker']")
-      .first()
-      .inputValue();
-    const stack2 = await page2
-      .locator("[data-testid='stack-picker']")
-      .first()
-      .inputValue();
-
-    expect(stack1).toBe("aronson");
-    expect(stack2).toBe("aronson");
+    await expect(
+      page1.locator("[data-testid='stack-picker']").first()
+    ).toHaveValue("aronson");
+    await expect(
+      page2.locator("[data-testid='stack-picker']").first()
+    ).toHaveValue("aronson");
 
     // Both should be able to navigate to flashcard
     await page1.locator("a:has-text('Flashcard')").first().click();
-    await page1.waitForLoadState("networkidle");
     await expect(page1).toHaveURL(FLASHCARD_URL_PATTERN);
 
     await page2.locator("a:has-text('Flashcard')").first().click();
-    await page2.waitForLoadState("networkidle");
     await expect(page2).toHaveURL(FLASHCARD_URL_PATTERN);
 
     // Cleanup

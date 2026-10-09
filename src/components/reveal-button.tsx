@@ -13,6 +13,7 @@ export const RevealButton = ({ onReveal }: RevealButtonProps) => {
     <Affix position={{ bottom: 24, right: 24 }} zIndex={200}>
       <ActionIcon
         aria-label={t("common.revealAriaLabel")}
+        autoContrast
         color="yellow"
         onClick={onReveal}
         radius="xl"

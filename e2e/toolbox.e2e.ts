@@ -16,11 +16,12 @@ test.describe("Toolbox Page", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Navigate to toolbox page
     await page.locator("a:has-text('Toolbox')").first().click();
-    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Toolbox" })
+    ).toBeVisible();
   });
 
   test("should load toolbox page and render correctly after selecting a stack", async ({
@@ -83,11 +84,9 @@ test.describe("Toolbox Page", () => {
         .locator("[data-testid='stack-picker']")
         .first()
         .selectOption(stack);
-      await page.waitForLoadState("networkidle");
 
       // Navigate to toolbox
       await page.locator("a:has-text('Toolbox')").first().click();
-      await page.waitForLoadState("networkidle");
 
       // Should render correctly
       await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
@@ -96,7 +95,7 @@ test.describe("Toolbox Page", () => {
       ).toBeVisible();
 
       // Verify stack persisted
-      const stackKey = await page.evaluate(() => {
+      const stackKey = await page.evaluate((): unknown => {
         const value = localStorage.getItem("memdeck-app-stack");
         return value ? JSON.parse(value) : null;
       });
@@ -111,7 +110,7 @@ test.describe("Toolbox Page", () => {
     await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
 
     // Check localStorage has stack selection
-    const stackKey = await page.evaluate(() => {
+    const stackKey = await page.evaluate((): unknown => {
       const value = localStorage.getItem("memdeck-app-stack");
       return value ? JSON.parse(value) : null;
     });

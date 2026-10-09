@@ -41,6 +41,11 @@
   overflow: hidden;
 }
 
+.cardSpreadContainer:focus-visible {
+  outline: 3px solid var(--mantine-primary-color-filled, #228be6);
+  outline-offset: 2px;
+}
+
 .cardSpreadCard {
   position: absolute;
   padding: 0;

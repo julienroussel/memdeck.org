@@ -213,4 +213,92 @@ describe("FlashcardActiveRound", () => {
 
     expect(onSubmitAnswer).toHaveBeenCalledWith(AceOfSpades, 2);
   });
+
+  describe("live region after a wrong pick", () => {
+    // A wrong pick keeps the same question open, so the announcement must not
+    // hand screen-reader users the answer.
+    const getLiveRegion = (container: HTMLElement) => {
+      const region = container.querySelector('[aria-live="polite"]');
+      if (!region) {
+        throw new Error("Expected a polite live region");
+      }
+      return region;
+    };
+
+    it("announces try-again without the answer for a wrong number", async () => {
+      const user = userEvent.setup();
+      const { container } = renderInGrid(
+        <FlashcardActiveRound
+          answerCard={promptCard}
+          card={promptCard}
+          cardChoices={cardChoices}
+          isNeighborMode={false}
+          numberChoices={numberChoices}
+          onSubmitAnswer={vi.fn()}
+          resolvedDirection={null}
+          shouldShowCard={true}
+          timeRemaining={30}
+          timerDuration={30}
+          timerEnabled={false}
+        />
+      );
+
+      await user.click(
+        screen.getByRole("button", { name: "Select position 3" })
+      );
+
+      const text = getLiveRegion(container).textContent ?? "";
+      expect(text).toContain("Wrong answer. Try again!");
+      // The answer is position 1.
+      expect(text).not.toContain("1");
+    });
+
+    it("announces try-again without the answer for a wrong card", async () => {
+      const user = userEvent.setup();
+      const { container } = renderInGrid(
+        <FlashcardActiveRound
+          answerCard={promptCard}
+          card={promptCard}
+          cardChoices={cardChoices}
+          isNeighborMode={true}
+          numberChoices={numberChoices}
+          onSubmitAnswer={vi.fn()}
+          resolvedDirection="after"
+          shouldShowCard={true}
+          timeRemaining={30}
+          timerDuration={30}
+          timerEnabled={false}
+        />
+      );
+
+      await user.click(screen.getByRole("button", { name: "Ace of Spades" }));
+
+      const text = getLiveRegion(container).textContent ?? "";
+      expect(text).toContain("Wrong answer. Try again!");
+      expect(text).not.toContain("Four of Clubs");
+    });
+
+    it("still announces Correct for a right pick", async () => {
+      const user = userEvent.setup();
+      const { container } = renderInGrid(
+        <FlashcardActiveRound
+          answerCard={promptCard}
+          card={promptCard}
+          cardChoices={cardChoices}
+          isNeighborMode={true}
+          numberChoices={numberChoices}
+          onSubmitAnswer={vi.fn()}
+          resolvedDirection="after"
+          shouldShowCard={true}
+          timeRemaining={30}
+          timerDuration={30}
+          timerEnabled={false}
+        />
+      );
+
+      await user.click(screen.getByRole("button", { name: "Four of Clubs" }));
+
+      expect(getLiveRegion(container).textContent).toContain("Correct");
+    });
+  });
 });

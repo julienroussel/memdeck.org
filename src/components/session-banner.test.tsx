@@ -5,6 +5,20 @@ import { render } from "../test-utils";
 import { makeActiveSession } from "../test-utils/session-factories";
 import { SessionBanner } from "./session-banner";
 
+/**
+ * Each badge exposes its meaning as visually hidden text (reachable in browse
+ * mode) followed by the visible value, which is hidden from assistive tech.
+ */
+const expectBadge = (label: string, value: string) => {
+  const hiddenLabel = screen.getByText(label);
+  const visibleValue = hiddenLabel.nextElementSibling;
+  expect(visibleValue).toHaveTextContent(value);
+  expect(visibleValue).toHaveAttribute("aria-hidden", "true");
+  expect(hiddenLabel.closest(".mantine-Badge-root")).not.toHaveAttribute(
+    "aria-label"
+  );
+};
+
 describe("SessionBanner", () => {
   it("renders progress as completed/total for structured sessions", () => {
     const session = makeActiveSession({
@@ -14,9 +28,7 @@ describe("SessionBanner", () => {
 
     render(<SessionBanner onStop={vi.fn()} session={session} />);
 
-    const progressBadge = screen.getByLabelText("Progress: 8/20");
-    expect(progressBadge).toBeInTheDocument();
-    expect(progressBadge).toHaveTextContent("8/20");
+    expectBadge("Progress: 8/20", "8/20");
   });
 
   it("renders progress as just the count for open sessions", () => {
@@ -27,9 +39,7 @@ describe("SessionBanner", () => {
 
     render(<SessionBanner onStop={vi.fn()} session={session} />);
 
-    const progressBadge = screen.getByLabelText("Progress: 15");
-    expect(progressBadge).toBeInTheDocument();
-    expect(progressBadge).toHaveTextContent("15");
+    expectBadge("Progress: 15", "15");
   });
 
   it("renders the Score component with correct success and fail counts", () => {
@@ -40,13 +50,8 @@ describe("SessionBanner", () => {
 
     render(<SessionBanner onStop={vi.fn()} session={session} />);
 
-    const successBadge = screen.getByLabelText("Correct answers: 12");
-    expect(successBadge).toBeInTheDocument();
-    expect(successBadge).toHaveTextContent("12");
-
-    const failBadge = screen.getByLabelText("Incorrect answers: 3");
-    expect(failBadge).toBeInTheDocument();
-    expect(failBadge).toHaveTextContent("3");
+    expect(screen.getByTestId("score-success")).toHaveTextContent("12");
+    expect(screen.getByTestId("score-fail")).toHaveTextContent("3");
   });
 
   it("renders accuracy percentage", () => {
@@ -58,9 +63,7 @@ describe("SessionBanner", () => {
 
     render(<SessionBanner onStop={vi.fn()} session={session} />);
 
-    const accuracyBadge = screen.getByLabelText("Accuracy: 70%");
-    expect(accuracyBadge).toBeInTheDocument();
-    expect(accuracyBadge).toHaveTextContent("70%");
+    expectBadge("Accuracy: 70%", "70%");
   });
 
   it("renders current streak count", () => {
@@ -70,9 +73,7 @@ describe("SessionBanner", () => {
 
     render(<SessionBanner onStop={vi.fn()} session={session} />);
 
-    const streakBadge = screen.getByLabelText("Current streak: 5");
-    expect(streakBadge).toBeInTheDocument();
-    expect(streakBadge).toHaveTextContent("5");
+    expectBadge("Current streak: 5", "5");
   });
 
   it("renders best streak count", () => {
@@ -82,9 +83,7 @@ describe("SessionBanner", () => {
 
     render(<SessionBanner onStop={vi.fn()} session={session} />);
 
-    const bestStreakBadge = screen.getByLabelText("Best streak: 8");
-    expect(bestStreakBadge).toBeInTheDocument();
-    expect(bestStreakBadge).toHaveTextContent("8");
+    expectBadge("Best streak: 8", "8");
   });
 
   it("calls onStop when the Stop button is clicked", async () => {

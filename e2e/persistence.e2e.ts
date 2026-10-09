@@ -13,7 +13,6 @@ test.describe("localStorage Persistence", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("aronson");
-    await page.waitForLoadState("networkidle");
 
     // Verify localStorage (Mantine's useLocalStorage stores JSON stringified values)
     const savedStack = await page.evaluate(() =>
@@ -26,11 +25,9 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Stack should still be selected
-    const selectedValue = await page
-      .locator("[data-testid='stack-picker']")
-      .first()
-      .inputValue();
-    expect(selectedValue).toBe("aronson");
+    await expect(
+      page.locator("[data-testid='stack-picker']").first()
+    ).toHaveValue("aronson");
 
     // Stack name should be displayed in main content
     await expect(page.getByRole("main").getByText("Aronson")).toBeVisible();
@@ -44,11 +41,9 @@ test.describe("localStorage Persistence", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard
     await page.locator("a:has-text('Flashcard')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Open settings popover and select card-only mode
     await page.getByRole("button", { name: "Flashcard settings" }).click();
@@ -103,8 +98,7 @@ test.describe("localStorage Persistence", () => {
 
     // Theme should still be dark
     const reloadedSwitch = page.locator("input[type='checkbox']").first();
-    const reloadedIsLight = await reloadedSwitch.isChecked();
-    expect(reloadedIsLight).toBe(!isLight);
+    await expect(reloadedSwitch).toBeChecked({ checked: !isLight });
   });
 
   test("should maintain multiple settings together", async ({ page }) => {
@@ -117,11 +111,9 @@ test.describe("localStorage Persistence", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("redford");
-    await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard and set mode
     await page.locator("a:has-text('Flashcard')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Open settings popover and select number-only mode
     await page.getByRole("button", { name: "Flashcard settings" }).click();
@@ -147,15 +139,12 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Check stack
-    const selectedValue = await page
-      .locator("[data-testid='stack-picker']")
-      .first()
-      .inputValue();
-    expect(selectedValue).toBe("redford");
+    await expect(
+      page.locator("[data-testid='stack-picker']").first()
+    ).toHaveValue("redford");
 
     // Navigate to flashcard
     await page.locator("a:has-text('Flashcard')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Check mode (Mantine's useLocalStorage stores JSON stringified values)
     const mode = await page.evaluate(() =>
@@ -183,7 +172,6 @@ test.describe("localStorage Persistence", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("particle");
-    await page.waitForLoadState("networkidle");
 
     // Create a new page in same context (simulates new tab)
     const page2 = await context.newPage();
@@ -193,11 +181,9 @@ test.describe("localStorage Persistence", () => {
     await page2.waitForLoadState("networkidle");
 
     // Stack selection should be visible in second tab
-    const selectedValue = await page2
-      .locator("[data-testid='stack-picker']")
-      .first()
-      .inputValue();
-    expect(selectedValue).toBe("particle");
+    await expect(
+      page2.locator("[data-testid='stack-picker']").first()
+    ).toHaveValue("particle");
 
     await page2.close();
   });
@@ -213,7 +199,6 @@ test.describe("localStorage Persistence", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("memorandum");
-    await page.waitForLoadState("networkidle");
 
     // Verify it's saved (Mantine's useLocalStorage stores JSON stringified values)
     const savedStack = await page.evaluate(() =>
@@ -231,11 +216,9 @@ test.describe("localStorage Persistence", () => {
     await page.waitForLoadState("networkidle");
 
     // Stack should be reset - verify the select has empty value
-    const selectedValue = await page
-      .locator("[data-testid='stack-picker']")
-      .first()
-      .inputValue();
-    expect(selectedValue).toBe("");
+    await expect(
+      page.locator("[data-testid='stack-picker']").first()
+    ).toHaveValue("");
 
     // After reload, the key stays absent until the user makes a selection.
     // (Pre-#639, mounting useLocalDb auto-wrote the default value to disk —
@@ -271,7 +254,7 @@ test.describe("localStorage Persistence", () => {
 
     // The picker shows empty (default fallback) — no stack selected.
     const stackPicker = page.locator("[data-testid='stack-picker']").first();
-    expect(await stackPicker.inputValue()).toBe("");
+    await expect(stackPicker).toHaveValue("");
 
     // Pin the invariant the fix guarantees: empty UI coexists with the
     // corrupt blob still on disk. Distinguishes reset-on-write from a
@@ -286,9 +269,8 @@ test.describe("localStorage Persistence", () => {
     // The user picks a real stack — the setter must overwrite the corrupt
     // bytes (reset-on-write) so the selection persists.
     await stackPicker.selectOption("aronson");
-    await page.waitForLoadState("networkidle");
 
-    expect(await stackPicker.inputValue()).toBe("aronson");
+    await expect(stackPicker).toHaveValue("aronson");
 
     const onDisk = await page.evaluate(() =>
       localStorage.getItem("memdeck-app-stack")
@@ -306,26 +288,19 @@ test.describe("localStorage Persistence", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Navigate rapidly between pages
     await page.locator("a:has-text('Flashcard')").first().click();
-    await page.waitForLoadState("networkidle");
 
     await page.locator("a:has-text('Home')").first().click();
-    await page.waitForLoadState("networkidle");
 
     await page.locator("a:has-text('Resources')").first().click();
-    await page.waitForLoadState("networkidle");
 
     await page.locator("a:has-text('Home')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Stack should still be selected
-    const selectedValue = await page
-      .locator("[data-testid='stack-picker']")
-      .first()
-      .inputValue();
-    expect(selectedValue).toBe("mnemonica");
+    await expect(
+      page.locator("[data-testid='stack-picker']").first()
+    ).toHaveValue("mnemonica");
   });
 });

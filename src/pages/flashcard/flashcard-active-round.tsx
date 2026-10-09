@@ -3,7 +3,6 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { TimerDisplay } from "../../components/timer-display";
-import { useFormatCardName } from "../../hooks/use-format-card-name";
 import type { PlayingCard } from "../../types/playingcard";
 import type { PlayingCardPosition } from "../../types/stacks";
 import type { ResolvedDirection } from "../../utils/neighbor";
@@ -46,7 +45,6 @@ export const FlashcardActiveRound = ({
   onSubmitAnswer,
 }: FlashcardActiveRoundProps) => {
   const { t } = useTranslation();
-  const formatCardName = useFormatCardName();
   const [announcement, setAnnouncement] = useState<Announcement>({
     id: 0,
     text: "",
@@ -58,19 +56,17 @@ export const FlashcardActiveRound = ({
 
   const showNumberChoices = !isNeighborMode && shouldShowCard;
 
+  // A wrong pick does not advance the question, so the announcement must not
+  // reveal the answer: it mirrors the visible "Wrong answer / Try again!" toast.
+  const wrongAnswerText = `${t("common.wrongAnswerTitle")}. ${t("common.wrongAnswerMessage")}`;
+
   const handleNumberClick = useCallback(
     (value: number, index: number) => {
       const correct = value === answerCard.index;
-      announce(
-        correct
-          ? t("flashcard.answerCorrect")
-          : t("flashcard.answerIncorrect", {
-              answer: String(answerCard.index),
-            })
-      );
+      announce(correct ? t("flashcard.answerCorrect") : wrongAnswerText);
       onSubmitAnswer(value, index);
     },
-    [answerCard, announce, onSubmitAnswer, t]
+    [answerCard, announce, onSubmitAnswer, t, wrongAnswerText]
   );
 
   const handleCardClick = useCallback(
@@ -78,16 +74,10 @@ export const FlashcardActiveRound = ({
       const correct =
         value.suit === answerCard.card.suit &&
         value.rank === answerCard.card.rank;
-      announce(
-        correct
-          ? t("flashcard.answerCorrect")
-          : t("flashcard.answerIncorrect", {
-              answer: formatCardName(answerCard.card),
-            })
-      );
+      announce(correct ? t("flashcard.answerCorrect") : wrongAnswerText);
       onSubmitAnswer(value, index);
     },
-    [answerCard, announce, onSubmitAnswer, t, formatCardName]
+    [answerCard, announce, onSubmitAnswer, t, wrongAnswerText]
   );
 
   return (

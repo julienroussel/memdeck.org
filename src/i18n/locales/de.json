@@ -23,8 +23,10 @@
     "acaanTimedTitle": "Du beherrschst ACAAN — jetzt gegen die Uhr."
   },
   "common": {
-    "comingSoon": "Demnächst verfügbar...",
     "learnMore": "Mehr erfahren",
+    "percent": "{{percent}}%",
+    "durationSeconds": "{{seconds}} s",
+    "durationMinutesSeconds": "{{minutes}} min {{seconds}} s",
     "showMore": "Mehr anzeigen",
     "check": "Prüfen",
     "stop": "Stopp",
@@ -90,21 +92,19 @@
     "languageAriaLabel": "Sprache"
   },
   "navFooter": {
-    "llmsTxtDescription": "— Website-Zusammenfassung für LLMs (öffnet in neuem Tab)"
+    "llmsTxtDescription": "— Website-Zusammenfassung für LLMs (öffnet in neuem Tab)",
+    "buildVersion": "Build-Version:"
   },
   "home": {
     "pageTitle": "MemDeck — Meistere dein memoriertes Kartendeck",
     "pageDescription": "Kostenloses Online-Tool zum Meistern von memorierten Kartensystemen wie Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant und Infinity.",
     "welcomeNew": "Meistere dein memoriertes Kartendeck",
     "welcomeReturning": "Bereit zum Üben?",
-    "intro": "Ich hoffe, diese Tools helfen dir beim Erlernen deines Stacks. Wirf einen Blick in die <guideLink>Anleitung</guideLink> für einen Überblick über alles, was MemDeck bietet. Brauchst du Hilfe oder fehlt etwas? Kontaktiere mich auf <githubLink>GitHub</githubLink>!",
-    "firstTimer": "Hallo, Neuling! Wähle unten deinen Lieblings-Stack, um alle Funktionen freizuschalten. Du kannst jederzeit über die Auswahl am unteren Rand des Menüs wechseln.",
     "guideCardTitle": "Neu hier? Lies die Anleitung",
     "guideCardDescription": "Erfahre alles über die Trainingsmodi und wie du das Beste aus MemDeck herausholst.",
     "selectedStack": "Dein ausgewählter Stack ist <bold>{{stackName}}</bold>",
     "whatIsMemdeck": "Ein memoriertes Kartendeck ist ein vollständiges Kartenspiel in einer bestimmten Reihenfolge, die du auswendig lernst — und damit die Tür zu starker Kartenmagie und beeindruckenden Gedächtnisleistungen öffnest.",
     "introNew": "MemDeck hilft dir, deinen Stack mit Übungen, Rechnern und visuellem Training zu meistern. Wähle unten einen Stack aus, um loszulegen — kostenlos und vollständig in deinem Browser.",
-    "introReturning": "Bereit zum Üben? Starte eine Sitzung oder erkunde deine Tools unten.",
     "stackPickerHint": "Nicht sicher? Mnemonica und Aronson sind beliebte Einstiegspunkte.",
     "featuresTitle": "Trainingsmodi",
     "featureFlashcardTitle": "Flashcard",
@@ -173,8 +173,7 @@
     "timesUp": "Zeit abgelaufen!",
     "movingToNext": "Weiter zur nächsten Karte.",
     "revealTitle": "Antwort",
-    "answerCorrect": "Richtig",
-    "answerIncorrect": "Falsch, die Antwort war {{answer}}"
+    "answerCorrect": "Richtig"
   },
   "acaan": {
     "pageTitle": "ACAAN-Training",
@@ -189,7 +188,6 @@
     "wrongMessage": "Versuch es nochmal!",
     "revealTitle": "Antwort",
     "timesUp": "Zeit abgelaufen!",
-    "movingToNext": "Weiter zur nächsten Runde.",
     "cutDepthMessage": "Position {{from}} → {{to}}, Abhebentiefe: {{cutDepth}}",
     "cutDepthZero": "0 (nicht abheben)"
   },
@@ -230,7 +228,8 @@
       "position": "#",
       "card": "Karte",
       "noResults": "Keine passenden Karten",
-      "resultCount": "{{count}} Karten gefunden"
+      "resultCount_one": "{{count}} Karte gefunden",
+      "resultCount_other": "{{count}} Karten gefunden"
     },
     "faro": {
       "title": "Faro-Mischen",
@@ -254,15 +253,20 @@
       "searchAriaLabel": "Karten nach Name oder Position suchen",
       "noResults": "Keine passenden Karten",
       "detailTitle": "Buchstabier-Aufschlüsselung",
+      "detailAriaLabel": "Buchstabier-Aufschlüsselung: {{cardName}}",
       "letter": "Buchstabe",
       "dealtCard": "Ausgeteilte Karte",
-      "resultCount": "{{count}} Ergebnisse"
+      "resultCount_one": "{{count}} Ergebnis",
+      "resultCount_other": "{{count}} Ergebnisse"
     },
     "sequences": {
       "title": "Stay-Stack-Sequenzen",
       "description": "Sieh dir die zyklischen Sequenzen an, die durch das Austeilen jeder N-ten Karte aus deinem Stack entstehen.",
       "stepLabel": "Schrittgröße",
-      "summary": "{{cycleCount}} Zyklen mit je {{cycleLength}} Karten",
+      "summary_one": "$t(toolbox.sequences.cycles, {\"count\": {{cycleCount}} }) mit je {{count}} Karte",
+      "summary_other": "$t(toolbox.sequences.cycles, {\"count\": {{cycleCount}} }) mit je {{count}} Karten",
+      "cycles_one": "{{count}} Zyklus",
+      "cycles_other": "{{count}} Zyklen",
       "cycleLabel": "Zyklus {{current}} von {{total}}",
       "position": "#",
       "card": "Karte"
@@ -270,6 +274,7 @@
   },
   "timer": {
     "timeRemaining": "Verbleibende Zeit",
+    "timeRemainingAriaLabel": "Verbleibende Zeit: {{seconds}} s",
     "timedMode": "Zeitmodus",
     "timeLimit": "Zeitlimit:"
   },
@@ -301,7 +306,8 @@
   },
   "cardSpread": {
     "ariaLabel": "Kartenfächer",
-    "selectPositionAriaLabel": "Position {{position}} auswählen"
+    "selectPositionAriaLabel": "Position {{position}} auswählen",
+    "selectDistanceAriaLabel": "Distanz {{distance}} auswählen"
   },
   "numberCard": {
     "ariaLabel": "Position {{number}}"
@@ -325,7 +331,6 @@
     "cancel": "Abbrechen"
   },
   "pwaInstall": {
-    "bannerMessage": "Installiere MemDeck für Offline-Training",
     "install": "Installieren",
     "modalTitle": "MemDeck installieren",
     "iosStep1": "Tippe auf das Teilen-Symbol am unteren Bildschirmrand",
@@ -343,6 +348,8 @@
   "errors": {
     "somethingWentWrong": "Etwas ist schiefgelaufen",
     "languageLoadFailed": "Deine bevorzugte Sprache konnte nicht geladen werden. Englisch wird verwendet.",
+    "unexpectedErrorMessage": "Ein unerwarteter Fehler ist aufgetreten. Versuche es erneut oder lade die Seite neu.",
+    "tryAgain": "Erneut versuchen",
     "sessionSaveFailed": {
       "title": "Speichern fehlgeschlagen",
       "message": "Deine Sitzung konnte nicht gespeichert werden — dein Browser-Speicher ist möglicherweise voll. Schaffe Platz und versuche es erneut."
@@ -450,6 +457,11 @@
     "copied": "Link kopiert!",
     "nudgeMessage": "Gefällt dir MemDeck? Teile es mit einem Zauberkollegen.",
     "nudgeDismiss": "Schließen"
+  },
+  "analyticsConsent": {
+    "message": "Google Analytics erlauben? Es setzt Cookies und erfasst Seitenaufrufe, die Modi, die du trainierst, und Fehler, damit MemDeck weiß, was verbessert und was behoben werden muss.",
+    "accept": "Erlauben",
+    "decline": "Ablehnen"
   },
   "about": {
     "pageTitle": "Über",
@@ -628,14 +640,12 @@
     "activeModeBoth": "Gemischter Modus",
     "promptComputeAriaLabel": "Distanz von {{from}} zu {{to}}",
     "promptApplyAriaLabel": "{{card}} mit Distanz {{offset}}",
-    "offsetLabel": "Distanz",
     "rangeTooSmall": "Das Distanzzahl-Training braucht mindestens {{count}} Karten im Bereich. Erweitere deinen Stack-Bereich, um zu starten.",
     "rangeTooSmallTitle": "Bereich zu klein",
     "revealTitle": "Antwort",
     "timesUp": "Zeit abgelaufen!",
     "movingToNext": "Weiter zur nächsten Runde.",
-    "answerCorrect": "Richtig",
-    "answerIncorrect": "Falsch, die Antwort war {{answer}}"
+    "answerCorrect": "Richtig"
   },
   "whatsNew": {
     "pageTitle": "Neuigkeiten",

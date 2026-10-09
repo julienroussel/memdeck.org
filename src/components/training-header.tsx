@@ -12,6 +12,7 @@ import { IconSettings, IconTarget } from "@tabler/icons-react";
 import { type ReactNode, useCallback } from "react";
 import type { GameScore } from "../types/game";
 import type { ActiveSession, SessionConfig } from "../types/session";
+import { deriveIsStructuredSession } from "../utils/session-phase";
 import { Score } from "./score";
 import { SessionBanner } from "./session-banner";
 import { SessionStartControls } from "./session-start-controls";
@@ -23,7 +24,6 @@ type TrainingHeaderProps = {
   sessionTooltip: string;
   settingsContent: ReactNode;
   score: GameScore;
-  isStructuredSession: boolean;
   activeSession: ActiveSession | null;
   onStopSession: () => void;
   onStartSession: (config: SessionConfig) => void;
@@ -37,7 +37,6 @@ export const TrainingHeader = ({
   sessionTooltip,
   settingsContent,
   score,
-  isStructuredSession,
   activeSession,
   onStopSession,
   onStartSession,
@@ -58,6 +57,10 @@ export const TrainingHeader = ({
     toggleSettings();
   }, [closeSession, toggleSettings]);
 
+  const structuredSession = deriveIsStructuredSession(activeSession)
+    ? activeSession
+    : null;
+
   return (
     <>
       <Group gap="xs" justify="space-between" wrap="nowrap">
@@ -72,14 +75,16 @@ export const TrainingHeader = ({
           ) : null}
         </Stack>
         <Group gap="xs" wrap="nowrap">
-          {!isStructuredSession && (
+          {structuredSession === null && (
             <Score fails={score.fails} successes={score.successes} />
           )}
           <Popover
             onClose={closeSession}
             opened={sessionOpened}
             position="bottom-end"
+            returnFocus
             transitionProps={{ duration: 0 }}
+            trapFocus
             withArrow
           >
             <Tooltip label={sessionTooltip}>
@@ -108,7 +113,9 @@ export const TrainingHeader = ({
             onClose={closeSettings}
             opened={settingsOpened}
             position="bottom-end"
+            returnFocus
             transitionProps={{ duration: 0 }}
+            trapFocus
             withArrow
           >
             <Tooltip label={settingsTooltip}>
@@ -129,8 +136,8 @@ export const TrainingHeader = ({
           </Popover>
         </Group>
       </Group>
-      {isStructuredSession && activeSession ? (
-        <SessionBanner onStop={onStopSession} session={activeSession} />
+      {structuredSession ? (
+        <SessionBanner onStop={onStopSession} session={structuredSession} />
       ) : null}
     </>
   );

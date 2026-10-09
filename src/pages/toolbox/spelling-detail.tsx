@@ -54,7 +54,7 @@ export const SpellingDetail = ({
   );
 
   return (
-    <Table aria-label={`${t("toolbox.spelling.detailTitle")}: ${cardName}`}>
+    <Table aria-label={t("toolbox.spelling.detailAriaLabel", { cardName })}>
       <Table.Thead>
         <Table.Tr>
           <Table.Th>{t("toolbox.spelling.letter")}</Table.Th>

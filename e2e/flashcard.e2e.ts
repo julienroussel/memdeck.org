@@ -1,5 +1,12 @@
 import { expect } from "@playwright/test";
+import {
+  CORRECT_ANSWERS_PATTERN,
+  INCORRECT_ANSWERS_PATTERN,
+} from "./fixtures/patterns";
+import { readCount } from "./fixtures/read-count";
 import { test } from "./fixtures/test-setup";
+
+const CARD_IMAGE_SRC_PATTERN = /cards\//;
 
 test.describe("Flashcard Training", () => {
   test.beforeEach(async ({ page }) => {
@@ -12,11 +19,12 @@ test.describe("Flashcard Training", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard page
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Flashcard" })
+    ).toBeVisible();
   });
 
   test("should load flashcard page with default card", async ({ page }) => {
@@ -31,8 +39,12 @@ test.describe("Flashcard Training", () => {
     await expect(scoreBadges).toHaveCount(2);
 
     // Both badges should show 0 initially
-    await expect(scoreBadges.first()).toContainText("0");
-    await expect(scoreBadges.last()).toContainText("0");
+    await expect(page.getByText(CORRECT_ANSWERS_PATTERN)).toHaveText(
+      "Correct answers: 0"
+    );
+    await expect(page.getByText(INCORRECT_ANSWERS_PATTERN)).toHaveText(
+      "Incorrect answers: 0"
+    );
   });
 
   test("should display settings button on flashcard page", async ({ page }) => {
@@ -69,19 +81,16 @@ test.describe("Flashcard Training", () => {
     await expect(secondarySelector.getByText("Both")).toBeVisible();
   });
 
-  test("should display card in card-only mode by default", async ({ page }) => {
-    // In default both modes, a card image or number card should be visible
-    // Card spread items are always present, so wait for those as a reliable indicator
+  test("should default to the Both position sub-mode", async ({ page }) => {
     await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
 
-    // Look for either a card image or number card - one should be visible
-    const cardImage = page.locator("img[src*='cards/']").first();
-    const numberCard = page.locator("[class*='numberCard']");
-
-    const hasCard = await cardImage.isVisible().catch(() => false);
-    const hasNumber = (await numberCard.count()) > 0;
-
-    expect(hasCard || hasNumber).toBeTruthy();
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+    const secondarySelector = page.getByRole("radiogroup", {
+      name: "Position mode variant",
+    });
+    await expect(
+      secondarySelector.getByRole("radio", { exact: true, name: "Both" })
+    ).toBeChecked();
   });
 
   test("should display choice cards or numbers for user to select from", async ({
@@ -105,25 +114,22 @@ test.describe("Flashcard Training", () => {
     await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
 
     // Get initial score from badges
-    const scoreBadges = page.locator("main .mantine-Badge-root");
-    const initialSuccess = await scoreBadges.first().textContent();
-    const initialFails = await scoreBadges.last().textContent();
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
+    const initialSuccess = await readCount(successBadge);
+    const initialFails = await readCount(failBadge);
 
     // Click on a choice - could be card spread with numbers or cards
     // The choices are in the card spread at the bottom
     const cardSpreadItems = page.locator(".cardSpreadCard");
-    const itemCount = await cardSpreadItems.count();
-
-    if (itemCount > 0) {
-      // Click on the last choice item (less likely to be overlapped by others)
-      // Use force:true because card spread items overlap each other visually
-      await cardSpreadItems.last().click({ force: true });
-    }
+    // Click on the last choice item (less likely to be overlapped by others)
+    // Use force:true because card spread items overlap each other visually
+    await cardSpreadItems.last().click({ force: true });
 
     // Score should have changed - one of the badges should now show 1
     await expect(async () => {
-      const newSuccess = await scoreBadges.first().textContent();
-      const newFails = await scoreBadges.last().textContent();
+      const newSuccess = await readCount(successBadge);
+      const newFails = await readCount(failBadge);
       const scoreChanged =
         newSuccess !== initialSuccess || newFails !== initialFails;
       expect(scoreChanged).toBeTruthy();
@@ -133,31 +139,41 @@ test.describe("Flashcard Training", () => {
   test("should update score when correct answer is selected", async ({
     page,
   }) => {
-    // Verify initial score badges show 0
-    const scoreBadges = page.locator("main .mantine-Badge-root");
-    await expect(scoreBadges.first()).toContainText("0");
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
+    await expect(successBadge).toHaveText("Correct answers: 0");
+    await expect(failBadge).toHaveText("Incorrect answers: 0");
 
-    // Make multiple selections to increase score
-    for (let i = 0; i < 3; i += 1) {
-      await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
+    // The prompt renders both its card image and its position (one hidden), so
+    // the correct choice is the spread item matching either: a number choice
+    // when the card is shown, a card choice when the position is shown.
+    const spreadItems = page.locator(".cardSpreadCard");
+    await expect(spreadItems.first()).toBeVisible();
+    const promptImage = page.locator("img.cardShadow");
+    await expect(promptImage).toHaveAttribute("src", CARD_IMAGE_SRC_PATTERN);
+    const promptSrc = await promptImage.getAttribute("src");
+    const promptPosition = await page
+      .getByTestId("number-card-value")
+      .first()
+      .textContent();
+    expect(promptSrc).toBeTruthy();
+    expect(promptPosition).toBeTruthy();
 
-      // Click on a choice from the card spread
-      // Use force:true because card spread items overlap each other visually
-      const cardSpreadItems = page.locator(".cardSpreadCard");
-      if ((await cardSpreadItems.count()) > 0) {
-        await cardSpreadItems.last().click({ force: true });
-      }
-    }
+    const correctChoice = spreadItems
+      .filter({ has: page.locator(`img[src="${promptSrc}"]`) })
+      .or(
+        spreadItems.filter({
+          has: page.getByTestId("number-card-value").filter({
+            hasText: new RegExp(`^${promptPosition}$`),
+          }),
+        })
+      );
+    // Spread items overlap, so a coordinate click can land on a neighbour;
+    // keyboard activation targets this exact button.
+    await correctChoice.press("Enter");
 
-    // Score should have increased - at least one badge should show a non-zero value
-    await expect(async () => {
-      const successText = await scoreBadges.first().textContent();
-      const failsText = await scoreBadges.last().textContent();
-      const totalScore =
-        Number.parseInt(successText || "0", 10) +
-        Number.parseInt(failsText || "0", 10);
-      expect(totalScore).toBeGreaterThan(0);
-    }).toPass();
+    await expect(successBadge).toHaveText("Correct answers: 1");
+    await expect(failBadge).toHaveText("Incorrect answers: 0");
   });
 
   test("should allow changing flashcard mode to card-only via settings popover", async ({
@@ -173,7 +189,7 @@ test.describe("Flashcard Training", () => {
     await secondarySelector.getByText("Card").click();
 
     // Verify mode was saved to localStorage (values are JSON-stringified)
-    const mode = await page.evaluate(() => {
+    const mode = await page.evaluate((): unknown => {
       const value = localStorage.getItem("memdeck-app-flashcard-option");
       return value ? JSON.parse(value) : null;
     });
@@ -194,7 +210,7 @@ test.describe("Flashcard Training", () => {
     await secondarySelector.getByText("Number").click();
 
     // Verify mode was saved to localStorage (values are JSON-stringified)
-    const mode = await page.evaluate(() => {
+    const mode = await page.evaluate((): unknown => {
       const value = localStorage.getItem("memdeck-app-flashcard-option");
       return value ? JSON.parse(value) : null;
     });
@@ -215,7 +231,7 @@ test.describe("Flashcard Training", () => {
     await secondarySelector.getByText("Card").click();
 
     // Check localStorage directly (values are JSON-stringified)
-    const mode = await page.evaluate(() => {
+    const mode = await page.evaluate((): unknown => {
       const value = localStorage.getItem("memdeck-app-flashcard-option");
       return value ? JSON.parse(value) : null;
     });
@@ -248,7 +264,7 @@ test.describe("Flashcard Training", () => {
     await expect(reloadedSelector).toBeVisible();
 
     // Verify localStorage still has the correct value
-    const mode = await page.evaluate(() => {
+    const mode = await page.evaluate((): unknown => {
       const value = localStorage.getItem("memdeck-app-flashcard-option");
       return value ? JSON.parse(value) : null;
     });
@@ -274,7 +290,7 @@ test.describe("Flashcard Training", () => {
     await expect(directionSelector).toBeVisible();
 
     // Verify mode was saved to localStorage
-    const mode = await page.evaluate(() => {
+    const mode = await page.evaluate((): unknown => {
       const value = localStorage.getItem("memdeck-app-flashcard-option");
       return value ? JSON.parse(value) : null;
     });
@@ -406,24 +422,19 @@ test.describe("Flashcard Training", () => {
     await expect(page.getByRole("img", { name: "Card after" })).toHaveCount(0);
 
     // Score should be reset to 0/0
-    const scoreBadges = page.locator("main .mantine-Badge-root");
-    await expect(scoreBadges.first()).toContainText("0");
-    await expect(scoreBadges.last()).toContainText("0");
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
+    await expect(successBadge).toHaveText("Correct answers: 0");
+    await expect(failBadge).toHaveText("Incorrect answers: 0");
 
     // Should be able to answer correctly (game state is valid)
     await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
-    const cardSpreadItems = page.locator(".cardSpreadCard");
-    if ((await cardSpreadItems.count()) > 0) {
-      await cardSpreadItems.last().click({ force: true });
-    }
+    await page.locator(".cardSpreadCard").last().click({ force: true });
 
     // Score should have changed (answer was registered)
     await expect(async () => {
-      const successText = await scoreBadges.first().textContent();
-      const failsText = await scoreBadges.last().textContent();
       const totalScore =
-        Number.parseInt(successText || "0", 10) +
-        Number.parseInt(failsText || "0", 10);
+        (await readCount(successBadge)) + (await readCount(failBadge));
       expect(totalScore).toBeGreaterThan(0);
     }).toPass();
   });
@@ -436,13 +447,11 @@ test.describe("Flashcard Training", () => {
     await page.locator(".cardSpreadCard").last().click({ force: true });
 
     // Score should be non-zero
-    const scoreBadges = page.locator("main .mantine-Badge-root");
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
     await expect(async () => {
-      const successText = await scoreBadges.first().textContent();
-      const failsText = await scoreBadges.last().textContent();
       const totalScore =
-        Number.parseInt(successText || "0", 10) +
-        Number.parseInt(failsText || "0", 10);
+        (await readCount(successBadge)) + (await readCount(failBadge));
       expect(totalScore).toBeGreaterThan(0);
     }).toPass();
 
@@ -455,8 +464,8 @@ test.describe("Flashcard Training", () => {
     await page.getByRole("button", { name: "Flashcard settings" }).click();
 
     // Score should be reset to 0/0
-    await expect(scoreBadges.first()).toContainText("0");
-    await expect(scoreBadges.last()).toContainText("0");
+    await expect(successBadge).toHaveText("Correct answers: 0");
+    await expect(failBadge).toHaveText("Incorrect answers: 0");
 
     // Both arrow elements should now be attached (one visible, one hidden)
     const beforeArrow = page.locator("[aria-label='Card before']");
@@ -470,11 +479,12 @@ test.describe("Flashcard Training", () => {
   }) => {
     // Navigate away
     await page.locator("#main-nav a:has-text('Home')").click();
-    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("heading", { name: "Ready to train?" })
+    ).toBeVisible();
 
     // Navigate back to flashcard
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // Page should load correctly with score badges and flashcard content
     const scoreBadges = page.locator("main .mantine-Badge-root");
@@ -486,8 +496,6 @@ test.describe("Flashcard Training", () => {
     ).toBeVisible();
 
     // Card spread should be visible
-    const cardSpreadItems = page.locator(".cardSpreadCard");
-    const itemCount = await cardSpreadItems.count();
-    expect(itemCount).toBeGreaterThan(0);
+    await expect(page.locator(".cardSpreadCard")).not.toHaveCount(0);
   });
 });

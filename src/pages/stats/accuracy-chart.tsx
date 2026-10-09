@@ -139,7 +139,7 @@ export const AccuracyChart = ({ history }: AccuracyChartProps) => {
             return (
               <Group gap="xs" key={record.id} wrap="nowrap">
                 <Text c="dimmed" miw={40} size="xs" ta="right">
-                  {percent}%
+                  {t("common.percent", { percent })}
                 </Text>
                 <Tooltip label={tooltipLabel}>
                   <Progress

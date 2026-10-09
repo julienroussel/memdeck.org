@@ -24,4 +24,14 @@ describe("RevealButton", () => {
 
     expect(onReveal).toHaveBeenCalledOnce();
   });
+  it("draws a dark icon on the yellow button for contrast", () => {
+    render(<RevealButton onReveal={vi.fn()} />);
+
+    // White on yellow-8 is 2.48:1, under the 3:1 non-text minimum.
+    expect(
+      screen
+        .getByRole("button", { name: REVEAL_BUTTON_NAME })
+        .style.getPropertyValue("--ai-color")
+    ).toBe("var(--mantine-color-black)");
+  });
 });

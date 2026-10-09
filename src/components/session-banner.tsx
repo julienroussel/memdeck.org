@@ -1,4 +1,4 @@
-import { Badge, Button, Group, Paper } from "@mantine/core";
+import { Badge, Button, Group, Paper, VisuallyHidden } from "@mantine/core";
 import { IconFlame, IconTargetArrow, IconTrophy } from "@tabler/icons-react";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,51 +32,53 @@ export const SessionBanner = memo(({ session, onStop }: SessionBannerProps) => {
       ? `${questionsCompleted}/${config.totalQuestions}`
       : `${questionsCompleted}`;
 
+  // Mantine Badge renders a role-less element, where aria-label is not
+  // allowed, so each badge carries its meaning as visually hidden text and
+  // hides the bare visible value from assistive tech.
   return (
     <Paper mb="sm" p="xs" radius="sm" withBorder>
       <Group gap="md" justify="space-between">
         <Group gap="sm">
-          <Badge
-            aria-label={t("session.progressAriaLabel", {
-              progress: progressText,
-            })}
-            size="lg"
-            variant="filled"
-          >
-            {progressText}
+          <Badge size="lg" variant="filled">
+            <VisuallyHidden>
+              {t("session.progressAriaLabel", { progress: progressText })}
+            </VisuallyHidden>
+            <span aria-hidden="true">{progressText}</span>
           </Badge>
           <Score fails={fails} successes={successes} />
           <Badge
-            aria-label={t("session.accuracyAriaLabel", {
-              percent: accuracyPercent,
-            })}
             leftSection={<IconTargetArrow size={12} />}
             size="md"
             variant="light"
           >
-            {accuracyPercent}%
+            <VisuallyHidden>
+              {t("session.accuracyAriaLabel", { percent: accuracyPercent })}
+            </VisuallyHidden>
+            <span aria-hidden="true">
+              {t("common.percent", { percent: accuracyPercent })}
+            </span>
           </Badge>
           <Badge
-            aria-label={t("session.currentStreakAriaLabel", {
-              count: currentStreak,
-            })}
             color="orange"
             leftSection={<IconFlame size={12} />}
             size="md"
             variant="light"
           >
-            {currentStreak}
+            <VisuallyHidden>
+              {t("session.currentStreakAriaLabel", { count: currentStreak })}
+            </VisuallyHidden>
+            <span aria-hidden="true">{currentStreak}</span>
           </Badge>
           <Badge
-            aria-label={t("session.bestStreakAriaLabel", {
-              count: bestStreak,
-            })}
             color="yellow"
             leftSection={<IconTrophy size={12} />}
             size="md"
             variant="light"
           >
-            {bestStreak}
+            <VisuallyHidden>
+              {t("session.bestStreakAriaLabel", { count: bestStreak })}
+            </VisuallyHidden>
+            <span aria-hidden="true">{bestStreak}</span>
           </Badge>
         </Group>
         <Group gap="xs">

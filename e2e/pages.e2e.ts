@@ -6,6 +6,7 @@ const HOME_URL_PATTERN = /\/$/;
 const RESOURCES_URL_PATTERN = /\/resources\/?$/;
 const ACAAN_URL_PATTERN = /\/acaan\/?$/;
 const TOOLBOX_URL_PATTERN = /\/toolbox\/?$/;
+const NOOPENER_PATTERN = /\bnoopener\b/;
 
 test.describe("Pages & Features", () => {
   test.beforeEach(async ({ page }) => {
@@ -18,61 +19,45 @@ test.describe("Pages & Features", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
   });
 
   test("should load resources page", async ({ page }) => {
     // Navigate to resources
     await page.locator("a:has-text('Resources')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Verify URL changed
     await expect(page).toHaveURL(RESOURCES_URL_PATTERN);
 
-    // Verify page content loads (may contain links or content)
-    await expect(page.locator("body")).toBeVisible();
+    // Verify page content loads
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Memorized Deck Resources" })
+    ).toBeVisible();
   });
 
   test("should load ACAAN page", async ({ page }) => {
     // Navigate to ACAAN
     await page.locator("a:has-text('ACAAN')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Verify URL changed
     await expect(page).toHaveURL(ACAAN_URL_PATTERN);
 
-    // Verify page is not empty
-    await expect(page.locator("body")).toBeVisible();
-  });
-
-  test("should display content on ACAAN page", async ({ page }) => {
-    // Navigate to ACAAN
-    await page.locator("a:has-text('ACAAN')").first().click();
-    await page.waitForLoadState("networkidle");
-
-    // Page should load successfully
-    await expect(page.locator("body")).toBeVisible();
+    // Verify the lazy-loaded page rendered
+    await expect(
+      page.getByRole("heading", { level: 1, name: "ACAAN" })
+    ).toBeVisible();
   });
 
   test("should load toolbox page", async ({ page }) => {
     // Navigate to toolbox
     await page.locator("a:has-text('Toolbox')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Verify URL changed
     await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
 
-    // Verify page is not empty
-    await expect(page.locator("body")).toBeVisible();
-  });
-
-  test("should display content on toolbox page", async ({ page }) => {
-    // Navigate to toolbox
-    await page.locator("a:has-text('Toolbox')").first().click();
-    await page.waitForLoadState("networkidle");
-
-    // Page should load successfully
-    await expect(page.locator("body")).toBeVisible();
+    // Verify the lazy-loaded page rendered
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Toolbox" })
+    ).toBeVisible();
   });
 
   test("should have working github link in header", async ({ page }) => {
@@ -94,10 +79,7 @@ test.describe("Pages & Features", () => {
     const githubLink = page.locator('a[href*="github"]').first();
 
     // Verify rel attribute includes noopener
-    const rel = await githubLink.getAttribute("rel");
-    if (rel) {
-      expect(rel).toContain("noopener");
-    }
+    await expect(githubLink).toHaveAttribute("rel", NOOPENER_PATTERN);
   });
 
   test("should have working llms.txt link in footer", async ({ page }) => {
@@ -113,16 +95,12 @@ test.describe("Pages & Features", () => {
   }) => {
     const llmsLink = page.locator('a[href="/llms.txt"]').first();
 
-    const rel = await llmsLink.getAttribute("rel");
-    if (rel) {
-      expect(rel).toContain("noopener");
-    }
+    await expect(llmsLink).toHaveAttribute("rel", NOOPENER_PATTERN);
   });
 
   test("should navigate back to home when clicking logo", async ({ page }) => {
     // Navigate to a different page
     await page.locator("a:has-text('Resources')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Verify we're not on home
     await expect(page).toHaveURL(RESOURCES_URL_PATTERN);
@@ -130,7 +108,6 @@ test.describe("Pages & Features", () => {
     // Click logo/home link
     const homeLink = page.locator("a[href='/']").first();
     await homeLink.click();
-    await page.waitForLoadState("networkidle");
 
     // Should be back on home
     await expect(page).toHaveURL(HOME_URL_PATTERN);

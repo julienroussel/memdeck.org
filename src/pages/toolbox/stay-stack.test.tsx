@@ -1,4 +1,5 @@
 import { screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "../../test-utils";
 import { stacks } from "../../types/stacks";
@@ -35,6 +36,23 @@ describe("StayStack", () => {
     );
     expect(matches.length).toBeGreaterThanOrEqual(1);
   });
+
+  it.each([
+    ["1", "1 cycle of 52 cards each"],
+    ["52", "52 cycles of 1 card each"],
+  ])(
+    "uses the singular in the summary for step %s, in both the visible text and the live region",
+    async (step, summary) => {
+      const user = userEvent.setup();
+      render(<StayStack />);
+
+      const input = screen.getByRole("textbox", { name: "Step size" });
+      await user.clear(input);
+      await user.type(input, step);
+
+      expect(screen.getAllByText(summary)).toHaveLength(2);
+    }
+  );
 
   it("renders the correct number of cycle tables for the default step", () => {
     const result = computeSequences(stacks.mnemonica.order, DEFAULT_STEP);

@@ -12,8 +12,27 @@ import { FourOfClubs, ThreeOfClubs } from "../../types/suits/clubs";
 import { TwoOfHearts } from "../../types/suits/hearts";
 import { AceOfSpades, FiveOfSpades } from "../../types/suits/spades";
 import type { TimerSettings } from "../../types/timer";
+import type { CardSpreadProps } from "../../types/typeguards";
 import { DistanceActiveRound } from "./distance-active-round";
 import type { PlayableDistanceRound } from "./distance-game-reducer";
+
+const SELECT_POSITION_REGEX = /Select position/;
+
+// Count CardSpread renders while keeping the real component, so these tests
+// still click real buttons.
+const cardSpreadRenders = vi.hoisted(() => ({ count: 0 }));
+vi.mock("../../components/card-spread/card-spread", async (importOriginal) => {
+  const actual =
+    await importOriginal<
+      typeof import("../../components/card-spread/card-spread")
+    >();
+  const { memo } = await import("react");
+  const CountedCardSpread = memo((props: CardSpreadProps) => {
+    cardSpreadRenders.count += 1;
+    return <actual.CardSpread {...props} />;
+  });
+  return { CardSpread: CountedCardSpread };
+});
 
 const promptCard: PlayingCardPosition = {
   card: FourOfClubs,
@@ -101,10 +120,39 @@ describe("DistanceActiveRound — compute round", () => {
       />
     );
 
-    // CardSpread labels its number buttons "Select position {n}".
-    await user.click(screen.getByRole("button", { name: "Select position 3" }));
+    // Compute-round number buttons are named "Select distance {n}".
+    await user.click(screen.getByRole("button", { name: "Select distance 3" }));
 
     expect(submitAnswer).toHaveBeenCalledWith({ kind: "compute", value: 3 });
+  });
+
+  it("names a negative signed choice as a distance with its sign", async () => {
+    const submitAnswer = vi.fn();
+    const user = userEvent.setup();
+    renderInGrid(
+      <DistanceActiveRound
+        card={promptCard}
+        round={{
+          ...computeRound,
+          choices: { data: [-3, -1, 1, 2, 3], kind: "numbers" },
+          expectedDistance: -3,
+        }}
+        roundConvention="signed"
+        submitAnswer={submitAnswer}
+        timeRemaining={30}
+        timerDuration={30}
+        timerSettings={noTimerSettings}
+      />
+    );
+
+    expect(
+      screen.queryByRole("button", { name: SELECT_POSITION_REGEX })
+    ).not.toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: "Select distance -3" })
+    );
+
+    expect(submitAnswer).toHaveBeenCalledWith({ kind: "compute", value: -3 });
   });
 });
 
@@ -149,5 +197,149 @@ describe("DistanceActiveRound — apply round", () => {
       kind: "apply",
       value: TwoOfHearts,
     });
+  });
+});
+
+describe("DistanceActiveRound — live region after a wrong pick", () => {
+  // A wrong pick keeps the same round open, so the announcement must not
+  // hand screen-reader users the answer.
+  const getLiveRegion = (container: HTMLElement) => {
+    const region = container.querySelector('[aria-live="polite"]');
+    if (!region) {
+      throw new Error("Expected a polite live region");
+    }
+    return region;
+  };
+
+  it("announces try-again without the expected distance in a compute round", async () => {
+    const user = userEvent.setup();
+    const { container } = renderInGrid(
+      <DistanceActiveRound
+        card={promptCard}
+        round={computeRound}
+        roundConvention="cyclic"
+        submitAnswer={vi.fn()}
+        timeRemaining={30}
+        timerDuration={30}
+        timerSettings={noTimerSettings}
+      />
+    );
+
+    await user.click(screen.getByRole("button", { name: "Select distance 1" }));
+
+    const text = getLiveRegion(container).textContent ?? "";
+    expect(text).toContain("Wrong answer. Try again!");
+    // The expected distance is 3.
+    expect(text).not.toContain("3");
+  });
+
+  it("announces try-again without the answer card in an apply round", async () => {
+    const user = userEvent.setup();
+    const { container } = renderInGrid(
+      <DistanceActiveRound
+        card={promptCard}
+        round={applyRound}
+        roundConvention="cyclic"
+        submitAnswer={vi.fn()}
+        timeRemaining={30}
+        timerDuration={30}
+        timerSettings={noTimerSettings}
+      />
+    );
+
+    await user.click(screen.getByRole("button", { name: "Three of Clubs" }));
+
+    const text = getLiveRegion(container).textContent ?? "";
+    expect(text).toContain("Wrong answer. Try again!");
+    expect(text).not.toContain("Two of Hearts");
+  });
+
+  it("still announces Correct for a right pick", async () => {
+    const user = userEvent.setup();
+    const { container } = renderInGrid(
+      <DistanceActiveRound
+        card={promptCard}
+        round={computeRound}
+        roundConvention="cyclic"
+        submitAnswer={vi.fn()}
+        timeRemaining={30}
+        timerDuration={30}
+        timerSettings={noTimerSettings}
+      />
+    );
+
+    await user.click(screen.getByRole("button", { name: "Select distance 3" }));
+
+    expect(getLiveRegion(container).textContent).toContain("Correct");
+  });
+});
+
+describe("DistanceActiveRound — timer ticks", () => {
+  const timerSettings: TimerSettings = { duration: 30, enabled: true };
+
+  it("does not re-render CardSpread when a TICK only changes timeRemaining", () => {
+    const submitAnswer = vi.fn();
+    const { rerender } = renderInGrid(
+      <DistanceActiveRound
+        card={promptCard}
+        round={computeRound}
+        roundConvention="cyclic"
+        submitAnswer={submitAnswer}
+        timeRemaining={30}
+        timerDuration={30}
+        timerSettings={timerSettings}
+      />
+    );
+    const rendersBeforeTick = cardSpreadRenders.count;
+
+    // A TICK spreads the reducer state, so `round` is a new object whose
+    // fields keep their identity.
+    rerender(
+      <Grid>
+        <DistanceActiveRound
+          card={promptCard}
+          round={{ ...computeRound }}
+          roundConvention="cyclic"
+          submitAnswer={submitAnswer}
+          timeRemaining={29}
+          timerDuration={30}
+          timerSettings={timerSettings}
+        />
+      </Grid>
+    );
+
+    expect(cardSpreadRenders.count).toBe(rendersBeforeTick);
+  });
+
+  it("does not re-render the apply-round CardSpread when a TICK only changes timeRemaining", () => {
+    const submitAnswer = vi.fn();
+    const { rerender } = renderInGrid(
+      <DistanceActiveRound
+        card={promptCard}
+        round={applyRound}
+        roundConvention="cyclic"
+        submitAnswer={submitAnswer}
+        timeRemaining={30}
+        timerDuration={30}
+        timerSettings={timerSettings}
+      />
+    );
+    const rendersBeforeTick = cardSpreadRenders.count;
+
+    rerender(
+      <Grid>
+        <DistanceActiveRound
+          card={promptCard}
+          round={{ ...applyRound }}
+          roundConvention="cyclic"
+          submitAnswer={submitAnswer}
+          timeRemaining={29}
+          timerDuration={30}
+          timerSettings={timerSettings}
+        />
+      </Grid>
+    );
+
+    expect(cardSpreadRenders.count).toBe(rendersBeforeTick);
   });
 });

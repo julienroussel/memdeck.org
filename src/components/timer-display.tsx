@@ -41,17 +41,21 @@ export const TimerDisplay = memo(
                 {t("timer.timeRemaining")}
               </Text>
               <Text c={timerTextColor} fw={700} size="lg">
-                {timeRemaining}s
+                {t("common.durationSeconds", { seconds: timeRemaining })}
               </Text>
             </Group>
             <Progress.Root size="lg">
               <Progress.Section
                 animated={timeRemaining > 0}
-                aria-label={`${t("timer.timeRemaining")}: ${timeRemaining}s`}
+                aria-label={t("timer.timeRemainingAriaLabel", {
+                  seconds: timeRemaining,
+                })}
                 aria-valuemax={100}
                 aria-valuemin={0}
                 aria-valuenow={timerProgress}
-                aria-valuetext={`${timeRemaining}s`}
+                aria-valuetext={t("common.durationSeconds", {
+                  seconds: timeRemaining,
+                })}
                 color={timerColor}
                 role="progressbar"
                 value={timerProgress}
@@ -59,7 +63,9 @@ export const TimerDisplay = memo(
               />
             </Progress.Root>
             <span aria-live="assertive" className="sr-only">
-              {isUrgent ? `${t("timer.timeRemaining")}: ${timeRemaining}s` : ""}
+              {isUrgent
+                ? t("timer.timeRemainingAriaLabel", { seconds: timeRemaining })
+                : ""}
             </span>
           </div>
         </Center>

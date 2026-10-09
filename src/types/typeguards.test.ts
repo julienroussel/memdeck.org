@@ -88,26 +88,31 @@ describe("isPlayingCard", () => {
 
   it("returns false for objects missing suit", () => {
     const invalid = { image: "test.svg", rank: "A" };
+    // Deliberately invalid input: the guard is typed `PlayingCard | number`.
     expect(isPlayingCard(invalid as never)).toBe(false);
   });
 
   it("returns false for objects missing rank", () => {
     const invalid = { image: "test.svg", suit: "hearts" };
+    // Deliberately invalid input: the guard is typed `PlayingCard | number`.
     expect(isPlayingCard(invalid as never)).toBe(false);
   });
 
   it("returns false for objects missing image", () => {
     const invalid = { rank: "A", suit: "hearts" };
+    // Deliberately invalid input: the guard is typed `PlayingCard | number`.
     expect(isPlayingCard(invalid as never)).toBe(false);
   });
 
   it("returns true for objects with all required properties", () => {
     const valid = { image: "test.svg", rank: "A", suit: "hearts" };
+    // Deliberately off-type input: plain string fields do not match PlayingCard's literals.
     expect(isPlayingCard(valid as never)).toBe(true);
   });
 
   it("returns true for objects with extra properties", () => {
     const valid = { extra: true, image: "test.svg", rank: "A", suit: "hearts" };
+    // Deliberately off-type input: plain string fields do not match PlayingCard's literals.
     expect(isPlayingCard(valid as never)).toBe(true);
   });
 

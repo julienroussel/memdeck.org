@@ -1,5 +1,10 @@
 import { expect } from "@playwright/test";
 import { STACK_LIMITS_LSK } from "../src/constants";
+import {
+  CORRECT_ANSWERS_PATTERN,
+  INCORRECT_ANSWERS_PATTERN,
+} from "./fixtures/patterns";
+import { readCount } from "./fixtures/read-count";
 import { test } from "./fixtures/test-setup";
 
 const RANGE_TOO_SMALL_TEXT_REGEX = /Distance training needs at least 6 cards/;
@@ -13,7 +18,6 @@ test.describe("Distance Number Training", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     await page.goto("/distance/");
     await page.waitForLoadState("networkidle");
@@ -23,8 +27,12 @@ test.describe("Distance Number Training", () => {
     page,
   }) => {
     await expect(page.getByRole("heading", { name: "Distance" })).toBeVisible();
-    await expect(page.getByTestId("score-success")).toContainText("0");
-    await expect(page.getByTestId("score-fail")).toContainText("0");
+    await expect(page.getByText(CORRECT_ANSWERS_PATTERN)).toHaveText(
+      "Correct answers: 0"
+    );
+    await expect(page.getByText(INCORRECT_ANSWERS_PATTERN)).toHaveText(
+      "Incorrect answers: 0"
+    );
   });
 
   test("opens the settings popover with mode + convention selectors", async ({
@@ -57,8 +65,8 @@ test.describe("Distance Number Training", () => {
     // produced by either compute or apply rounds.
     await expect(page.getByTestId("distance-prompt-card")).toBeVisible();
     await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
-    const cardCount = await page.locator(".cardSpreadCard").count();
-    expect(cardCount).toBeGreaterThanOrEqual(5);
+    // A fifth item exists only if the spread has at least 5 choices
+    await expect(page.locator(".cardSpreadCard").nth(4)).toBeAttached();
   });
 
   test("switching to compute mode produces two prompt cards", async ({
@@ -101,8 +109,8 @@ test.describe("Distance Number Training", () => {
     // two paths is broken (e.g. isCorrectAnswer always returns true/false).
     await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
 
-    const successBadge = page.getByTestId("score-success");
-    const failBadge = page.getByTestId("score-fail");
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
     const cardSpreadItems = page.locator(".cardSpreadCard");
 
     // The correct-answer position is at some index in [0, itemCount-1].
@@ -121,9 +129,8 @@ test.describe("Distance Number Training", () => {
       // Capture the score total before clicking. Every click submits an
       // answer that dispatches either CORRECT_ANSWER (successes+1) or
       // WRONG_ANSWER (fails+1), so successes+fails is monotonic per click.
-      const beforeSuccess = Number(await successBadge.textContent()) || 0;
-      const beforeFail = Number(await failBadge.textContent()) || 0;
-      const beforeTotal = beforeSuccess + beforeFail;
+      const beforeTotal =
+        (await readCount(successBadge)) + (await readCount(failBadge));
 
       // dispatchEvent fires the click directly on the button regardless of
       // what's visually on top. Two overlays can intercept a coordinate-
@@ -142,17 +149,16 @@ test.describe("Distance Number Training", () => {
       // advanced or not) is already mounted. Replaces a flaky fixed 120ms
       // wait that let the next click race the React re-render under CI load.
       await expect
-        .poll(async () => {
-          const success = Number(await successBadge.textContent()) || 0;
-          const fail = Number(await failBadge.textContent()) || 0;
-          return success + fail;
-        })
+        .poll(
+          async () =>
+            (await readCount(successBadge)) + (await readCount(failBadge))
+        )
         .toBeGreaterThan(beforeTotal);
     }
 
     await expect(async () => {
-      const successCount = Number(await successBadge.textContent());
-      const failCount = Number(await failBadge.textContent());
+      const successCount = await readCount(successBadge);
+      const failCount = await readCount(failBadge);
       // At least one of each path must have happened. If a regression makes
       // every click score the same way, this fails loudly.
       expect(successCount).toBeGreaterThan(0);

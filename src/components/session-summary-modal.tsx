@@ -66,7 +66,7 @@ export const SessionSummaryModal = ({
           />
           <StatDisplay
             label={t("common.accuracy")}
-            value={`${accuracyPercent}%`}
+            value={t("common.percent", { percent: accuracyPercent })}
           />
           <StatDisplay
             label={t("common.bestStreak")}
@@ -74,7 +74,7 @@ export const SessionSummaryModal = ({
           />
           <StatDisplay
             label={t("common.duration")}
-            value={formatDuration(record.durationSeconds)}
+            value={formatDuration(record.durationSeconds, t)}
           />
         </SimpleGrid>
 
@@ -88,7 +88,9 @@ export const SessionSummaryModal = ({
               size="sm"
               variant="light"
             >
-              {toAccuracyPercent(previousAverageAccuracy)}%
+              {t("common.percent", {
+                percent: toAccuracyPercent(previousAverageAccuracy),
+              })}
             </Badge>
           </Group>
         )}

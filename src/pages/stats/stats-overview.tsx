@@ -30,7 +30,7 @@ export const StatsOverview = ({ stats }: StatsOverviewProps) => {
       />
       <StatDisplay
         label={t("stats.overallAccuracy")}
-        value={`${accuracyPercent}%`}
+        value={t("common.percent", { percent: accuracyPercent })}
         withBorder
       />
       <StatDisplay
