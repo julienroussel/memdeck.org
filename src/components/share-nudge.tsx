@@ -10,7 +10,7 @@ import {
   handleLocalDbWriteFailed,
   reportLocalDbCorruption,
 } from "../utils/localstorage-telemetry";
-import { shareMemDeck } from "../utils/share";
+import { notifyShareResult, shareMemDeck } from "../utils/share";
 import { isShareNudgePending } from "../utils/share-nudge-eligibility";
 
 const isBoolean = (value: unknown): value is boolean =>
@@ -42,7 +42,12 @@ export const ShareNudge = () => {
   const handleShare = useCallback(async () => {
     const result = await shareMemDeck(t("share.message"));
     analytics.trackShareClicked("nudge", result);
-    handleDismiss();
+    notifyShareResult(result);
+    // Stay visible on "failed" (so the user can retry) and on "cancelled"
+    // (backing out of the sheet is not a choice to hide the nudge; the X is).
+    if (result === "shared" || result === "copied") {
+      handleDismiss();
+    }
   }, [handleDismiss, t]);
 
   if (

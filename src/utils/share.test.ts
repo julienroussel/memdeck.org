@@ -1,8 +1,19 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SITE_NAME, SITE_URL } from "../constants";
-import { canNativeShare, shareMemDeck } from "./share";
+import { canNativeShare, notifyShareResult, shareMemDeck } from "./share";
+
+const mockNotificationsShow = vi.fn();
+vi.mock("@mantine/notifications", () => ({
+  notifications: {
+    show: (...args: unknown[]) => mockNotificationsShow(...args),
+  },
+}));
 
 const TEST_MESSAGE = "Test share message";
+
+beforeEach(() => {
+  mockNotificationsShow.mockReset();
+});
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -36,9 +47,38 @@ describe("shareMemDeck", () => {
     });
   });
 
-  it("returns 'failed' when native share is cancelled", async () => {
-    const shareFn = vi.fn().mockRejectedValue(new Error("cancelled"));
-    vi.stubGlobal("navigator", { share: shareFn });
+  it("returns 'cancelled' without touching the clipboard when the user dismisses the share sheet", async () => {
+    const shareFn = vi
+      .fn()
+      .mockRejectedValue(new DOMException("Share canceled", "AbortError"));
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("navigator", { clipboard: { writeText }, share: shareFn });
+
+    const result = await shareMemDeck(TEST_MESSAGE);
+
+    expect(result).toBe("cancelled");
+    expect(writeText).not.toHaveBeenCalled();
+  });
+
+  it("falls back to the clipboard and returns 'copied' when native share fails for a non-abort reason", async () => {
+    const shareFn = vi
+      .fn()
+      .mockRejectedValue(new DOMException("Not allowed", "NotAllowedError"));
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("navigator", { clipboard: { writeText }, share: shareFn });
+
+    const result = await shareMemDeck(TEST_MESSAGE);
+
+    expect(result).toBe("copied");
+    expect(writeText).toHaveBeenCalledWith(TEST_MESSAGE);
+  });
+
+  it("returns 'failed' when native share fails and the clipboard fallback also fails", async () => {
+    const shareFn = vi
+      .fn()
+      .mockRejectedValue(new DOMException("Not allowed", "NotAllowedError"));
+    const writeText = vi.fn().mockRejectedValue(new Error("denied"));
+    vi.stubGlobal("navigator", { clipboard: { writeText }, share: shareFn });
 
     const result = await shareMemDeck(TEST_MESSAGE);
 
@@ -69,5 +109,35 @@ describe("shareMemDeck", () => {
     vi.stubGlobal("navigator", {});
     const result = await shareMemDeck(TEST_MESSAGE);
     expect(result).toBe("failed");
+  });
+});
+
+describe("notifyShareResult", () => {
+  // Assertions check the rendered en translations. If an i18n key changes,
+  // update these and the locale file in lockstep.
+  it("shows a green 'Link copied!' toast for 'copied'", () => {
+    notifyShareResult("copied");
+    expect(mockNotificationsShow).toHaveBeenCalledWith({
+      color: "green",
+      message: "Link copied!",
+    });
+  });
+
+  it("shows a red error toast for 'failed'", () => {
+    notifyShareResult("failed");
+    expect(mockNotificationsShow).toHaveBeenCalledWith({
+      color: "red",
+      message: "Something went wrong",
+    });
+  });
+
+  it("shows nothing for 'shared'", () => {
+    notifyShareResult("shared");
+    expect(mockNotificationsShow).not.toHaveBeenCalled();
+  });
+
+  it("shows nothing for 'cancelled'", () => {
+    notifyShareResult("cancelled");
+    expect(mockNotificationsShow).not.toHaveBeenCalled();
   });
 });

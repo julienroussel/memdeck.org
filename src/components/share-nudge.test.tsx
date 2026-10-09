@@ -38,8 +38,16 @@ vi.mock("../utils/localstorage-telemetry", () => ({
 }));
 
 const mockShareMemDeck = vi.fn();
-vi.mock("../utils/share", () => ({
+vi.mock("../utils/share", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../utils/share")>()),
   shareMemDeck: (...args: unknown[]) => mockShareMemDeck(...args),
+}));
+
+const mockNotificationsShow = vi.fn();
+vi.mock("@mantine/notifications", () => ({
+  notifications: {
+    show: (...args: unknown[]) => mockNotificationsShow(...args),
+  },
 }));
 
 const mockTrackShareClicked = vi.fn();
@@ -65,11 +73,12 @@ beforeEach(() => {
   mockShareMemDeck.mockReset();
   mockTrackShareClicked.mockReset();
   mockTrackShareNudgeDismissed.mockReset();
+  mockNotificationsShow.mockReset();
   mockSetDismissed.mockClear();
   // Reset the default `useLocalDb` mock implementation so per-test
   // `mockReturnValueOnce` overrides apply to only one render.
   mockedUseLocalDb.mockImplementation((_key, defaultValue) => [
-    defaultValue as boolean,
+    defaultValue,
     mockSetDismissed,
     vi.fn(),
   ]);
@@ -120,7 +129,7 @@ describe("ShareNudge", () => {
     expect(mockTrackShareNudgeDismissed).toHaveBeenCalledOnce();
   });
 
-  it("dismisses nudge even when share fails", async () => {
+  it("stays visible and shows a red error notification when share fails", async () => {
     mockShareMemDeck.mockResolvedValue("failed");
     const user = userEvent.setup();
     render(<ShareNudge />);
@@ -128,9 +137,45 @@ describe("ShareNudge", () => {
     await user.click(screen.getByRole("button", { name: "Share MemDeck" }));
 
     await waitFor(() => {
-      expect(mockShareMemDeck).toHaveBeenCalledOnce();
+      expect(mockTrackShareClicked).toHaveBeenCalledWith("nudge", "failed");
     });
-    expect(mockTrackShareClicked).toHaveBeenCalledWith("nudge", "failed");
+    expect(mockNotificationsShow).toHaveBeenCalledWith({
+      color: "red",
+      message: "Something went wrong",
+    });
+    expect(mockSetDismissed).not.toHaveBeenCalled();
+    expect(mockTrackShareNudgeDismissed).not.toHaveBeenCalled();
+  });
+
+  it("stays visible without a notification when the share sheet is cancelled", async () => {
+    mockShareMemDeck.mockResolvedValue("cancelled");
+    const user = userEvent.setup();
+    render(<ShareNudge />);
+
+    await user.click(screen.getByRole("button", { name: "Share MemDeck" }));
+
+    await waitFor(() => {
+      expect(mockTrackShareClicked).toHaveBeenCalledWith("nudge", "cancelled");
+    });
+    expect(mockNotificationsShow).not.toHaveBeenCalled();
+    expect(mockSetDismissed).not.toHaveBeenCalled();
+    expect(mockTrackShareNudgeDismissed).not.toHaveBeenCalled();
+  });
+
+  it("shows a green 'Link copied!' notification and dismisses when the message is copied", async () => {
+    mockShareMemDeck.mockResolvedValue("copied");
+    const user = userEvent.setup();
+    render(<ShareNudge />);
+
+    await user.click(screen.getByRole("button", { name: "Share MemDeck" }));
+
+    await waitFor(() => {
+      expect(mockTrackShareClicked).toHaveBeenCalledWith("nudge", "copied");
+    });
+    expect(mockNotificationsShow).toHaveBeenCalledWith({
+      color: "green",
+      message: "Link copied!",
+    });
     expect(mockSetDismissed).toHaveBeenCalledWith(true, {
       onSuccess: expect.any(Function),
     });
