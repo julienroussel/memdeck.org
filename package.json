@@ -52,7 +52,7 @@
     "@mantine/hooks": "9.7.1",
     "@mantine/notifications": "9.7.1",
     "@tabler/icons-react": "3.49.0",
-    "i18next": "26.4.2",
+    "i18next": "26.4.3",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-error-boundary": "6.1.6",
@@ -89,7 +89,7 @@
     "vitest": "5.0.3",
     "workbox-window": "7.4.1"
   },
-  "packageManager": "pnpm@12.10.1",
+  "packageManager": "pnpm@12.11.2",
   "engines": {
     "node": ">=25",
     "pnpm": ">=11"
