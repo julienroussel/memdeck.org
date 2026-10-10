@@ -1,18 +1,28 @@
+import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ALL_TIME_STATS_LSK, SESSION_HISTORY_LSK } from "../constants";
+import {
+  ALL_TIME_STATS_LSK,
+  LAST_SAVE_FAILED_LSK,
+  SESSION_HISTORY_LSK,
+} from "../constants";
 import { eventBus } from "../services/event-bus";
 import { createMockLocalStorage } from "../test-utils/mock-local-storage";
 import {
   makeActiveSession,
   makeSessionRecord as makeRecord,
 } from "../test-utils/session-factories";
-import type { AllTimeStats } from "../types/session";
+import type { AllTimeStats, SessionRecord } from "../types/session";
 import { createDeckPosition } from "../types/stacks";
+import { useLocalDb } from "./localstorage";
+import { writeLastSaveFailedBreadcrumb } from "./session-breadcrumbs";
 import {
   buildSessionRecord,
+  checkpointSession,
   computeSessionSummary,
   finalizeSession,
+  type SessionCheckpoint,
 } from "./session-persistence";
+import { isAllTimeStats, isSessionRecordArray } from "./session-typeguards";
 
 const { storage, mockLocalStorage } = createMockLocalStorage();
 
@@ -32,24 +42,17 @@ vi.mock("../services/analytics", () => ({
 }));
 
 // Per-key read-error overrides for simulating Safari ITP / security failures
-// during `localStorage.getItem`. Tests register a key here to make the mocked
-// `readLocalStorageValue` throw for that key only.
+// during `localStorage.getItem`. Tests register a key here to make
+// `localStorage.getItem` throw for that key only, which the real
+// `probeStoredValue` must surface as `read-error`.
 const readErrorKeys = new Map<string, unknown>();
 
-// Mock @mantine/hooks so getStoredValue can work
-vi.mock("@mantine/hooks", () => ({
-  readLocalStorageValue: ({ key }: { key: string }) => {
-    if (readErrorKeys.has(key)) {
-      throw readErrorKeys.get(key);
-    }
-    const raw = storage.get(key);
-    if (raw === undefined || raw === null) {
-      return;
-    }
-    return JSON.parse(raw);
-  },
-  useLocalStorage: vi.fn(),
-}));
+mockLocalStorage.getItem = (key: string) => {
+  if (readErrorKeys.has(key)) {
+    throw readErrorKeys.get(key);
+  }
+  return storage.get(key) ?? null;
+};
 
 Object.defineProperty(globalThis, "localStorage", {
   value: mockLocalStorage,
@@ -584,6 +587,21 @@ describe("finalizeSession", () => {
     expect(storage.get(ALL_TIME_STATS_LSK)).toBeUndefined();
   });
 
+  it("returns { ok: false, reason: 'corrupt-prior-state' } without writing when localStorage.getItem throws for every key", () => {
+    // getItem throws while setItem would succeed: without the read-error
+    // refusal, `[record]` would overwrite the whole unreadable history.
+    storage.set(SESSION_HISTORY_LSK, JSON.stringify([makeRecord()]));
+    vi.spyOn(mockLocalStorage, "getItem").mockImplementation(() => {
+      throw new DOMException("Access denied", "SecurityError");
+    });
+    const setItemSpy = vi.spyOn(mockLocalStorage, "setItem");
+
+    const result = finalizeSession(makeSession());
+
+    expect(result).toEqual({ ok: false, reason: "corrupt-prior-state" });
+    expect(setItemSpy).not.toHaveBeenCalled();
+  });
+
   it("returns { ok: false, reason: 'corrupt-prior-state' } when the all-time stats read throws", () => {
     storage.set(SESSION_HISTORY_LSK, JSON.stringify([]));
     readErrorKeys.set(
@@ -642,5 +660,333 @@ describe("finalizeSession", () => {
     expect(entry?.totalSuccesses).toBe(16);
     expect(entry?.totalFails).toBe(4);
     expect(entry?.globalBestStreak).toBe(5);
+  });
+});
+
+// --- Same-id upsert: a session saved on page hide, then saved again ---
+
+const readHistory = (): SessionRecord[] =>
+  JSON.parse(storage.get(SESSION_HISTORY_LSK) ?? "[]");
+
+const readEntry = () => {
+  const stats: AllTimeStats = JSON.parse(
+    storage.get(ALL_TIME_STATS_LSK) ?? "{}"
+  );
+  return stats["flashcard:mnemonica"];
+};
+
+const checkpointOrThrow = (
+  ...args: Parameters<typeof checkpointSession>
+): SessionCheckpoint => {
+  const result = checkpointSession(...args);
+  if (!result.ok) {
+    throw new Error(`Expected checkpointSession to succeed: ${result.reason}`);
+  }
+  return result.checkpoint;
+};
+
+// Fails the all-time stats write (the 2nd setItem) and, when asked, the
+// history rollback (the 3rd), letting the history write through.
+const failStatsWrite = ({ rollbackToo }: { rollbackToo: boolean }) => {
+  const originalSetItem = mockLocalStorage.setItem;
+  let callCount = 0;
+  mockLocalStorage.setItem = (key: string, value: string) => {
+    callCount += 1;
+    if (callCount === 1 || (callCount === 3 && !rollbackToo)) {
+      originalSetItem.call(mockLocalStorage, key, value);
+      return;
+    }
+    throw new Error("QuotaExceededError");
+  };
+  return () => {
+    mockLocalStorage.setItem = originalSetItem;
+  };
+};
+
+describe("checkpointSession and same-id upsert", () => {
+  const atHide = makeSession({
+    bestStreak: 3,
+    config: { type: "open" },
+    fails: 1,
+    id: "hidden-session",
+    questionsCompleted: 5,
+    successes: 4,
+  });
+  const atStop = {
+    ...atHide,
+    bestStreak: 4,
+    fails: 2,
+    questionsCompleted: 8,
+    successes: 6,
+  };
+
+  it("hide, return, then Stop yields one record with the combined count, counted once", () => {
+    const checkpoint = checkpointOrThrow(atHide);
+    const result = finalizeSession(atStop, checkpoint);
+
+    expect(result.ok).toBe(true);
+    const history = readHistory();
+    expect(history).toHaveLength(1);
+    expect(history[0]).toMatchObject({
+      id: "hidden-session",
+      questionsCompleted: 8,
+      successes: 6,
+    });
+    expect(readEntry()).toEqual({
+      globalBestStreak: 4,
+      totalFails: 2,
+      totalQuestions: 8,
+      totalSessions: 1,
+      totalSuccesses: 6,
+    });
+  });
+
+  it("hide, then the page is killed, leaves one record with the counts at hide time and no completion event", () => {
+    checkpointOrThrow(atHide);
+
+    const history = readHistory();
+    expect(history).toHaveLength(1);
+    expect(history[0]).toMatchObject({ questionsCompleted: 5, successes: 4 });
+    expect(readEntry()).toEqual({
+      globalBestStreak: 3,
+      totalFails: 1,
+      totalQuestions: 5,
+      totalSessions: 1,
+      totalSuccesses: 4,
+    });
+    // The session has not ended, so GA must not see a completion.
+    expect(eventBus.emit.SESSION_COMPLETED).not.toHaveBeenCalled();
+  });
+
+  it("two hides then Stop yield one record, counted once", () => {
+    const first = checkpointOrThrow(atHide);
+    const second = checkpointOrThrow(
+      { ...atHide, fails: 2, questionsCompleted: 6 },
+      first
+    );
+    finalizeSession(atStop, second);
+
+    expect(readHistory()).toHaveLength(1);
+    expect(readEntry()).toMatchObject({
+      totalFails: 2,
+      totalQuestions: 8,
+      totalSessions: 1,
+      totalSuccesses: 6,
+    });
+    expect(eventBus.emit.SESSION_COMPLETED).toHaveBeenCalledOnce();
+  });
+
+  it("persists a structured session hidden and killed", () => {
+    checkpointOrThrow(
+      makeSession({
+        config: { totalQuestions: 10, type: "structured" },
+        questionsCompleted: 4,
+      })
+    );
+
+    const history = readHistory();
+    expect(history).toHaveLength(1);
+    expect(history[0]).toMatchObject({
+      config: { totalQuestions: 10, type: "structured" },
+      questionsCompleted: 4,
+    });
+    expect(readEntry()?.totalSessions).toBe(1);
+  });
+
+  it("replaces the checkpointed record even when another record was saved after it", () => {
+    storage.set(
+      SESSION_HISTORY_LSK,
+      JSON.stringify([makeRecord({ id: "old" })])
+    );
+    const checkpoint = checkpointOrThrow(atHide);
+    // Another tab saves a session while this one is hidden.
+    finalizeSession(makeSession({ id: "other-tab" }));
+    finalizeSession(atStop, checkpoint);
+
+    expect(readHistory().map((r) => r.id)).toEqual([
+      "hidden-session",
+      "other-tab",
+      "old",
+    ]);
+  });
+
+  it("compares the final summary against the stats from before the first checkpoint", () => {
+    const existingStats: AllTimeStats = {
+      "flashcard:mnemonica": {
+        globalBestStreak: 3,
+        totalFails: 0,
+        totalQuestions: 5,
+        totalSessions: 1,
+        totalSuccesses: 5,
+      },
+    };
+    storage.set(ALL_TIME_STATS_LSK, JSON.stringify(existingStats));
+    // The streak of 5 was reached before the hide, so the checkpoint has
+    // already raised the stored best to 5.
+    const checkpoint = checkpointOrThrow({ ...atHide, bestStreak: 5 });
+    const result = finalizeSession({ ...atStop, bestStreak: 5 }, checkpoint);
+
+    if (!result.ok) {
+      throw new Error("Expected finalizeSession to succeed");
+    }
+    expect(result.summary.isNewGlobalBestStreak).toBe(true);
+    expect(readEntry()?.totalSessions).toBe(2);
+  });
+
+  it("retries a failed final save with the same checkpoint without double counting", () => {
+    const checkpoint = checkpointOrThrow(atHide);
+    const restore = failStatsWrite({ rollbackToo: false });
+    const failed = finalizeSession(atStop, checkpoint);
+    restore();
+    expect(failed).toEqual({ ok: false, reason: "write-failed" });
+
+    finalizeSession(atStop, checkpoint);
+
+    expect(readHistory()).toHaveLength(1);
+    expect(readEntry()).toMatchObject({ totalQuestions: 8, totalSessions: 1 });
+  });
+
+  it("repairs the stats after a checkpoint that left history written but stats unwritten", () => {
+    const restore = failStatsWrite({ rollbackToo: true });
+    const failed = checkpointSession(atHide);
+    restore();
+    expect(failed).toEqual({ ok: false, reason: "corrupt" });
+
+    // No checkpoint was stored for the failed save, so the next one adds the
+    // full counts and replaces the stray history record.
+    finalizeSession(atStop);
+
+    expect(readHistory()).toHaveLength(1);
+    expect(readEntry()).toMatchObject({ totalQuestions: 8, totalSessions: 1 });
+  });
+
+  it("refuses to overwrite corrupt prior history", () => {
+    const corrupt = JSON.stringify([{ not: "a record" }]);
+    storage.set(SESSION_HISTORY_LSK, corrupt);
+
+    expect(checkpointSession(atHide)).toEqual({
+      ok: false,
+      reason: "corrupt-prior-state",
+    });
+    expect(storage.get(SESSION_HISTORY_LSK)).toBe(corrupt);
+    expect(storage.get(ALL_TIME_STATS_LSK)).toBeUndefined();
+  });
+
+  it("keeps the breadcrumb of a failed checkpoint until a later save of the same session succeeds", () => {
+    const restore = failStatsWrite({ rollbackToo: false });
+    expect(checkpointSession(atHide).ok).toBe(false);
+    restore();
+    writeLastSaveFailedBreadcrumb("write-failed", atHide.id);
+    // Page killed here: nothing saved the session, so the breadcrumb stays.
+    expect(storage.has(LAST_SAVE_FAILED_LSK)).toBe(true);
+
+    expect(finalizeSession(atStop).ok).toBe(true);
+
+    expect(storage.has(LAST_SAVE_FAILED_LSK)).toBe(false);
+  });
+
+  it("clears the breadcrumb when a later checkpoint of the same session succeeds", () => {
+    writeLastSaveFailedBreadcrumb("write-failed", atHide.id);
+
+    checkpointOrThrow(atHide);
+
+    expect(storage.has(LAST_SAVE_FAILED_LSK)).toBe(false);
+  });
+
+  it("keeps the breadcrumb of another session when this one saves", () => {
+    writeLastSaveFailedBreadcrumb("write-failed", "lost-session");
+
+    checkpointOrThrow(atHide);
+    finalizeSession(atStop);
+
+    expect(storage.has(LAST_SAVE_FAILED_LSK)).toBe(true);
+  });
+});
+
+// --- Same-tab notification of useLocalDb subscribers ---
+
+const EMPTY_HISTORY: SessionRecord[] = [];
+const EMPTY_STATS: AllTimeStats = {};
+
+const announcedKeys = (spy: { mock: { calls: unknown[][] } }): unknown[] =>
+  spy.mock.calls.map(([event]) =>
+    event instanceof CustomEvent ? event.detail.key : null
+  );
+
+describe("same-tab change notifications", () => {
+  it("shows a mounted history and stats subscriber the finalized session without remount", () => {
+    const history = renderHook(() =>
+      useLocalDb(SESSION_HISTORY_LSK, EMPTY_HISTORY, isSessionRecordArray)
+    );
+    const stats = renderHook(() =>
+      useLocalDb(ALL_TIME_STATS_LSK, EMPTY_STATS, isAllTimeStats)
+    );
+    expect(history.result.current[0]).toEqual([]);
+
+    act(() => {
+      finalizeSession(makeSession());
+    });
+
+    expect(history.result.current[0]).toHaveLength(1);
+    expect(stats.result.current[0]["flashcard:mnemonica"]?.totalSessions).toBe(
+      1
+    );
+  });
+
+  it("shows a mounted history subscriber a checkpoint without remount", () => {
+    const history = renderHook(() =>
+      useLocalDb(SESSION_HISTORY_LSK, EMPTY_HISTORY, isSessionRecordArray)
+    );
+
+    act(() => {
+      checkpointSession(makeSession());
+    });
+
+    expect(history.result.current[0]).toHaveLength(1);
+  });
+
+  it("announces history only when the stats write fails and history is rolled back", () => {
+    const dispatchSpy = vi.spyOn(window, "dispatchEvent");
+    const restore = failStatsWrite({ rollbackToo: false });
+    finalizeSession(makeSession());
+    restore();
+
+    expect(announcedKeys(dispatchSpy)).toEqual([SESSION_HISTORY_LSK]);
+  });
+
+  it("announces history when the rollback also fails, so subscribers see what is on disk", () => {
+    const history = renderHook(() =>
+      useLocalDb(SESSION_HISTORY_LSK, EMPTY_HISTORY, isSessionRecordArray)
+    );
+    const restore = failStatsWrite({ rollbackToo: true });
+    act(() => {
+      finalizeSession(makeSession());
+    });
+    restore();
+
+    expect(history.result.current[0]).toHaveLength(1);
+  });
+
+  it("still reports success when announcing the change throws", () => {
+    vi.spyOn(window, "dispatchEvent").mockImplementation(() => {
+      throw new Error("listener failed");
+    });
+
+    const result = finalizeSession(makeSession());
+
+    expect(result.ok).toBe(true);
+    expect(readHistory()).toHaveLength(1);
+  });
+
+  it("announces nothing when the history write fails", () => {
+    const dispatchSpy = vi.spyOn(window, "dispatchEvent");
+    const originalSetItem = mockLocalStorage.setItem;
+    mockLocalStorage.setItem = () => {
+      throw new Error("QuotaExceededError");
+    };
+    finalizeSession(makeSession());
+    mockLocalStorage.setItem = originalSetItem;
+
+    expect(announcedKeys(dispatchSpy)).toEqual([]);
   });
 });

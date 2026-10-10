@@ -133,7 +133,9 @@ export const HomeWithStack = ({ stackKey, stackName }: HomeWithStackProps) => {
             />
             <StatDisplay
               label={t("home.statAccuracy")}
-              value={`${toAccuracyPercent(accuracy)}%`}
+              value={t("common.percent", {
+                percent: toAccuracyPercent(accuracy),
+              })}
               withBorder
             />
             <StatDisplay

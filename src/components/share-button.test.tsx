@@ -5,7 +5,8 @@ import { render } from "../test-utils";
 import { ShareButton } from "./share-button";
 
 const mockShareMemDeck = vi.fn();
-vi.mock("../utils/share", () => ({
+vi.mock("../utils/share", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../utils/share")>()),
   shareMemDeck: (...args: unknown[]) => mockShareMemDeck(...args),
 }));
 
@@ -134,6 +135,36 @@ describe("ShareButton", () => {
         message: "Something went wrong",
       })
     );
+  });
+
+  it("shows a green 'Link copied!' notification when the message is copied", async () => {
+    mockShareMemDeck.mockResolvedValue("copied");
+    const user = userEvent.setup();
+    render(<ShareButton />);
+
+    await user.click(screen.getByRole("button", { name: "Share MemDeck" }));
+
+    await waitFor(() => {
+      expect(mockNotificationsShow).toHaveBeenCalledWith({
+        color: "green",
+        message: "Link copied!",
+      });
+    });
+    expect(mockTrackShareClicked).toHaveBeenCalledWith("nav", "copied");
+  });
+
+  it("tracks 'cancelled' and shows no notification when the share sheet is dismissed", async () => {
+    mockShareMemDeck.mockResolvedValue("cancelled");
+    const user = userEvent.setup();
+    render(<ShareButton />);
+
+    await user.click(screen.getByRole("button", { name: "Share MemDeck" }));
+
+    await waitFor(() => {
+      expect(mockTrackShareClicked).toHaveBeenCalledWith("nav", "cancelled");
+    });
+    expect(mockNotificationsShow).not.toHaveBeenCalled();
+    expect(getCheckIcon()).not.toBeInTheDocument();
   });
 
   it("does not show an error notification when share succeeds", async () => {

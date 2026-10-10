@@ -31,7 +31,7 @@ When the change being persisted is also analytics-tracked or event-bus-emitted, 
 
 ## Use `probeStoredValue` for recoverable state
 
-`probeStoredValue` (`src/utils/localstorage.ts:42`) returns a discriminated `absent | valid | corrupt | read-error` result. Use it instead of `getStoredValue` when overwriting would destroy user-recoverable data (session history, all-time stats) so consumers refuse to silently overwrite a corrupt-but-readable blob (#647). `getStoredValue` is fine for low-stakes single values where reset-on-write is acceptable.
+`probeStoredValue` (in `src/utils/localstorage.ts`) returns a discriminated `absent | valid | corrupt | read-error` result. Use it instead of `getStoredValue` when overwriting would destroy user-recoverable data (session history, all-time stats) so consumers refuse to silently overwrite a corrupt-but-readable blob (#647). `getStoredValue` is fine for low-stakes single values where reset-on-write is acceptable.
 
 ## sessionStorage sentinels for non-clearable breadcrumbs; last-known-valid cache for cross-tab corruption
 

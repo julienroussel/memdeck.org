@@ -23,8 +23,10 @@
     "acaanTimedTitle": "Já faz o ACAAN — agora vença o relógio."
   },
   "common": {
-    "comingSoon": "Em breve...",
     "learnMore": "Saber mais",
+    "percent": "{{percent}}%",
+    "durationSeconds": "{{seconds}} s",
+    "durationMinutesSeconds": "{{minutes}} min {{seconds}} s",
     "showMore": "Mostrar mais",
     "check": "Verificar",
     "stop": "Parar",
@@ -90,21 +92,19 @@
     "languageAriaLabel": "Idioma"
   },
   "navFooter": {
-    "llmsTxtDescription": "— Resumo do site para LLMs (abre em novo separador)"
+    "llmsTxtDescription": "— Resumo do site para LLMs (abre em novo separador)",
+    "buildVersion": "Versão da compilação:"
   },
   "home": {
     "pageTitle": "MemDeck — Domine o baralho memorizado",
     "pageDescription": "Ferramenta online gratuita para dominar sistemas de baralho memorizado como Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant e Infinity.",
     "welcomeNew": "Domine o seu baralho memorizado",
     "welcomeReturning": "Pronto para treinar?",
-    "intro": "Espero que estas ferramentas o ajudem a melhorar a aprendizagem do seu stack. Consulte o <guideLink>guia</guideLink> para uma visão geral de tudo o que o MemDeck oferece. Precisa de ajuda ou acha que falta algo? Contacte-me no <githubLink>GitHub</githubLink>!",
-    "firstTimer": "Olá, primeira vez aqui! Escolha o seu stack favorito abaixo para desbloquear todas as funcionalidades. Pode mudar a qualquer momento usando o seletor na parte inferior do menu.",
     "guideCardTitle": "Novo aqui? Leia o Guia",
     "guideCardDescription": "Conheça todos os modos de treino e como tirar o máximo partido do MemDeck.",
     "selectedStack": "O seu stack selecionado é <bold>{{stackName}}</bold>",
     "whatIsMemdeck": "Um baralho memorizado é um baralho completo numa ordem específica que decora — abrindo caminho a truques de cartas poderosos e proezas mentais impressionantes.",
     "introNew": "O MemDeck ajuda-o a dominar o seu baralho memorizado com exercícios, calculadoras e treino visual. Escolha um stack abaixo para começar — é gratuito e funciona inteiramente no seu navegador.",
-    "introReturning": "Pronto para treinar? Comece uma sessão ou explore as suas ferramentas abaixo.",
     "stackPickerHint": "Não sabe qual escolher? Mnemonica e Aronson são pontos de partida populares.",
     "featuresTitle": "Modos de treino",
     "featureFlashcardTitle": "Flashcard",
@@ -173,8 +173,7 @@
     "timesUp": "Tempo esgotado!",
     "movingToNext": "A avançar para a próxima carta.",
     "revealTitle": "Resposta",
-    "answerCorrect": "Correto",
-    "answerIncorrect": "Errado, a resposta era {{answer}}"
+    "answerCorrect": "Correto"
   },
   "acaan": {
     "pageTitle": "Treino ACAAN",
@@ -189,7 +188,6 @@
     "wrongMessage": "Tente novamente!",
     "revealTitle": "Resposta",
     "timesUp": "Tempo esgotado!",
-    "movingToNext": "A passar para a próxima ronda.",
     "cutDepthMessage": "Posição {{from}} → {{to}}, profundidade de corte: {{cutDepth}}",
     "cutDepthZero": "0 (sem corte)"
   },
@@ -230,7 +228,9 @@
       "position": "#",
       "card": "Carta",
       "noResults": "Nenhuma carta encontrada",
-      "resultCount": "{{count}} cartas encontradas"
+      "resultCount_one": "{{count}} carta encontrada",
+      "resultCount_many": "{{count}} cartas encontradas",
+      "resultCount_other": "{{count}} cartas encontradas"
     },
     "faro": {
       "title": "Mistura Faro",
@@ -254,15 +254,23 @@
       "searchAriaLabel": "Pesquisar cartas por nome ou posição",
       "noResults": "Nenhuma carta encontrada",
       "detailTitle": "Detalhe da soletração",
+      "detailAriaLabel": "Detalhe da soletração: {{cardName}}",
       "letter": "Letra",
       "dealtCard": "Carta distribuída",
-      "resultCount": "{{count}} resultados"
+      "resultCount_one": "{{count}} resultado",
+      "resultCount_many": "{{count}} resultados",
+      "resultCount_other": "{{count}} resultados"
     },
     "sequences": {
       "title": "Sequências Stay Stack",
       "description": "Visualize as sequências cíclicas formadas ao distribuir cada N-ésima carta do seu stack.",
       "stepLabel": "Tamanho do passo",
-      "summary": "{{cycleCount}} ciclos de {{cycleLength}} cartas cada",
+      "summary_one": "$t(toolbox.sequences.cycles, {\"count\": {{cycleCount}} }) de {{count}} carta cada",
+      "summary_many": "$t(toolbox.sequences.cycles, {\"count\": {{cycleCount}} }) de {{count}} cartas cada",
+      "summary_other": "$t(toolbox.sequences.cycles, {\"count\": {{cycleCount}} }) de {{count}} cartas cada",
+      "cycles_one": "{{count}} ciclo",
+      "cycles_many": "{{count}} ciclos",
+      "cycles_other": "{{count}} ciclos",
       "cycleLabel": "Ciclo {{current}} de {{total}}",
       "position": "#",
       "card": "Carta"
@@ -270,6 +278,7 @@
   },
   "timer": {
     "timeRemaining": "Tempo restante",
+    "timeRemainingAriaLabel": "Tempo restante: {{seconds}} s",
     "timedMode": "Modo cronometrado",
     "timeLimit": "Limite de tempo:"
   },
@@ -301,7 +310,8 @@
   },
   "cardSpread": {
     "ariaLabel": "Leque de cartas",
-    "selectPositionAriaLabel": "Selecionar a posição {{position}}"
+    "selectPositionAriaLabel": "Selecionar a posição {{position}}",
+    "selectDistanceAriaLabel": "Selecionar a distância {{distance}}"
   },
   "numberCard": {
     "ariaLabel": "Posição {{number}}"
@@ -325,7 +335,6 @@
     "cancel": "Cancelar"
   },
   "pwaInstall": {
-    "bannerMessage": "Instale o MemDeck para treinar offline",
     "install": "Instalar",
     "modalTitle": "Instalar MemDeck",
     "iosStep1": "Toque no botão Partilhar na parte inferior do ecrã",
@@ -343,6 +352,8 @@
   "errors": {
     "somethingWentWrong": "Algo correu mal",
     "languageLoadFailed": "Não foi possível carregar o idioma preferido. A usar inglês.",
+    "unexpectedErrorMessage": "Ocorreu um erro inesperado. Tente novamente ou atualize a página.",
+    "tryAgain": "Tentar novamente",
     "sessionSaveFailed": {
       "title": "Falha ao guardar",
       "message": "Não foi possível guardar a sessão — o armazenamento do navegador pode estar cheio. Liberte espaço e tente Parar novamente."
@@ -450,6 +461,11 @@
     "copied": "Link copiado!",
     "nudgeMessage": "Gosta do MemDeck? Partilhe-o com outro mágico.",
     "nudgeDismiss": "Fechar"
+  },
+  "analyticsConsent": {
+    "message": "Permitir o Google Analytics? Usa cookies e regista as páginas vistas, os modos que treina e os erros, para que o MemDeck saiba o que melhorar e o que corrigir.",
+    "accept": "Permitir",
+    "decline": "Recusar"
   },
   "about": {
     "pageTitle": "Sobre",
@@ -628,14 +644,12 @@
     "activeModeBoth": "Ambos os modos",
     "promptComputeAriaLabel": "Distância de {{from}} a {{to}}",
     "promptApplyAriaLabel": "Aplicar deslocamento {{offset}} a {{card}}",
-    "offsetLabel": "Deslocamento",
     "rangeTooSmall": "O treino de Distância precisa de pelo menos {{count}} cartas no intervalo. Alargue o intervalo do seu stack para começar a treinar.",
     "rangeTooSmallTitle": "Intervalo demasiado pequeno",
     "revealTitle": "Resposta",
     "timesUp": "Tempo esgotado!",
     "movingToNext": "A passar para a próxima ronda.",
-    "answerCorrect": "Correto",
-    "answerIncorrect": "Errado, a resposta era {{answer}}"
+    "answerCorrect": "Correto"
   },
   "whatsNew": {
     "pageTitle": "Novidades",

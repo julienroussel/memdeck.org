@@ -3,7 +3,9 @@ import { mnemonica } from "../src/types/stacks/mnemonica";
 import {
   CORRECT_ANSWERS_PATTERN,
   INCORRECT_ANSWERS_PATTERN,
+  PROGRESS_SENTENCE_PATTERN,
 } from "./fixtures/patterns";
+import { readCount } from "./fixtures/read-count";
 import { test } from "./fixtures/test-setup";
 
 const SETTINGS_PATTERN = /settings/i;
@@ -12,8 +14,7 @@ const CHECK_PATTERN = /check/i;
 const TIMED_MODE_PATTERN = /timed mode/i;
 const START_SESSION_PATTERN = /start \d+ question session/i;
 const STOP_PATTERN = /stop/i;
-const PROGRESS_ARIA_PATTERN = /progress:/i;
-const PROGRESS_PATTERN = /\/\d+/;
+const PROGRESS_PATTERN = /^\d+\/\d+$/;
 const CARD_SRC_PATTERN = /cards\/(.+)\.svg/;
 const SESSION_TOOLTIP_PATTERN = /start a session/i;
 
@@ -83,11 +84,12 @@ test.describe("ACAAN Training", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Navigate to ACAAN page
     await page.locator("a:has-text('ACAAN')").first().click();
-    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "ACAAN" })
+    ).toBeVisible();
   });
 
   test("should load ACAAN page and render correctly after selecting a stack", async ({
@@ -97,14 +99,14 @@ test.describe("ACAAN Training", () => {
     await expect(page.getByRole("heading", { name: "ACAAN" })).toBeVisible();
 
     // Verify score badges are displayed (thumbs up/down icons with numbers)
-    const successBadge = page.getByLabel(CORRECT_ANSWERS_PATTERN);
-    const failBadge = page.getByLabel(INCORRECT_ANSWERS_PATTERN);
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
     await expect(successBadge).toBeVisible();
     await expect(failBadge).toBeVisible();
 
     // Both badges should show 0 initially
-    await expect(successBadge).toContainText("0");
-    await expect(failBadge).toContainText("0");
+    await expect(successBadge).toHaveText("Correct answers: 0");
+    await expect(failBadge).toHaveText("Incorrect answers: 0");
 
     // Verify settings button is visible
     const settingsButton = page.getByRole("button", {
@@ -171,8 +173,8 @@ test.describe("ACAAN Training", () => {
   test("should accept cut depth input and submit answer", async ({ page }) => {
     const cutDepthInput = page.getByLabel(CUT_DEPTH_PATTERN);
     const checkButton = page.getByRole("button", { name: CHECK_PATTERN });
-    const successBadge = page.getByLabel(CORRECT_ANSWERS_PATTERN);
-    const failBadge = page.getByLabel(INCORRECT_ANSWERS_PATTERN);
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
 
     // Get initial score
     const initialSuccess = await successBadge.textContent();
@@ -197,8 +199,8 @@ test.describe("ACAAN Training", () => {
 
   test("should submit answer on Enter key press", async ({ page }) => {
     const cutDepthInput = page.getByLabel(CUT_DEPTH_PATTERN);
-    const successBadge = page.getByLabel(CORRECT_ANSWERS_PATTERN);
-    const failBadge = page.getByLabel(INCORRECT_ANSWERS_PATTERN);
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
 
     // Get initial score
     const initialSuccess = await successBadge.textContent();
@@ -238,10 +240,9 @@ test.describe("ACAAN Training", () => {
   test("should update score on correct answer", async ({ page }) => {
     const cutDepthInput = page.getByLabel(CUT_DEPTH_PATTERN);
     const checkButton = page.getByRole("button", { name: CHECK_PATTERN });
-    const successBadge = page.getByLabel(CORRECT_ANSWERS_PATTERN);
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
 
-    const initialSuccessText = await successBadge.textContent();
-    const initialSuccess = Number.parseInt(initialSuccessText || "0", 10);
+    const initialSuccess = await readCount(successBadge);
 
     // Compute the correct answer from the displayed card and target position
     const correctAnswer = await computeCorrectCutDepth(page);
@@ -251,19 +252,17 @@ test.describe("ACAAN Training", () => {
     await expect(cutDepthInput).toHaveValue("");
 
     // Success count should have incremented by exactly 1
-    const updatedSuccessText = await successBadge.textContent();
-    const updatedSuccess = Number.parseInt(updatedSuccessText || "0", 10);
+    const updatedSuccess = await readCount(successBadge);
     expect(updatedSuccess).toBe(initialSuccess + 1);
   });
 
   test("should update score on wrong answer", async ({ page }) => {
     const cutDepthInput = page.getByLabel(CUT_DEPTH_PATTERN);
     const checkButton = page.getByRole("button", { name: CHECK_PATTERN });
-    const failBadge = page.getByLabel(INCORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
 
     // Get initial fail count
-    const initialFailsText = await failBadge.textContent();
-    const initialFails = Number.parseInt(initialFailsText || "0", 10);
+    const initialFails = await readCount(failBadge);
 
     // Compute a guaranteed wrong answer
     const wrongAnswer = await computeWrongCutDepth(page);
@@ -273,8 +272,7 @@ test.describe("ACAAN Training", () => {
     await expect(cutDepthInput).toHaveValue("");
 
     // Fail count should have incremented by exactly 1
-    const updatedFailsText = await failBadge.textContent();
-    const updatedFails = Number.parseInt(updatedFailsText || "0", 10);
+    const updatedFails = await readCount(failBadge);
     expect(updatedFails).toBe(initialFails + 1);
   });
 
@@ -398,21 +396,20 @@ test.describe("ACAAN Training", () => {
     await timerSwitch.click();
 
     // Verify it toggled
-    const newChecked = await timerSwitch.isChecked();
-    expect(newChecked).toBe(!initialChecked);
+    await expect(timerSwitch).toBeChecked({ checked: !initialChecked });
 
     // Close popover
     await settingsButton.click();
     await expect(timerSwitch).not.toBeVisible();
 
     // Verify setting persisted in localStorage
-    const timerSettings = await page.evaluate(() => {
+    const timerSettings = await page.evaluate((): unknown => {
       const value = localStorage.getItem("memdeck-app-acaan-trainer-timer");
       return value ? JSON.parse(value) : null;
     });
 
     expect(timerSettings).not.toBeNull();
-    expect(timerSettings.enabled).toBe(newChecked);
+    expect(timerSettings).toHaveProperty("enabled", !initialChecked);
   });
 
   test("should persist timer settings in localStorage", async ({ page }) => {
@@ -436,7 +433,7 @@ test.describe("ACAAN Training", () => {
     await expect(timerSwitch).not.toBeVisible();
 
     // Check localStorage directly
-    const timerSettings = await page.evaluate(() => {
+    const timerSettings = await page.evaluate((): unknown => {
       const value = localStorage.getItem("memdeck-app-acaan-trainer-timer");
       return value ? JSON.parse(value) : null;
     });
@@ -463,7 +460,7 @@ test.describe("ACAAN Training", () => {
     await startButton.click();
 
     // Session banner should appear — look for its progress badge and stop button
-    const progressBadge = page.getByLabel(PROGRESS_ARIA_PATTERN);
+    const progressBadge = page.getByText(PROGRESS_SENTENCE_PATTERN);
     await expect(progressBadge).toBeVisible();
 
     // Stop session button should be visible
@@ -487,7 +484,7 @@ test.describe("ACAAN Training", () => {
     await startButton.click();
 
     // Session banner should be visible with progress badge
-    const progressBadge = page.getByLabel(PROGRESS_ARIA_PATTERN);
+    const progressBadge = page.getByText(PROGRESS_SENTENCE_PATTERN);
     await expect(progressBadge).toBeVisible();
 
     // Should show question count (e.g., "0/10")
@@ -502,8 +499,8 @@ test.describe("ACAAN Training", () => {
     await expect(page.getByRole("heading", { name: "ACAAN" })).toBeVisible();
 
     // The score badges indicate session is tracking
-    const successBadge = page.getByLabel(CORRECT_ANSWERS_PATTERN);
-    const failBadge = page.getByLabel(INCORRECT_ANSWERS_PATTERN);
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
     await expect(successBadge).toBeVisible();
     await expect(failBadge).toBeVisible();
   });
@@ -524,15 +521,15 @@ test.describe("ACAAN Training", () => {
     await startButton.click();
 
     // Session banner should appear with progress badge
-    const progressBadge = page.getByLabel(PROGRESS_ARIA_PATTERN);
+    const progressBadge = page.getByText(PROGRESS_SENTENCE_PATTERN);
     await expect(progressBadge).toBeVisible();
   });
 
   test("should persist game state across page reload", async ({ page }) => {
     const cutDepthInput = page.getByLabel(CUT_DEPTH_PATTERN);
     const checkButton = page.getByRole("button", { name: CHECK_PATTERN });
-    const successBadge = page.getByLabel(CORRECT_ANSWERS_PATTERN);
-    const failBadge = page.getByLabel(INCORRECT_ANSWERS_PATTERN);
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
 
     // Submit a few answers to build up score
     for (let i = 0; i < 3; i += 1) {
@@ -542,11 +539,8 @@ test.describe("ACAAN Training", () => {
     }
 
     // Get current score
-    const successText = await successBadge.textContent();
-    const failsText = await failBadge.textContent();
     const totalScore =
-      Number.parseInt(successText || "0", 10) +
-      Number.parseInt(failsText || "0", 10);
+      (await readCount(successBadge)) + (await readCount(failBadge));
 
     expect(totalScore).toBeGreaterThan(0);
 
@@ -554,13 +548,9 @@ test.describe("ACAAN Training", () => {
     await page.reload();
     await page.waitForLoadState("networkidle");
 
-    // Score should reset (ACAAN doesn't persist score, only settings)
-    const newSuccessText = await successBadge.textContent();
-    const newFailsText = await failBadge.textContent();
-
-    // After reload, score resets to 0
-    expect(newSuccessText).toContain("0");
-    expect(newFailsText).toContain("0");
+    // Score should reset to 0 (ACAAN doesn't persist score, only settings)
+    await expect(successBadge).toHaveText("Correct answers: 0");
+    await expect(failBadge).toHaveText("Incorrect answers: 0");
   });
 
   test("should validate cut depth input range", async ({ page }) => {
@@ -570,12 +560,8 @@ test.describe("ACAAN Training", () => {
     // Try entering negative number
     await cutDepthInput.fill("-5");
 
-    // Mantine NumberInput should prevent negative numbers
-    const negativeValue = await cutDepthInput.inputValue();
-    // Empty string or non-negative number expected
-    if (negativeValue !== "") {
-      expect(Number(negativeValue)).toBeGreaterThanOrEqual(0);
-    }
+    // allowNegative={false} strips the minus sign rather than clearing the input
+    await expect(cutDepthInput).toHaveValue("5");
 
     // Try entering valid number
     await cutDepthInput.fill("25");
@@ -590,18 +576,19 @@ test.describe("ACAAN Training", () => {
 
     // Navigate away to home
     await page.locator("a:has-text('Home')").first().click();
-    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("heading", { name: "Ready to train?" })
+    ).toBeVisible();
 
     // Navigate back to ACAAN
     await page.locator("a:has-text('ACAAN')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Page should load correctly
     await expect(page.getByRole("heading", { name: "ACAAN" })).toBeVisible();
 
     // Score badges should be visible
-    await expect(page.getByLabel(CORRECT_ANSWERS_PATTERN)).toBeVisible();
-    await expect(page.getByLabel(INCORRECT_ANSWERS_PATTERN)).toBeVisible();
+    await expect(page.getByText(CORRECT_ANSWERS_PATTERN)).toBeVisible();
+    await expect(page.getByText(INCORRECT_ANSWERS_PATTERN)).toBeVisible();
 
     // Card and number should be visible
     const cardImage = page.locator("img[src*='cards/']").first();

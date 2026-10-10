@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createDeckPosition, type Stack } from "../../types/stacks";
+import { createDeckPosition, getCardAt, type Stack } from "../../types/stacks";
 import { aronson } from "../../types/stacks/aronson";
 import { mnemonica } from "../../types/stacks/mnemonica";
 import type { TimerSettings } from "../../types/timer";
@@ -57,7 +57,7 @@ const createTestScenario = (
   cardPosition: number,
   targetPosition: number
 ): AcaanScenario => ({
-  card: mnemonica.order[cardPosition - 1],
+  card: getCardAt(mnemonica.order, cardPosition - 1),
   cardPosition: createDeckPosition(cardPosition),
   targetPosition: createDeckPosition(targetPosition),
 });
@@ -660,6 +660,7 @@ describe("useAcaanGame hook", () => {
   describe("handleTimeout", () => {
     it("emits ACAAN_ANSWER event with correct: false on timeout", async () => {
       const { eventBus } = await import("../../services/event-bus");
+      // The vi.mock factory adds this test-only export; the real module's type lacks it.
       const gameTimerMock = (await import(
         "../../hooks/use-game-timer"
       )) as typeof import("../../hooks/use-game-timer") & {

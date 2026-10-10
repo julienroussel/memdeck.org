@@ -1,6 +1,5 @@
 import { Flex, Image } from "@mantine/core";
-import type { KeyboardEvent } from "react";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { SPREAD_CARD_HEIGHT, SPREAD_CARD_WIDTH } from "../../constants";
 import { useFormatCardName } from "../../hooks/use-format-card-name";
@@ -8,13 +7,12 @@ import type {
   CardSpreadCardsProps,
   CardSpreadProps,
 } from "../../types/typeguards";
-import { cssVarCounterStyle } from "../../utils/style";
 import { NumberCard } from "../number-card";
+import { SpreadItem } from "./spread-item";
+import { useSpreadOffset } from "./use-spread-offset";
 
 const isCardsProps = (props: CardSpreadProps): props is CardSpreadCardsProps =>
   props.items.type === "cards";
-
-const KEYBOARD_STEP = 3;
 
 export const CardSpread = memo((props: CardSpreadProps) => {
   const {
@@ -26,115 +24,18 @@ export const CardSpread = memo((props: CardSpreadProps) => {
   } = props;
   const onCardClick = isCardsProps(props) ? props.onItemClick : undefined;
   const onNumberClick = isCardsProps(props) ? undefined : props.onItemClick;
+  const numberLabel = isCardsProps(props) ? undefined : props.numberLabel;
+  const isInteractive = props.onItemClick !== undefined;
   const { t } = useTranslation();
   const formatCardName = useFormatCardName();
-  const [offset, setOffset] = useState(0);
-  const touchLastPositionRef = useRef(0);
-  const rafRef = useRef<number | null>(null);
-  const movementAccumulatorRef = useRef(0);
-
-  useEffect(
-    () => () => {
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
-      }
-      movementAccumulatorRef.current = 0;
-    },
-    []
-  );
-
-  const updateOffset = useCallback(
-    (movementX: number) => {
-      const maxOffset = items.data.length / 2;
-      setOffset((prev) => {
-        if (movementX < 0 && prev > -maxOffset) {
-          return prev - 1;
-        }
-        if (movementX > 0 && prev < maxOffset) {
-          return prev + 1;
-        }
-        return prev;
-      });
-    },
-    [items.data.length]
-  );
-
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (canMove && e.buttons === 1) {
-        movementAccumulatorRef.current += e.nativeEvent.movementX;
-        if (rafRef.current === null) {
-          rafRef.current = requestAnimationFrame(() => {
-            const accumulated = movementAccumulatorRef.current;
-            movementAccumulatorRef.current = 0;
-            updateOffset(accumulated);
-            rafRef.current = null;
-          });
-        }
-      }
-    },
-    [canMove, updateOffset]
-  );
-
-  const handleTouchMove = useCallback(
-    (e: React.TouchEvent<HTMLDivElement>) => {
-      if (canMove && e.touches.length === 1) {
-        const [touch] = e.nativeEvent.touches;
-        if (!touch) {
-          return;
-        }
-        const movementX = touch.screenX - touchLastPositionRef.current;
-        touchLastPositionRef.current = touch.screenX;
-        movementAccumulatorRef.current += movementX;
-        if (rafRef.current === null) {
-          rafRef.current = requestAnimationFrame(() => {
-            const accumulated = movementAccumulatorRef.current;
-            movementAccumulatorRef.current = 0;
-            updateOffset(accumulated);
-            rafRef.current = null;
-          });
-        }
-      }
-    },
-    [canMove, updateOffset]
-  );
-
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent<HTMLDivElement>) => {
-      if (!canMove) {
-        return;
-      }
-
-      const maxOffset = items.data.length / 2;
-      switch (event.key) {
-        case "ArrowLeft":
-          event.preventDefault();
-          setOffset((prev) => Math.max(prev - KEYBOARD_STEP, -maxOffset));
-          break;
-        case "ArrowRight":
-          event.preventDefault();
-          setOffset((prev) => Math.min(prev + KEYBOARD_STEP, maxOffset));
-          break;
-        default:
-          break;
-      }
-    },
-    [canMove, items.data.length]
-  );
-
-  const handleCardItemClick = useCallback(
-    (item: CardSpreadCardsProps["items"]["data"][number], index: number) => {
-      onCardClick?.(item, index);
-    },
-    [onCardClick]
-  );
-
-  const handleNumberItemClick = useCallback(
-    (item: number, index: number) => {
-      onNumberClick?.(item, index);
-    },
-    [onNumberClick]
-  );
+  const {
+    offset,
+    handleFocus,
+    handleKeyDown,
+    handleMouseMove,
+    handleTouchMove,
+    handleTouchStart,
+  } = useSpreadOffset({ canMove, itemCount: items.data.length });
 
   const handleCardButtonClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -144,10 +45,10 @@ export const CardSpread = memo((props: CardSpreadProps) => {
       }
       const item = items.data[idx];
       if (item !== undefined) {
-        handleCardItemClick(item, idx);
+        onCardClick?.(item, idx);
       }
     },
-    [items, handleCardItemClick]
+    [items, onCardClick]
   );
 
   const handleNumberButtonClick = useCallback(
@@ -158,10 +59,18 @@ export const CardSpread = memo((props: CardSpreadProps) => {
       }
       const item = items.data[idx];
       if (item !== undefined) {
-        handleNumberItemClick(item, idx);
+        onNumberClick?.(item, idx);
       }
     },
-    [items, handleNumberItemClick]
+    [items, onNumberClick]
+  );
+
+  const getNumberAriaLabel = useCallback(
+    (item: number) =>
+      numberLabel === "distance"
+        ? t("cardSpread.selectDistanceAriaLabel", { distance: item })
+        : t("cardSpread.selectPositionAriaLabel", { position: item }),
+    [numberLabel, t]
   );
 
   // Keys are position-based (not data-based) so that DOM buttons are reused
@@ -173,18 +82,15 @@ export const CardSpread = memo((props: CardSpreadProps) => {
     () =>
       items.type === "cards"
         ? items.data.map((item, index) => (
-            <button
-              aria-label={formatCardName(item)}
-              className="cardSpreadCard"
-              data-card-index={index}
+            <SpreadItem
+              hasCursor={hasCursor}
+              index={index}
               // biome-ignore lint/suspicious/noArrayIndexKey: Position-based keys prevent DOM flicker when switching card/number items
               key={`spread_${index}`}
-              onClick={handleCardButtonClick}
-              style={{
-                cursor: hasCursor ? "pointer" : "default",
-                ...cssVarCounterStyle(index, items.data.length / 2, 0),
-              }}
-              type="button"
+              kind="card"
+              label={formatCardName(item)}
+              onClick={isInteractive ? handleCardButtonClick : undefined}
+              size={items.data.length / 2}
             >
               <Image
                 alt=""
@@ -192,32 +98,28 @@ export const CardSpread = memo((props: CardSpreadProps) => {
                 src={item.image}
                 w={SPREAD_CARD_WIDTH}
               />
-            </button>
+            </SpreadItem>
           ))
         : items.data.map((item, index) => (
-            <button
-              aria-label={t("cardSpread.selectPositionAriaLabel", {
-                position: item,
-              })}
-              className="cardSpreadCard"
-              data-number-index={index}
+            <SpreadItem
+              hasCursor={hasCursor}
+              index={index}
               // biome-ignore lint/suspicious/noArrayIndexKey: Position-based keys prevent DOM flicker when switching card/number items
               key={`spread_${index}`}
-              onClick={handleNumberButtonClick}
-              style={{
-                cursor: hasCursor ? "pointer" : "default",
-                ...cssVarCounterStyle(index, items.data.length / 2, 0),
-              }}
-              type="button"
+              kind="number"
+              label={getNumberAriaLabel(item)}
+              onClick={isInteractive ? handleNumberButtonClick : undefined}
+              size={items.data.length / 2}
             >
               <NumberCard number={item} />
-            </button>
+            </SpreadItem>
           )),
     [
       items,
+      isInteractive,
       hasCursor,
       formatCardName,
-      t,
+      getNumberAriaLabel,
       handleCardButtonClick,
       handleNumberButtonClick,
     ]
@@ -230,11 +132,16 @@ export const CardSpread = memo((props: CardSpreadProps) => {
       className="cardSpreadContainer"
       justify="center"
       mih={height}
+      onFocus={handleFocus}
       onKeyDown={handleKeyDown}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
+      onTouchStart={handleTouchStart}
       role="group"
       style={{ "--degree": `${degree}deg`, "--offset": offset }}
+      // A display-only spread has no focusable items, so the container takes
+      // the single tab stop that keeps arrow-key panning reachable.
+      tabIndex={!isInteractive && canMove ? 0 : undefined}
     >
       {renderedItems}
     </Flex>

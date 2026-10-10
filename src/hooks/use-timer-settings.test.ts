@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FLASHCARD_TIMER_LSK } from "../constants";
 import {
   handleLocalDbWriteFailed,
@@ -70,6 +70,12 @@ describe("isTimerSettings", () => {
 });
 
 describe("useTimerSettings", () => {
+  // `vi.clearAllMocks` keeps implementations, so a `mockReturnValue` from one
+  // test would leak into the next; `mockReset` restores the pass-through.
+  beforeEach(() => {
+    mockedUseLocalDb.mockReset();
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -85,7 +91,7 @@ describe("useTimerSettings", () => {
 
     expect(mockedUseLocalDb).toHaveBeenCalledWith(
       FLASHCARD_TIMER_LSK,
-      expect.any(Object),
+      { duration: 15, enabled: false },
       expect.any(Function),
       expect.objectContaining({
         onCorrupt: reportLocalDbCorruption,
@@ -95,12 +101,6 @@ describe("useTimerSettings", () => {
   });
 
   it("returns default timer settings", () => {
-    mockedUseLocalDb.mockReturnValue([
-      { duration: 15, enabled: false },
-      mockSetSettings,
-      vi.fn(),
-    ]);
-
     const { timerSettings } = useTimerSettings(FLASHCARD_TIMER_LSK);
 
     expect(timerSettings).toEqual({ duration: 15, enabled: false });
@@ -129,7 +129,7 @@ describe("useTimerSettings", () => {
       const { setTimerEnabled } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerEnabled(true);
 
-      const [[updater]] = mockSetSettings.mock.calls;
+      const updater = mockSetSettings.mock.calls[0]?.[0];
       const result = updater({ duration: 15, enabled: false });
       expect(result).toEqual({ duration: 15, enabled: true });
     });
@@ -185,7 +185,7 @@ describe("useTimerSettings", () => {
       const { setTimerEnabled } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerEnabled(false);
 
-      const [[updater]] = mockSetSettings.mock.calls;
+      const updater = mockSetSettings.mock.calls[0]?.[0];
       const result = updater({ duration: 15, enabled: true });
       expect(result).toEqual({ duration: 15, enabled: false });
     });
@@ -200,7 +200,7 @@ describe("useTimerSettings", () => {
       const { setTimerEnabled } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerEnabled(true);
 
-      const [[updater]] = mockSetSettings.mock.calls;
+      const updater = mockSetSettings.mock.calls[0]?.[0];
       const result = updater({ duration: 30, enabled: false });
       expect(result.duration).toBe(30);
     });
@@ -217,7 +217,7 @@ describe("useTimerSettings", () => {
       const { setTimerDuration } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerDuration(10);
 
-      const [[updater]] = mockSetSettings.mock.calls;
+      const updater = mockSetSettings.mock.calls[0]?.[0];
       const result = updater({ duration: 15, enabled: true });
       expect(result).toEqual({ duration: 10, enabled: true });
     });
@@ -232,7 +232,7 @@ describe("useTimerSettings", () => {
       const { setTimerDuration } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerDuration(30);
 
-      const [[updater]] = mockSetSettings.mock.calls;
+      const updater = mockSetSettings.mock.calls[0]?.[0];
       const result = updater({ duration: 15, enabled: true });
       expect(result).toEqual({ duration: 30, enabled: true });
     });
@@ -247,7 +247,7 @@ describe("useTimerSettings", () => {
       const { setTimerDuration } = useTimerSettings(FLASHCARD_TIMER_LSK);
       setTimerDuration(10);
 
-      const [[updater]] = mockSetSettings.mock.calls;
+      const updater = mockSetSettings.mock.calls[0]?.[0];
       const result = updater({ duration: 15, enabled: false });
       expect(result.enabled).toBe(false);
     });

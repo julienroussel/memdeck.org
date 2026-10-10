@@ -6,8 +6,8 @@ const NEW_CHALLENGE_PATTERN = /new challenge/i;
 // Structured-session controls (the only UI path to the summary modal).
 const START_A_SESSION_PATTERN = /start a session/i;
 const START_PRESET_PATTERN = /start \d+ question session/i;
-const PROGRESS_ZERO_PATTERN = /progress: 0\/\d+/i;
-const PROGRESS_ONE_PATTERN = /progress: 1\/\d+/i;
+const PROGRESS_ZERO_PATTERN = /^progress: 0\/\d+$/i;
+const PROGRESS_ONE_PATTERN = /^progress: 1\/\d+$/i;
 const NUMBERONLY_DEEP_LINK = /\/flashcard\/\?try=numberonly$/;
 const NEIGHBOR_DEEP_LINK = /\/flashcard\/\?try=neighbor$/;
 // The page strips the deep-link param on mount, so the landed URL is bare.
@@ -134,7 +134,8 @@ async function latestSessionRecord(page: Page) {
     .poll(() =>
       page.evaluate<number, string>((key) => {
         const raw = localStorage.getItem(key);
-        return raw === null ? 0 : JSON.parse(raw).length;
+        const parsed: unknown = raw === null ? null : JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed.length : 0;
       }, SESSION_HISTORY_KEY)
     )
     .toBeGreaterThan(0);
@@ -143,8 +144,11 @@ async function latestSessionRecord(page: Page) {
     if (raw === null) {
       return null;
     }
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : null;
+    const parsed: unknown = JSON.parse(raw);
+    const first: unknown = Array.isArray(parsed) ? parsed[0] : null;
+    const isRecord = (value: unknown): value is Record<string, unknown> =>
+      typeof value === "object" && value !== null;
+    return isRecord(first) ? first : null;
   }, SESSION_HISTORY_KEY);
 }
 
@@ -379,12 +383,12 @@ test.describe("Feature Discovery — post-session summary surface (#698)", () =>
       .click();
     // Confirm the structured session is active before answering (its banner
     // shows "0/N").
-    await expect(page.getByLabel(PROGRESS_ZERO_PATTERN)).toBeVisible();
+    await expect(page.getByText(PROGRESS_ZERO_PATTERN)).toBeVisible();
     await page.getByRole("button", { name: "Reveal answer" }).click();
     // Wait for the answer to commit before stopping: stopSession reads the
     // committed status synchronously, so clicking Stop before "1/N" lands would
     // see questionsCompleted = 0 and discard the session instead of summarizing.
-    await expect(page.getByLabel(PROGRESS_ONE_PATTERN)).toBeVisible();
+    await expect(page.getByText(PROGRESS_ONE_PATTERN)).toBeVisible();
     await page.getByRole("button", { name: "Stop" }).click();
 
     // Confirm the summary modal opened.
@@ -423,12 +427,15 @@ test.describe("Feature Discovery — post-session summary surface (#698)", () =>
           if (raw === null) {
             return null;
           }
-          const parsed = JSON.parse(raw);
-          const latest =
-            Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : null;
-          return latest
-            ? `${latest.config?.type}:${latest.flashcardMode ?? ""}`
-            : null;
+          const parsed: unknown = JSON.parse(raw);
+          const isRecord = (value: unknown): value is Record<string, unknown> =>
+            typeof value === "object" && value !== null;
+          const latest: unknown = Array.isArray(parsed) ? parsed[0] : null;
+          if (!isRecord(latest)) {
+            return null;
+          }
+          const config = isRecord(latest.config) ? latest.config : {};
+          return `${String(config.type)}:${String(latest.flashcardMode ?? "")}`;
         }, SESSION_HISTORY_KEY)
       )
       .toBe(`open:${variant}`);

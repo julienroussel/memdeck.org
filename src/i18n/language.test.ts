@@ -7,6 +7,7 @@ import {
   isSupportedLanguage,
   LANGUAGE_CODES,
 } from "./language";
+import fr from "./locales/fr.json";
 import { SUPPORTED_LANGUAGES } from "./supported-languages";
 
 vi.mock("i18next", () => ({
@@ -371,14 +372,11 @@ describe("changeLanguage", () => {
 
     const { languageLoaders } = await import("./language");
 
-    let resolveFr:
-      | ((value: { default: Record<string, unknown> }) => void)
-      | undefined;
-    const frPromise = new Promise<{ default: Record<string, unknown> }>(
-      (resolve) => {
-        resolveFr = resolve;
-      }
-    );
+    type LocaleModule = Awaited<ReturnType<typeof languageLoaders.fr>>;
+    let resolveFr: ((value: LocaleModule) => void) | undefined;
+    const frPromise = new Promise<LocaleModule>((resolve) => {
+      resolveFr = resolve;
+    });
     vi.spyOn(languageLoaders, "fr").mockReturnValue(frPromise);
 
     // Start slow "fr" call (call A) — do not await
@@ -388,7 +386,7 @@ describe("changeLanguage", () => {
     const callB = changeLanguage("es");
 
     // Now resolve call A's loader after call B has already started
-    resolveFr?.({ default: { greeting: "Bonjour" } });
+    resolveFr?.({ default: fr });
 
     await Promise.all([callA, callB]);
 

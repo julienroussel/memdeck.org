@@ -1,12 +1,23 @@
-/** Formats a duration in seconds to a human-readable string (e.g. "2m 30s") */
-export const formatDuration = (seconds: number): string => {
+type DurationTranslate = (
+  key: "common.durationSeconds" | "common.durationMinutesSeconds",
+  options: { minutes?: number; seconds: number }
+) => string;
+
+/**
+ * Formats a duration in seconds through the locale catalog
+ * (e.g. "2m 30s" in English, "2 min 30 s" in French).
+ */
+export const formatDuration = (
+  seconds: number,
+  t: DurationTranslate
+): string => {
   const totalSeconds = Math.round(seconds);
   const mins = Math.floor(totalSeconds / 60);
   const secs = totalSeconds % 60;
   if (mins === 0) {
-    return `${secs}s`;
+    return t("common.durationSeconds", { seconds: secs });
   }
-  return `${mins}m ${secs}s`;
+  return t("common.durationMinutesSeconds", { minutes: mins, seconds: secs });
 };
 
 /** Calculates accuracy as a 0-1 decimal. Returns 0 when no attempts. */

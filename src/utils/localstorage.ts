@@ -1,4 +1,3 @@
-import { readLocalStorageValue } from "@mantine/hooks";
 import {
   useCallback,
   useEffect,
@@ -44,13 +43,13 @@ export const probeStoredValue = <T>(
   validate: (value: unknown) => value is T
 ): StoredValueProbe<T> => {
   try {
-    // Custom `deserialize` so the prototype-stripping reviver applies on this
-    // path too — Mantine's default `deserializeJSON` parses without a reviver,
-    // which would hand probeStoredValue consumers unstripped objects.
-    const raw: unknown = readLocalStorageValue({
-      deserialize: deserializeWithSafeReviver,
-      key,
-    });
+    // Read `window.localStorage` directly rather than through Mantine's
+    // `readLocalStorageValue`: Mantine catches a throwing `getItem` (and a
+    // blocked `localStorage` access) and returns the default, which would
+    // collapse the read-error branch below into "absent".
+    const raw: unknown = deserializeWithSafeReviver(
+      window.localStorage.getItem(key) ?? undefined
+    );
 
     if (raw === undefined || raw === null) {
       return { status: "absent" };
@@ -167,7 +166,7 @@ const safeJsonReviver = (key: string, value: unknown): unknown => {
 };
 
 // Reviver-applying replacement for Mantine's default `deserializeJSON`,
-// passed to `readLocalStorageValue` by `probeStoredValue` above. Mirrors
+// used by `probeStoredValue` above. Mirrors
 // Mantine's malformed-JSON semantics — return the raw string so the caller's
 // validator fails on it and the probe classifies it as corrupt.
 const deserializeWithSafeReviver = (value: string | undefined): unknown => {
@@ -193,9 +192,9 @@ const parseRawValue = <T>(
     parsed = JSON.parse(raw, safeJsonReviver);
   } catch {
     // Malformed JSON: classify as corrupt with the raw bytes preserved for
-    // telemetry. Mirrors `probeStoredValue` semantics (where Mantine's
-    // `deserializeJSON` catches the parse error and the validator then fails
-    // on the still-string value).
+    // telemetry. `probeStoredValue` differs: `deserializeWithSafeReviver`
+    // hands the unparsed string to the validator, so the two agree only when
+    // the validator rejects strings.
     return { raw, status: "corrupt" };
   }
   try {
@@ -230,7 +229,7 @@ const subscribeToKey = (key: string, onChange: () => void): (() => void) => {
   };
 };
 
-const dispatchKeyChange = (key: string): void => {
+export const dispatchKeyChange = (key: string): void => {
   window.dispatchEvent(
     new CustomEvent<LocalStorageEventDetail>(LOCAL_STORAGE_EVENT, {
       detail: { key },

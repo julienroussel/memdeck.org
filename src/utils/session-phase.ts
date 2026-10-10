@@ -1,6 +1,7 @@
 import type {
   ActiveSession,
   AnswerOutcome,
+  SessionConfig,
   SessionPhase,
 } from "../types/session";
 
@@ -9,10 +10,15 @@ export const deriveActiveSession = (
   status: SessionPhase
 ): ActiveSession | null => (status.phase === "active" ? status.session : null);
 
+/** An active session whose config is structured (finite) */
+type StructuredActiveSession = ActiveSession & {
+  config: Extract<SessionConfig, { type: "structured" }>;
+};
+
 /** Determines whether the current session is a structured (finite) session */
 export const deriveIsStructuredSession = (
   activeSession: ActiveSession | null
-): boolean =>
+): activeSession is StructuredActiveSession =>
   activeSession !== null && activeSession.config.type === "structured";
 
 /** Routes an answer outcome to the appropriate recording callbacks */

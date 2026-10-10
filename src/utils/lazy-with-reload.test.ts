@@ -23,6 +23,7 @@ vi.mock("react", () => ({
 }));
 
 function callFactory(lazyResult: unknown): Promise<{ default: unknown }> {
+  // The `react` mock above makes `lazy` return its factory, which React's types do not model.
   const factory = lazyResult as () => Promise<{ default: unknown }>;
   return factory();
 }
@@ -176,5 +177,82 @@ describe("lazyWithReload", () => {
     expect(raceResult).toBe(pendingSentinel);
     expect(reloadMock).not.toHaveBeenCalled();
     expect(window.location.search).toBe("chunk-reloaded=1");
+  });
+  it("reloads again on a later stale chunk error once a load has succeeded", async () => {
+    const { lazyWithReload } = await import("./lazy-with-reload");
+    const staleError = () =>
+      Promise.reject(
+        new TypeError(
+          "Failed to fetch dynamically imported module: /assets/flashcard-DrWAC-jS.js"
+        )
+      );
+    const pendingSentinel = Symbol("pending");
+    const expectPending = async (promise: Promise<unknown>) => {
+      await Promise.resolve();
+      await Promise.resolve();
+      const raceResult = await Promise.race([
+        promise.then(() => "resolved"),
+        Promise.resolve(pendingSentinel),
+      ]);
+      expect(raceResult).toBe(pendingSentinel);
+    };
+
+    // First deploy: stale error triggers a reload and sets the guard.
+    await expectPending(callFactory(lazyWithReload(staleError)));
+    expect(reloadMock).toHaveBeenCalledOnce();
+
+    // After the reload the chunk loads, which clears the guard.
+    const FakeComponent = () => null;
+    await callFactory(
+      lazyWithReload(() => Promise.resolve({ default: FakeComponent }))
+    );
+    expect(sessionStorage.getItem(`${CHUNK_RELOAD_SSK}/flashcard`)).toBeNull();
+
+    // Second deploy in the same tab: reload again instead of throwing.
+    await expectPending(callFactory(lazyWithReload(staleError)));
+    expect(reloadMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("strips the chunk-reloaded URL param once a load has succeeded", async () => {
+    const { lazyWithReload } = await import("./lazy-with-reload");
+    const replaceStateSpy = vi
+      .spyOn(window.history, "replaceState")
+      .mockImplementation(() => {
+        // Intentionally empty: the mocked location cannot navigate
+      });
+
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: {
+        hash: "#top",
+        pathname: "/flashcard",
+        reload: reloadMock,
+        search: "?chunk-reloaded=1&try=neighbor",
+      },
+      writable: true,
+    });
+
+    const FakeComponent = () => null;
+    await callFactory(
+      lazyWithReload(() => Promise.resolve({ default: FakeComponent }))
+    );
+
+    expect(replaceStateSpy).toHaveBeenCalledWith(
+      window.history.state,
+      "",
+      "/flashcard?try=neighbor#top"
+    );
+  });
+
+  it("leaves the URL alone after a successful load without the param", async () => {
+    const { lazyWithReload } = await import("./lazy-with-reload");
+    const replaceStateSpy = vi.spyOn(window.history, "replaceState");
+
+    const FakeComponent = () => null;
+    await callFactory(
+      lazyWithReload(() => Promise.resolve({ default: FakeComponent }))
+    );
+
+    expect(replaceStateSpy).not.toHaveBeenCalled();
   });
 });

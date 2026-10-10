@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SessionRecord } from "../types/session";
 
 const mockSetValue = vi.fn();
@@ -38,6 +38,12 @@ const makeRecord = (overrides: Partial<SessionRecord> = {}): SessionRecord => ({
 });
 
 describe("useSessionHistory", () => {
+  // `vi.clearAllMocks` keeps implementations, so a `mockReturnValue` from one
+  // test would leak into the next; `mockReset` restores the pass-through.
+  beforeEach(() => {
+    mockedUseLocalDb.mockReset();
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -77,8 +83,8 @@ describe("useSessionHistory", () => {
     const flashcardSessions = result.current.sessionsByMode("flashcard");
 
     expect(flashcardSessions).toHaveLength(2);
-    expect(flashcardSessions[0].id).toBe("flashcard-1");
-    expect(flashcardSessions[1].id).toBe("flashcard-2");
+    expect(flashcardSessions[0]?.id).toBe("flashcard-1");
+    expect(flashcardSessions[1]?.id).toBe("flashcard-2");
   });
 
   it("returns only ACAAN sessions when filtering by acaan mode", () => {
@@ -94,8 +100,8 @@ describe("useSessionHistory", () => {
     const acaanSessions = result.current.sessionsByMode("acaan");
 
     expect(acaanSessions).toHaveLength(2);
-    expect(acaanSessions[0].id).toBe("acaan-1");
-    expect(acaanSessions[1].id).toBe("acaan-2");
+    expect(acaanSessions[0]?.id).toBe("acaan-1");
+    expect(acaanSessions[1]?.id).toBe("acaan-2");
   });
 
   it("returns sessions filtered by stack key", () => {
@@ -111,8 +117,8 @@ describe("useSessionHistory", () => {
     const mnemonicaSessions = result.current.sessionsByStack("mnemonica");
 
     expect(mnemonicaSessions).toHaveLength(2);
-    expect(mnemonicaSessions[0].id).toBe("mnemonica-1");
-    expect(mnemonicaSessions[1].id).toBe("mnemonica-2");
+    expect(mnemonicaSessions[0]?.id).toBe("mnemonica-1");
+    expect(mnemonicaSessions[1]?.id).toBe("mnemonica-2");
   });
 
   it("returns sessions filtered by both mode and stack", () => {
@@ -147,8 +153,8 @@ describe("useSessionHistory", () => {
     );
 
     expect(filtered).toHaveLength(2);
-    expect(filtered[0].id).toBe("flashcard-mnemonica-1");
-    expect(filtered[1].id).toBe("flashcard-mnemonica-2");
+    expect(filtered[0]?.id).toBe("flashcard-mnemonica-1");
+    expect(filtered[1]?.id).toBe("flashcard-mnemonica-2");
   });
 
   it("returns empty array when no sessions match the mode filter", () => {

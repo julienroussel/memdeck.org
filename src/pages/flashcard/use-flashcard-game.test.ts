@@ -356,6 +356,7 @@ describe("useFlashcardGame hook", () => {
   describe("handleTimeout", () => {
     it("emits FLASHCARD_ANSWER event with correct: false on timeout", async () => {
       const { eventBus } = await import("../../services/event-bus");
+      // The vi.mock factory adds this test-only export; the real module's type lacks it.
       const gameTimerMock = (await import(
         "../../hooks/use-game-timer"
       )) as typeof import("../../hooks/use-game-timer") & {

@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import type { PlayingCard } from "../types/playingcard";
 
-export const useFormatCardName = () => {
+export const useFormatCardName = (): ((card: PlayingCard) => string) => {
   const { t } = useTranslation();
   return useCallback(
     (card: PlayingCard): string => {

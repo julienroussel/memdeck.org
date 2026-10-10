@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { render } from "../test-utils";
 import { Score } from "./score";
@@ -6,32 +6,39 @@ import { Score } from "./score";
 const getLiveRegion = () => screen.getByTestId("score-live-region");
 
 describe("Score", () => {
-  it("renders the successes count", () => {
+  it("renders the successes count with its meaning as hidden text", () => {
     render(<Score fails={2} successes={5} />);
 
-    const successBadge = screen.getByLabelText("Correct answers: 5");
-    expect(successBadge).toBeInTheDocument();
+    const successBadge = screen.getByTestId("score-success");
     expect(successBadge).toHaveTextContent("5");
+    expect(within(successBadge).getByText("Correct answers: 5")).toHaveClass(
+      "sr-only"
+    );
+    expect(successBadge).not.toHaveAttribute("aria-label");
   });
 
-  it("renders the fails count", () => {
+  it("renders the fails count with its meaning as hidden text", () => {
     render(<Score fails={7} successes={3} />);
 
-    const failBadge = screen.getByLabelText("Incorrect answers: 7");
-    expect(failBadge).toBeInTheDocument();
+    const failBadge = screen.getByTestId("score-fail");
     expect(failBadge).toHaveTextContent("7");
+    expect(within(failBadge).getByText("Incorrect answers: 7")).toHaveClass(
+      "sr-only"
+    );
+    expect(failBadge).not.toHaveAttribute("aria-label");
   });
 
   it("renders zero counts when given zero values", () => {
     render(<Score fails={0} successes={0} />);
 
-    const successBadge = screen.getByLabelText("Correct answers: 0");
-    expect(successBadge).toBeInTheDocument();
-    expect(successBadge).toHaveTextContent("0");
-
-    const failBadge = screen.getByLabelText("Incorrect answers: 0");
-    expect(failBadge).toBeInTheDocument();
-    expect(failBadge).toHaveTextContent("0");
+    expect(
+      within(screen.getByTestId("score-success")).getByText(
+        "Correct answers: 0"
+      )
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("score-fail")).getByText("Incorrect answers: 0")
+    ).toBeInTheDocument();
   });
 
   it("announces the score in the live region on the first answer", () => {

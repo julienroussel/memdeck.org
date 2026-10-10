@@ -17,7 +17,7 @@ import { buildBreadcrumbSchema, JsonLd } from "../components/json-ld";
 import { GITHUB_URL, LINKTREE_URL, MAGIC_LAB_URL, ROUTES } from "../constants";
 import { useDocumentMeta } from "../hooks/use-document-meta";
 import { analytics } from "../services/analytics";
-import { shareMemDeck } from "../utils/share";
+import { notifyShareResult, shareMemDeck } from "../utils/share";
 
 const breadcrumbSchema = buildBreadcrumbSchema("About", ROUTES.about);
 
@@ -31,6 +31,7 @@ export const About = () => {
   const handleShare = useCallback(async () => {
     const result = await shareMemDeck(t("share.message"));
     analytics.trackShareClicked("about", result);
+    notifyShareResult(result);
   }, [t]);
 
   return (
@@ -48,7 +49,7 @@ export const About = () => {
           <IconBrandGithub aria-hidden="true" size={20} stroke={1.5} />
           <Anchor href={GITHUB_URL} rel="noopener noreferrer" target="_blank">
             GitHub
-            <VisuallyHidden> (opens in new tab)</VisuallyHidden>
+            <VisuallyHidden> {t("common.opensInNewTab")}</VisuallyHidden>
           </Anchor>
           <Text c="dimmed" size="sm">
             — {t("about.githubDescription")}
@@ -62,7 +63,7 @@ export const About = () => {
             target="_blank"
           >
             The Magic Lab
-            <VisuallyHidden> (opens in new tab)</VisuallyHidden>
+            <VisuallyHidden> {t("common.opensInNewTab")}</VisuallyHidden>
           </Anchor>
           <Text c="dimmed" size="sm">
             — {t("about.magicLabDescription")}
@@ -72,7 +73,7 @@ export const About = () => {
           <IconExternalLink aria-hidden="true" size={20} stroke={1.5} />
           <Anchor href={LINKTREE_URL} rel="noopener noreferrer" target="_blank">
             Linktree
-            <VisuallyHidden> (opens in new tab)</VisuallyHidden>
+            <VisuallyHidden> {t("common.opensInNewTab")}</VisuallyHidden>
           </Anchor>
           <Text c="dimmed" size="sm">
             — {t("about.linktreeDescription")}

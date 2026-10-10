@@ -107,7 +107,6 @@ vi.mock("../../hooks/use-session", () => ({
     activeSession: null,
     dismissSummary: vi.fn(),
     handleAnswer: vi.fn(),
-    isStructuredSession: false,
     startNewSession: vi.fn(),
     startSession: vi.fn(),
     status: { phase: "idle" },

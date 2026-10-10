@@ -7,11 +7,9 @@ import "./types";
 const detectedLng = detectLanguage();
 
 // Initialize synchronously with bundled English — no async gap before first paint.
-// Set lng to the detected language so i18next knows the target from the start;
-// non-English bundles are lazy-loaded below but fallbackLng covers the gap.
-i18n
-  .use(initReactI18next)
-  .init({ ...i18nConfig, initAsync: false, lng: detectedLng });
+// lng stays "en" (from i18nConfig) until changeLanguage() below has loaded the
+// detected bundle, so a failed load leaves i18n.language matching what renders.
+i18n.use(initReactI18next).init({ ...i18nConfig, initAsync: false });
 
 // Always start with "en" since English is the bundled fallback rendered during
 // the loading gap.  Once changeLanguage() finishes below it will set the

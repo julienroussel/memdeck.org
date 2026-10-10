@@ -70,7 +70,6 @@ export const SpotCheck = () => {
     startSession,
     handleAnswer,
     startNewSession,
-    isStructuredSession,
     activeSession,
     stopSession,
     dismissSummary,
@@ -104,7 +103,6 @@ export const SpotCheck = () => {
       <Stack gap={0} h="100%" style={{ overflow: "hidden" }}>
         <TrainingHeader
           activeSession={activeSession}
-          isStructuredSession={isStructuredSession}
           onStartSession={startSession}
           onStopSession={stopSession}
           rangeSize={rangeSize}

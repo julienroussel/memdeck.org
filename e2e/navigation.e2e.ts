@@ -38,7 +38,6 @@ test.describe("Navigation", () => {
   }) => {
     // Click on home link
     await page.locator("a:has-text('Home')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Verify we're on home page
     await expect(page).toHaveURL(HOME_URL_PATTERN);
@@ -50,7 +49,6 @@ test.describe("Navigation", () => {
   test("should navigate to resources page", async ({ page }) => {
     // Click on resources link
     await page.locator("a:has-text('Resources')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Verify we're on resources page
     await expect(page).toHaveURL(RESOURCES_URL_PATTERN);
@@ -64,11 +62,9 @@ test.describe("Navigation", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Click on flashcard link in nav
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // Verify we're on flashcard page
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
@@ -85,11 +81,9 @@ test.describe("Navigation", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Click on ACAAN link in nav
     await page.locator("#main-nav a:has-text('ACAAN')").click();
-    await page.waitForLoadState("networkidle");
 
     // Verify we're on ACAAN page
     await expect(page).toHaveURL(ACAAN_URL_PATTERN);
@@ -103,11 +97,9 @@ test.describe("Navigation", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Click on toolbox link in nav
     await page.locator("#main-nav a:has-text('Toolbox')").click();
-    await page.waitForLoadState("networkidle");
 
     // Verify we're on toolbox page
     await expect(page).toHaveURL(TOOLBOX_URL_PATTERN);
@@ -121,7 +113,6 @@ test.describe("Navigation", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard
     await page.locator("#main-nav a:has-text('Flashcard')").click();
@@ -141,7 +132,6 @@ test.describe("Navigation", () => {
   }) => {
     // Resize to mobile
     await page.setViewportSize({ height: 667, width: 375 });
-    await page.waitForLoadState("networkidle");
 
     // Find burger button (may be hidden on desktop)
     const burgerButton = page.locator("button").filter({ hasText: "" }).first();

@@ -3,6 +3,7 @@ import { act, renderHook } from "@testing-library/react";
 import { useRef, useState } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { analytics } from "../services/analytics";
+import { eventBus } from "../services/event-bus";
 import {
   makeActiveSession,
   makeSummary,
@@ -10,7 +11,10 @@ import {
 import type { ActiveSession, SessionPhase } from "../types/session";
 import type { StackKey } from "../types/stacks";
 import { writeLastSaveFailedBreadcrumb } from "../utils/session-breadcrumbs";
-import type { TryFinalizeSessionResult } from "./use-session";
+import type {
+  TryFinalizeSessionResult,
+  TrySaveCheckpointResult,
+} from "./use-session";
 import { useSessionAutoSave } from "./use-session-auto-save";
 
 vi.mock("../services/analytics", () => ({
@@ -39,13 +43,20 @@ type HarnessProps = {
   initialPhase: SessionPhase;
   tryFinalizeSession: (session: ActiveSession) => TryFinalizeSessionResult;
   requestFinalization?: (session: ActiveSession) => void;
+  trySaveCheckpoint?: (session: ActiveSession) => TrySaveCheckpointResult;
 };
+
+// Module-level so the default keeps one identity across renders: the listener
+// effect depends on it, and a fresh mock per render would re-run its cleanup.
+const defaultTrySaveCheckpoint =
+  vi.fn<(session: ActiveSession) => TrySaveCheckpointResult>();
 
 const useTestHarness = ({
   stackKey,
   initialPhase,
   tryFinalizeSession,
   requestFinalization,
+  trySaveCheckpoint,
 }: HarnessProps) => {
   const [status, setStatus] = useState<SessionPhase>(initialPhase);
   const statusRef = useRef<SessionPhase>(status);
@@ -57,6 +68,7 @@ const useTestHarness = ({
     stackKey,
     statusRef,
     tryFinalizeSession,
+    trySaveCheckpoint: trySaveCheckpoint ?? defaultTrySaveCheckpoint,
   });
 
   return { status, statusRef };
@@ -99,10 +111,10 @@ describe("useSessionAutoSave", () => {
             stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
-        { initialProps: { stackKey: "mnemonica" as StackKey } }
+        { initialProps: { stackKey: "mnemonica" } }
       );
 
-      rerender({ stackKey: "aronson" as StackKey });
+      rerender({ stackKey: "aronson" });
 
       // Stack-change auto-save routes through requestFinalization (F2) so the
       // flush effect can surface save failures as a Mantine notification and
@@ -127,10 +139,10 @@ describe("useSessionAutoSave", () => {
             stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
-        { initialProps: { stackKey: "mnemonica" as StackKey } }
+        { initialProps: { stackKey: "mnemonica" } }
       );
 
-      rerender({ stackKey: "aronson" as StackKey });
+      rerender({ stackKey: "aronson" });
 
       expect(mockTryFinalizeSession).not.toHaveBeenCalled();
       expect(result.current.status).toEqual({ phase: "idle" });
@@ -146,10 +158,10 @@ describe("useSessionAutoSave", () => {
             stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
-        { initialProps: { stackKey: "mnemonica" as StackKey } }
+        { initialProps: { stackKey: "mnemonica" } }
       );
 
-      rerender({ stackKey: "mnemonica" as StackKey });
+      rerender({ stackKey: "mnemonica" });
 
       expect(mockTryFinalizeSession).not.toHaveBeenCalled();
       expect(result.current.status.phase).toBe("active");
@@ -163,10 +175,10 @@ describe("useSessionAutoSave", () => {
             stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
-        { initialProps: { stackKey: "mnemonica" as StackKey } }
+        { initialProps: { stackKey: "mnemonica" } }
       );
 
-      rerender({ stackKey: "aronson" as StackKey });
+      rerender({ stackKey: "aronson" });
 
       expect(mockTryFinalizeSession).not.toHaveBeenCalled();
       expect(result.current.status.phase).toBe("idle");
@@ -180,10 +192,10 @@ describe("useSessionAutoSave", () => {
             stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
-        { initialProps: { stackKey: "mnemonica" as StackKey } }
+        { initialProps: { stackKey: "mnemonica" } }
       );
 
-      rerender({ stackKey: "aronson" as StackKey });
+      rerender({ stackKey: "aronson" });
 
       expect(mockTryFinalizeSession).not.toHaveBeenCalled();
       expect(result.current.status.phase).toBe("summary");
@@ -201,10 +213,10 @@ describe("useSessionAutoSave", () => {
             stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
-        { initialProps: { stackKey: "mnemonica" as StackKey } }
+        { initialProps: { stackKey: "mnemonica" } }
       );
 
-      rerender({ stackKey: "aronson" as StackKey });
+      rerender({ stackKey: "aronson" });
 
       expect(mockRequestFinalization).toHaveBeenCalledWith(activeSession);
       // The hook does not flip phase away from active; that is the parent's
@@ -227,10 +239,10 @@ describe("useSessionAutoSave", () => {
             stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
-        { initialProps: { stackKey: "mnemonica" as StackKey } }
+        { initialProps: { stackKey: "mnemonica" } }
       );
 
-      rerender({ stackKey: "aronson" as StackKey });
+      rerender({ stackKey: "aronson" });
 
       expect(mockRequestFinalization).toHaveBeenCalledWith(activeSession);
     });
@@ -248,10 +260,10 @@ describe("useSessionAutoSave", () => {
             stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
-        { initialProps: { stackKey: "mnemonica" as StackKey } }
+        { initialProps: { stackKey: "mnemonica" } }
       );
 
-      rerender({ stackKey: "aronson" as StackKey });
+      rerender({ stackKey: "aronson" });
 
       expect(mockTryFinalizeSession).not.toHaveBeenCalled();
       expect(result.current.status).toEqual({ phase: "idle" });
@@ -272,10 +284,10 @@ describe("useSessionAutoSave", () => {
             stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
-        { initialProps: { stackKey: "mnemonica" as StackKey } }
+        { initialProps: { stackKey: "mnemonica" } }
       );
 
-      rerender({ stackKey: "aronson" as StackKey });
+      rerender({ stackKey: "aronson" });
 
       expect(mockRequestFinalization).toHaveBeenCalledWith(activeSession);
     });
@@ -402,11 +414,11 @@ describe("useSessionAutoSave", () => {
             stackKey,
             tryFinalizeSession: mockTryFinalizeSession,
           }),
-        { initialProps: { stackKey: "mnemonica" as StackKey } }
+        { initialProps: { stackKey: "mnemonica" } }
       );
 
       // Step 1: stack change queues requestFinalization.
-      rerender({ stackKey: "aronson" as StackKey });
+      rerender({ stackKey: "aronson" });
       expect(mockRequestFinalization).toHaveBeenCalledTimes(1);
       expect(mockRequestFinalization).toHaveBeenCalledWith(activeSession);
 
@@ -534,7 +546,11 @@ describe("useSessionAutoSave", () => {
       unmount();
 
       expect(analytics.trackError).toHaveBeenCalledOnce();
-      const [error, context] = vi.mocked(analytics.trackError).mock.calls[0];
+      const [trackErrorCall] = vi.mocked(analytics.trackError).mock.calls;
+      if (!trackErrorCall) {
+        throw new Error("Expected trackError to be called");
+      }
+      const [error, context] = trackErrorCall;
       expect(error).toBeInstanceOf(Error);
       // `name` IS GA's `action` dimension — the discriminator the consolidation
       // exists to set. write-failed shares the LocalDbWriteFailed bucket with
@@ -564,7 +580,10 @@ describe("useSessionAutoSave", () => {
       unmount();
 
       expect(analytics.trackError).toHaveBeenCalledOnce();
-      const [error] = vi.mocked(analytics.trackError).mock.calls[0];
+      const error = vi.mocked(analytics.trackError).mock.calls[0]?.[0];
+      if (!error) {
+        throw new Error("Expected trackError to be called with an error");
+      }
       // corrupt = two failed writes (stats write + history rollback), so it
       // also lands in the LocalDbWriteFailed bucket.
       expect(error.name).toBe("LocalDbWriteFailed");
@@ -628,14 +647,19 @@ describe("useSessionAutoSave", () => {
 
       expect(writeLastSaveFailedBreadcrumb).toHaveBeenCalledOnce();
       expect(writeLastSaveFailedBreadcrumb).toHaveBeenCalledWith(
-        "write-failed"
+        "write-failed",
+        activeSession.id
       );
       // The :beforeUnload context string is the load-bearing GA discriminator
       // that splits page-close failures from the :cleanup path. Assert it here
       // so a regression that swaps/drops it on this branch fails a test — the
       // :cleanup path asserts the symmetric thing in the observability suite.
       expect(analytics.trackError).toHaveBeenCalledOnce();
-      const [error, context] = vi.mocked(analytics.trackError).mock.calls[0];
+      const [trackErrorCall] = vi.mocked(analytics.trackError).mock.calls;
+      if (!trackErrorCall) {
+        throw new Error("Expected trackError to be called");
+      }
+      const [error, context] = trackErrorCall;
       expect(error.name).toBe("LocalDbWriteFailed");
       expect(error.message).toBe("reason=write-failed");
       expect(context).toBe("useSessionAutoSave:beforeUnload");
@@ -683,7 +707,10 @@ describe("useSessionAutoSave", () => {
       unmount();
 
       expect(notifications.show).toHaveBeenCalledOnce();
-      const [[call]] = vi.mocked(notifications.show).mock.calls;
+      const call = vi.mocked(notifications.show).mock.calls[0]?.[0];
+      if (!call) {
+        throw new Error("Expected notifications.show to be called");
+      }
       expect(call.color).toBe("yellow");
       // i18n is initialised in vitest.setup.ts, so `t` returns the resolved
       // English string for the save-failed title key.
@@ -708,7 +735,10 @@ describe("useSessionAutoSave", () => {
       unmount();
 
       expect(notifications.show).toHaveBeenCalledOnce();
-      const [[call]] = vi.mocked(notifications.show).mock.calls;
+      const call = vi.mocked(notifications.show).mock.calls[0]?.[0];
+      if (!call) {
+        throw new Error("Expected notifications.show to be called");
+      }
       expect(call.color).toBe("red");
       // i18n-resolved English string for errors.sessionStorageCorrupt.title.
       expect(call.title).toBe("Stored data looks corrupted");
@@ -732,10 +762,233 @@ describe("useSessionAutoSave", () => {
       unmount();
 
       expect(notifications.show).toHaveBeenCalledOnce();
-      const [[call]] = vi.mocked(notifications.show).mock.calls;
+      const call = vi.mocked(notifications.show).mock.calls[0]?.[0];
+      if (!call) {
+        throw new Error("Expected notifications.show to be called");
+      }
       expect(call.color).toBe("red");
       // i18n-resolved English string for errors.sessionStorageCorrupt.title.
       expect(call.title).toBe("Stored data looks corrupted");
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // Auto-save when the page is hidden
+  // -----------------------------------------------------------------------
+
+  describe("auto-save when the page is hidden", () => {
+    let visibility: DocumentVisibilityState;
+    let visibilitySpy: { mockRestore: () => void };
+
+    beforeEach(() => {
+      visibility = "visible";
+      visibilitySpy = vi
+        .spyOn(document, "visibilityState", "get")
+        .mockImplementation(() => visibility);
+    });
+
+    afterEach(() => {
+      visibilitySpy.mockRestore();
+    });
+
+    const hidePage = () => {
+      visibility = "hidden";
+      document.dispatchEvent(new Event("visibilitychange"));
+    };
+
+    // happy-dom ignores the `persisted` init field, so pin it on the event.
+    const pageHideEvent = (persisted: boolean) => {
+      const event = new PageTransitionEvent("pagehide");
+      Object.defineProperty(event, "persisted", { value: persisted });
+      return event;
+    };
+
+    const mockTrySaveCheckpoint =
+      vi.fn<(session: ActiveSession) => TrySaveCheckpointResult>();
+
+    beforeEach(() => {
+      mockTrySaveCheckpoint.mockReset();
+      mockTrySaveCheckpoint.mockReturnValue({ status: "saved" });
+    });
+
+    it("checkpoints an open session on hide and keeps it running unchanged", () => {
+      const startedSpy = vi.spyOn(eventBus.emit, "SESSION_STARTED");
+      const activeSession = makeActiveSession({
+        config: { type: "open" },
+        questionsCompleted: 5,
+        successes: 4,
+      });
+
+      const { result } = renderHook(() =>
+        useTestHarness({
+          initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
+          tryFinalizeSession: mockTryFinalizeSession,
+          trySaveCheckpoint: mockTrySaveCheckpoint,
+        })
+      );
+
+      act(() => {
+        hidePage();
+      });
+
+      expect(mockTrySaveCheckpoint).toHaveBeenCalledWith(activeSession);
+      expect(mockTryFinalizeSession).not.toHaveBeenCalled();
+      // No continuation session: same id, same counters, no new start event.
+      expect(result.current.status).toEqual({
+        phase: "active",
+        session: activeSession,
+      });
+      expect(startedSpy).not.toHaveBeenCalled();
+    });
+
+    it("ignores a visibilitychange back to visible", () => {
+      const activeSession = makeActiveSession({ questionsCompleted: 5 });
+
+      renderHook(() =>
+        useTestHarness({
+          initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
+          tryFinalizeSession: mockTryFinalizeSession,
+          trySaveCheckpoint: mockTrySaveCheckpoint,
+        })
+      );
+
+      act(() => {
+        document.dispatchEvent(new Event("visibilitychange"));
+      });
+
+      expect(mockTryFinalizeSession).not.toHaveBeenCalled();
+      expect(mockTrySaveCheckpoint).not.toHaveBeenCalled();
+    });
+
+    it("keeps the session unchanged when the hide save is a duplicate", () => {
+      mockTrySaveCheckpoint.mockReturnValue({ status: "duplicate" });
+      const activeSession = makeActiveSession({ questionsCompleted: 5 });
+
+      const { result } = renderHook(() =>
+        useTestHarness({
+          initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
+          tryFinalizeSession: mockTryFinalizeSession,
+          trySaveCheckpoint: mockTrySaveCheckpoint,
+        })
+      );
+
+      act(() => {
+        hidePage();
+      });
+
+      expect(result.current.status).toEqual({
+        phase: "active",
+        session: activeSession,
+      });
+      expect(analytics.trackError).not.toHaveBeenCalled();
+    });
+
+    it("writes the breadcrumb and reports with the pageHidden context when the hide save fails", () => {
+      mockTrySaveCheckpoint.mockReturnValue({
+        reason: "write-failed",
+        status: "write-failed",
+      });
+      const activeSession = makeActiveSession({ questionsCompleted: 5 });
+
+      const { result } = renderHook(() =>
+        useTestHarness({
+          initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
+          tryFinalizeSession: mockTryFinalizeSession,
+          trySaveCheckpoint: mockTrySaveCheckpoint,
+        })
+      );
+
+      act(() => {
+        hidePage();
+      });
+
+      expect(writeLastSaveFailedBreadcrumb).toHaveBeenCalledWith(
+        "write-failed",
+        activeSession.id
+      );
+      const context = vi.mocked(analytics.trackError).mock.calls[0]?.[1];
+      expect(context).toBe("useSessionAutoSave:pageHidden");
+      expect(result.current.status).toEqual({
+        phase: "active",
+        session: activeSession,
+      });
+    });
+
+    it("checkpoints a structured session on hide", () => {
+      const activeSession = makeActiveSession({
+        config: { totalQuestions: 10, type: "structured" },
+        questionsCompleted: 5,
+      });
+
+      const { result } = renderHook(() =>
+        useTestHarness({
+          initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
+          tryFinalizeSession: mockTryFinalizeSession,
+          trySaveCheckpoint: mockTrySaveCheckpoint,
+        })
+      );
+
+      act(() => {
+        hidePage();
+      });
+
+      expect(mockTrySaveCheckpoint).toHaveBeenCalledWith(activeSession);
+      expect(mockTryFinalizeSession).not.toHaveBeenCalled();
+      expect(result.current.status).toEqual({
+        phase: "active",
+        session: activeSession,
+      });
+    });
+
+    it("checkpoints on a pagehide entering bfcache and finalizes on one that is not", () => {
+      const activeSession = makeActiveSession({ questionsCompleted: 5 });
+
+      renderHook(() =>
+        useTestHarness({
+          initialPhase: { phase: "active", session: activeSession },
+          stackKey: "mnemonica",
+          tryFinalizeSession: mockTryFinalizeSession,
+          trySaveCheckpoint: mockTrySaveCheckpoint,
+        })
+      );
+
+      act(() => {
+        window.dispatchEvent(pageHideEvent(true));
+      });
+      expect(mockTrySaveCheckpoint).toHaveBeenCalledOnce();
+      expect(mockTryFinalizeSession).not.toHaveBeenCalled();
+
+      act(() => {
+        window.dispatchEvent(pageHideEvent(false));
+      });
+      expect(mockTryFinalizeSession).toHaveBeenCalledWith(activeSession);
+      expect(mockTrySaveCheckpoint).toHaveBeenCalledOnce();
+    });
+
+    it("removes the visibilitychange and pagehide listeners on unmount", () => {
+      const documentSpy = vi.spyOn(document, "removeEventListener");
+      const windowSpy = vi.spyOn(window, "removeEventListener");
+
+      const { unmount } = renderHook(() =>
+        useTestHarness({
+          initialPhase: { phase: "idle" },
+          stackKey: "mnemonica",
+          tryFinalizeSession: mockTryFinalizeSession,
+        })
+      );
+
+      unmount();
+
+      expect(documentSpy).toHaveBeenCalledWith(
+        "visibilitychange",
+        expect.any(Function)
+      );
+      expect(windowSpy).toHaveBeenCalledWith("pagehide", expect.any(Function));
     });
   });
 });

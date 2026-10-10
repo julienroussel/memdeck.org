@@ -15,6 +15,9 @@ export type CardSpreadCardsProps = BaseCardSpreadProps & {
 type CardSpreadNumbersProps = BaseCardSpreadProps & {
   items: { type: "numbers"; data: number[] };
   onItemClick?: (item: number, index: number) => void;
+  // Number items name their buttons by what the numbers mean: stack positions
+  // (the default) or Distance offsets, which can be negative.
+  numberLabel?: "position" | "distance";
 };
 
 export type CardSpreadProps = CardSpreadCardsProps | CardSpreadNumbersProps;

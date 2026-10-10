@@ -1,6 +1,6 @@
 import type { Icon } from "@tabler/icons-react";
 import type { ParseKeys } from "i18next";
-import type { RoutePath } from "../constants";
+import type { AppRoute } from "../constants";
 import type { DistanceConvention, DistanceMode } from "./distance";
 import type { FlashcardMode } from "./flashcard";
 import type { TrainingMode } from "./session";
@@ -39,9 +39,18 @@ export type FeatureSuggestion = {
   isApplicable: (usage: UsageFlags) => boolean;
   /** Lower sorts first. Whole modes outrank variants. */
   priority: number;
-  route: RoutePath;
+  route: AppRoute;
   /** Preselect param the target page honors on mount via `useSuggestionDeepLink` — applied through the page's own guard + setter, then stripped. */
-  deepLink?: { param: "try" | "timed"; value: string };
+  deepLink?:
+    | {
+        param: "try";
+        value:
+          | FlashcardMode
+          | SpotCheckMode
+          | DistanceMode
+          | DistanceConvention;
+      }
+    | { param: "timed"; value: "1" };
   icon: Icon;
   i18n: { titleKey: ParseKeys; ctaKey?: ParseKeys };
 };

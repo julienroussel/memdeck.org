@@ -23,8 +23,10 @@
     "acaanTimedTitle": "You can run ACAAN — now beat the clock."
   },
   "common": {
-    "comingSoon": "Coming soon...",
     "learnMore": "Learn more",
+    "percent": "{{percent}}%",
+    "durationSeconds": "{{seconds}}s",
+    "durationMinutesSeconds": "{{minutes}}m {{seconds}}s",
     "showMore": "Show more",
     "check": "Check",
     "stop": "Stop",
@@ -90,21 +92,19 @@
     "languageAriaLabel": "Language"
   },
   "navFooter": {
-    "llmsTxtDescription": "— LLM-friendly site summary (opens in new tab)"
+    "llmsTxtDescription": "— LLM-friendly site summary (opens in new tab)",
+    "buildVersion": "Build version:"
   },
   "home": {
     "pageTitle": "MemDeck — Master your memorized deck",
     "pageDescription": "Free online tool for mastering memorized deck systems like Mnemonica, Aronson, Memorandum, Redford, Particle, Elephant, Infinity, and Intuitiva Santi.",
     "welcomeNew": "Master your memorized deck",
     "welcomeReturning": "Ready to train?",
-    "intro": "Hope these tools help you level up your memorized deck learning. Check out the <guideLink>guide</guideLink> for a walkthrough of everything MemDeck offers. Need a hand or think something's missing? Hit me up on <githubLink>GitHub</githubLink>!",
-    "firstTimer": "Hey there, first-timer! Pick your favorite stack below to unlock all the cool features. You can switch it up anytime using the selector at the bottom of the menu.",
     "guideCardTitle": "New here? Read the Guide",
     "guideCardDescription": "Learn about all the training modes and how to get the most out of MemDeck.",
     "selectedStack": "Your selected stack is <bold>{{stackName}}</bold>",
     "whatIsMemdeck": "A memorized deck is a full deck of cards in a specific order that you commit to memory — unlocking powerful card magic and mental feats.",
     "introNew": "MemDeck helps you master your memorized deck with drills, calculators, and visual training. Pick a stack below to get started — it's free and runs entirely in your browser.",
-    "introReturning": "Ready to train? Jump into a session or explore your tools below.",
     "stackPickerHint": "Not sure? Mnemonica and Aronson are popular starting points.",
     "featuresTitle": "Training modes",
     "featureFlashcardTitle": "Flashcard",
@@ -173,8 +173,7 @@
     "timesUp": "Time's up!",
     "movingToNext": "Moving to the next card.",
     "revealTitle": "Answer",
-    "answerCorrect": "Correct",
-    "answerIncorrect": "Incorrect, the answer was {{answer}}"
+    "answerCorrect": "Correct"
   },
   "distance": {
     "pageTitle": "Distance Number Training",
@@ -199,14 +198,12 @@
     "activeModeBoth": "Both modes",
     "promptComputeAriaLabel": "Distance from {{from}} to {{to}}",
     "promptApplyAriaLabel": "Apply offset {{offset}} to {{card}}",
-    "offsetLabel": "Offset",
     "rangeTooSmall": "Distance training needs at least {{count}} cards in range. Widen your stack range to start training.",
     "rangeTooSmallTitle": "Range too small",
     "revealTitle": "Answer",
     "timesUp": "Time's up!",
     "movingToNext": "Moving to the next round.",
-    "answerCorrect": "Correct",
-    "answerIncorrect": "Incorrect, the answer was {{answer}}"
+    "answerCorrect": "Correct"
   },
   "acaan": {
     "pageTitle": "ACAAN Training",
@@ -221,7 +218,6 @@
     "wrongMessage": "Try again!",
     "revealTitle": "Answer",
     "timesUp": "Time's up!",
-    "movingToNext": "Moving to the next round.",
     "cutDepthMessage": "Position {{from}} → {{to}}, cut depth: {{cutDepth}}",
     "cutDepthZero": "0 (no cut needed)"
   },
@@ -262,7 +258,8 @@
       "position": "#",
       "card": "Card",
       "noResults": "No matching cards",
-      "resultCount": "{{count}} cards found"
+      "resultCount_one": "{{count}} card found",
+      "resultCount_other": "{{count}} cards found"
     },
     "faro": {
       "title": "Faro Shuffle",
@@ -286,15 +283,20 @@
       "searchAriaLabel": "Search cards by name or position",
       "noResults": "No matching cards",
       "detailTitle": "Spelling breakdown",
+      "detailAriaLabel": "Spelling breakdown: {{cardName}}",
       "letter": "Letter",
       "dealtCard": "Card dealt",
-      "resultCount": "{{count}} results"
+      "resultCount_one": "{{count}} result",
+      "resultCount_other": "{{count}} results"
     },
     "sequences": {
       "title": "Stay Stack Sequences",
       "description": "View the cyclical sequences formed by dealing every Nth card from your stack.",
       "stepLabel": "Step size",
-      "summary": "{{cycleCount}} cycles of {{cycleLength}} cards each",
+      "summary_one": "$t(toolbox.sequences.cycles, {\"count\": {{cycleCount}} }) of {{count}} card each",
+      "summary_other": "$t(toolbox.sequences.cycles, {\"count\": {{cycleCount}} }) of {{count}} cards each",
+      "cycles_one": "{{count}} cycle",
+      "cycles_other": "{{count}} cycles",
       "cycleLabel": "Cycle {{current}} of {{total}}",
       "position": "#",
       "card": "Card"
@@ -302,6 +304,7 @@
   },
   "timer": {
     "timeRemaining": "Time remaining",
+    "timeRemainingAriaLabel": "Time remaining: {{seconds}}s",
     "timedMode": "Timed mode",
     "timeLimit": "Time limit:"
   },
@@ -333,7 +336,8 @@
   },
   "cardSpread": {
     "ariaLabel": "Card spread",
-    "selectPositionAriaLabel": "Select position {{position}}"
+    "selectPositionAriaLabel": "Select position {{position}}",
+    "selectDistanceAriaLabel": "Select distance {{distance}}"
   },
   "numberCard": {
     "ariaLabel": "Position {{number}}"
@@ -357,7 +361,6 @@
     "cancel": "Cancel"
   },
   "pwaInstall": {
-    "bannerMessage": "Install MemDeck for offline practice",
     "install": "Install",
     "modalTitle": "Install MemDeck",
     "iosStep1": "Tap the Share button at the bottom of the screen",
@@ -375,6 +378,8 @@
   "errors": {
     "somethingWentWrong": "Something went wrong",
     "languageLoadFailed": "Could not load your preferred language. Using English.",
+    "unexpectedErrorMessage": "An unexpected error occurred. Please try again or refresh the page.",
+    "tryAgain": "Try again",
     "sessionSaveFailed": {
       "title": "Save failed",
       "message": "Couldn't save your session — your browser storage may be full. Clear space and try Stop again."
@@ -482,6 +487,11 @@
     "copied": "Link copied!",
     "nudgeMessage": "Enjoying MemDeck? Share it with a fellow magician.",
     "nudgeDismiss": "Dismiss"
+  },
+  "analyticsConsent": {
+    "message": "Allow Google Analytics? It sets cookies and records page views, the modes you train, and errors, so MemDeck knows what to improve and what to fix.",
+    "accept": "Allow",
+    "decline": "Decline"
   },
   "about": {
     "pageTitle": "About",

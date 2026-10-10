@@ -1,10 +1,9 @@
 import { ActionIcon, Tooltip } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
 import { IconCheck, IconShare } from "@tabler/icons-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { analytics } from "../services/analytics";
-import { shareMemDeck } from "../utils/share";
+import { notifyShareResult, shareMemDeck } from "../utils/share";
 
 type ShareButtonProps = {
   /** Visual variant — "icon" renders a compact icon button, "default" a standard one */
@@ -21,16 +20,12 @@ export const ShareButton = ({ variant = "icon" }: ShareButtonProps) => {
   const handleShare = useCallback(async () => {
     const result = await shareMemDeck(t("share.message"));
     analytics.trackShareClicked("nav", result);
+    notifyShareResult(result);
 
     if (result === "copied") {
       setShowCheck(true);
       clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => setShowCheck(false), 2000);
-    } else if (result === "failed") {
-      notifications.show({
-        color: "red",
-        message: t("errors.somethingWentWrong"),
-      });
     }
   }, [t]);
 

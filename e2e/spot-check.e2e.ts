@@ -1,5 +1,10 @@
 import { expect } from "@playwright/test";
 import { SPOT_CHECK_MODE_LSK } from "../src/constants";
+import {
+  CORRECT_ANSWERS_PATTERN,
+  INCORRECT_ANSWERS_PATTERN,
+} from "./fixtures/patterns";
+import { readCount } from "./fixtures/read-count";
 import { test } from "./fixtures/test-setup";
 
 const SWAPPED_CARDS_PATTERN = /swapped cards/i;
@@ -15,7 +20,6 @@ test.describe("Spot Check Training", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Force the spot-check mode deterministically. Without this the mode
     // defaults to "missing" but a regression could flip it; pinning the mode
@@ -41,10 +45,10 @@ test.describe("Spot Check Training", () => {
 
     // Score badges start at zero — Spot Check uses auto-start "open" sessions,
     // and the Score component is rendered for non-structured sessions.
-    const successBadge = page.getByTestId("score-success");
-    const failBadge = page.getByTestId("score-fail");
-    await expect(successBadge).toContainText("0");
-    await expect(failBadge).toContainText("0");
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
+    await expect(successBadge).toHaveText("Correct answers: 0");
+    await expect(failBadge).toHaveText("Incorrect answers: 0");
 
     // Mode-specific instruction text (missing variant — pinned via localStorage
     // in beforeEach). The exact i18n key is `spotCheck.identifyMissing`.
@@ -52,10 +56,9 @@ test.describe("Spot Check Training", () => {
 
     // Card spread renders for the puzzle.
     await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
-    const cardCount = await page.locator(".cardSpreadCard").count();
     // For "missing" mode on full mnemonica deck (52 cards), one card is removed
     // so 51 should remain visible.
-    expect(cardCount).toBe(51);
+    await expect(page.locator(".cardSpreadCard")).toHaveCount(51);
   });
 
   test("surfaces a notification and updates the score when a card in the spread is tapped", async ({
@@ -68,8 +71,8 @@ test.describe("Spot Check Training", () => {
     // is: tap → notification shows AND the score advances by exactly one.
     await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
 
-    const successBadge = page.getByTestId("score-success");
-    const failBadge = page.getByTestId("score-fail");
+    const successBadge = page.getByText(CORRECT_ANSWERS_PATTERN);
+    const failBadge = page.getByText(INCORRECT_ANSWERS_PATTERN);
     const cardSpreadItems = page.locator(".cardSpreadCard");
 
     // dispatchEvent fires the click directly on the button regardless of
@@ -88,11 +91,10 @@ test.describe("Spot Check Training", () => {
     // src/pages/spot-check/use-spot-check-game.test.ts.
     // Score should advance by exactly one (either success+1 or fail+1).
     await expect
-      .poll(async () => {
-        const successText = (await successBadge.textContent()) ?? "0";
-        const failText = (await failBadge.textContent()) ?? "0";
-        return Number(successText) + Number(failText);
-      })
+      .poll(
+        async () =>
+          (await readCount(successBadge)) + (await readCount(failBadge))
+      )
       .toBe(1);
   });
 
@@ -105,7 +107,9 @@ test.describe("Spot Check Training", () => {
 
     // Navigate away to home via the nav link.
     await page.locator("#main-nav a:has-text('Home')").click();
-    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("heading", { name: "Ready to train?" })
+    ).toBeVisible();
 
     // Back to spot-check. A fresh navigation should mount the page cleanly
     // (the prior auto-save flushes on unmount, so the new mount auto-starts a
@@ -116,8 +120,12 @@ test.describe("Spot Check Training", () => {
     await expect(
       page.getByRole("heading", { name: "Spot Check" })
     ).toBeVisible();
-    await expect(page.getByTestId("score-success")).toContainText("0");
-    await expect(page.getByTestId("score-fail")).toContainText("0");
+    await expect(page.getByText(CORRECT_ANSWERS_PATTERN)).toHaveText(
+      "Correct answers: 0"
+    );
+    await expect(page.getByText(INCORRECT_ANSWERS_PATTERN)).toHaveText(
+      "Incorrect answers: 0"
+    );
     await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
   });
 
@@ -137,7 +145,7 @@ test.describe("Spot Check Training", () => {
     await swappedRadio.click();
 
     // Verify the mode persisted (JSON-stringified, mirroring useLocalDb).
-    const persistedMode = await page.evaluate((key) => {
+    const persistedMode = await page.evaluate((key): unknown => {
       const value = window.localStorage.getItem(key);
       return value ? JSON.parse(value) : null;
     }, SPOT_CHECK_MODE_LSK);

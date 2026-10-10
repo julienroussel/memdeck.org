@@ -19,6 +19,7 @@ const SHOW_MORE_PATTERN = /show more/i;
 const NO_FILTER_MATCH_PATTERN = /no.*match|no sessions|no data/i;
 const EXPLORED_COUNT_PATTERN = /of 13 explored/i;
 const NEIGHBOR_PITCH_PATTERN = /before or after/i;
+const STATS_URL_PATTERN = /\/stats\/?$/;
 
 test.describe("Statistics Page", () => {
   type SessionSeed = {
@@ -602,13 +603,12 @@ test.describe("Statistics Page", () => {
 
     // Navigate to stats using nav link
     await page.locator("a:has-text('Stats')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Should arrive at stats page
     await expect(page.getByRole("heading", { name: "Stats" })).toBeVisible();
 
     // URL should be correct
-    expect(page.url()).toContain("/stats");
+    await expect(page).toHaveURL(STATS_URL_PATTERN);
   });
 
   test("should display correct all-time stats aggregation", async ({
@@ -718,11 +718,12 @@ test.describe("Statistics Page", () => {
 
     // Navigate away
     await page.locator("a:has-text('Home')").first().click();
-    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("heading", { name: "Master your memorized deck" })
+    ).toBeVisible();
 
     // Navigate back to stats
     await page.locator("a:has-text('Stats')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Stats should still be visible
     await expect(page.getByRole("heading", { name: "Stats" })).toBeVisible();

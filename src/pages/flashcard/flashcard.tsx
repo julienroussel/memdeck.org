@@ -55,7 +55,6 @@ export const Flashcard = () => {
     startSession,
     handleAnswer,
     startNewSession,
-    isStructuredSession,
     activeSession,
     stopSession,
     dismissSummary,
@@ -112,7 +111,6 @@ export const Flashcard = () => {
         <Grid.Col span={12}>
           <TrainingHeader
             activeSession={activeSession}
-            isStructuredSession={isStructuredSession}
             onStartSession={startSession}
             onStopSession={stopSession}
             rangeSize={rangeSize}

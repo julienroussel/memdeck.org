@@ -1,16 +1,14 @@
 import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
+import type { AppRoute } from "../src/constants.ts";
 
 const { ROUTES, SITE_URL } = await import("../src/constants.ts");
 
 const DIST_DIR = join(import.meta.dirname, "..", "dist");
 
-/** Route path literal type derived from the ROUTES constant. */
-type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];
-
 /** Priority assigned to each route for sitemap ordering. */
-const ROUTE_PRIORITIES: Record<RoutePath, string> = {
+const ROUTE_PRIORITIES: Record<AppRoute, string> = {
   "/": "1.0",
   "/about/": "0.3",
   "/acaan/": "0.7",
@@ -29,8 +27,8 @@ const ROUTE_PRIORITIES: Record<RoutePath, string> = {
  * Returns the last git commit date (YYYY-MM-DD) that touched any file
  * related to a given route path. Falls back to today's date.
  */
-const getLastModified = (routePath: RoutePath): string => {
-  const sourceMap: Record<RoutePath, string> = {
+const getLastModified = (routePath: AppRoute): string => {
+  const sourceMap: Record<AppRoute, string> = {
     "/": "src/pages/home",
     "/about/": "src/pages/about.tsx",
     "/acaan/": "src/pages/acaan",
@@ -55,7 +53,15 @@ const getLastModified = (routePath: RoutePath): string => {
         encoding: "utf-8",
       }
     ).trim();
-    return date || new Date().toISOString().slice(0, 10);
+    if (date) {
+      return date;
+    }
+    // Warn rather than fail: a new route built before its first commit has
+    // no history yet, and the build should still pass locally.
+    process.stderr.write(
+      `[generate-sitemap] git log found no commit for route "${routePath}" (source "${source}"), using today's date\n`
+    );
+    return new Date().toISOString().slice(0, 10);
   } catch (error) {
     // Don't fail the build — sitemap should still publish — but make the
     // failure noisy so a silently-stuck "today's date" lastmod across many
@@ -67,6 +73,29 @@ const getLastModified = (routePath: RoutePath): string => {
     return new Date().toISOString().slice(0, 10);
   }
 };
+
+// A shallow clone makes git log report HEAD's date for every path, so every
+// <lastmod> would silently become the build date. Fail instead of warning:
+// the deployed sitemap is built in CI, where a warning goes unread.
+const isShallowRepository = (): boolean => {
+  try {
+    return (
+      execFileSync("git", ["rev-parse", "--is-shallow-repository"], {
+        encoding: "utf-8",
+      }).trim() === "true"
+    );
+  } catch {
+    // Not a git checkout: getLastModified's catch already reports each route.
+    return false;
+  }
+};
+
+if (isShallowRepository()) {
+  process.stderr.write(
+    "[generate-sitemap] shallow git clone: per-route <lastmod> dates would all be HEAD's. Run `git fetch --unshallow`, or check out with fetch-depth: 0.\n"
+  );
+  process.exit(1);
+}
 
 const routePaths = Object.values(ROUTES);
 

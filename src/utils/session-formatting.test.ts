@@ -1,4 +1,6 @@
+import i18n from "i18next";
 import { describe, expect, it } from "vitest";
+import fr from "../i18n/locales/fr.json";
 import {
   calculateAccuracy,
   formatDuration,
@@ -30,28 +32,41 @@ describe("toAccuracyPercent", () => {
 });
 
 describe("formatDuration", () => {
+  const { t } = i18n;
+
   it("returns '0s' for 0 seconds", () => {
-    expect(formatDuration(0)).toBe("0s");
+    expect(formatDuration(0, t)).toBe("0s");
   });
 
   it("returns seconds only when under a minute", () => {
-    expect(formatDuration(45)).toBe("45s");
+    expect(formatDuration(45, t)).toBe("45s");
   });
 
   it("returns minutes and zero seconds for exact minutes", () => {
-    expect(formatDuration(120)).toBe("2m 0s");
+    expect(formatDuration(120, t)).toBe("2m 0s");
   });
 
   it("returns minutes and seconds for mixed durations", () => {
-    expect(formatDuration(150)).toBe("2m 30s");
+    expect(formatDuration(150, t)).toBe("2m 30s");
   });
 
   it("rounds fractional seconds up to the nearest integer", () => {
-    expect(formatDuration(150.7)).toBe("2m 31s");
+    expect(formatDuration(150.7, t)).toBe("2m 31s");
   });
 
   it("normalizes 59.5 seconds to 1m 0s", () => {
-    expect(formatDuration(59.5)).toBe("1m 0s");
+    expect(formatDuration(59.5, t)).toBe("1m 0s");
+  });
+
+  it("takes its units from the active locale's catalog", async () => {
+    const instance = i18n.createInstance();
+    await instance.init({
+      lng: "fr",
+      resources: { fr: { translation: fr } },
+    });
+
+    expect(formatDuration(45, instance.t)).toBe("45 s");
+    expect(formatDuration(150, instance.t)).toBe("2 min 30 s");
   });
 });
 

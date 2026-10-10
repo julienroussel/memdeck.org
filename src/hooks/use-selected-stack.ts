@@ -6,7 +6,10 @@ import {
   reportLocalDbCorruption,
 } from "../utils/localstorage-telemetry";
 
-export const isStackKey = (key: string): key is StackKey => key in stacks;
+// `Object.hasOwn`, not `in`: `stacks` is a plain object literal, so `in`
+// would accept inherited names such as "constructor" or "toString".
+export const isStackKey = (key: string): key is StackKey =>
+  Object.hasOwn(stacks, key);
 
 type RequiredStackResult = {
   stackKey: StackKey;
@@ -28,7 +31,7 @@ type SelectedStackResult =
     };
 
 const isStackKeyOrEmpty = (value: unknown): value is StackKey | "" =>
-  typeof value === "string" && (value === "" || value in stacks);
+  typeof value === "string" && (value === "" || isStackKey(value));
 
 export const useSelectedStack = (): SelectedStackResult => {
   // Corruption recovery is reset-on-write — the on-disk value is low-stakes
@@ -50,7 +53,7 @@ export const useSelectedStack = (): SelectedStackResult => {
   };
 
   // Validate that the key exists in stacks
-  if (selectedStackKey !== "" && selectedStackKey in stacks) {
+  if (selectedStackKey !== "" && isStackKey(selectedStackKey)) {
     const stack = stacks[selectedStackKey];
     return {
       setStackKey,

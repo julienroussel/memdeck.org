@@ -39,13 +39,15 @@ export const StatsByStack = () => {
               <Table.Td ta="center" visibleFrom="sm">
                 {entry.totalQuestions}
               </Table.Td>
-              <Table.Td ta="center">{toAccuracyPercent(accuracy)}%</Table.Td>
+              <Table.Td ta="center">
+                {t("common.percent", { percent: toAccuracyPercent(accuracy) })}
+              </Table.Td>
               <Table.Td ta="center">{entry.globalBestStreak}</Table.Td>
             </Table.Tr>
           );
         })
         .filter(Boolean),
-    [getStatsByStack]
+    [getStatsByStack, t]
   );
 
   if (rows.length === 0) {

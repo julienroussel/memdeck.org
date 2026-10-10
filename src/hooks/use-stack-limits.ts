@@ -36,7 +36,9 @@ const STACK_LIMITS_CORRUPT_NOTIFICATION_ID = "stack-limits-corrupt";
 export const useStackLimits = (stackKey: StackKey): UseStackLimitsResult => {
   const { t } = useTranslation();
   const tRef = useRef(t);
-  tRef.current = t;
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
 
   const [record, setRecord] = useLocalDb<StackLimitsRecord>(
     STACK_LIMITS_LSK,

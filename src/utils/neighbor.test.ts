@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { DEFAULT_STACK_LIMITS } from "../types/stack-limits";
-import { createDeckPosition, type PlayingCardPosition } from "../types/stacks";
+import {
+  createDeckPosition,
+  getCardAt,
+  type PlayingCardPosition,
+} from "../types/stacks";
 import { mnemonica } from "../types/stacks/mnemonica";
 import { getNeighborCard, resolveDirection } from "./neighbor";
 
@@ -8,7 +12,7 @@ const stackOrder = mnemonica.order;
 const fullDeck = DEFAULT_STACK_LIMITS;
 
 const makeCardPosition = (index: number): PlayingCardPosition => ({
-  card: stackOrder[index - 1],
+  card: getCardAt(stackOrder, index - 1),
   index: createDeckPosition(index),
 });
 

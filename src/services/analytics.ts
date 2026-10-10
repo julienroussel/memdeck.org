@@ -15,14 +15,25 @@ type ShareSource = "nav" | "nudge" | "about";
 const TRACKING_ID = "G-36CZ6GEMKQ";
 const PRODUCTION_HOSTNAME = "memdeck.org";
 
-const isEnabled = () => window.location.hostname === PRODUCTION_HOSTNAME;
+export const isAnalyticsHost = (): boolean =>
+  window.location.hostname === PRODUCTION_HOSTNAME;
+
+// Set by `initialize`, which only runs after consent. Until then every tracker
+// is a no-op: react-ga4 would otherwise push pre-init calls onto
+// `window.dataLayer`, and gtag.js replays that array once it loads.
+let initialized = false;
+
+const isEnabled = () => initialized && isAnalyticsHost();
 
 const trackWebVital = ({ id, name, value }: Metric) => {
+  // react-ga4 drops a `send` without a supported `hitType` ("Send command
+  // doesn't exist"); "event" routes it to a gtag event.
   ReactGA.send({
     eventAction: name,
     eventCategory: "Web Vitals",
     eventLabel: id,
     eventValue: Math.round(name === "CLS" ? value * 1000 : value),
+    hitType: "event",
     nonInteraction: true,
   });
 };
@@ -42,7 +53,7 @@ const formatSessionLabel = (
 //
 // Reporting is deferred to a microtask so the throwing listener's stack
 // has fully unwound before re-entering analytics machinery. No re-entry
-// guard is needed: analytics.trackError calls only ReactGA.event/send
+// guard is needed: analytics.trackError calls only ReactGA.event/gtag
 // (no bus emits), and listeners on a single channel are iterated as peers
 // — never nested — so the throwing-listener stack is the only reachable
 // source of recursion, and it is already unwound by the time the
@@ -169,10 +180,11 @@ export const scrubErrorMessage = (message: string): string => {
 
 export const analytics = {
   initialize: () => {
-    if (!isEnabled()) {
+    if (!isAnalyticsHost()) {
       return;
     }
     ReactGA.initialize(TRACKING_ID);
+    initialized = true;
     onCLS(trackWebVital);
     onINP(trackWebVital);
     onLCP(trackWebVital);
@@ -232,7 +244,7 @@ export const analytics = {
     }
     try {
       // Defense-in-depth scrubbing applied to both the `label` and
-      // `exDescription` fields. Most callers (`localstorage-telemetry.ts`,
+      // exception `description` fields. Most callers (`localstorage-telemetry.ts`,
       // `session-breadcrumbs.ts`) already construct controlled messages;
       // this guards against future callers forwarding raw `Error.message`
       // strings — V8 leaks JSON.parse snippets there, and stack traces /
@@ -243,10 +255,11 @@ export const analytics = {
         category: "Error",
         label: scrubbedMessage,
       });
-      ReactGA.send({
-        exDescription: `${error.name}: ${scrubbedMessage}${componentStack ? ` | ${componentStack.slice(0, 100)}` : ""}`,
-        exFatal: false,
-        hitType: "exception",
+      // GA4's `exception` event, sent through gtag directly: react-ga4's
+      // `send({ hitType: "exception" })` is unsupported and drops the hit.
+      ReactGA.gtag("event", "exception", {
+        description: `${error.name}: ${scrubbedMessage}${componentStack ? ` | ${componentStack.slice(0, 100)}` : ""}`,
+        fatal: false,
       });
     } catch {
       // Analytics MUST NOT break user-facing flows.

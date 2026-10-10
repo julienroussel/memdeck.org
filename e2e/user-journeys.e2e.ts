@@ -1,5 +1,10 @@
 import { expect } from "@playwright/test";
 import { COLOR_SCHEME_LSK } from "../src/constants";
+import {
+  CORRECT_ANSWERS_PATTERN,
+  INCORRECT_ANSWERS_PATTERN,
+} from "./fixtures/patterns";
+import { readCount } from "./fixtures/read-count";
 import { test } from "./fixtures/test-setup";
 
 // URL patterns
@@ -24,21 +29,17 @@ test.describe("User Journeys", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Verify stack selection persists
-    const selectedValue = await page
-      .locator("[data-testid='stack-picker']")
-      .first()
-      .inputValue();
-    expect(selectedValue).toBe("mnemonica");
+    await expect(
+      page.locator("[data-testid='stack-picker']").first()
+    ).toHaveValue("mnemonica");
 
     // Stack name should be displayed (mnemonica's display name is "Tamariz")
     await expect(page.getByRole("main").getByText("Tamariz")).toBeVisible();
 
     // User can now navigate to flashcard
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // User is on flashcard page
     await expect(page).toHaveURL(FLASHCARD_URL_PATTERN);
@@ -57,11 +58,9 @@ test.describe("User Journeys", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("aronson");
-    await page.waitForLoadState("networkidle");
 
     // Go to flashcard
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // Verify training page loaded
     await expect(
@@ -76,22 +75,18 @@ test.describe("User Journeys", () => {
       // Wait for card spread to render before clicking
       await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
 
-      // Get available choices from card spread (use force:true due to overlapping)
-      const cardSpreadItems = page.locator(".cardSpreadCard");
-      const count = await cardSpreadItems.count();
-
-      if (count > 0) {
-        await cardSpreadItems.last().click({ force: true });
-      }
+      // Click a choice from the card spread (use force:true due to overlapping)
+      await page.locator(".cardSpreadCard").last().click({ force: true });
     }
 
-    // Score should have changed (at least one badge shows non-zero)
-    const successText = await scoreBadges.first().textContent();
-    const failsText = await scoreBadges.last().textContent();
-    const totalScore =
-      Number.parseInt(successText || "0", 10) +
-      Number.parseInt(failsText || "0", 10);
-    expect(totalScore).toBeGreaterThan(0);
+    // Score should have changed
+    await expect
+      .poll(
+        async () =>
+          (await readCount(page.getByText(CORRECT_ANSWERS_PATTERN))) +
+          (await readCount(page.getByText(INCORRECT_ANSWERS_PATTERN)))
+      )
+      .toBeGreaterThan(0);
 
     // User can change mode via settings popover
     await page.getByRole("button", { name: "Flashcard settings" }).click();
@@ -102,7 +97,7 @@ test.describe("User Journeys", () => {
     await page.getByRole("button", { name: "Flashcard settings" }).click();
 
     // Mode should be saved (localStorage values are JSON-stringified)
-    const mode = await page.evaluate(() => {
+    const mode = await page.evaluate((): unknown => {
       const value = localStorage.getItem("memdeck-app-flashcard-option");
       return value ? JSON.parse(value) : null;
     });
@@ -118,32 +113,29 @@ test.describe("User Journeys", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Go to flashcard
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // Practice a bit (use force:true due to overlapping cards)
     const cardSpreadItems = page.locator(".cardSpreadCard");
-    if ((await cardSpreadItems.count()) > 0) {
-      await cardSpreadItems.last().click({ force: true });
-    }
+    await expect(cardSpreadItems.first()).toBeVisible();
+    await cardSpreadItems.last().click({ force: true });
 
     // Navigate to home
     await page.locator("#main-nav a:has-text('Home')").click();
-    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("heading", { name: "Ready to train?" })
+    ).toBeVisible();
 
     // Switch to different deck
     await page
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("redford");
-    await page.waitForLoadState("networkidle");
 
     // Go back to flashcard with new deck
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // Flashcard page should load with score badges
     const scoreBadges = page.locator("main .mantine-Badge-root");
@@ -164,28 +156,33 @@ test.describe("User Journeys", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("particle");
-    await page.waitForLoadState("networkidle");
 
     // Should be able to navigate to all pages
-    const pages = ["Flashcard", "ACAAN", "Toolbox", "Resources"];
+    const pages = [
+      { heading: "Flashcard", link: "Flashcard" },
+      { heading: "ACAAN", link: "ACAAN" },
+      { heading: "Toolbox", link: "Toolbox" },
+      { heading: "Memorized Deck Resources", link: "Resources" },
+    ];
 
-    for (const pageName of pages) {
-      await page.locator(`#main-nav a:has-text('${pageName}')`).click();
-      await page.waitForLoadState("networkidle");
+    for (const { heading, link } of pages) {
+      await page.locator(`#main-nav a:has-text('${link}')`).click();
 
       // Each page should load
-      await expect(page.locator("body")).toBeVisible();
+      await expect(
+        page.getByRole("heading", { level: 1, name: heading })
+      ).toBeVisible();
 
       // Navigate back to home
       await page.locator("#main-nav a:has-text('Home')").click();
-      await page.waitForLoadState("networkidle");
+      await expect(
+        page.getByRole("heading", { name: "Ready to train?" })
+      ).toBeVisible();
 
       // Stack should still be selected
-      const selectedValue = await page
-        .locator("[data-testid='stack-picker']")
-        .first()
-        .inputValue();
-      expect(selectedValue).toBe("particle");
+      await expect(
+        page.locator("[data-testid='stack-picker']").first()
+      ).toHaveValue("particle");
     }
   });
 
@@ -252,7 +249,6 @@ test.describe("User Journeys", () => {
 
     // Select a stack
     await select.selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard - may need to click burger menu again on mobile
     if (await burgerButton.isVisible()) {
@@ -265,7 +261,6 @@ test.describe("User Journeys", () => {
     }
 
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // Flashcard should be usable on mobile
     await expect(
@@ -273,9 +268,7 @@ test.describe("User Journeys", () => {
     ).toBeVisible();
 
     // Card spread items should be visible
-    const cardSpreadItems = page.locator(".cardSpreadCard");
-    const itemCount = await cardSpreadItems.count();
-    expect(itemCount).toBeGreaterThan(0);
+    await expect(page.locator(".cardSpreadCard")).not.toHaveCount(0);
 
     // Score badges should be visible
     const scoreBadges = page.locator("main .mantine-Badge-root");
@@ -293,11 +286,9 @@ test.describe("User Journeys", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("memorandum");
-    await page.waitForLoadState("networkidle");
 
     // Navigate to flashcard and set mode
     await page.locator("#main-nav a:has-text('Flashcard')").click();
-    await page.waitForLoadState("networkidle");
 
     // Open settings popover and select number-only mode
     await page.getByRole("button", { name: "Flashcard settings" }).click();
@@ -312,14 +303,12 @@ test.describe("User Journeys", () => {
     await page.waitForLoadState("networkidle");
 
     // All preferences should be restored
-    const selectedValue = await page
-      .locator("[data-testid='stack-picker']")
-      .first()
-      .inputValue();
-    expect(selectedValue).toBe("memorandum");
+    await expect(
+      page.locator("[data-testid='stack-picker']").first()
+    ).toHaveValue("memorandum");
 
     // localStorage values are JSON-stringified
-    const mode = await page.evaluate(() => {
+    const mode = await page.evaluate((): unknown => {
       const value = localStorage.getItem("memdeck-app-flashcard-option");
       return value ? JSON.parse(value) : null;
     });

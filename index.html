@@ -267,8 +267,6 @@
       rel="apple-touch-startup-image"
     >
     <meta content="telephone=no" name="format-detection">
-    <link crossorigin href="https://www.google-analytics.com" rel="preconnect">
-    <link href="https://www.google-analytics.com" rel="dns-prefetch">
     <link
       href="/memdeck-black.webp"
       media="(prefers-color-scheme: light)"
@@ -384,6 +382,23 @@
       } catch {
         // Silently ignore localStorage access errors
       }
+    })();
+    // If the app bundle fails to load or throws while evaluating, React never
+    // mounts and nothing removes the opaque #splash, which then hides the page
+    // for good. Capture phase, because script load errors do not bubble.
+    (() => {
+      window.addEventListener(
+        "error",
+        (event) => {
+          if (
+            event instanceof ErrorEvent ||
+            event.target instanceof HTMLScriptElement
+          ) {
+            document.getElementById("splash")?.remove();
+          }
+        },
+        true
+      );
     })();
     </script>
     <style>

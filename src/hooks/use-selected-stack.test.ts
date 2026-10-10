@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { renderHook } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SELECTED_STACK_LSK } from "../constants";
 import { stacks } from "../types/stacks";
 import {
@@ -17,8 +18,24 @@ vi.mock("../utils/localstorage", () => ({
   useLocalDb: vi.fn((_, defaultValue) => [defaultValue, mockSetValue, vi.fn()]),
 }));
 
+// Only `reportLocalDbCorruption` is replaced so the real `useLocalDb` (used
+// by the stored-value test below) keeps its other telemetry imports.
+vi.mock("../utils/localstorage-telemetry", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../utils/localstorage-telemetry")>()),
+  reportLocalDbCorruption: vi.fn(),
+}));
+
 const { useLocalDb } = await import("../utils/localstorage");
 const mockedUseLocalDb = vi.mocked(useLocalDb);
+const actualLocalStorage = await vi.importActual<
+  typeof import("../utils/localstorage")
+>("../utils/localstorage");
+
+// `vi.clearAllMocks` keeps implementations, so a `mockReturnValue` from one
+// test would leak into the next; `mockReset` restores the pass-through.
+beforeEach(() => {
+  mockedUseLocalDb.mockReset();
+});
 
 describe("isStackKey", () => {
   it("returns true for valid stack keys", () => {
@@ -42,6 +59,14 @@ describe("isStackKey", () => {
     expect(isStackKey("null")).toBe(false);
     expect(isStackKey("undefined")).toBe(false);
     expect(isStackKey("object")).toBe(false);
+  });
+
+  it("returns false for names inherited from Object.prototype", () => {
+    expect(isStackKey("constructor")).toBe(false);
+    expect(isStackKey("toString")).toBe(false);
+    expect(isStackKey("__proto__")).toBe(false);
+    expect(isStackKey("hasOwnProperty")).toBe(false);
+    expect(isStackKey("valueOf")).toBe(false);
   });
 });
 
@@ -114,6 +139,38 @@ describe("useSelectedStack", () => {
         onWriteFailed: handleLocalDbWriteFailed,
       })
     );
+  });
+
+  it("passes a validator that rejects names inherited from Object.prototype", () => {
+    useSelectedStack();
+
+    const validate = mockedUseLocalDb.mock.calls[0]?.[2];
+    if (!validate) {
+      throw new Error("Expected useLocalDb to receive a validator");
+    }
+    expect(validate("constructor")).toBe(false);
+    expect(validate("toString")).toBe(false);
+    expect(validate("__proto__")).toBe(false);
+    expect(validate("")).toBe(true);
+    expect(validate("mnemonica")).toBe(true);
+  });
+
+  it("reports corruption and returns empty state when the stored key is an Object.prototype name", () => {
+    mockedUseLocalDb.mockImplementation(actualLocalStorage.useLocalDb);
+    localStorage.setItem(SELECTED_STACK_LSK, JSON.stringify("constructor"));
+
+    try {
+      const { result } = renderHook(() => useSelectedStack());
+
+      expect(reportLocalDbCorruption).toHaveBeenCalledWith(
+        SELECTED_STACK_LSK,
+        "constructor"
+      );
+      expect(result.current.stackKey).toBe("");
+      expect(result.current.stack).toBeNull();
+    } finally {
+      localStorage.removeItem(SELECTED_STACK_LSK);
+    }
   });
 
   it("setStackKey handles empty string input", () => {

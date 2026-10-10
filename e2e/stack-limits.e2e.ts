@@ -26,7 +26,6 @@ test.describe("Stack Limits", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
   });
 
   test("should display stack range badge in navbar after selecting a stack", async ({
@@ -149,7 +148,6 @@ test.describe("Stack Limits", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("aronson");
-    await page.waitForLoadState("networkidle");
 
     // Aronson should show full deck (default)
     const badge = page.getByRole("button", {
@@ -162,7 +160,6 @@ test.describe("Stack Limits", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Mnemonica should still show 13
     const mnemonicaBadge = page.getByRole("button", {
@@ -226,7 +223,6 @@ test.describe("Stack Limits — emit and corrupt-lock", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     await page.waitForFunction(() => window.__memdeckEventBus !== undefined);
     await page.evaluate(() => {
@@ -279,7 +275,6 @@ test.describe("Stack Limits — emit and corrupt-lock", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     await page.waitForFunction(() => window.__memdeckEventBus !== undefined);
     await page.evaluate(() => {

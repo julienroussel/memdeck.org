@@ -85,7 +85,7 @@ describe("LanguagePicker", () => {
     expect(mockNotificationsShow).toHaveBeenCalledWith(
       expect.objectContaining({
         color: "red",
-        message: "Something went wrong",
+        message: "Could not load your preferred language. Using English.",
       })
     );
     expect(mockTrackEvent).not.toHaveBeenCalled();

@@ -65,11 +65,14 @@ describe("computeSequences", () => {
   it("maps correct positions and cards per cycle", () => {
     const result = computeSequences(stack, 2);
     const [firstCycle] = result.cycles;
+    if (!firstCycle) {
+      throw new Error("Expected at least one cycle");
+    }
     // First cycle starts at position 1 (index 0), steps by 2
-    expect(firstCycle[0].position).toBe(1);
-    expect(firstCycle[0].card).toBe(stack[0]);
-    expect(firstCycle[1].position).toBe(3);
-    expect(firstCycle[1].card).toBe(stack[2]);
+    expect(firstCycle[0]?.position).toBe(1);
+    expect(firstCycle[0]?.card).toBe(stack[0]);
+    expect(firstCycle[1]?.position).toBe(3);
+    expect(firstCycle[1]?.card).toBe(stack[2]);
   });
 
   it("includes every card exactly once across all cycles", () => {

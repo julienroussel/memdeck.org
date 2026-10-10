@@ -108,7 +108,7 @@ export const buildCanonicalUrl = (pathname: string): string => {
   return `${SITE_URL}${pathname}${trailingSlash}`;
 };
 
-export const useDocumentMeta = ({ title, description }: DocumentMeta) => {
+export const useDocumentMeta = ({ title, description }: DocumentMeta): void => {
   const { pathname } = useLocation();
 
   useEffect(() => {

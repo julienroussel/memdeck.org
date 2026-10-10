@@ -54,61 +54,67 @@ export const StayStack = () => {
 
       <Text size="sm">
         {t("toolbox.sequences.summary", {
+          count: result.cycleLength,
           cycleCount: result.cycleCount,
-          cycleLength: result.cycleLength,
         })}
       </Text>
 
       <VisuallyHidden>
         <div aria-atomic="true" aria-live="polite">
           {t("toolbox.sequences.summary", {
+            count: result.cycleLength,
             cycleCount: result.cycleCount,
-            cycleLength: result.cycleLength,
           })}
         </div>
       </VisuallyHidden>
 
-      {result.cycles.map((cycle, cycleIndex) => (
-        <Table
-          aria-label={t("toolbox.sequences.cycleLabel", {
-            current: cycleIndex + 1,
-            total: result.cycleCount,
-          })}
-          key={cycle[0].position}
-          striped
-        >
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th colSpan={2}>
-                {t("toolbox.sequences.cycleLabel", {
-                  current: cycleIndex + 1,
-                  total: result.cycleCount,
-                })}
-              </Table.Th>
-            </Table.Tr>
-            <Table.Tr>
-              <Table.Th>{t("toolbox.sequences.position")}</Table.Th>
-              <Table.Th>{t("toolbox.sequences.card")}</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {cycle.map((entry) => (
-              <Table.Tr key={`${entry.card.rank}-${entry.card.suit}`}>
-                <Table.Td>{entry.position}</Table.Td>
-                <Table.Td style={CARD_CELL_STYLE}>
-                  <Image
-                    alt=""
-                    h={THUMBNAIL_HEIGHT}
-                    src={entry.card.image}
-                    w={THUMBNAIL_WIDTH}
-                  />
-                  {formatCardName(entry.card)}
-                </Table.Td>
+      {result.cycles.map((cycle, cycleIndex) => {
+        const [first] = cycle;
+        if (!first) {
+          return null;
+        }
+        return (
+          <Table
+            aria-label={t("toolbox.sequences.cycleLabel", {
+              current: cycleIndex + 1,
+              total: result.cycleCount,
+            })}
+            key={first.position}
+            striped
+          >
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th colSpan={2}>
+                  {t("toolbox.sequences.cycleLabel", {
+                    current: cycleIndex + 1,
+                    total: result.cycleCount,
+                  })}
+                </Table.Th>
               </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
-      ))}
+              <Table.Tr>
+                <Table.Th>{t("toolbox.sequences.position")}</Table.Th>
+                <Table.Th>{t("toolbox.sequences.card")}</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {cycle.map((entry) => (
+                <Table.Tr key={`${entry.card.rank}-${entry.card.suit}`}>
+                  <Table.Td>{entry.position}</Table.Td>
+                  <Table.Td style={CARD_CELL_STYLE}>
+                    <Image
+                      alt=""
+                      h={THUMBNAIL_HEIGHT}
+                      src={entry.card.image}
+                      w={THUMBNAIL_WIDTH}
+                    />
+                    {formatCardName(entry.card)}
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        );
+      })}
     </Stack>
   );
 };

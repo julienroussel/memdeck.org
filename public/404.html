@@ -5,8 +5,6 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Page not found | MemDeck</title>
     <meta content="noindex" name="robots">
-    <link crossorigin href="https://www.google-analytics.com" rel="preconnect">
-    <link href="https://www.google-analytics.com" rel="dns-prefetch">
     <link
       href="/memdeck-black.webp"
       media="(prefers-color-scheme: light)"
@@ -110,12 +108,12 @@
       font-weight: 500;
       color: #fff;
       text-decoration: none;
-      background: #228be6;
+      background: #1971c2;
       border-radius: 8px;
       transition: background 0.2s;
     }
     a:hover {
-      background: #1c7ed6;
+      background: #1864ab;
     }
     html[data-mantine-color-scheme="dark"] body {
       color: #ddd;
@@ -131,7 +129,7 @@
       background: #1864ab;
     }
     html[data-mantine-color-scheme="dark"] a:hover {
-      background: #1c7ed6;
+      background: #1971c2;
     }
     @media (prefers-color-scheme: dark) {
       body {
@@ -148,7 +146,7 @@
         background: #1864ab;
       }
       a:hover {
-        background: #1c7ed6;
+        background: #1971c2;
       }
     }
     </style>
@@ -179,13 +177,29 @@
       if (window.location.hostname !== "memdeck.org") {
         return;
       }
+      // Same key and JSON encoding as ANALYTICS_CONSENT_LSK in src/constants.ts
+      // (written by useLocalDb). Anything but a stored "granted" keeps GA off.
+      let consent = null;
+      try {
+        consent = JSON.parse(
+          window.localStorage.getItem("memdeck-app-analytics-consent")
+        );
+      } catch {
+        return;
+      }
+      if (consent !== "granted") {
+        return;
+      }
       const s = document.createElement("script");
       s.async = true;
       s.src = "https://www.googletagmanager.com/gtag/js?id=G-36CZ6GEMKQ";
       document.head.appendChild(s);
       window.dataLayer = window.dataLayer || [];
-      function gtag(...args) {
-        window.dataLayer.push(...args);
+      // gtag.js only treats an Arguments object as a command, so this must
+      // push `arguments` rather than spread values, as Google's snippet does.
+      function gtag() {
+        // biome-ignore lint/complexity/noArguments: gtag.js only processes an Arguments object as a command
+        window.dataLayer.push(arguments);
       }
       gtag("js", new Date());
       gtag("config", "G-36CZ6GEMKQ");

@@ -37,14 +37,14 @@ describe("filterStack", () => {
   it("matches by position number", () => {
     const results = filterStack(stackOrder, "42", formatCardName);
     expect(results).toHaveLength(1);
-    expect(results[0].position).toBe(42);
+    expect(results[0]?.position).toBe(42);
   });
 
   it("matches full spelled card name", () => {
     const results = filterStack(stackOrder, "seven of clubs", formatCardName);
     expect(results).toHaveLength(1);
-    expect(results[0].card.rank).toBe("7");
-    expect(results[0].card.suit).toBe("clubs");
+    expect(results[0]?.card.rank).toBe("7");
+    expect(results[0]?.card.suit).toBe("clubs");
   });
 
   it("matches by raw rank digit (e.g., '7' finds all four sevens)", () => {
@@ -74,8 +74,8 @@ describe("filterStack", () => {
 
   it("assigns correct 1-based positions", () => {
     const results = filterStack(stackOrder, "", formatCardName);
-    expect(results[0].position).toBe(1);
-    expect(results[51].position).toBe(52);
+    expect(results[0]?.position).toBe(1);
+    expect(results[51]?.position).toBe(52);
   });
 
   it("uses the provided formatter for matching", () => {

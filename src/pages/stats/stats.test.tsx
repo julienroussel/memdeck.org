@@ -34,7 +34,7 @@ const emptyStatsEntry = () => ({
 
 const sessionHistoryDefaults = {
   history: [],
-  historyStatus: "ready" as LocalDbStatus,
+  historyStatus: "ready",
   sessionsByMode: () => [],
   sessionsByModeAndStack: () => [],
   sessionsByStack: () => [],
@@ -46,7 +46,7 @@ const allTimeStatsDefaults = {
   getStatsByMode: emptyStatsEntry,
   getStatsByStack: emptyStatsEntry,
   stats: {},
-  statsStatus: "ready" as LocalDbStatus,
+  statsStatus: "ready",
 };
 
 const setHooks = ({

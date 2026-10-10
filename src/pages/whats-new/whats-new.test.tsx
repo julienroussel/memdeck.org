@@ -16,6 +16,10 @@ describe("WhatsNew", () => {
     render(<WhatsNew />);
     const entryHeadings = screen.getAllByRole("heading", { level: 2 });
     expect(entryHeadings).toHaveLength(WHATS_NEW_ENTRIES.length);
-    expect(entryHeadings[0]).toHaveTextContent(WHATS_NEW_ENTRIES[0].title.en);
+    const [latest] = WHATS_NEW_ENTRIES;
+    if (!latest) {
+      throw new Error("WHATS_NEW_ENTRIES must be non-empty for this test");
+    }
+    expect(entryHeadings[0]).toHaveTextContent(latest.title.en);
   });
 });

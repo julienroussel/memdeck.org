@@ -3,6 +3,7 @@ import { LANGUAGE_LSK, LOCALE_RELOAD_SSK } from "../constants";
 import { analytics } from "../services/analytics";
 import { includes } from "../utils/includes";
 import { isStaleChunkError } from "../utils/stale-chunk";
+import type en from "./locales/en.json";
 import {
   SUPPORTED_LANGUAGES,
   type SupportedLanguage,
@@ -49,9 +50,10 @@ export const detectLanguage = (): SupportedLanguage => {
   return "en";
 };
 
+// Typed with the English shape so a key missing from any locale fails typecheck.
 export const languageLoaders: Record<
   Exclude<SupportedLanguage, "en">,
-  () => Promise<{ default: Record<string, unknown> }>
+  () => Promise<{ default: typeof en }>
 > = {
   de: () => import("./locales/de.json"),
   es: () => import("./locales/es.json"),

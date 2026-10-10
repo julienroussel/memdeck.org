@@ -1,16 +1,9 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockReadLocalStorageValue = vi.fn();
-const mockUseLocalStorage = vi.fn();
 const mockNotifyLocalDbCorruption = vi.fn<(key: string) => void>();
 const mockReportLocalDbNotifyFailed =
   vi.fn<(key: string, cause: unknown) => void>();
-
-vi.mock("@mantine/hooks", () => ({
-  readLocalStorageValue: (args: unknown) => mockReadLocalStorageValue(args),
-  useLocalStorage: (args: unknown) => mockUseLocalStorage(args),
-}));
 
 // Mock the telemetry module so cross-tab corruption tests can assert the
 // wrapper's notification + analytics calls without exercising real Mantine
@@ -46,31 +39,45 @@ const isTestObj = (value: unknown): value is TestObj =>
   value !== null &&
   "name" in value &&
   "value" in value &&
-  typeof (value as TestObj).name === "string" &&
-  typeof (value as TestObj).value === "number";
+  typeof value.name === "string" &&
+  typeof value.value === "number";
 
 const isPositiveNumber = (value: unknown): value is number =>
   typeof value === "number" && value > 0;
 
+// `probeStoredValue` (and `getStoredValue` through it) reads
+// `window.localStorage.getItem` directly; the probe blocks below stub it so
+// each test chooses what the read returns or throws.
+const mockGetItem = vi.fn<(key: string) => string | null>();
+const stubGetItem = (): void => {
+  vi.stubGlobal("localStorage", { getItem: mockGetItem });
+};
+/** Stores `value` as JSON; `undefined` means the key is absent. */
+const storeValue = (value: unknown): void => {
+  mockGetItem.mockReturnValue(
+    value === undefined ? null : JSON.stringify(value)
+  );
+};
+
 describe("getStoredValue", () => {
+  beforeEach(stubGetItem);
+
   afterEach(() => {
+    vi.unstubAllGlobals();
     vi.clearAllMocks();
   });
 
   it("returns stored value when it exists", () => {
-    mockReadLocalStorageValue.mockReturnValue("stored-value");
+    storeValue("stored-value");
 
     const result = getStoredValue("test-key", "default", isString);
 
     expect(result).toBe("stored-value");
-    expect(mockReadLocalStorageValue).toHaveBeenCalledWith({
-      deserialize: expect.any(Function),
-      key: "test-key",
-    });
+    expect(mockGetItem).toHaveBeenCalledWith("test-key");
   });
 
   it("returns default value when stored value is undefined", () => {
-    mockReadLocalStorageValue.mockReturnValue(undefined);
+    storeValue(undefined);
 
     const result = getStoredValue("test-key", "default", isString);
 
@@ -78,7 +85,7 @@ describe("getStoredValue", () => {
   });
 
   it("returns default value when stored value is null", () => {
-    mockReadLocalStorageValue.mockReturnValue(null);
+    storeValue(null);
 
     const result = getStoredValue("test-key", "default", isString);
 
@@ -86,7 +93,7 @@ describe("getStoredValue", () => {
   });
 
   it("returns stored number value", () => {
-    mockReadLocalStorageValue.mockReturnValue(42);
+    storeValue(42);
 
     const result = getStoredValue("test-key", 0, isNumber);
 
@@ -94,7 +101,7 @@ describe("getStoredValue", () => {
   });
 
   it("returns stored boolean value", () => {
-    mockReadLocalStorageValue.mockReturnValue(true);
+    storeValue(true);
 
     const result = getStoredValue("test-key", false, isBool);
 
@@ -103,7 +110,7 @@ describe("getStoredValue", () => {
 
   it("returns stored object value", () => {
     const storedObject = { name: "test", value: 123 };
-    mockReadLocalStorageValue.mockReturnValue(storedObject);
+    storeValue(storedObject);
 
     const result = getStoredValue(
       "test-key",
@@ -116,15 +123,15 @@ describe("getStoredValue", () => {
 
   it("returns stored array value", () => {
     const storedArray = [1, 2, 3];
-    mockReadLocalStorageValue.mockReturnValue(storedArray);
+    storeValue(storedArray);
 
-    const result = getStoredValue("test-key", [] as number[], isNumberArray);
+    const result = getStoredValue("test-key", [], isNumberArray);
 
     expect(result).toEqual([1, 2, 3]);
   });
 
-  it("returns default value when readLocalStorageValue throws", () => {
-    mockReadLocalStorageValue.mockImplementation(() => {
+  it("returns default value when localStorage.getItem throws", () => {
+    mockGetItem.mockImplementation(() => {
       throw new Error("Storage error");
     });
 
@@ -141,7 +148,7 @@ describe("getStoredValue", () => {
       // Suppress console output
     });
 
-    mockReadLocalStorageValue.mockImplementation(() => {
+    mockGetItem.mockImplementation(() => {
       throw new Error("Storage error");
     });
 
@@ -157,7 +164,7 @@ describe("getStoredValue", () => {
   });
 
   it("preserves false as a valid stored value", () => {
-    mockReadLocalStorageValue.mockReturnValue(false);
+    storeValue(false);
 
     const result = getStoredValue("test-key", true, isBool);
 
@@ -165,7 +172,7 @@ describe("getStoredValue", () => {
   });
 
   it("preserves zero as a valid stored value", () => {
-    mockReadLocalStorageValue.mockReturnValue(0);
+    storeValue(0);
 
     const result = getStoredValue("test-key", 100, isNumber);
 
@@ -173,7 +180,7 @@ describe("getStoredValue", () => {
   });
 
   it("preserves empty string as a valid stored value", () => {
-    mockReadLocalStorageValue.mockReturnValue("");
+    storeValue("");
 
     const result = getStoredValue("test-key", "default", isString);
 
@@ -181,7 +188,7 @@ describe("getStoredValue", () => {
   });
 
   it("preserves empty array as a valid stored value", () => {
-    mockReadLocalStorageValue.mockReturnValue([]);
+    storeValue([]);
 
     const result = getStoredValue("test-key", [1, 2, 3], isNumberArray);
 
@@ -190,12 +197,15 @@ describe("getStoredValue", () => {
 });
 
 describe("getStoredValue with validate", () => {
+  beforeEach(stubGetItem);
+
   afterEach(() => {
+    vi.unstubAllGlobals();
     vi.clearAllMocks();
   });
 
   it("returns stored value when validator passes", () => {
-    mockReadLocalStorageValue.mockReturnValue("valid-string");
+    storeValue("valid-string");
 
     const result = getStoredValue("test-key", "default", isString);
 
@@ -203,7 +213,7 @@ describe("getStoredValue with validate", () => {
   });
 
   it("returns default value when validator rejects stored value", () => {
-    mockReadLocalStorageValue.mockReturnValue(42);
+    storeValue(42);
 
     const result = getStoredValue("test-key", "default", isString);
 
@@ -211,7 +221,7 @@ describe("getStoredValue with validate", () => {
   });
 
   it("returns default value when stored number fails a stricter validator", () => {
-    mockReadLocalStorageValue.mockReturnValue(-5);
+    storeValue(-5);
 
     const result = getStoredValue("test-key", 1, isPositiveNumber);
 
@@ -219,7 +229,7 @@ describe("getStoredValue with validate", () => {
   });
 
   it("returns stored number when it passes a stricter validator", () => {
-    mockReadLocalStorageValue.mockReturnValue(10);
+    storeValue(10);
 
     const result = getStoredValue("test-key", 1, isPositiveNumber);
 
@@ -227,7 +237,7 @@ describe("getStoredValue with validate", () => {
   });
 
   it("returns default value when stored value is undefined with validator", () => {
-    mockReadLocalStorageValue.mockReturnValue(undefined);
+    storeValue(undefined);
 
     const result = getStoredValue("test-key", "default", isString);
 
@@ -235,15 +245,15 @@ describe("getStoredValue with validate", () => {
   });
 
   it("returns default value when stored value is null with validator", () => {
-    mockReadLocalStorageValue.mockReturnValue(null);
+    storeValue(null);
 
     const result = getStoredValue("test-key", "default", isString);
 
     expect(result).toBe("default");
   });
 
-  it("returns default value when readLocalStorageValue throws with validator", () => {
-    mockReadLocalStorageValue.mockImplementation(() => {
+  it("returns default value when localStorage.getItem throws with validator", () => {
+    mockGetItem.mockImplementation(() => {
       throw new Error("Storage error");
     });
 
@@ -260,7 +270,7 @@ describe("getStoredValue with validate", () => {
       // Suppress console output
     });
 
-    mockReadLocalStorageValue.mockReturnValue(123);
+    storeValue(123);
 
     getStoredValue("test-key", "default", isString);
 
@@ -274,8 +284,9 @@ describe("getStoredValue with validate", () => {
   });
 
   it("does not call validator when stored value is undefined", () => {
-    mockReadLocalStorageValue.mockReturnValue(undefined);
+    storeValue(undefined);
 
+    // vi.fn cannot carry a type-predicate signature, which getStoredValue requires.
     const validator = vi.fn(() => true) as unknown as (
       value: unknown
     ) => value is string;
@@ -286,8 +297,9 @@ describe("getStoredValue with validate", () => {
   });
 
   it("does not call validator when stored value is null", () => {
-    mockReadLocalStorageValue.mockReturnValue(null);
+    storeValue(null);
 
+    // vi.fn cannot carry a type-predicate signature, which getStoredValue requires.
     const validator = vi.fn(() => true) as unknown as (
       value: unknown
     ) => value is string;
@@ -305,10 +317,10 @@ describe("getStoredValue with validate", () => {
       value !== null &&
       "theme" in value &&
       "fontSize" in value &&
-      typeof (value as { theme: unknown }).theme === "string" &&
-      typeof (value as { fontSize: unknown }).fontSize === "number";
+      typeof value.theme === "string" &&
+      typeof value.fontSize === "number";
 
-    mockReadLocalStorageValue.mockReturnValue({
+    storeValue({
       fontSize: 14,
       theme: "dark",
     });
@@ -330,10 +342,10 @@ describe("getStoredValue with validate", () => {
       value !== null &&
       "theme" in value &&
       "fontSize" in value &&
-      typeof (value as { theme: unknown }).theme === "string" &&
-      typeof (value as { fontSize: unknown }).fontSize === "number";
+      typeof value.theme === "string" &&
+      typeof value.fontSize === "number";
 
-    mockReadLocalStorageValue.mockReturnValue({
+    storeValue({
       fontSize: "not-a-number",
       theme: 123,
     });
@@ -348,7 +360,7 @@ describe("getStoredValue with validate", () => {
   });
 
   it("preserves falsy values that pass validation", () => {
-    mockReadLocalStorageValue.mockReturnValue(0);
+    storeValue(0);
 
     const result = getStoredValue("test-key", 100, isNumber);
 
@@ -356,7 +368,7 @@ describe("getStoredValue with validate", () => {
   });
 
   it("preserves empty string that passes validation", () => {
-    mockReadLocalStorageValue.mockReturnValue("");
+    storeValue("");
 
     const result = getStoredValue("test-key", "default", isString);
 
@@ -365,12 +377,15 @@ describe("getStoredValue with validate", () => {
 });
 
 describe("probeStoredValue", () => {
+  beforeEach(stubGetItem);
+
   afterEach(() => {
+    vi.unstubAllGlobals();
     vi.clearAllMocks();
   });
 
   it("returns { status: 'valid' } when stored value passes validation", () => {
-    mockReadLocalStorageValue.mockReturnValue("ok");
+    storeValue("ok");
 
     const probe = probeStoredValue("test-key", isString);
 
@@ -378,7 +393,7 @@ describe("probeStoredValue", () => {
   });
 
   it("returns { status: 'absent' } when stored value is undefined", () => {
-    mockReadLocalStorageValue.mockReturnValue(undefined);
+    storeValue(undefined);
 
     const probe = probeStoredValue("test-key", isString);
 
@@ -386,7 +401,7 @@ describe("probeStoredValue", () => {
   });
 
   it("returns { status: 'absent' } when stored value is null", () => {
-    mockReadLocalStorageValue.mockReturnValue(null);
+    storeValue(null);
 
     const probe = probeStoredValue("test-key", isString);
 
@@ -394,22 +409,36 @@ describe("probeStoredValue", () => {
   });
 
   it("returns { status: 'corrupt' } when stored value fails validation", () => {
-    mockReadLocalStorageValue.mockReturnValue(123);
+    storeValue(123);
 
     const probe = probeStoredValue("test-key", isString);
 
     expect(probe).toEqual({ raw: 123, status: "corrupt" });
   });
 
-  it("returns { status: 'read-error', error } when readLocalStorageValue throws", () => {
+  it("returns { status: 'read-error', error } when localStorage.getItem throws", () => {
     const readError = new Error("SecurityError: ITP read denied");
-    mockReadLocalStorageValue.mockImplementation(() => {
+    mockGetItem.mockImplementation(() => {
       throw readError;
     });
 
     const probe = probeStoredValue("test-key", isString);
 
     expect(probe).toEqual({ error: readError, status: "read-error" });
+  });
+
+  it("returns { status: 'read-error', error } when accessing window.localStorage itself throws", () => {
+    const accessError = new DOMException("Access denied", "SecurityError");
+    Object.defineProperty(window, "localStorage", {
+      configurable: true,
+      get: () => {
+        throw accessError;
+      },
+    });
+
+    const probe = probeStoredValue("test-key", isString);
+
+    expect(probe).toEqual({ error: accessError, status: "read-error" });
   });
 
   it("logs a DEV warning when the read throws", () => {
@@ -420,7 +449,7 @@ describe("probeStoredValue", () => {
       // Suppress console output
     });
 
-    mockReadLocalStorageValue.mockImplementation(() => {
+    mockGetItem.mockImplementation(() => {
       throw new Error("Storage error");
     });
 
@@ -439,9 +468,7 @@ describe("probeStoredValue", () => {
 // useLocalDb no longer wraps Mantine's `useLocalStorage`. It reads via
 // `useSyncExternalStore` and writes via direct `localStorage.setItem`, so
 // these tests drive `window.localStorage` directly and dispatch real DOM
-// events to simulate cross-tab and same-tab updates. The
-// `mockUseLocalStorage` / `mockReadLocalStorageValue` factories above are
-// inert for this block.
+// events to simulate cross-tab and same-tab updates.
 //
 // happy-dom@20 + vitest@4 in this project's configuration exposes
 // `window.localStorage` as a plain `{}` without the Storage API methods, so
@@ -844,11 +871,12 @@ describe("useLocalDb", () => {
       // Use Object.keys (own enumerable keys) — `in` walks the prototype
       // chain and would mask a successful pollution.
       expect(Object.keys(parsed)).not.toContain("polluted");
-      expect((parsed as Bag).polluted).toBeUndefined();
+      expect(parsed.polluted).toBeUndefined();
       expect(parsed.a).toBe(1);
       // The smoking-gun assertion: a brand-new {} must NOT have `polluted`
       // anywhere in its prototype chain.
-      expect(({} as Bag).polluted).toBeUndefined();
+      const fresh: Bag = {};
+      expect(fresh.polluted).toBeUndefined();
     });
 
     it("strips a nested `__proto__` key", () => {
@@ -859,12 +887,16 @@ describe("useLocalDb", () => {
 
       const { result } = renderHook(() => useLocalDb<Bag>("k", {}, isBag));
       const [parsed] = result.current;
-      const inner = parsed.a as Bag;
+      const inner = parsed.a;
+      if (!isBag(inner)) {
+        throw new Error("Expected `a` to be a nested object");
+      }
 
       expect(Object.keys(inner)).not.toContain("polluted");
-      expect((inner as Bag).polluted).toBeUndefined();
+      expect(inner.polluted).toBeUndefined();
       expect(inner.b).toBe(2);
-      expect(({} as Bag).polluted).toBeUndefined();
+      const fresh: Bag = {};
+      expect(fresh.polluted).toBeUndefined();
     });
 
     it("strips `constructor` and `prototype` keys at any depth", () => {
@@ -883,7 +915,8 @@ describe("useLocalDb", () => {
       expect(ownKeys).not.toContain("constructor");
       expect(ownKeys).not.toContain("prototype");
       expect(parsed.x).toBe(42);
-      expect(({} as Bag).polluted).toBeUndefined();
+      const fresh: Bag = {};
+      expect(fresh.polluted).toBeUndefined();
     });
 
     it("preserves array elements (integer keys never match the strip list)", () => {

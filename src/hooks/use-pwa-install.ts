@@ -8,7 +8,7 @@ import {
 } from "../constants";
 import { analytics } from "../services/analytics";
 import { isPwa } from "../utils/is-pwa";
-import { getStoredValue, useLocalDb } from "../utils/localstorage";
+import { useLocalDb } from "../utils/localstorage";
 import {
   handleLocalDbWriteFailed,
   reportLocalDbCorruption,
@@ -18,17 +18,15 @@ interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
 }
 
+const isBeforeInstallPromptEvent = (
+  event: Event
+): event is BeforeInstallPromptEvent =>
+  "prompt" in event && typeof event.prompt === "function";
+
 const isUnknownArray = (value: unknown): value is unknown[] =>
   Array.isArray(value);
 
-const hasCompletedSession = (): boolean => {
-  const history = getStoredValue<unknown[]>(
-    SESSION_HISTORY_LSK,
-    [],
-    isUnknownArray
-  );
-  return history.length > 0;
-};
+const EMPTY_HISTORY: unknown[] = [];
 
 const isNumber = (value: unknown): value is number =>
   typeof value === "number" && Number.isFinite(value);
@@ -68,11 +66,25 @@ export const usePwaInstall = (): UsePwaInstallResult => {
     }
   );
 
+  // Subscribed rather than read once, so eligibility re-evaluates when the
+  // history changes, without a reload.
+  const [history] = useLocalDb<unknown[]>(
+    SESSION_HISTORY_LSK,
+    EMPTY_HISTORY,
+    isUnknownArray,
+    {
+      onCorrupt: reportLocalDbCorruption,
+      onWriteFailed: handleLocalDbWriteFailed,
+    }
+  );
+  const hasCompletedSession = history.length > 0;
+
   useEffect(() => {
     const handler = (e: Event) => {
       e.preventDefault();
-      // Browser event type lacks the prompt() method; cast at system boundary
-      deferredPromptRef.current = e as BeforeInstallPromptEvent;
+      if (isBeforeInstallPromptEvent(e)) {
+        deferredPromptRef.current = e;
+      }
     };
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
@@ -85,11 +97,17 @@ export const usePwaInstall = (): UsePwaInstallResult => {
     const isEligible =
       !runningAsPwa &&
       isMobile === true &&
-      hasCompletedSession() &&
+      hasCompletedSession &&
       !permanentlyDismissed &&
       !cooldownActive;
     setEligible(isEligible);
-  }, [runningAsPwa, isMobile, permanentlyDismissed, dismissedAt]);
+  }, [
+    runningAsPwa,
+    isMobile,
+    hasCompletedSession,
+    permanentlyDismissed,
+    dismissedAt,
+  ]);
 
   const install = useCallback((): boolean => {
     const event = deferredPromptRef.current;

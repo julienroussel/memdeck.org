@@ -31,7 +31,7 @@ export const LanguagePicker = memo(() => {
           .catch(() => {
             notifications.show({
               color: "red",
-              message: t("errors.somethingWentWrong"),
+              message: t("errors.languageLoadFailed"),
             });
           });
       }

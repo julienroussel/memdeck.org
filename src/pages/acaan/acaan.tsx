@@ -50,7 +50,6 @@ export const Acaan = () => {
     startSession,
     handleAnswer,
     startNewSession,
-    isStructuredSession,
     activeSession,
     stopSession,
     dismissSummary,
@@ -94,7 +93,6 @@ export const Acaan = () => {
         <Grid.Col span={12}>
           <TrainingHeader
             activeSession={activeSession}
-            isStructuredSession={isStructuredSession}
             onStartSession={startSession}
             onStopSession={stopSession}
             score={score}

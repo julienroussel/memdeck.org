@@ -3,7 +3,6 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardSpread } from "../../components/card-spread/card-spread";
 import { TimerDisplay } from "../../components/timer-display";
-import { useFormatCardName } from "../../hooks/use-format-card-name";
 import type { DistanceConvention } from "../../types/distance";
 import type { PlayingCard } from "../../types/playingcard";
 import type { PlayingCardPosition } from "../../types/stacks";
@@ -37,7 +36,6 @@ export const DistanceActiveRound = ({
   timerDuration,
 }: DistanceActiveRoundProps) => {
   const { t } = useTranslation();
-  const formatCardName = useFormatCardName();
   const [announcement, setAnnouncement] = useState<Announcement>({
     id: 0,
     text: "",
@@ -47,40 +45,37 @@ export const DistanceActiveRound = ({
     setAnnouncement((prev) => ({ id: prev.id + 1, text }));
   }, []);
 
+  // A wrong pick does not advance the round, so the announcement must not
+  // reveal the answer: it mirrors the visible "Wrong answer / Try again!" toast.
+  const wrongAnswerText = `${t("common.wrongAnswerTitle")}. ${t("common.wrongAnswerMessage")}`;
+
+  // Depend on the fields the handlers read, not on `round`: the timer TICK
+  // creates a new `round` object every second, which would otherwise give the
+  // handlers a new identity per tick and re-render CardSpread.
+  const { display, expectedDistance, answerCard } = round;
+
   const handleNumberClick = useCallback(
     (value: number) => {
-      if (round.display === "compute") {
-        const correct = value === round.expectedDistance;
-        announce(
-          correct
-            ? t("distance.answerCorrect")
-            : t("distance.answerIncorrect", {
-                answer: String(round.expectedDistance),
-              })
-        );
+      if (display === "compute") {
+        const correct = value === expectedDistance;
+        announce(correct ? t("distance.answerCorrect") : wrongAnswerText);
       }
       submitAnswer({ kind: "compute", value });
     },
-    [submitAnswer, round, announce, t]
+    [submitAnswer, display, expectedDistance, announce, t, wrongAnswerText]
   );
 
   const handleCardClick = useCallback(
     (value: PlayingCard) => {
-      if (round.display === "apply") {
+      if (display === "apply") {
         const correct =
-          value.suit === round.answerCard.card.suit &&
-          value.rank === round.answerCard.card.rank;
-        announce(
-          correct
-            ? t("distance.answerCorrect")
-            : t("distance.answerIncorrect", {
-                answer: formatCardName(round.answerCard.card),
-              })
-        );
+          value.suit === answerCard.card.suit &&
+          value.rank === answerCard.card.rank;
+        announce(correct ? t("distance.answerCorrect") : wrongAnswerText);
       }
       submitAnswer({ kind: "apply", value });
     },
-    [submitAnswer, round, announce, t, formatCardName]
+    [submitAnswer, display, answerCard, announce, t, wrongAnswerText]
   );
 
   const numberChoices = useMemo(
@@ -134,6 +129,7 @@ export const DistanceActiveRound = ({
             canMove={false}
             hasCursor={true}
             items={numberChoices}
+            numberLabel="distance"
             onItemClick={handleNumberClick}
           />
         ) : (

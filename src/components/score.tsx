@@ -10,23 +10,33 @@ export const Score = memo(({ fails, successes }: GameScore) => {
 
   return (
     <Group gap="xs">
+      {/*
+        Badge renders a role-less div, where aria-label is not allowed and
+        browse mode skips it, so the label is visually hidden text instead.
+        Mantine's green palette has no shade that holds white text at 4.5:1
+        (green-9 is 4.37:1), hence the custom hex.
+      */}
       <Badge
-        aria-label={t("score.correctAriaLabel", { count: successes })}
-        bg="green.6"
+        bg="#247434"
         data-testid="score-success"
         leftSection={<IconThumbUp aria-hidden={true} size={12} />}
         size="md"
       >
-        {successes}
+        <span aria-hidden="true">{successes}</span>
+        <span className="sr-only">
+          {t("score.correctAriaLabel", { count: successes })}
+        </span>
       </Badge>
       <Badge
-        aria-label={t("score.incorrectAriaLabel", { count: fails })}
-        bg="red.6"
+        bg="red.9"
         data-testid="score-fail"
         leftSection={<IconThumbDown aria-hidden={true} size={12} />}
         size="md"
       >
-        {fails}
+        <span aria-hidden="true">{fails}</span>
+        <span className="sr-only">
+          {t("score.incorrectAriaLabel", { count: fails })}
+        </span>
       </Badge>
       {/*
         Aria-live announcement throttled to first answer + every 5th to avoid

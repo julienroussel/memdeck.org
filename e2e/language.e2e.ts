@@ -14,8 +14,7 @@ test.describe("Language & i18n", () => {
       page.getByRole("heading", { name: "Master your memorized deck" })
     ).toBeVisible();
 
-    const htmlLang = await page.getAttribute("html", "lang");
-    expect(htmlLang).toBe("en");
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
   });
 
   test("should display language picker in header", async ({ page }) => {
@@ -32,8 +31,7 @@ test.describe("Language & i18n", () => {
       page.getByRole("heading", { name: "Maîtrisez votre jeu mémorisé" })
     ).toBeVisible();
 
-    const htmlLang = await page.getAttribute("html", "lang");
-    expect(htmlLang).toBe("fr");
+    await expect(page.locator("html")).toHaveAttribute("lang", "fr");
   });
 
   test("should switch to Spanish via language picker", async ({ page }) => {
@@ -112,8 +110,7 @@ test.describe("Language & i18n", () => {
     const reloadedPicker = page.locator("[data-testid='language-picker']");
     await expect(reloadedPicker).toHaveValue("fr");
 
-    const htmlLang = await page.getAttribute("html", "lang");
-    expect(htmlLang).toBe("fr");
+    await expect(page.locator("html")).toHaveAttribute("lang", "fr");
   });
 
   test("should persist language in localStorage", async ({ page }) => {
@@ -137,7 +134,7 @@ test.describe("Language & i18n", () => {
   test("should update html lang attribute on language change", async ({
     page,
   }) => {
-    expect(await page.getAttribute("html", "lang")).toBe("en");
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
 
     const picker = page.locator("[data-testid='language-picker']");
     await picker.selectOption("es");
@@ -147,7 +144,7 @@ test.describe("Language & i18n", () => {
       page.getByRole("heading", { name: "Domina tu baraja memorizada" })
     ).toBeVisible();
 
-    expect(await page.getAttribute("html", "lang")).toBe("es");
+    await expect(page.locator("html")).toHaveAttribute("lang", "es");
 
     await picker.selectOption("de");
 
@@ -158,7 +155,7 @@ test.describe("Language & i18n", () => {
       })
     ).toBeVisible();
 
-    expect(await page.getAttribute("html", "lang")).toBe("de");
+    await expect(page.locator("html")).toHaveAttribute("lang", "de");
   });
 
   test("should translate card names in flashcard mode", async ({ page }) => {
@@ -167,7 +164,6 @@ test.describe("Language & i18n", () => {
       .locator("[data-testid='stack-picker']")
       .first()
       .selectOption("mnemonica");
-    await page.waitForLoadState("networkidle");
 
     // Switch to French
     const picker = page.locator("[data-testid='language-picker']");
@@ -178,17 +174,13 @@ test.describe("Language & i18n", () => {
 
     // Navigate to flashcard page
     await page.locator("a:has-text('Flashcard')").first().click();
-    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Flashcard" })
+    ).toBeVisible();
 
-    // Start a session
-    const startButton = page
-      .locator("button:has-text('10')")
-      .or(page.locator("[aria-label*='questions']").first());
-    if (await startButton.isVisible()) {
-      await startButton.click();
-    }
-
-    // Card names should be translated to French (visible in flashcard prompt image alt text)
+    // Card names should be translated to French (visible in flashcard prompt image alt text).
+    // The first round always prompts with a card, so no answer is clicked here:
+    // answering would randomise the next prompt in "both" mode.
     const frenchSuitCard = page.getByRole("img", {
       name: FRENCH_SUIT_PATTERN,
     });
@@ -224,7 +216,6 @@ test.describe("Language & i18n", () => {
 
     // Navigate to resources
     await page.locator("a:has-text('Recursos')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Should still be in Spanish
     await expect(
@@ -233,9 +224,10 @@ test.describe("Language & i18n", () => {
 
     // Navigate to guide
     await page.locator("a:has-text('Gu\u00eda')").first().click();
-    await page.waitForLoadState("networkidle");
 
     // Should still be in Spanish
-    await expect(page.locator("text=Gu\u00eda")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Gu\u00eda" })
+    ).toBeVisible();
   });
 });
