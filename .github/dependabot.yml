@@ -1,31 +1,31 @@
 version: 2
 updates:
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
     labels:
-      - 'dependencies'
+      - "dependencies"
 
-  - package-ecosystem: 'npm'
-    directory: '/'
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '03:00'
-      timezone: 'Europe/Paris'
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+      timezone: "Europe/Paris"
     open-pull-requests-limit: 5
-    target-branch: 'main'
+    target-branch: "main"
     labels:
-      - 'dependencies'
+      - "dependencies"
     ignore:
       # biome 2.5.3 regressed: its module-graph scanner panics on this repo's
       # React/hook files and hides real lint errors (biomejs/biome#7355, #7324).
       # Held at 2.5.2 in package.json. Auto-merge would otherwise silently
       # re-land 2.5.3 because `pnpm run lint` exits 0 even while biome panics.
       # Blocking only 2.5.3 lets a future fixed release be proposed for review.
-      - dependency-name: '@biomejs/biome'
-        versions: ['2.5.3']
+      - dependency-name: "@biomejs/biome"
+        versions: [ "2.5.3" ]
     groups:
       # Catch-all for remaining packages; dependency-review job gates merges
       all-minor-patch:
@@ -33,39 +33,39 @@ updates:
           - minor
           - patch
         exclude-patterns:
-          - '@mantine/*'
-          - 'react'
-          - 'react-dom'
-          - '@types/react'
-          - '@types/react-dom'
-          - '@react-router/*'
-          - '@vitest/*'
-          - 'vitest'
+          - "@mantine/*"
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+          - "@react-router/*"
+          - "@vitest/*"
+          - "vitest"
       mantine:
         patterns:
-          - '@mantine/*'
+          - "@mantine/*"
         update-types:
           - minor
           - patch
       react:
         patterns:
-          - '@types/react'
-          - '@types/react-dom'
-          - 'react'
-          - 'react-dom'
+          - "@types/react"
+          - "@types/react-dom"
+          - "react"
+          - "react-dom"
         update-types:
           - minor
           - patch
       react-router:
         patterns:
-          - '@react-router/*'
+          - "@react-router/*"
         update-types:
           - minor
           - patch
       vitest:
         patterns:
-          - '@vitest/*'
-          - 'vitest'
+          - "@vitest/*"
+          - "vitest"
         update-types:
           - minor
           - patch
