@@ -14,3 +14,6 @@ allowBuilds:
   # would write hook stubs into the global core.hooksPath dir. See
   # .claude/rules/git-hooks.md. The `prepare` script installs hooks instead.
   lefthook: false
+
+patchedDependencies:
+  ultracite@8.0.2: patches/ultracite@8.0.2.patch
