@@ -1,7 +1,7 @@
 import { List, Modal } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 
-const IOS_PATTERN = /iPhone|iPad|iPod/;
+const IOS_PATTERN = /iPhone|iPad|iPod/u;
 
 const isIos = (): boolean =>
   IOS_PATTERN.test(navigator.userAgent) && !("MSStream" in window);

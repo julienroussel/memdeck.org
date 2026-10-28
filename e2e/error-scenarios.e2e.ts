@@ -7,11 +7,11 @@ import {
 import { test } from "./fixtures/test-setup";
 
 // URL patterns
-const HOME_URL_PATTERN = /\/$/;
-const FLASHCARD_URL_PATTERN = /\/flashcard\/?$/;
-const ACAAN_URL_PATTERN = /\/acaan\/?$/;
-const TOOLBOX_URL_PATTERN = /\/toolbox\/?$/;
-const RESOURCES_URL_PATTERN = /\/resources\/?$/;
+const HOME_URL_PATTERN = /\/$/u;
+const FLASHCARD_URL_PATTERN = /\/flashcard\/?$/u;
+const ACAAN_URL_PATTERN = /\/acaan\/?$/u;
+const TOOLBOX_URL_PATTERN = /\/toolbox\/?$/u;
+const RESOURCES_URL_PATTERN = /\/resources\/?$/u;
 
 test.describe("Error Scenarios - RequireStack Guard", () => {
   test("should show no-stack message when navigating to flashcard without selected stack", async ({
@@ -659,9 +659,9 @@ test.describe("Error Scenarios - Edge Cases", () => {
 });
 
 // Matches the About page chunk in production ("about-HASH.js")
-const ABOUT_CHUNK_PATTERN = /\/about[.-]/;
+const ABOUT_CHUNK_PATTERN = /\/about[.-]/u;
 // Matches the About page module in Vite dev server ("/src/pages/about.tsx")
-const ABOUT_DEV_MODULE_PATTERN = /\/src\/pages\/about/;
+const ABOUT_DEV_MODULE_PATTERN = /\/src\/pages\/about/u;
 
 test.describe("Error Scenarios - Error Boundary Fallback", () => {
   test("should render error fallback when a lazy-loaded page fails to load", async ({

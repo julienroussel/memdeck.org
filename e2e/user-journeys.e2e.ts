@@ -8,7 +8,7 @@ import { readCount } from "./fixtures/read-count";
 import { test } from "./fixtures/test-setup";
 
 // URL patterns
-const FLASHCARD_URL_PATTERN = /\/flashcard\/?$/;
+const FLASHCARD_URL_PATTERN = /\/flashcard\/?$/u;
 
 test.describe("User Journeys", () => {
   test("should complete first-time user onboarding flow", async ({ page }) => {

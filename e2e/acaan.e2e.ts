@@ -8,15 +8,15 @@ import {
 import { readCount } from "./fixtures/read-count";
 import { test } from "./fixtures/test-setup";
 
-const SETTINGS_PATTERN = /settings/i;
-const CUT_DEPTH_PATTERN = /cut depth/i;
-const CHECK_PATTERN = /check/i;
-const TIMED_MODE_PATTERN = /timed mode/i;
-const START_SESSION_PATTERN = /start \d+ question session/i;
-const STOP_PATTERN = /stop/i;
-const PROGRESS_PATTERN = /^\d+\/\d+$/;
-const CARD_SRC_PATTERN = /cards\/(.+)\.svg/;
-const SESSION_TOOLTIP_PATTERN = /start a session/i;
+const SETTINGS_PATTERN = /settings/iu;
+const CUT_DEPTH_PATTERN = /cut depth/iu;
+const CHECK_PATTERN = /check/iu;
+const TIMED_MODE_PATTERN = /timed mode/iu;
+const START_SESSION_PATTERN = /start \d+ question session/iu;
+const STOP_PATTERN = /stop/iu;
+const PROGRESS_PATTERN = /^\d+\/\d+$/u;
+const CARD_SRC_PATTERN = /cards\/(?<fragment>.+)\.svg/u;
+const SESSION_TOOLTIP_PATTERN = /start a session/iu;
 
 /**
  * Mnemonica stack order as image filename fragments (without "cards/" prefix and ".svg" suffix).
@@ -47,7 +47,7 @@ async function computeCorrectCutDepth(page: Page): Promise<number> {
   // Extract the filename fragment between "cards/" and ".svg"
   const match = cardSrc?.match(CARD_SRC_PATTERN);
   expect(match).toBeTruthy();
-  const fragment = match?.[1] ?? "";
+  const fragment = match?.groups?.fragment ?? "";
 
   const cardPosition = MNEMONICA_POSITION_MAP.get(fragment);
   expect(cardPosition).toBeDefined();

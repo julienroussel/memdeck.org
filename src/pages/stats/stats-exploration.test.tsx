@@ -7,9 +7,9 @@ import { makeSessionRecord } from "../../test-utils/session-factories";
 import { StatsExploration } from "./stats-exploration";
 
 // Hoisted to module scope per Biome's useTopLevelRegex rule.
-const POSITION_ALONE = /position alone/;
-const NEIGHBOR_LINK_NAME = /Not explored:.*before or after/;
-const ACAAN_LINK_NAME = /Not explored:.*Any Card At Any Number/;
+const POSITION_ALONE = /position alone/u;
+const NEIGHBOR_LINK_NAME = /Not explored:.*before or after/u;
+const ACAAN_LINK_NAME = /Not explored:.*Any Card At Any Number/u;
 
 const mockAccept = vi.fn();
 let hookValue: UseFeatureDiscoveryResult;

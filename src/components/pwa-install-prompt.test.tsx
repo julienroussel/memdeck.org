@@ -3,8 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render } from "../test-utils";
 import { PwaInstallPrompt } from "./pwa-install-prompt";
 
-const TAP_THE_MENU_PATTERN = /Tap the menu/;
-const TAP_THE_SHARE_PATTERN = /Tap the Share/;
+const TAP_THE_MENU_PATTERN = /Tap the menu/u;
+const TAP_THE_SHARE_PATTERN = /Tap the Share/u;
 
 beforeEach(() => {
   vi.restoreAllMocks();

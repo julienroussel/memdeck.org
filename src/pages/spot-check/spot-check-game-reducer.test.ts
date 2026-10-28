@@ -19,8 +19,8 @@ const FULL_LIMITS = {
   start: createDeckPosition(1),
 };
 
-const UNHANDLED_ACTION_RE = /Unhandled action type/;
-const UNKNOWN_SPOT_CHECK_MODE_RE = /Unknown spot check mode/;
+const UNHANDLED_ACTION_RE = /Unhandled action type/u;
+const UNKNOWN_SPOT_CHECK_MODE_RE = /Unknown spot check mode/u;
 
 const stackOrder = mnemonica.order;
 

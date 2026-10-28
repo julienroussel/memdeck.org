@@ -9,8 +9,8 @@ import {
   pickRandomOffset,
 } from "./distance";
 
-const SAME_CARD_REGEX = /same card/i;
-const EMPTY_RANGE_REGEX = /empty range/;
+const SAME_CARD_REGEX = /same card/iu;
+const EMPTY_RANGE_REGEX = /empty range/u;
 
 const limitsOf = (start: number, end: number): StackLimits => ({
   end: createDeckPosition(end),

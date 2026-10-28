@@ -7,7 +7,7 @@ const { PWA_SHORTCUTS } = await import("./src/constants.ts");
 
 const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
 
-const LOCALE_CHUNK_RE = /i18n\/locales\/(?!en)(\w+)\.json$/;
+const LOCALE_CHUNK_RE = /i18n\/locales\/(?!en)(?<code>\w+)\.json$/u;
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -21,7 +21,7 @@ export default defineConfig({
           // instead of enumerating every language code.
           const localeMatch = id.match(LOCALE_CHUNK_RE);
           if (localeMatch) {
-            return `locale-${localeMatch[1]}`;
+            return `locale-${localeMatch.groups?.code}`;
           }
 
           const vendorChunks: Record<string, string[]> = {
@@ -178,7 +178,7 @@ export default defineConfig({
           "cards/blank_card.svg",
         ],
         navigateFallback: "/index.html",
-        navigateFallbackDenylist: [/\.(?:txt|xml|json|webmanifest)$/],
+        navigateFallbackDenylist: [/\.(?:txt|xml|json|webmanifest)$/u],
         runtimeCaching: [
           {
             handler: "CacheFirst",
@@ -191,7 +191,7 @@ export default defineConfig({
             },
             // Cache locale chunks on first use. Vite's hashed filenames make
             // them immutable, so CacheFirst is safe and avoids re-fetching.
-            urlPattern: /\/assets\/locale-[a-zA-Z0-9_-]+\.js$/,
+            urlPattern: /\/assets\/locale-[a-zA-Z0-9_-]+\.js$/u,
           },
           {
             handler: "CacheFirst",
@@ -202,7 +202,7 @@ export default defineConfig({
                 maxEntries: 50,
               },
             },
-            urlPattern: /\.(?:png|jpg|jpeg|gif|webp)$/,
+            urlPattern: /\.(?:png|jpg|jpeg|gif|webp)$/u,
           },
         ],
       },

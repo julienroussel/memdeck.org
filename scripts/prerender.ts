@@ -20,7 +20,7 @@ const ERROR_FALLBACK_HEADINGS = ["Something went wrong", "Application Error"];
 // The attribute list of one start tag. Quoted values may hold `>` or
 // newlines, so multi-line tags match, and lookaheads built on it find an
 // attribute in any position, since index.html puts `content`/`href` first.
-const TAG_ATTRS = /(?:[^>"']|"[^"]*"|'[^']*')*/.source;
+const TAG_ATTRS = /(?:[^>"']|"[^"]*"|'[^']*')*/u.source;
 
 type HtmlPatch = {
   label: string;
@@ -37,11 +37,11 @@ const attributePatch = (
   label: `<${tagName} ${keyAttr}>`,
   pattern: new RegExp(
     String.raw`<${tagName}(?=\s)(?=${TAG_ATTRS}\s${keyAttr})(?=${TAG_ATTRS}\s${valueAttr}=")${TAG_ATTRS}>`,
-    "g"
+    "gu"
   ),
   replace: (tag) =>
     tag.replace(
-      new RegExp(String.raw`(\s${valueAttr}=")[^"]*(")`),
+      new RegExp(String.raw`(\s${valueAttr}=")[^"]*(")`, "u"),
       (_: string, p1: string, p2: string) => `${p1}${value}${p2}`
     ),
 });
@@ -111,7 +111,7 @@ try {
     // Wait for splash screen to be dismissed and content to render
     await page.waitForFunction(
       () => {
-        const splash = document.getElementById("splash");
+        const splash = document.querySelector("#splash");
         return !splash || splash.classList.contains("splash-hidden");
       },
       { timeout: TIMEOUT }
@@ -120,7 +120,7 @@ try {
 
     // Extract the rendered content and meta values from the page
     const extracted = await page.evaluate((fallbackHeadings: string[]) => {
-      const root = document.getElementById("root");
+      const root = document.querySelector("#root");
       const headings = Array.from(root?.querySelectorAll("h1, h2") ?? []);
       return {
         canonicalUrl:
@@ -145,7 +145,7 @@ try {
     const { failures, html } = applyPatches(originalHtml, [
       {
         label: "<title>",
-        pattern: /<title>[^<]*<\/title>/g,
+        pattern: /<title>[^<]*<\/title>/gu,
         replace: () => `<title>${title}</title>`,
       },
       attributePatch("meta", 'name="title"', "content", title),
@@ -169,7 +169,7 @@ try {
       attributePatch("meta", 'name="twitter:url"', "content", canonicalUrl),
       {
         label: '<div id="root">',
-        pattern: /<div id="root"><\/div>/g,
+        pattern: /<div id="root"><\/div>/gu,
         replace: () => `<div id="root">${extracted.rootInnerHtml}</div>`,
       },
     ]);

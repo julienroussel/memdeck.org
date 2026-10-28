@@ -6,7 +6,7 @@ import {
 import { readCount } from "./fixtures/read-count";
 import { test } from "./fixtures/test-setup";
 
-const CARD_IMAGE_SRC_PATTERN = /cards\//;
+const CARD_IMAGE_SRC_PATTERN = /cards\//u;
 
 test.describe("Flashcard Training", () => {
   test.beforeEach(async ({ page }) => {
@@ -164,7 +164,7 @@ test.describe("Flashcard Training", () => {
       .or(
         spreadItems.filter({
           has: page.getByTestId("number-card-value").filter({
-            hasText: new RegExp(`^${promptPosition}$`),
+            hasText: new RegExp(`^${promptPosition}$`, "u"),
           }),
         })
       );

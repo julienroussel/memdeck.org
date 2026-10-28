@@ -7,7 +7,7 @@ import type { TimerSettings } from "../../types/timer";
 import { formatCardName } from "../../utils/card-formatting";
 import { useFlashcardGame } from "./use-flashcard-game";
 
-const INDEX_ANSWER_PATTERN = /^\d+$/;
+const INDEX_ANSWER_PATTERN = /^\d+$/u;
 
 const defaultTimerSettings: TimerSettings = { duration: 15, enabled: false };
 

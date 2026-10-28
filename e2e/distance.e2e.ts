@@ -7,7 +7,7 @@ import {
 import { readCount } from "./fixtures/read-count";
 import { test } from "./fixtures/test-setup";
 
-const RANGE_TOO_SMALL_TEXT_REGEX = /Distance training needs at least 6 cards/;
+const RANGE_TOO_SMALL_TEXT_REGEX = /Distance training needs at least 6 cards/u;
 
 test.describe("Distance Number Training", () => {
   test.beforeEach(async ({ page }) => {

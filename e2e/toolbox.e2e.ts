@@ -1,9 +1,9 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures/test-setup";
 
-const TOOLBOX_URL_PATTERN = /\/toolbox\/?$/;
-const HOME_URL_PATTERN = /\/$/;
-const SEARCH_INPUT_PATTERN = /search/i;
+const TOOLBOX_URL_PATTERN = /\/toolbox\/?$/u;
+const HOME_URL_PATTERN = /\/$/u;
+const SEARCH_INPUT_PATTERN = /search/iu;
 
 test.describe("Toolbox Page", () => {
   test.beforeEach(async ({ page }) => {

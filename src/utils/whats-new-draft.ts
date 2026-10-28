@@ -1,9 +1,9 @@
 import type { WhatsNewType } from "../data/whats-new";
 
 // `feat`/`fix` with optional `(scope)` and `!`, then `:` and any following space.
-const PREFIX_RE = /^(feat|fix)(?:\([^)]*\))?!?:\s*/;
+const PREFIX_RE = /^(?<type>feat|fix)(?:\([^)]*\))?!?:\s*/u;
 // One or more trailing ` (#NNN)` issue/PR refs (incl. doubled squash suffixes like `(#713) (#719)`).
-const TRAILING_REFS_RE = /(?:\s*\(#\d+\))+\s*$/;
+const TRAILING_REFS_RE = /(?:\s*\(#\d+\))+\s*$/u;
 
 /**
  * Parses a conventional-commit subject into a draft "What's New" candidate. Strips the
@@ -19,7 +19,7 @@ export const cleanCommitSubject = (
   if (!match) {
     return null;
   }
-  const type = match[1] === "feat" ? "feature" : "fix";
+  const type = match.groups?.type === "feat" ? "feature" : "fix";
   const text = subject
     .slice(match[0].length)
     .replace(TRAILING_REFS_RE, "")

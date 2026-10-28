@@ -161,7 +161,7 @@ const subscribeToEvents = () => {
 // forwarded to GA's `label` field. Conservative by design: only collapses
 // well-known leak patterns and caps the length — preserves the message body
 // when it does not match any pattern so existing taxonomies stay readable.
-const ABSOLUTE_PATH_RE = /\/(?:Users|home|var|tmp|private|opt|etc|root)\/\S+/g;
+const ABSOLUTE_PATH_RE = /\/(?:Users|home|var|tmp|private|opt|etc|root)\/\S+/gu;
 const ERROR_LABEL_MAX_LENGTH = 200;
 
 export const scrubErrorMessage = (message: string): string => {

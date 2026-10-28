@@ -189,7 +189,7 @@ This project uses **Ultracite** (a Biome preset) for formatting and linting.
 ## Configuration Files
 
 - **biome.jsonc**: Linter/formatter config. Extends `ultracite/biome/core` and `ultracite/biome/react`, then layers the project's rule overrides on top. Every override carries a comment explaining why; keep that up when adding one. `public/cards` is excluded from Biome entirely (third-party artwork, see the comment there)
-- **knip.json**: Dependency and export checker config. Ignores `@biomejs/biome` and `globals`
+- **knip.json**: Dependency and export checker config. Ignores the `optipng` binary
 - **tsconfig.json**: Project references to `tsconfig.app.json` and `tsconfig.node.json`
 - **vite.config.ts**: Vite config (React plugin, VitePWA with manifest, locale chunk splitting, vendor chunks). Not "minimal" — touch with care; changes here require `pnpm run build` in the Definition of Done.
 - **vitest.config.ts**: Test runner configuration with per-directory coverage thresholds
@@ -250,7 +250,7 @@ All user-facing English text must follow these principles:
 
 1. Copy `src/i18n/locales/en.json` to `src/i18n/locales/<code>.json` and translate values. Keys must stay identical — they're typed off `en` via `src/i18n/types.ts`, so any drift is a type error.
 2. Register the locale: add `<code>` to `SUPPORTED_LANGUAGES` in `src/i18n/supported-languages.ts` (the dependency-free leaf that owns the list/type), then to `LANGUAGE_LABELS`, `LANGUAGE_CODES`, and `languageLoaders` in `src/i18n/language.ts` (all four must stay in sync; `LANGUAGE_LABELS`/`LANGUAGE_CODES` share a `satisfies Record<SupportedLanguage, …>` constraint).
-3. The filename must match `vite.config.ts`'s `LOCALE_CHUNK_RE` (`/i18n/locales/(?!en)(\w+)\.json$/`) — use a plain `<code>.json`, not `<code>-<region>.json`, or the chunk won't be split correctly.
+3. The filename must match `vite.config.ts`'s `LOCALE_CHUNK_RE` (`/i18n/locales/(?!en)(?<code>\w+)\.json$/u`) — use a plain `<code>.json`, not `<code>-<region>.json`, or the chunk won't be split correctly.
 4. Run `pnpm run build` — a new `dist/assets/locale-<code>-<hash>.js` chunk should appear and be excluded from precaching (see `globIgnores` in `vite.config.ts`).
 
 ## Adding a New Route / Page

@@ -60,7 +60,7 @@ vi.mock("../../hooks/use-selected-stack", () => ({
   }),
 }));
 
-const RANGE_TOO_SMALL_REGEX = /range too small/i;
+const RANGE_TOO_SMALL_REGEX = /range too small/iu;
 
 // Range that is < MIN_DISTANCE_RANGE so the page disables the timer.
 const tooSmallLimits = {

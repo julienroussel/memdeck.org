@@ -1,6 +1,6 @@
 import type { Locator } from "@playwright/test";
 
-const TRAILING_COUNT_PATTERN = /(\d+)$/;
+const TRAILING_COUNT_PATTERN = /(?<count>\d+)$/u;
 
 /**
  * Reads the number ending a badge's visually hidden sentence, e.g. 5 from
@@ -10,8 +10,8 @@ const TRAILING_COUNT_PATTERN = /(\d+)$/;
 export async function readCount(sentence: Locator): Promise<number> {
   const text = (await sentence.textContent()) ?? "";
   const match = TRAILING_COUNT_PATTERN.exec(text);
-  if (match?.[1] === undefined) {
+  if (match?.groups?.count === undefined) {
     throw new Error(`No trailing count in badge sentence "${text}"`);
   }
-  return Number(match[1]);
+  return Number(match.groups.count);
 }

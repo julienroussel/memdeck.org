@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render } from "../test-utils";
 import { RevealButton } from "./reveal-button";
 
-const REVEAL_BUTTON_NAME = /reveal/i;
+const REVEAL_BUTTON_NAME = /reveal/iu;
 
 describe("RevealButton", () => {
   it("renders the reveal button", () => {

@@ -35,7 +35,7 @@ function getKeys(obj: Record<string, unknown>, prefix = ""): string[] {
  * Each language has its own set of categories, so plural keys are compared by
  * their base name for parity, and their suffixes are checked per language.
  */
-const PLURAL_SUFFIX_RE = /_(zero|one|two|few|many|other)$/;
+const PLURAL_SUFFIX_RE = /_(?:zero|one|two|few|many|other)$/u;
 
 const stripPluralSuffix = (key: string): string =>
   key.replace(PLURAL_SUFFIX_RE, "");
@@ -133,7 +133,7 @@ describe("locale plural categories", () => {
  * For example, "Start {{count}} question session" yields ["count"].
  */
 function extractInterpolationVars(value: string): string[] {
-  const matches = value.match(/\{\{(\w+)\}\}/g);
+  const matches = value.match(/\{\{\w+\}\}/gu);
   if (!matches) {
     return [];
   }
@@ -239,7 +239,7 @@ describe("plural resolution", () => {
 
     expect(percent).toBe("80 %");
     expect(t("session.accuracyAriaLabel", { percent: 80 })).toMatch(
-      new RegExp(`${percent}$`)
+      new RegExp(`${percent}$`, "u")
     );
   });
 

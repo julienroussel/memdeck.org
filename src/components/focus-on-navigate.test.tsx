@@ -25,6 +25,18 @@ const TestApp = ({ initialPath = "/" }: { initialPath?: string }) => (
   </MemoryRouter>
 );
 
+const TestAppNoMain = () => (
+  <MemoryRouter initialEntries={["/"]}>
+    <FocusOnNavigate />
+    <div>
+      <Routes>
+        <Route element={<NavigateButton to="/other" />} path="/" />
+        <Route element={<div>Other page</div>} path="/other" />
+      </Routes>
+    </div>
+  </MemoryRouter>
+);
+
 describe("FocusOnNavigate", () => {
   it("does not move focus on initial render", () => {
     render(<TestApp />);
@@ -61,18 +73,6 @@ describe("FocusOnNavigate", () => {
 
   it("does nothing if no main element exists", async () => {
     const user = userEvent.setup();
-
-    const TestAppNoMain = () => (
-      <MemoryRouter initialEntries={["/"]}>
-        <FocusOnNavigate />
-        <div>
-          <Routes>
-            <Route element={<NavigateButton to="/other" />} path="/" />
-            <Route element={<div>Other page</div>} path="/other" />
-          </Routes>
-        </div>
-      </MemoryRouter>
-    );
 
     render(<TestAppNoMain />);
 

@@ -12,7 +12,7 @@ import {
 import { cardItems, numberItems } from "../../types/typeguards";
 import { CardSpread } from "./card-spread";
 
-const SELECT_POSITION_REGEX = /Select position/;
+const SELECT_POSITION_REGEX = /Select position/u;
 
 describe("CardSpread", () => {
   describe("Card items", () => {
