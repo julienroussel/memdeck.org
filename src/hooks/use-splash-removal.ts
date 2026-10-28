@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 export const useSplashRemoval = (): void => {
   useEffect(() => {
-    const splash = document.getElementById("splash");
+    const splash = document.querySelector("#splash");
     if (!splash) {
       return;
     }

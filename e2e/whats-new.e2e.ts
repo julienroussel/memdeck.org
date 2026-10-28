@@ -1,9 +1,9 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures/test-setup";
 
-const WHATS_NEW_URL_PATTERN = /\/whats-new\/?$/;
-const WHATS_NEW_HEADING = /what.?s new/i;
-const NON_EMPTY_PATTERN = /.+/;
+const WHATS_NEW_URL_PATTERN = /\/whats-new\/?$/u;
+const WHATS_NEW_HEADING = /what.?s new/iu;
+const NON_EMPTY_PATTERN = /.+/u;
 
 test.describe("What's New page", () => {
   test("loads and lists changelog entries with localized dates", async ({

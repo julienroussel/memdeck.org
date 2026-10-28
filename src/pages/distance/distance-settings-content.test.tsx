@@ -7,9 +7,9 @@ import { DistanceSettingsContent } from "./distance-settings-content";
 
 const defaultTimerSettings: TimerSettings = { duration: 15, enabled: false };
 
-const MODE_LABEL_REGEX = /Distance mode/i;
-const CONVENTION_LABEL_REGEX = /Distance convention/i;
-const TIMED_MODE_LABEL_REGEX = /Timed mode/i;
+const MODE_LABEL_REGEX = /Distance mode/iu;
+const CONVENTION_LABEL_REGEX = /Distance convention/iu;
+const TIMED_MODE_LABEL_REGEX = /Timed mode/iu;
 
 const renderControl = (
   overrides: Partial<{

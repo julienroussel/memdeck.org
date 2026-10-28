@@ -1,4 +1,3 @@
 {
-  "ignoreBinaries": ["optipng"],
-  "ignoreDependencies": ["@biomejs/biome", "globals"]
+  "ignoreBinaries": ["optipng"]
 }

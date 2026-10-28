@@ -28,11 +28,12 @@ function callFactory(lazyResult: unknown): Promise<{ default: unknown }> {
   return factory();
 }
 
+const FakeComponent = () => null;
+
 describe("lazyWithReload", () => {
   it("passes through a successful import", async () => {
     const { lazyWithReload } = await import("./lazy-with-reload");
 
-    const FakeComponent = () => null;
     const result = lazyWithReload(() =>
       Promise.resolve({ default: FakeComponent })
     );
@@ -202,7 +203,6 @@ describe("lazyWithReload", () => {
     expect(reloadMock).toHaveBeenCalledOnce();
 
     // After the reload the chunk loads, which clears the guard.
-    const FakeComponent = () => null;
     await callFactory(
       lazyWithReload(() => Promise.resolve({ default: FakeComponent }))
     );
@@ -232,7 +232,6 @@ describe("lazyWithReload", () => {
       writable: true,
     });
 
-    const FakeComponent = () => null;
     await callFactory(
       lazyWithReload(() => Promise.resolve({ default: FakeComponent }))
     );
@@ -248,7 +247,6 @@ describe("lazyWithReload", () => {
     const { lazyWithReload } = await import("./lazy-with-reload");
     const replaceStateSpy = vi.spyOn(window.history, "replaceState");
 
-    const FakeComponent = () => null;
     await callFactory(
       lazyWithReload(() => Promise.resolve({ default: FakeComponent }))
     );

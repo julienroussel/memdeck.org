@@ -2,24 +2,24 @@ import { expect } from "@playwright/test";
 import { test } from "./fixtures/test-setup";
 
 // Text patterns
-const NO_TRAINING_DATA_YET_PATTERN = /no training data yet/i;
-const TOTAL_SESSIONS_PATTERN = /total sessions/i;
-const TOTAL_QUESTIONS_PATTERN = /total questions/i;
-const OVERALL_ACCURACY_PATTERN = /overall accuracy/i;
-const BEST_STREAK_PATTERN = /best streak/i;
-const ACCURACY_TREND_PATTERN = /accuracy trend/i;
-const SESSION_HISTORY_PATTERN = /session history/i;
-const BY_STACK_PATTERN = /by stack/i;
-const STATISTICS_BY_STACK_PATTERN = /statistics by stack/i;
-const DATE_PATTERN = /date/i;
-const MODE_PATTERN = /mode/i;
-const STACK_PATTERN = /stack/i;
-const SCORE_PATTERN = /score/i;
-const SHOW_MORE_PATTERN = /show more/i;
-const NO_FILTER_MATCH_PATTERN = /no.*match|no sessions|no data/i;
-const EXPLORED_COUNT_PATTERN = /of 13 explored/i;
-const NEIGHBOR_PITCH_PATTERN = /before or after/i;
-const STATS_URL_PATTERN = /\/stats\/?$/;
+const NO_TRAINING_DATA_YET_PATTERN = /no training data yet/iu;
+const TOTAL_SESSIONS_PATTERN = /total sessions/iu;
+const TOTAL_QUESTIONS_PATTERN = /total questions/iu;
+const OVERALL_ACCURACY_PATTERN = /overall accuracy/iu;
+const BEST_STREAK_PATTERN = /best streak/iu;
+const ACCURACY_TREND_PATTERN = /accuracy trend/iu;
+const SESSION_HISTORY_PATTERN = /session history/iu;
+const BY_STACK_PATTERN = /by stack/iu;
+const STATISTICS_BY_STACK_PATTERN = /statistics by stack/iu;
+const DATE_PATTERN = /date/iu;
+const MODE_PATTERN = /mode/iu;
+const STACK_PATTERN = /stack/iu;
+const SCORE_PATTERN = /score/iu;
+const SHOW_MORE_PATTERN = /show more/iu;
+const NO_FILTER_MATCH_PATTERN = /no.*match|no sessions|no data/iu;
+const EXPLORED_COUNT_PATTERN = /of 13 explored/iu;
+const NEIGHBOR_PITCH_PATTERN = /before or after/iu;
+const STATS_URL_PATTERN = /\/stats\/?$/u;
 
 test.describe("Statistics Page", () => {
   type SessionSeed = {

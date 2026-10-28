@@ -7,7 +7,7 @@ import {
 import { readCount } from "./fixtures/read-count";
 import { test } from "./fixtures/test-setup";
 
-const SWAPPED_CARDS_PATTERN = /swapped cards/i;
+const SWAPPED_CARDS_PATTERN = /swapped cards/iu;
 
 test.describe("Spot Check Training", () => {
   test.beforeEach(async ({ page }) => {

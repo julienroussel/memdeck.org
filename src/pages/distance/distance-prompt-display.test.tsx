@@ -9,9 +9,9 @@ import { FourOfClubs } from "../../types/suits/clubs";
 import { TwoOfHearts } from "../../types/suits/hearts";
 import { DistancePromptDisplay } from "./distance-prompt-display";
 
-const COMPUTE_LABEL_REGEX = /Distance from Four of Clubs to Two of Hearts/;
-const APPLY_LABEL_REGEX = /Apply offset \+3 to Four of Clubs/;
-const APPLY_OFFSET_5_REGEX = /Apply offset 5 to Four of Clubs/;
+const COMPUTE_LABEL_REGEX = /Distance from Four of Clubs to Two of Hearts/u;
+const APPLY_LABEL_REGEX = /Apply offset \+3 to Four of Clubs/u;
+const APPLY_OFFSET_5_REGEX = /Apply offset 5 to Four of Clubs/u;
 
 const promptCard: PlayingCardPosition = {
   card: FourOfClubs,

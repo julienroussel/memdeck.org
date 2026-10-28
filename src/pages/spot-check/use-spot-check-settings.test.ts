@@ -108,8 +108,9 @@ describe("useSpotCheckSettings", () => {
   });
 
   describe("handleModeChange", () => {
-    for (const value of ["missing", "swapped", "moved"] as const) {
-      it(`updates mode and emits event for '${value}'`, () => {
+    it.each(["missing", "swapped", "moved"] as const)(
+      "updates mode and emits event for '%s'",
+      (value) => {
         act(() => {
           result.current.handleModeChange(value);
         });
@@ -120,8 +121,8 @@ describe("useSpotCheckSettings", () => {
         expect(mockEmitSpotCheckModeChanged).toHaveBeenCalledWith({
           mode: value,
         });
-      });
-    }
+      }
+    );
 
     it("does not emit SPOT_CHECK_MODE_CHANGED when the wrapped setter's write fails", () => {
       mockSetValueSucceeds = false;

@@ -17,6 +17,18 @@ const useTestHarness = (initialSession: ActiveSession) => {
 // Replaces the prior `as { phase: "active"; session: ActiveSession }` cast
 // pattern across this file. `asserts` lets the compiler narrow the
 // discriminated `SessionPhase` union without an `as` cast.
+const useDedupedEffect = (onSideEffect: (id: string) => void): void => {
+  const requestedRef = useRef(new Set<string>());
+  useEffect(() => {
+    const id = "session-1";
+    if (requestedRef.current.has(id)) {
+      return;
+    }
+    requestedRef.current.add(id);
+    onSideEffect(id);
+  }, [onSideEffect]);
+};
+
 function assertActive(
   status: SessionPhase
 ): asserts status is { phase: "active"; session: ActiveSession } {
@@ -184,19 +196,7 @@ describe("useSessionRecording", () => {
       // useState also persists across StrictMode's mount→unmount→remount.
       const onSideEffect = vi.fn();
 
-      const useDedupedEffect = () => {
-        const requestedRef = useRef(new Set<string>());
-        useEffect(() => {
-          const id = "session-1";
-          if (requestedRef.current.has(id)) {
-            return;
-          }
-          requestedRef.current.add(id);
-          onSideEffect(id);
-        }, []);
-      };
-
-      renderHook(() => useDedupedEffect(), {
+      renderHook(() => useDedupedEffect(onSideEffect), {
         wrapper: ({ children }) => createElement(StrictMode, null, children),
       });
 

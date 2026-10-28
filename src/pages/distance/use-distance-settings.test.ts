@@ -149,8 +149,9 @@ describe("useDistanceSettings", () => {
   });
 
   describe("handleModeChange", () => {
-    for (const value of ["compute", "apply", "both"] as const) {
-      it(`updates mode and emits event for '${value}'`, () => {
+    it.each(["compute", "apply", "both"] as const)(
+      "updates mode and emits event for '%s'",
+      (value) => {
         act(() => {
           result.current.handleModeChange(value);
         });
@@ -161,8 +162,8 @@ describe("useDistanceSettings", () => {
         expect(mockEmitDistanceModeChanged).toHaveBeenCalledWith({
           mode: value,
         });
-      });
-    }
+      }
+    );
     // Runtime input validation lives in DistanceSettingsContent, where the
     // SegmentedControl emits a raw string. By the time handleModeChange is
     // reached, the value is already narrowed to DistanceMode.
@@ -179,8 +180,9 @@ describe("useDistanceSettings", () => {
   });
 
   describe("handleConventionChange", () => {
-    for (const value of ["cyclic", "signed"] as const) {
-      it(`updates convention and emits event for '${value}'`, () => {
+    it.each(["cyclic", "signed"] as const)(
+      "updates convention and emits event for '%s'",
+      (value) => {
         act(() => {
           result.current.handleConventionChange(value);
         });
@@ -191,8 +193,8 @@ describe("useDistanceSettings", () => {
         expect(mockEmitDistanceConventionChanged).toHaveBeenCalledWith({
           convention: value,
         });
-      });
-    }
+      }
+    );
     // Runtime input validation lives in DistanceSettingsContent.
 
     it("does not emit DISTANCE_CONVENTION_CHANGED when the wrapped setter's write fails", () => {

@@ -19,14 +19,6 @@
   "javascript": {
     "globals": ["__COMMIT_HASH__"]
   },
-  "markdown": {
-    // Biome 2.6.2's Markdown formatter does not recognise YAML frontmatter: it
-    // turns the closing "---" into a setext heading and flattens `paths:`
-    // lists, which breaks .claude/commands/*.md and .claude/rules/*.md.
-    "formatter": {
-      "enabled": false
-    }
-  },
   "linter": {
     "rules": {
       "style": {

@@ -5,7 +5,7 @@ import { render } from "../../test-utils";
 import { makeSessionRecord } from "../../test-utils/session-factories";
 import { AccuracyChart, getAccuracyColor } from "./accuracy-chart";
 
-const NO_SESSIONS_MATCH_PATTERN = /no sessions match/i;
+const NO_SESSIONS_MATCH_PATTERN = /no sessions match/iu;
 
 describe("getAccuracyColor", () => {
   it("returns 'green' for percent >= 80", () => {

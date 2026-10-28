@@ -95,7 +95,7 @@ for (const {
 
   // Wait for splash screen to fade
   await page.waitForFunction(() => {
-    const splash = document.getElementById("splash");
+    const splash = document.querySelector("#splash");
     return !splash || splash.classList.contains("splash-hidden");
   });
   await page.waitForTimeout(500);

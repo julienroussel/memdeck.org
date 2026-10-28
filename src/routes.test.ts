@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { ROUTES } from "./constants";
 
-const STARTS_WITH_SLASH = /^\//;
+const STARTS_WITH_SLASH = /^\//u;
 
 /**
  * Compile-time exhaustiveness check: if ROUTES gains or loses a key,

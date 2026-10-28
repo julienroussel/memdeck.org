@@ -33,7 +33,7 @@ const cardChoices: { type: "cards"; data: PlayingCard[] } = {
 // from Mantine. Wrap every render in a Grid so the components mount cleanly.
 const renderInGrid = (ui: ReactNode) => render(<Grid>{ui}</Grid>);
 
-const TIMER_LABEL_12S = /12s$/;
+const TIMER_LABEL_12S = /12s$/u;
 
 describe("FlashcardActiveRound", () => {
   it("renders numeric choices when not in neighbor mode and the card is shown", () => {

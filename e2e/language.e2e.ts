@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures/test-setup";
 
-const FRENCH_SUIT_PATTERN = /Cœur|Pique|Trèfle|Carreau/;
+const FRENCH_SUIT_PATTERN = /Cœur|Pique|Trèfle|Carreau/u;
 
 test.describe("Language & i18n", () => {
   test.beforeEach(async ({ page }) => {

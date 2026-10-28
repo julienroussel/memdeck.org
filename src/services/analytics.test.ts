@@ -22,10 +22,14 @@ const mockOnLCP = vi.fn<(callback: WebVitalCallback) => void>();
 
 vi.mock("react-ga4", () => ({
   ReactGAImplementation: class {
+    // The arrows defer reading the mocks: analytics.ts constructs this class
+    // at import time, before the hoisted mock consts are initialized.
+    // biome-ignore-start lint/style/useThisInClassMethods: mock class that only forwards to vi.fn() spies
     initialize = (id: string) => mockInitialize(id);
     send = (data: unknown) => mockSend(data);
     event = (data: unknown) => mockEvent(data);
     gtag = (...args: unknown[]) => mockGtag(...args);
+    // biome-ignore-end lint/style/useThisInClassMethods: mock class that only forwards to vi.fn() spies
   },
 }));
 

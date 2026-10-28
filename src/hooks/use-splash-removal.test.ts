@@ -35,7 +35,7 @@ describe("useSplashRemoval", () => {
 
     splash.dispatchEvent(new Event("transitionend"));
 
-    expect(document.getElementById("splash")).toBeNull();
+    expect(document.querySelector("#splash")).toBeNull();
   });
 
   it("removes the splash element via fallback timeout when transition does not fire", () => {
@@ -47,7 +47,7 @@ describe("useSplashRemoval", () => {
 
     vi.advanceTimersByTime(500);
 
-    expect(document.getElementById("splash")).toBeNull();
+    expect(document.querySelector("#splash")).toBeNull();
   });
 
   it("clears the fallback timeout on cleanup", () => {
@@ -61,7 +61,7 @@ describe("useSplashRemoval", () => {
 
     vi.advanceTimersByTime(500);
 
-    expect(document.getElementById("splash")).not.toBeNull();
+    expect(document.querySelector("#splash")).not.toBeNull();
   });
 
   it("removes the transitionend listener on cleanup", () => {
@@ -75,6 +75,6 @@ describe("useSplashRemoval", () => {
 
     splash.dispatchEvent(new Event("transitionend"));
 
-    expect(document.getElementById("splash")).not.toBeNull();
+    expect(document.querySelector("#splash")).not.toBeNull();
   });
 });

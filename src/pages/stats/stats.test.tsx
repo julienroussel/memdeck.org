@@ -3,9 +3,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { render } from "../../test-utils";
 import type { LocalDbStatus } from "../../utils/localstorage";
 
-const CORRUPTION_ALERT_TITLE = /training history couldn't be loaded/i;
-const CORRUPTION_ALERT_BODY = /sessions are preserved/i;
-const EMPTY_STATE_COPY = /no training data yet/i;
+const CORRUPTION_ALERT_TITLE = /training history couldn't be loaded/iu;
+const CORRUPTION_ALERT_BODY = /sessions are preserved/iu;
+const EMPTY_STATE_COPY = /no training data yet/iu;
 
 const mockUseSessionHistory = vi.fn();
 const mockUseAllTimeStats = vi.fn();

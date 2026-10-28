@@ -2,18 +2,18 @@ import type { Page } from "@playwright/test";
 import { expect } from "@playwright/test";
 import { test } from "./fixtures/test-setup";
 
-const NEW_CHALLENGE_PATTERN = /new challenge/i;
+const NEW_CHALLENGE_PATTERN = /new challenge/iu;
 // Structured-session controls (the only UI path to the summary modal).
-const START_A_SESSION_PATTERN = /start a session/i;
-const START_PRESET_PATTERN = /start \d+ question session/i;
-const PROGRESS_ZERO_PATTERN = /^progress: 0\/\d+$/i;
-const PROGRESS_ONE_PATTERN = /^progress: 1\/\d+$/i;
-const NUMBERONLY_DEEP_LINK = /\/flashcard\/\?try=numberonly$/;
-const NEIGHBOR_DEEP_LINK = /\/flashcard\/\?try=neighbor$/;
+const START_A_SESSION_PATTERN = /start a session/iu;
+const START_PRESET_PATTERN = /start \d+ question session/iu;
+const PROGRESS_ZERO_PATTERN = /^progress: 0\/\d+$/iu;
+const PROGRESS_ONE_PATTERN = /^progress: 1\/\d+$/iu;
+const NUMBERONLY_DEEP_LINK = /\/flashcard\/\?try=numberonly$/u;
+const NEIGHBOR_DEEP_LINK = /\/flashcard\/\?try=neighbor$/u;
 // The page strips the deep-link param on mount, so the landed URL is bare.
-const STRIPPED_FLASHCARD_URL = /\/flashcard\/$/;
-const STRIPPED_ACAAN_URL = /\/acaan\/$/;
-const STRIPPED_DISTANCE_URL = /\/distance\/$/;
+const STRIPPED_FLASHCARD_URL = /\/flashcard\/$/u;
+const STRIPPED_ACAAN_URL = /\/acaan\/$/u;
+const STRIPPED_DISTANCE_URL = /\/distance\/$/u;
 const SESSION_HISTORY_KEY = "memdeck-app-session-history";
 
 type Seed = {

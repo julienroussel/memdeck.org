@@ -394,7 +394,7 @@
             event instanceof ErrorEvent ||
             event.target instanceof HTMLScriptElement
           ) {
-            document.getElementById("splash")?.remove();
+            document.querySelector("#splash")?.remove();
           }
         },
         true
@@ -451,7 +451,7 @@
         document.documentElement.getAttribute("data-mantine-color-scheme") ===
         "dark"
       ) {
-        const img = document.getElementById("splash-logo");
+        const img = document.querySelector("#splash-logo");
         if (img) {
           img.src = "/memdeck-logo-black.webp";
           img.width = 990;

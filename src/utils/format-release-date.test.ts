@@ -5,7 +5,7 @@ import { formatReleaseDate } from "./format-release-date";
 // A fixed mid-year, mid-day instant. Assertions stay timezone-independent (no
 // exact ICU output is checked) so the test passes regardless of the machine's TZ.
 const ISO = "2026-06-05T13:30:00Z";
-const TIME_PATTERN = /\d{1,2}:\d{2}/;
+const TIME_PATTERN = /\d{1,2}:\d{2}/u;
 
 describe("formatReleaseDate", () => {
   it("includes a time component (hours:minutes)", () => {

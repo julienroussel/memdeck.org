@@ -16,7 +16,7 @@ import type { CardSpreadProps } from "../../types/typeguards";
 import { DistanceActiveRound } from "./distance-active-round";
 import type { PlayableDistanceRound } from "./distance-game-reducer";
 
-const SELECT_POSITION_REGEX = /Select position/;
+const SELECT_POSITION_REGEX = /Select position/u;
 
 // Count CardSpread renders while keeping the real component, so these tests
 // still click real buttons.

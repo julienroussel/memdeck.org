@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-const STACK_RANGE_BADGE_PATTERN = /Stack range/;
+const STACK_RANGE_BADGE_PATTERN = /Stack range/u;
 
 test.describe("Stack Limits", () => {
   test.beforeEach(async ({ page }) => {

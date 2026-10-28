@@ -69,7 +69,7 @@ describe("Provider error fallbacks", () => {
 
   afterEach(() => {
     consoleErrorSpy.mockRestore();
-    document.getElementById("splash")?.remove();
+    document.querySelector("#splash")?.remove();
   });
 
   it("removes the splash and shows a working Refresh button when Header throws on first render", async () => {
@@ -81,7 +81,7 @@ describe("Provider error fallbacks", () => {
       screen.getByRole("heading", { name: "Application Error" })
     ).toBeInTheDocument();
     await waitFor(() => {
-      expect(document.getElementById("splash")).toBeNull();
+      expect(document.querySelector("#splash")).toBeNull();
     });
 
     const reloadSpy = vi
@@ -103,7 +103,7 @@ describe("Provider error fallbacks", () => {
       screen.getByRole("button", { name: "Refresh Page" })
     ).toBeInTheDocument();
     await waitFor(() => {
-      expect(document.getElementById("splash")).toBeNull();
+      expect(document.querySelector("#splash")).toBeNull();
     });
   });
 });

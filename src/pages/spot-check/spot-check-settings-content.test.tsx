@@ -6,9 +6,9 @@ import type { SpotCheckMode } from "../../types/spot-check";
 import type { TimerDuration, TimerSettings } from "../../types/timer";
 import { SpotCheckSettingsContent } from "./spot-check-settings-content";
 
-const MISSING_PATTERN = /missing/i;
-const SWAPPED_PATTERN = /swapped/i;
-const MOVED_PATTERN = /moved/i;
+const MISSING_PATTERN = /missing/iu;
+const SWAPPED_PATTERN = /swapped/iu;
+const MOVED_PATTERN = /moved/iu;
 
 const defaultProps: {
   mode: SpotCheckMode;

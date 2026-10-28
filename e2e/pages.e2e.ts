@@ -2,11 +2,11 @@ import { expect } from "@playwright/test";
 import { test } from "./fixtures/test-setup";
 
 // URL patterns
-const HOME_URL_PATTERN = /\/$/;
-const RESOURCES_URL_PATTERN = /\/resources\/?$/;
-const ACAAN_URL_PATTERN = /\/acaan\/?$/;
-const TOOLBOX_URL_PATTERN = /\/toolbox\/?$/;
-const NOOPENER_PATTERN = /\bnoopener\b/;
+const HOME_URL_PATTERN = /\/$/u;
+const RESOURCES_URL_PATTERN = /\/resources\/?$/u;
+const ACAAN_URL_PATTERN = /\/acaan\/?$/u;
+const TOOLBOX_URL_PATTERN = /\/toolbox\/?$/u;
+const NOOPENER_PATTERN = /\bnoopener\b/u;
 
 test.describe("Pages & Features", () => {
   test.beforeEach(async ({ page }) => {
