@@ -14,3 +14,10 @@ allowBuilds:
   # would write hook stubs into the global core.hooksPath dir. See
   # .claude/rules/git-hooks.md. The `prepare` script installs hooks instead.
   lefthook: false
+
+# GHSA-3g3m-2fjr-6pw4: glob >=9.0.0 <=14.0.1 keeps walking after an abort,
+# patched in 14.0.2. @sentry/bundler-plugins (via @lhci/cli > lighthouse >
+# @sentry/node) declares glob ^13.0.6, so no in-range fix exists. Drop this once
+# it declares glob ^14.0.2 or later.
+overrides:
+  "@sentry/bundler-plugins>glob": "^14.0.2"
