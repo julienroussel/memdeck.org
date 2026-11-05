@@ -142,9 +142,9 @@ test.describe("ACAAN Training", () => {
     const cutDepthInput = page.getByLabel(CUT_DEPTH_PATTERN);
     await expect(cutDepthInput).toBeVisible();
 
-    // Mantine NumberInput uses type="text" with inputmode="decimal"
+    // Mantine NumberInput uses type="text"; acaan.tsx sets inputMode="numeric"
     await expect(cutDepthInput).toHaveAttribute("type", "text");
-    await expect(cutDepthInput).toHaveAttribute("inputmode", "decimal");
+    await expect(cutDepthInput).toHaveAttribute("inputmode", "numeric");
 
     // Find check button
     const checkButton = page.getByRole("button", { name: CHECK_PATTERN });
