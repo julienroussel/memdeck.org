@@ -33,7 +33,7 @@ export const SessionSummaryModal = ({
   const accuracyPercent = toAccuracyPercent(record.accuracy);
   const { t } = useTranslation();
 
-  const encouragementText = t(encouragement.key, encouragement.params);
+  const encouragementText = t(encouragement.key, encouragement.params ?? {});
 
   return (
     <Modal
