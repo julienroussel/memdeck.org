@@ -19,5 +19,12 @@ allowBuilds:
 # patched in 14.0.2. @sentry/bundler-plugins (via @lhci/cli > lighthouse >
 # @sentry/node) declares glob ^13.0.6, so no in-range fix exists. Drop this once
 # it declares glob ^14.0.2 or later.
+#
+# GHSA-c475-qrg2-pj4r (patched in 6.2.1) and GHSA-5pm8-86m8-9m6r (patched in
+# 6.2.4): basic-ftp's Client.list() parsers can be driven into a DoS. get-uri
+# (via @lhci/cli > proxy-agent > pac-proxy-agent) declares basic-ftp ^5.3.1, so
+# no in-range fix exists. Drop this once get-uri declares basic-ftp ^6.2.4 or
+# later.
 overrides:
   "@sentry/bundler-plugins>glob": "^14.0.2"
+  "get-uri>basic-ftp": "^6.2.4"
