@@ -6,12 +6,8 @@ import {
   DISTANCE_TIMER_LSK,
 } from "../../constants";
 import { createGatedSetterMock } from "../../test-utils/mock-local-db-setter";
-import {
-  type DistanceConvention,
-  type DistanceMode,
-  isDistanceConvention,
-  isDistanceMode,
-} from "../../types/distance";
+import type { DistanceConvention, DistanceMode } from "../../types/distance";
+import { isDistanceConvention, isDistanceMode } from "../../types/distance";
 
 let currentMode: DistanceMode = "compute";
 let currentConvention: DistanceConvention = "cyclic";

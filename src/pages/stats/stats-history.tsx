@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { isSupportedLanguage } from "../../i18n/language";
 import type { SupportedLanguage } from "../../i18n/supported-languages";
-import { type DistanceMode, isDistanceMode } from "../../types/distance";
+import type { DistanceMode } from "../../types/distance";
+import { isDistanceMode } from "../../types/distance";
 import type { SessionRecord } from "../../types/session";
 import type { SpotCheckMode } from "../../types/spot-check";
 import { stacks } from "../../types/stacks";
@@ -11,7 +12,8 @@ import {
   formatDuration,
   toAccuracyPercent,
 } from "../../utils/session-formatting";
-import { MODE_LABELS, type StatsI18nKey } from "./stats-i18n";
+import type { StatsI18nKey } from "./stats-i18n";
+import { MODE_LABELS } from "./stats-i18n";
 
 export const PAGE_SIZE = 20;
 

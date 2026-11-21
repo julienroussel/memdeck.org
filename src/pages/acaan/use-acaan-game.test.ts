@@ -1,16 +1,16 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createDeckPosition, getCardAt, type Stack } from "../../types/stacks";
+import type { Stack } from "../../types/stacks";
+import { createDeckPosition, getCardAt } from "../../types/stacks";
 import { aronson } from "../../types/stacks/aronson";
 import { mnemonica } from "../../types/stacks/mnemonica";
 import type { TimerSettings } from "../../types/timer";
 import type { AcaanScenario } from "../../utils/acaan-scenario";
 import { calculateCutDepth } from "../../utils/acaan-scenario";
+import type { GameAction, GameState } from "./acaan-game-reducer";
 import {
   createInitialState,
   formatCutDepth,
-  type GameAction,
-  type GameState,
   gameReducer,
   getCurrentCutDepth,
 } from "./acaan-game-reducer";

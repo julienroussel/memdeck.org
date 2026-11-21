@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { type DisplayMode, getRandomDisplayMode } from "./utils";
+import type { DisplayMode } from "./utils";
+import { getRandomDisplayMode } from "./utils";
 
 describe("getRandomDisplayMode", () => {
   it("returns a valid display mode", () => {

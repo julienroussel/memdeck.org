@@ -28,11 +28,13 @@ import {
   markLastSaveFailedNotificationShown,
   readLastSaveFailedBreadcrumb,
 } from "../utils/session-breadcrumbs";
+import type {
+  FinalizeFailureReason,
+  SessionCheckpoint,
+} from "../utils/session-persistence";
 import {
   checkpointSession,
-  type FinalizeFailureReason,
   finalizeSession,
-  type SessionCheckpoint,
 } from "../utils/session-persistence";
 import {
   applyAnswerOutcome,

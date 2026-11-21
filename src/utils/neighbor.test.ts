@@ -1,10 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { DEFAULT_STACK_LIMITS } from "../types/stack-limits";
-import {
-  createDeckPosition,
-  getCardAt,
-  type PlayingCardPosition,
-} from "../types/stacks";
+import type { PlayingCardPosition } from "../types/stacks";
+import { createDeckPosition, getCardAt } from "../types/stacks";
 import { mnemonica } from "../types/stacks/mnemonica";
 import { getNeighborCard, resolveDirection } from "./neighbor";
 

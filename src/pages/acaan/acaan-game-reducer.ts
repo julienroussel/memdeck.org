@@ -1,8 +1,8 @@
 import { timerReducerCases } from "../../hooks/use-game-timer";
 import type { BaseResetGameAction } from "../../types/reset-game-action";
 import type { Stack } from "../../types/stacks";
+import type { AcaanScenario } from "../../utils/acaan-scenario";
 import {
-  type AcaanScenario,
   calculateCutDepth,
   generateAcaanScenario,
 } from "../../utils/acaan-scenario";

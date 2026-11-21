@@ -6,7 +6,8 @@ import type {
   SPOT_CHECK_TIMER_LSK,
 } from "../constants";
 import type { TimerDuration, TimerSettings } from "../types/timer";
-import { type UseLocalDbSetOptions, useLocalDb } from "../utils/localstorage";
+import type { UseLocalDbSetOptions } from "../utils/localstorage";
+import { useLocalDb } from "../utils/localstorage";
 import {
   handleLocalDbWriteFailed,
   reportLocalDbCorruption,

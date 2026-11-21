@@ -1,4 +1,5 @@
-import { type Mock, vi } from "vitest";
+import type { Mock } from "vitest";
+import { vi } from "vitest";
 import type { UseLocalDbSetOptions } from "../utils/localstorage";
 
 /**

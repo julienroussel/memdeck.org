@@ -2,12 +2,8 @@ import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FLASHCARD_OPTION_LSK, NEIGHBOR_DIRECTION_LSK } from "../../constants";
 import { createGatedSetterMock } from "../../test-utils/mock-local-db-setter";
-import {
-  type FlashcardMode,
-  isFlashcardMode,
-  isNeighborDirection,
-  type NeighborDirection,
-} from "../../types/flashcard";
+import type { FlashcardMode, NeighborDirection } from "../../types/flashcard";
+import { isFlashcardMode, isNeighborDirection } from "../../types/flashcard";
 
 let currentMode: FlashcardMode = "bothmodes";
 let currentDirection: NeighborDirection = "random";

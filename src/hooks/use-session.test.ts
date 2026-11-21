@@ -8,7 +8,8 @@
  * and applyAnswerOutcome live in their colocated file session-phase.test.ts.
  */
 import { act, renderHook } from "@testing-library/react";
-import { createElement, type ReactNode, StrictMode } from "react";
+import type { ReactNode } from "react";
+import { createElement, StrictMode } from "react";
 import { MemoryRouter, useNavigate } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -17,14 +18,17 @@ import {
   SESSION_HISTORY_LSK,
 } from "../constants";
 import type { DistanceConvention, DistanceMode } from "../types/distance";
-import { type FlashcardMode, isFlashcardMode } from "../types/flashcard";
+import type { FlashcardMode } from "../types/flashcard";
+import { isFlashcardMode } from "../types/flashcard";
 import type {
   ActiveSession,
   AllTimeStats,
   SessionRecord,
 } from "../types/session";
-import { DEFAULT_STACK_LIMITS, type StackLimits } from "../types/stack-limits";
-import { createDeckPosition, type StackKey } from "../types/stacks";
+import type { StackLimits } from "../types/stack-limits";
+import { DEFAULT_STACK_LIMITS } from "../types/stack-limits";
+import type { StackKey } from "../types/stacks";
+import { createDeckPosition } from "../types/stacks";
 import type { SessionCheckpoint } from "../utils/session-persistence";
 // Imported via the `use-session` re-export — pins the public type surface of
 // the hook (status phase) as the contract these tests assert against.

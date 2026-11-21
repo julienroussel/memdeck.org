@@ -14,7 +14,8 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { useFeatureDiscovery } from "../../hooks/use-feature-discovery";
 import type { FeatureSuggestion } from "../../types/discovery";
-import { type SessionRecord, TRAINING_MODES } from "../../types/session";
+import type { SessionRecord } from "../../types/session";
+import { TRAINING_MODES } from "../../types/session";
 import { deriveFeatureUsage } from "../../utils/feature-usage";
 import {
   SUGGESTION_CATALOG,

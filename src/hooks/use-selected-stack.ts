@@ -1,5 +1,6 @@
 import { SELECTED_STACK_LSK } from "../constants";
-import { type StackKey, type StackValue, stacks } from "../types/stacks";
+import type { StackKey, StackValue } from "../types/stacks";
+import { stacks } from "../types/stacks";
 import { useLocalDb } from "../utils/localstorage";
 import {
   handleLocalDbWriteFailed,

@@ -2,15 +2,8 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import i18n from "i18next";
 import { Link, Route, Routes } from "react-router";
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  type MockInstance,
-  vi,
-} from "vitest";
+import type { MockInstance } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import frLocale from "../i18n/locales/fr.json";
 import { render } from "../test-utils";
 import { ErrorBoundary } from "./error-boundary";

@@ -4,10 +4,8 @@ import { analytics } from "../services/analytics";
 import { includes } from "../utils/includes";
 import { isStaleChunkError } from "../utils/stale-chunk";
 import type en from "./locales/en.json";
-import {
-  SUPPORTED_LANGUAGES,
-  type SupportedLanguage,
-} from "./supported-languages";
+import type { SupportedLanguage } from "./supported-languages";
+import { SUPPORTED_LANGUAGES } from "./supported-languages";
 
 export const LANGUAGE_LABELS = {
   de: "Deutsch",

@@ -1,6 +1,7 @@
 import { MantineProvider } from "@mantine/core";
 import { render, waitFor } from "@testing-library/react";
-import { type ReactNode, useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ROUTES } from "../../constants";

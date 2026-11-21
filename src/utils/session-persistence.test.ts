@@ -15,12 +15,12 @@ import type { AllTimeStats, SessionRecord } from "../types/session";
 import { createDeckPosition } from "../types/stacks";
 import { useLocalDb } from "./localstorage";
 import { writeLastSaveFailedBreadcrumb } from "./session-breadcrumbs";
+import type { SessionCheckpoint } from "./session-persistence";
 import {
   buildSessionRecord,
   checkpointSession,
   computeSessionSummary,
   finalizeSession,
-  type SessionCheckpoint,
 } from "./session-persistence";
 import { isAllTimeStats, isSessionRecordArray } from "./session-typeguards";
 

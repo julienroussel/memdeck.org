@@ -3,7 +3,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { DECK_SIZE } from "../../constants";
 import type { useGameTimer } from "../../hooks/use-game-timer";
 import { DEFAULT_STACK_LIMITS } from "../../types/stack-limits";
-import { type Stack, stacks } from "../../types/stacks";
+import type { Stack } from "../../types/stacks";
+import { stacks } from "../../types/stacks";
 import { useSpotCheckGame } from "./use-spot-check-game";
 
 vi.mock("@mantine/notifications", () => ({

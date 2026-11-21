@@ -43,4 +43,4 @@ When adding a new persisted-state hook, write at least one unit test that trigge
 
 ## Note on rule activation
 
-Per the Claude Code docs, path-scoped rules trigger when Claude *reads* a matching file. If you're asking Claude to create a brand-new `src/hooks/use-foo.ts` from scratch (no prior read), this rule won't auto-attach — mention it explicitly or have Claude read an existing persisted-state hook (e.g., `use-stack-limits.ts`) first.
+Per the Claude Code docs, path-scoped rules trigger when Claude _reads_ a matching file. If you're asking Claude to create a brand-new `src/hooks/use-foo.ts` from scratch (no prior read), this rule won't auto-attach — mention it explicitly or have Claude read an existing persisted-state hook (e.g., `use-stack-limits.ts`) first.

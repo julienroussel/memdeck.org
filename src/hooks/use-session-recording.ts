@@ -1,4 +1,5 @@
-import { type Dispatch, type SetStateAction, useCallback } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { useCallback } from "react";
 import type { SessionPhase } from "../types/session";
 
 type UseSessionRecordingOptions = {

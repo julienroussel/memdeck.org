@@ -1,9 +1,6 @@
 import { MantineProvider } from "@mantine/core";
-import {
-  type RenderOptions,
-  type RenderResult,
-  render as rtlRender,
-} from "@testing-library/react";
+import type { RenderOptions, RenderResult } from "@testing-library/react";
+import { render as rtlRender } from "@testing-library/react";
 import type { ReactElement, ReactNode } from "react";
 import { MemoryRouter } from "react-router";
 

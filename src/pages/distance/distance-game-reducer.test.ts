@@ -1,16 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_STACK_LIMITS } from "../../types/stack-limits";
-import {
-  createDeckPosition,
-  type PlayingCardPosition,
-} from "../../types/stacks";
+import type { PlayingCardPosition } from "../../types/stacks";
+import { createDeckPosition } from "../../types/stacks";
 import { mnemonica } from "../../types/stacks/mnemonica";
 import { FourOfClubs } from "../../types/suits/clubs";
 import { TwoOfHearts } from "../../types/suits/hearts";
+import type { DistanceRound, GameState } from "./distance-game-reducer";
 import {
   createInitialState,
-  type DistanceRound,
-  type GameState,
   gameReducer,
   generateApplyPrompt,
   generateComputePrompt,

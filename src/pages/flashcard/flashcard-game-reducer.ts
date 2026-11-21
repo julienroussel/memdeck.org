@@ -3,25 +3,17 @@ import type { FlashcardMode, NeighborDirection } from "../../types/flashcard";
 import type { PlayingCard } from "../../types/playingcard";
 import type { BaseResetGameAction } from "../../types/reset-game-action";
 import { shuffle } from "../../types/shuffle";
-import {
-  DEFAULT_STACK_LIMITS,
-  type StackLimits,
-} from "../../types/stack-limits";
-import {
-  getRandomPlayingCard,
-  type PlayingCardPosition,
-  type Stack,
-} from "../../types/stacks";
+import type { StackLimits } from "../../types/stack-limits";
+import { DEFAULT_STACK_LIMITS } from "../../types/stack-limits";
+import type { PlayingCardPosition, Stack } from "../../types/stacks";
+import { getRandomPlayingCard } from "../../types/stacks";
 import { isPlayingCard } from "../../types/typeguards";
 import {
   generateNeighborChoices,
   generateUniqueCardChoices,
 } from "../../utils/card-selection";
-import {
-  getNeighborCard,
-  type ResolvedDirection,
-  resolveDirection,
-} from "../../utils/neighbor";
+import type { ResolvedDirection } from "../../utils/neighbor";
+import { getNeighborCard, resolveDirection } from "../../utils/neighbor";
 import type { DisplayMode } from "./utils";
 
 // --- Types ---

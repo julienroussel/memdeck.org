@@ -3,7 +3,8 @@ import { SPOT_CHECK_MODE_LSK, SPOT_CHECK_TIMER_LSK } from "../../constants";
 import { useTimerSettings } from "../../hooks/use-timer-settings";
 import { analytics } from "../../services/analytics";
 import { eventBus } from "../../services/event-bus";
-import { isSpotCheckMode, type SpotCheckMode } from "../../types/spot-check";
+import type { SpotCheckMode } from "../../types/spot-check";
+import { isSpotCheckMode } from "../../types/spot-check";
 import type { TimerDuration, TimerSettings } from "../../types/timer";
 import { useLocalDb } from "../../utils/localstorage";
 import {

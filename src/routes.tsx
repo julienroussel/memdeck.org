@@ -1,5 +1,6 @@
 import { Center, Loader } from "@mantine/core";
-import { type ReactNode, Suspense } from "react";
+import type { ReactNode } from "react";
+import { Suspense } from "react";
 import {
   Navigate,
   Route as RouterRoute,

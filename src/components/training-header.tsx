@@ -9,7 +9,8 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSettings, IconTarget } from "@tabler/icons-react";
-import { type ReactNode, useCallback } from "react";
+import type { ReactNode } from "react";
+import { useCallback } from "react";
 import type { GameScore } from "../types/game";
 import type { ActiveSession, SessionConfig } from "../types/session";
 import { deriveIsStructuredSession } from "../utils/session-phase";

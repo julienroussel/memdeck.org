@@ -1,11 +1,7 @@
 import { DECK_SIZE } from "../../constants";
 import type { PlayingCard } from "../../types/playingcard";
-import {
-  createDeckPosition,
-  type DeckPosition,
-  getCardAt,
-  type Stack,
-} from "../../types/stacks";
+import type { DeckPosition, Stack } from "../../types/stacks";
+import { createDeckPosition, getCardAt } from "../../types/stacks";
 
 type SequenceEntry = {
   position: DeckPosition;

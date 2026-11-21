@@ -1,14 +1,11 @@
 import { timerReducerCases } from "../../hooks/use-game-timer";
 import type { PlayingCard } from "../../types/playingcard";
 import type { SpotCheckMode } from "../../types/spot-check";
-import { isFullDeck, type StackLimits } from "../../types/stack-limits";
+import type { StackLimits } from "../../types/stack-limits";
+import { isFullDeck } from "../../types/stack-limits";
 import type { Stack } from "../../types/stacks";
-import {
-  moveCard,
-  type PuzzleState,
-  removeSingleCard,
-  swapTwoCards,
-} from "./utils";
+import type { PuzzleState } from "./utils";
+import { moveCard, removeSingleCard, swapTwoCards } from "./utils";
 
 // --- State ---
 

@@ -1,10 +1,8 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { render } from "../../test-utils";
-import {
-  createDeckPosition,
-  type PlayingCardPosition,
-} from "../../types/stacks";
+import type { PlayingCardPosition } from "../../types/stacks";
+import { createDeckPosition } from "../../types/stacks";
 import { AceOfSpades } from "../../types/suits/spades";
 import { FlashcardCardDisplay } from "./flashcard-card-display";
 

@@ -1,10 +1,8 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { render } from "../../test-utils";
-import {
-  createDeckPosition,
-  type PlayingCardPosition,
-} from "../../types/stacks";
+import type { PlayingCardPosition } from "../../types/stacks";
+import { createDeckPosition } from "../../types/stacks";
 import { FourOfClubs } from "../../types/suits/clubs";
 import { TwoOfHearts } from "../../types/suits/hearts";
 import { DistancePromptDisplay } from "./distance-prompt-display";

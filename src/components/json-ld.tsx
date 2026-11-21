@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import { type AppRoute, SITE_URL } from "../constants";
+import type { AppRoute } from "../constants";
+import { SITE_URL } from "../constants";
 
 /** Minimal structural constraint for JSON-LD data objects. */
 type JsonLdData = Record<string, unknown> & {

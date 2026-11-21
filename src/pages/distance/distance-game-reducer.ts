@@ -8,13 +8,12 @@ import type {
 import type { PlayingCard } from "../../types/playingcard";
 import { shuffle } from "../../types/shuffle";
 import type { StackLimits } from "../../types/stack-limits";
+import type { PlayingCardPosition, Stack } from "../../types/stacks";
 import {
   createDeckPosition,
   getCardAt,
   getRandomPlayingCard,
   getUniqueRandomCard,
-  type PlayingCardPosition,
-  type Stack,
 } from "../../types/stacks";
 import { generateNeighborChoices } from "../../utils/card-selection";
 import {

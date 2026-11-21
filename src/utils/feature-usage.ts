@@ -1,11 +1,8 @@
 import type { UsageFlags } from "../types/discovery";
 import type { DistanceConvention, DistanceMode } from "../types/distance";
 import type { FlashcardMode } from "../types/flashcard";
-import {
-  type SessionRecord,
-  TRAINING_MODES,
-  type TrainingMode,
-} from "../types/session";
+import type { SessionRecord, TrainingMode } from "../types/session";
+import { TRAINING_MODES } from "../types/session";
 import type { SpotCheckMode } from "../types/spot-check";
 
 /**

@@ -1,14 +1,14 @@
 import { DECK_SIZE } from "../constants";
 import { isDistanceConvention, isDistanceMode } from "../types/distance";
 import { isFlashcardMode } from "../types/flashcard";
-import {
-  type AllTimeStats,
-  type SessionConfig,
-  type SessionRecord,
-  type StatsKey,
-  TRAINING_MODES,
-  type TrainingMode,
+import type {
+  AllTimeStats,
+  SessionConfig,
+  SessionRecord,
+  StatsKey,
+  TrainingMode,
 } from "../types/session";
+import { TRAINING_MODES } from "../types/session";
 import { isSpotCheckMode } from "../types/spot-check";
 import { stacks } from "../types/stacks";
 import { includes } from "./includes";

@@ -1,4 +1,5 @@
-import { expect, type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { mnemonica } from "../src/types/stacks/mnemonica";
 import {
   CORRECT_ANSWERS_PATTERN,

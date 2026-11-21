@@ -1,4 +1,5 @@
-import { type MantineColor, ThemeIcon, Title } from "@mantine/core";
+import type { MantineColor } from "@mantine/core";
+import { ThemeIcon, Title } from "@mantine/core";
 import type { ReactNode } from "react";
 
 type SectionHeadingProps = {

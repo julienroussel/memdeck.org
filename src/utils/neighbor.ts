@@ -1,12 +1,8 @@
 import type { NeighborDirection } from "../types/flashcard";
 import type { PlayingCard } from "../types/playingcard";
 import type { StackLimits } from "../types/stack-limits";
-import {
-  createDeckPosition,
-  getCardAt,
-  type PlayingCardPosition,
-  type Stack,
-} from "../types/stacks";
+import type { PlayingCardPosition, Stack } from "../types/stacks";
+import { createDeckPosition, getCardAt } from "../types/stacks";
 
 export type ResolvedDirection = "before" | "after";
 

@@ -7,12 +7,8 @@ import {
 import { useTimerSettings } from "../../hooks/use-timer-settings";
 import { analytics } from "../../services/analytics";
 import { eventBus } from "../../services/event-bus";
-import {
-  type DistanceConvention,
-  type DistanceMode,
-  isDistanceConvention,
-  isDistanceMode,
-} from "../../types/distance";
+import type { DistanceConvention, DistanceMode } from "../../types/distance";
+import { isDistanceConvention, isDistanceMode } from "../../types/distance";
 import type { TimerDuration, TimerSettings } from "../../types/timer";
 import { useLocalDb } from "../../utils/localstorage";
 import {
