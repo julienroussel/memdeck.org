@@ -2,12 +2,12 @@ import { describe, expect, it, vi } from "vitest";
 import { DECK_SIZE } from "../constants";
 import { ALL_CARDS } from "./playingcard";
 import { DEFAULT_STACK_LIMITS } from "./stack-limits";
+import type { PlayingCardPosition } from "./stacks";
 import {
   createDeckPosition,
   getCardAt,
   getRandomPlayingCard,
   getUniqueRandomCard,
-  type PlayingCardPosition,
   stacks,
 } from "./stacks";
 

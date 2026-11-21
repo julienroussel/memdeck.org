@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 import { DECK_SIZE } from "../../constants";
 import type { PlayingCard } from "../../types/playingcard";
 import type { SpotCheckMode } from "../../types/spot-check";
-import { createDeckPosition, type DeckPosition } from "../../types/stacks";
+import type { DeckPosition } from "../../types/stacks";
+import { createDeckPosition } from "../../types/stacks";
 import { mnemonica } from "../../types/stacks/mnemonica";
+import type { GameAction, GameState } from "./spot-check-game-reducer";
 import {
   createInitialState,
-  type GameAction,
-  type GameState,
   gameReducer,
   generatePuzzle,
   getCardsForPuzzle,

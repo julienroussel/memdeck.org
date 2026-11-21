@@ -1,10 +1,10 @@
 import { Divider, Radio, Stack, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { TimerSettingsControl } from "../../components/timer-settings-control";
+import type { SpotCheckMode } from "../../types/spot-check";
 import {
   isSpotCheckMode,
   SPOT_CHECK_MODE_OPTIONS,
-  type SpotCheckMode,
 } from "../../types/spot-check";
 import type { TimerDuration, TimerSettings } from "../../types/timer";
 

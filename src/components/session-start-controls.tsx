@@ -1,7 +1,8 @@
 import { Button, Group, Text } from "@mantine/core";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { SESSION_PRESETS, type SessionConfig } from "../types/session";
+import type { SessionConfig } from "../types/session";
+import { SESSION_PRESETS } from "../types/session";
 
 type SessionStartControlsProps = {
   onStart: (config: SessionConfig) => void;

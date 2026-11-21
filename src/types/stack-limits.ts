@@ -1,10 +1,6 @@
 import { DECK_SIZE } from "../constants";
-import {
-  createDeckPosition,
-  type DeckPosition,
-  type StackKey,
-  stacks,
-} from "./stacks";
+import type { DeckPosition, StackKey } from "./stacks";
+import { createDeckPosition, stacks } from "./stacks";
 
 const VALID_STACK_KEYS: ReadonlySet<string> = new Set(Object.keys(stacks));
 

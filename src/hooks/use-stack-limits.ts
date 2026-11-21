@@ -4,15 +4,15 @@ import { useTranslation } from "react-i18next";
 import { STACK_LIMITS_LSK } from "../constants";
 import { analytics } from "../services/analytics";
 import { eventBus } from "../services/event-bus";
+import type { StackLimits, StackLimitsRecord } from "../types/stack-limits";
 import {
   DEFAULT_STACK_LIMITS,
   getRangeSize,
   isFullDeck,
   isStackLimitsRecord,
-  type StackLimits,
-  type StackLimitsRecord,
 } from "../types/stack-limits";
-import { createDeckPosition, type StackKey, stacks } from "../types/stacks";
+import type { StackKey } from "../types/stacks";
+import { createDeckPosition, stacks } from "../types/stacks";
 import { probeStoredValue, useLocalDb } from "../utils/localstorage";
 import {
   handleLocalDbWriteFailed,

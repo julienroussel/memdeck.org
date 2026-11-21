@@ -2,7 +2,8 @@ import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SPOT_CHECK_MODE_LSK } from "../../constants";
 import { createGatedSetterMock } from "../../test-utils/mock-local-db-setter";
-import { isSpotCheckMode, type SpotCheckMode } from "../../types/spot-check";
+import type { SpotCheckMode } from "../../types/spot-check";
+import { isSpotCheckMode } from "../../types/spot-check";
 
 let currentMode: SpotCheckMode = "missing";
 

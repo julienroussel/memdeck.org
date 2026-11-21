@@ -1,4 +1,5 @@
-import { type ComponentType, type LazyExoticComponent, lazy } from "react";
+import type { ComponentType, LazyExoticComponent } from "react";
+import { lazy } from "react";
 import { CHUNK_RELOAD_SSK } from "../constants";
 import { analytics } from "../services/analytics";
 import { isStaleChunkError } from "./stale-chunk";

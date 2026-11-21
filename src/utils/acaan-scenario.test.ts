@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { createDeckPosition } from "../types/stacks";
 import { mnemonica } from "../types/stacks/mnemonica";
+import type { AcaanScenario } from "./acaan-scenario";
 import {
-  type AcaanScenario,
   calculateCutDepth,
   generateAcaanScenario,
   getRandomTargetPosition,

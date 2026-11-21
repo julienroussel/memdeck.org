@@ -1,10 +1,7 @@
 import { DEFAULT_CHOICES_COUNT } from "../constants";
 import type { StackLimits } from "../types/stack-limits";
-import {
-  getUniqueRandomCard,
-  type PlayingCardPosition,
-  type Stack,
-} from "../types/stacks";
+import type { PlayingCardPosition, Stack } from "../types/stacks";
+import { getUniqueRandomCard } from "../types/stacks";
 
 /**
  * Generates a set of unique card choices from a stack.

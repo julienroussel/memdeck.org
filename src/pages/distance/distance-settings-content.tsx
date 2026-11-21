@@ -2,11 +2,10 @@ import { Divider, SegmentedControl, Stack } from "@mantine/core";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { TimerSettingsControl } from "../../components/timer-settings-control";
+import type { DistanceConvention, DistanceMode } from "../../types/distance";
 import {
   DISTANCE_CONVENTION_OPTIONS,
   DISTANCE_MODE_OPTIONS,
-  type DistanceConvention,
-  type DistanceMode,
   isDistanceConvention,
   isDistanceMode,
 } from "../../types/distance";

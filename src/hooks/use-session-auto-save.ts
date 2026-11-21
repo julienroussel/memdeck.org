@@ -1,12 +1,6 @@
 import { notifications } from "@mantine/notifications";
-import {
-  type Dispatch,
-  type RefObject,
-  type SetStateAction,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from "react";
+import type { Dispatch, RefObject, SetStateAction } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { ActiveSession, SessionPhase } from "../types/session";
 import type { StackKey } from "../types/stacks";

@@ -81,16 +81,16 @@ Toggle themes freely. Your preference is saved across sessions.
 
 ## Supported Stacks
 
-| Stack | Author |
-|-------|--------|
-| Mnemonica | Juan Tamariz |
-| Aronson | Simon Aronson |
-| Memorandum | Woody Aragon |
-| Redford | Patrick Redford |
-| Particle | Joshua Jay |
-| Elephant | Pierre Boc & Yves Meret |
-| Infinity | Tim Conover |
-| Intuitiva Santi | Magic Santi |
+| Stack           | Author                  |
+| --------------- | ----------------------- |
+| Mnemonica       | Juan Tamariz            |
+| Aronson         | Simon Aronson           |
+| Memorandum      | Woody Aragon            |
+| Redford         | Patrick Redford         |
+| Particle        | Joshua Jay              |
+| Elephant        | Pierre Boc & Yves Meret |
+| Infinity        | Tim Conover             |
+| Intuitiva Santi | Magic Santi             |
 
 ## Getting Started
 

@@ -1,10 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_STACK_LIMITS } from "../types/stack-limits";
-import {
-  createDeckPosition,
-  type PlayingCardPosition,
-  stacks,
-} from "../types/stacks";
+import type { PlayingCardPosition } from "../types/stacks";
+import { createDeckPosition, stacks } from "../types/stacks";
 import {
   generateNeighborChoices,
   generateUniqueCardChoices,

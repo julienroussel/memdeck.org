@@ -12,14 +12,15 @@ import type { SpotCheckMode } from "../../types/spot-check";
 import type { StackLimits } from "../../types/stack-limits";
 import type { Stack, StackValue } from "../../types/stacks";
 import type { TimerSettings } from "../../types/timer";
+import type { AdvancePayload } from "./spot-check-game-reducer";
 import {
-  type AdvancePayload,
   createInitialState,
   gameReducer,
   generatePuzzle,
   getCardsForPuzzle,
 } from "./spot-check-game-reducer";
-import { isSpotCheckAnswerCorrect, type PuzzleState } from "./utils";
+import type { PuzzleState } from "./utils";
+import { isSpotCheckAnswerCorrect } from "./utils";
 
 // Fixed id so repeated Reveal taps replace the pinned toast instead of
 // stacking permanently-open notifications (Mantine shows at most 5).

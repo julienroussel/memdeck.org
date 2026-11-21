@@ -1,11 +1,9 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  type SessionRecord,
-  TRAINING_MODES,
-  type TrainingMode,
-} from "../../types/session";
-import { isSpotCheckMode, type SpotCheckMode } from "../../types/spot-check";
+import type { SessionRecord, TrainingMode } from "../../types/session";
+import { TRAINING_MODES } from "../../types/session";
+import type { SpotCheckMode } from "../../types/spot-check";
+import { isSpotCheckMode } from "../../types/spot-check";
 import { includes } from "../../utils/includes";
 
 type Filter = "all" | TrainingMode;

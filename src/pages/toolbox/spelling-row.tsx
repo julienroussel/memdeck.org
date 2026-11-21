@@ -1,6 +1,7 @@
 import { Badge, Image, Table, Text, useMatches } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
-import { type MouseEvent, memo } from "react";
+import type { MouseEvent } from "react";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { CARD_ASPECT_RATIO } from "../../constants";
 import type { PlayingCard } from "../../types/playingcard";

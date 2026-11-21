@@ -17,11 +17,13 @@ import type {
 } from "../../types/stacks";
 import type { TimerSettings } from "../../types/timer";
 import { buildWrongAnswerNotification } from "../../utils/notifications";
+import type {
+  AdvancePayload,
+  DistanceAnswer,
+  DistanceRound,
+} from "./distance-game-reducer";
 import {
-  type AdvancePayload,
   createInitialState,
-  type DistanceAnswer,
-  type DistanceRound,
   gameReducer,
   generateNextDistanceRound,
   isCorrectAnswer,

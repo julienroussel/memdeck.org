@@ -1,5 +1,6 @@
 import { ReactGAImplementation } from "react-ga4";
-import { type Metric, onCLS, onINP, onLCP } from "web-vitals";
+import type { Metric } from "web-vitals";
+import { onCLS, onINP, onLCP } from "web-vitals";
 import type { DiscoverySurface } from "../types/discovery";
 import type { DistanceConvention, DistanceMode } from "../types/distance";
 import type { FlashcardMode, NeighborDirection } from "../types/flashcard";

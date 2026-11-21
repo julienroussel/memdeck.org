@@ -17,11 +17,8 @@ import {
   tryHandler,
   useSuggestionDeepLink,
 } from "../../hooks/use-suggestion-deep-link";
-import {
-  isSpotCheckMode,
-  type SpotCheckI18nKey,
-  type SpotCheckMode,
-} from "../../types/spot-check";
+import type { SpotCheckI18nKey, SpotCheckMode } from "../../types/spot-check";
+import { isSpotCheckMode } from "../../types/spot-check";
 import { cardItems } from "../../types/typeguards";
 import { SpotCheckSettingsContent } from "./spot-check-settings-content";
 import { useSpotCheckGame } from "./use-spot-check-game";

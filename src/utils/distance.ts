@@ -1,6 +1,7 @@
 import type { DistanceConvention } from "../types/distance";
 import type { StackLimits } from "../types/stack-limits";
-import { createDeckPosition, type DeckPosition } from "../types/stacks";
+import type { DeckPosition } from "../types/stacks";
+import { createDeckPosition } from "../types/stacks";
 
 /**
  * Distance number math, operating on the active deck cycle. The cycle size is

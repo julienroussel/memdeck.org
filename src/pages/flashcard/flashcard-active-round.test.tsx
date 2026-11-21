@@ -5,10 +5,8 @@ import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "../../test-utils";
 import type { PlayingCard } from "../../types/playingcard";
-import {
-  createDeckPosition,
-  type PlayingCardPosition,
-} from "../../types/stacks";
+import type { PlayingCardPosition } from "../../types/stacks";
+import { createDeckPosition } from "../../types/stacks";
 import { FourOfClubs, ThreeOfClubs } from "../../types/suits/clubs";
 import { TwoOfHearts } from "../../types/suits/hearts";
 import { AceOfSpades, FiveOfSpades } from "../../types/suits/spades";

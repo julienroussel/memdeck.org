@@ -1,11 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render } from "../../test-utils";
 import type { FlashcardMode, NeighborDirection } from "../../types/flashcard";
-import {
-  createDeckPosition,
-  type PlayingCardPosition,
-  stacks,
-} from "../../types/stacks";
+import type { PlayingCardPosition } from "../../types/stacks";
+import { createDeckPosition, stacks } from "../../types/stacks";
 import type { ResolvedDirection } from "../../utils/neighbor";
 
 // Mock the timer hook so useFlashcardGame mounts without a real interval.

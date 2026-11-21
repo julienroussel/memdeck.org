@@ -6,7 +6,8 @@ import type {
   TrainingMode,
 } from "../types/session";
 import type { StackKey } from "../types/stacks";
-import { type LocalDbStatus, useLocalDb } from "../utils/localstorage";
+import type { LocalDbStatus } from "../utils/localstorage";
+import { useLocalDb } from "../utils/localstorage";
 import { reportLocalDbCorruption } from "../utils/localstorage-telemetry";
 import {
   aggregateStatsEntries,

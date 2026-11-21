@@ -3,10 +3,10 @@ import { createDeckPosition } from "../../types/stacks";
 import { mnemonica } from "../../types/stacks/mnemonica";
 import { FourOfClubs } from "../../types/suits/clubs";
 import type { AcaanScenario } from "../../utils/acaan-scenario";
+import type { GameState } from "./acaan-game-reducer";
 import {
   createInitialState,
   formatCutDepth,
-  type GameState,
   gameReducer,
   getCurrentCutDepth,
 } from "./acaan-game-reducer";
