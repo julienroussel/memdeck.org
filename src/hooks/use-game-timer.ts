@@ -8,6 +8,14 @@ type TimerAction =
 type UseGameTimerOptions<TTimeoutAction extends { type: string }> = {
   timerSettings: TimerSettings;
   timeRemaining: number;
+  /**
+   * Identity of the current question: a fresh object per round, and the same
+   * object for the whole round (a value rebuilt on every render would restart
+   * the tick on every render and freeze the countdown). A new round
+   * restarts the 1-second tick even when `timeRemaining` resets to the value it
+   * already had, so an answer before the first tick does not shorten the next round.
+   */
+  roundKey: object;
   dispatch: (action: TimerAction | TTimeoutAction) => void;
   createTimeoutAction: () => TTimeoutAction;
   onTimeout?: () => void;
@@ -19,6 +27,7 @@ type UseGameTimerOptions<TTimeoutAction extends { type: string }> = {
  *
  * @param options.timerSettings - Current timer settings (enabled, duration)
  * @param options.timeRemaining - Current time remaining from game state
+ * @param options.roundKey - Current question object; a new one restarts the tick
  * @param options.dispatch - Dispatch function for TICK, RESET_TIMER, and timeout actions
  * @param options.createTimeoutAction - Factory function to create the timeout action
  * @param options.onTimeout - Optional callback when timeout occurs (for side effects like notifications)
@@ -26,6 +35,7 @@ type UseGameTimerOptions<TTimeoutAction extends { type: string }> = {
 export const useGameTimer = <TTimeoutAction extends { type: string }>({
   timerSettings,
   timeRemaining,
+  roundKey,
   dispatch,
   createTimeoutAction,
   onTimeout,
@@ -48,6 +58,7 @@ export const useGameTimer = <TTimeoutAction extends { type: string }>({
   }, [timerSettings.duration, dispatch]);
 
   // Timer tick effect
+  // biome-ignore lint/correctness/useExhaustiveDependencies: roundKey and duration restart the tick on a new question or a duration change, even when timeRemaining resets to the value it already had
   useEffect(() => {
     if (!timerSettings.enabled || timeRemaining <= 0) {
       return;
@@ -58,7 +69,13 @@ export const useGameTimer = <TTimeoutAction extends { type: string }>({
     }, 1000);
 
     return () => clearTimeout(timeout);
-  }, [timerSettings.enabled, timeRemaining, dispatch]);
+  }, [
+    timerSettings.enabled,
+    timerSettings.duration,
+    timeRemaining,
+    roundKey,
+    dispatch,
+  ]);
 
   // Handle timeout - only triggers when timer reaches 0
   useEffect(() => {
