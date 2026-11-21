@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { VALID_DURATIONS } from "../types/timer";
 import {
   calculateTimerProgress,
   getTimerColor,
   isValidDuration,
   TIMER_DURATION_OPTIONS,
-  VALID_DURATIONS,
 } from "./timer";
 
 describe("calculateTimerProgress", () => {
@@ -33,51 +33,66 @@ describe("calculateTimerProgress", () => {
 
 describe("getTimerColor", () => {
   it("returns red when time is 0 seconds", () => {
-    expect(getTimerColor(0)).toBe("red");
+    expect(getTimerColor(0, 30)).toBe("red");
   });
 
   it("returns red when time is 1 second", () => {
-    expect(getTimerColor(1)).toBe("red");
+    expect(getTimerColor(1, 30)).toBe("red");
   });
 
   it("returns red when time is 2 seconds", () => {
-    expect(getTimerColor(2)).toBe("red");
+    expect(getTimerColor(2, 30)).toBe("red");
   });
 
   it("returns red when time is 3 seconds", () => {
-    expect(getTimerColor(3)).toBe("red");
+    expect(getTimerColor(3, 30)).toBe("red");
   });
 
   it("returns yellow when time is 4 seconds", () => {
-    expect(getTimerColor(4)).toBe("yellow");
+    expect(getTimerColor(4, 30)).toBe("yellow");
   });
 
   it("returns yellow when time is 5 seconds", () => {
-    expect(getTimerColor(5)).toBe("yellow");
+    expect(getTimerColor(5, 30)).toBe("yellow");
   });
 
   it("returns blue when time is 6 seconds", () => {
-    expect(getTimerColor(6)).toBe("blue");
+    expect(getTimerColor(6, 30)).toBe("blue");
   });
 
   it("returns blue when time is 10 seconds", () => {
-    expect(getTimerColor(10)).toBe("blue");
+    expect(getTimerColor(10, 30)).toBe("blue");
   });
 
   it("returns blue when time is 30 seconds", () => {
-    expect(getTimerColor(30)).toBe("blue");
+    expect(getTimerColor(30, 30)).toBe("blue");
+  });
+});
+
+describe("getTimerColor at the start of a short timer", () => {
+  it("returns blue while the full 5-second duration remains", () => {
+    expect(getTimerColor(5, 5)).toBe("blue");
+  });
+
+  it("returns red when a zero-length timer has no time left", () => {
+    expect(getTimerColor(0, 0)).toBe("red");
+  });
+
+  it("returns yellow once a 5-second timer starts counting down", () => {
+    expect(getTimerColor(4, 5)).toBe("yellow");
   });
 });
 
 describe("VALID_DURATIONS", () => {
-  it("contains exactly 10, 15, and 30", () => {
-    expect(VALID_DURATIONS).toEqual([10, 15, 30]);
+  it("contains exactly 5, 10, 15, and 30", () => {
+    expect(VALID_DURATIONS).toEqual([5, 10, 15, 30]);
   });
 });
 
 describe("TIMER_DURATION_OPTIONS", () => {
   it("has correctly formatted options for SegmentedControl", () => {
     expect(TIMER_DURATION_OPTIONS).toEqual([
+      { label: "5s", value: "5" },
       { label: "10s", value: "10" },
       { label: "15s", value: "15" },
       { label: "30s", value: "30" },
@@ -98,8 +113,12 @@ describe("isValidDuration", () => {
     expect(isValidDuration(30)).toBe(true);
   });
 
-  it("returns false for 5", () => {
-    expect(isValidDuration(5)).toBe(false);
+  it("returns true for 5", () => {
+    expect(isValidDuration(5)).toBe(true);
+  });
+
+  it("returns false for 7", () => {
+    expect(isValidDuration(7)).toBe(false);
   });
 
   it("returns false for 20", () => {

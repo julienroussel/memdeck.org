@@ -46,6 +46,10 @@ describe("isTimerSettings", () => {
     expect(isTimerSettings({ duration: -10, enabled: true })).toBe(false);
   });
 
+  it("accepts duration of 5", () => {
+    expect(isTimerSettings({ duration: 5, enabled: true })).toBe(true);
+  });
+
   it("accepts duration of 10", () => {
     expect(isTimerSettings({ duration: 10, enabled: true })).toBe(true);
   });

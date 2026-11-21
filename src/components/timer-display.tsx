@@ -27,10 +27,12 @@ type TimerDisplayProps = {
 export const TimerDisplay = memo(
   ({ timerDuration, timeRemaining }: TimerDisplayProps) => {
     const timerProgress = calculateTimerProgress(timeRemaining, timerDuration);
-    const timerColor = getTimerColor(timeRemaining);
+    const timerColor = getTimerColor(timeRemaining, timerDuration);
     const timerTextColor = TIMER_TEXT_COLORS[timerColor] ?? timerColor;
     const { t } = useTranslation();
-    const isUrgent = timeRemaining === 5 || timeRemaining === 1;
+    // The 5-second warning means nothing on a 5-second timer, which starts there.
+    const isUrgent =
+      (timeRemaining === 5 && timerDuration > 5) || timeRemaining === 1;
 
     return (
       <>

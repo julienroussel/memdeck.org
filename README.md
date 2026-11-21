@@ -20,7 +20,7 @@ Test your recall with three training modes:
 - **Position → Card** — See a position, pick the correct card
 - **Mixed** — Randomly alternates between the two
 
-Each mode presents five choices and tracks your score in real time. An optional timer adds time pressure (10s, 15s, or 30s).
+Each mode presents five choices and tracks your score in real time. An optional timer adds time pressure (5s, 10s, 15s, or 30s).
 
 ### Spot Check
 

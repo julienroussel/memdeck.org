@@ -12,7 +12,7 @@ type TimerSettingsControlProps = {
 
 /**
  * Reusable control for timer settings (enable/disable + duration).
- * Used in options modals for both Flashcard and ACAAN trainers.
+ * Used in the settings popover of every timed mode: Flashcard, Spot Check, ACAAN and Distance.
  */
 export const TimerSettingsControl = ({
   timerSettings,
