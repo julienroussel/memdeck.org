@@ -136,6 +136,7 @@ export const useSpotCheckGame = (
     createTimeoutAction,
     dispatch,
     onTimeout: handleTimeout,
+    roundKey: state.puzzleState,
     timeRemaining: state.timeRemaining,
     timerSettings,
   });

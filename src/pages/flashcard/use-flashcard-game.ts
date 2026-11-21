@@ -215,6 +215,7 @@ export const useFlashcardGame = (
     createTimeoutAction,
     dispatch,
     onTimeout: handleTimeout,
+    roundKey: state.card,
     timeRemaining: state.timeRemaining,
     timerSettings,
   });

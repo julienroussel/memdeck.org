@@ -97,7 +97,7 @@ describe("TimerSettingsControl", () => {
       expect(radiogroup).toHaveAttribute("aria-labelledby", label.id);
     });
 
-    it("renders all three duration options when timer is enabled", () => {
+    it("renders all four duration options when timer is enabled", () => {
       render(
         <TimerSettingsControl
           onDurationChange={vi.fn()}
@@ -106,6 +106,7 @@ describe("TimerSettingsControl", () => {
         />
       );
 
+      expect(screen.getByRole("radio", { name: "5s" })).toBeInTheDocument();
       expect(screen.getByRole("radio", { name: "10s" })).toBeInTheDocument();
       expect(screen.getByRole("radio", { name: "15s" })).toBeInTheDocument();
       expect(screen.getByRole("radio", { name: "30s" })).toBeInTheDocument();

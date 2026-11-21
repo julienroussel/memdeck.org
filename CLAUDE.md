@@ -108,7 +108,7 @@ All memorized decks are centralized in `src/types/stacks.ts`:
 ### Key Features
 
 - **Stack Range** (`src/components/stack-range-badge.tsx`, `src/components/stack-limits-control.tsx`): Global per-stack position range (e.g., 1–20) accessible via the navbar. Lets users train on a subset of the deck for progressive learning. Stored in localStorage per stack. Applies to Flashcard, Spot Check, Distance, Stack Lookup, and Card Spelling. ACAAN, Faro Shuffle, and Stay Stack always use the full deck
-- **Flashcard Mode** (`src/pages/flashcard/`): Main training feature with three position modes (card-only, index-only, both) plus a Neighbor mode (recall the card before/after a shown card). Presents 5 choices with optional timer (10/15/30 s). Respects stack range
+- **Flashcard Mode** (`src/pages/flashcard/`): Main training feature with three position modes (card-only, index-only, both) plus a Neighbor mode (recall the card before/after a shown card). Presents 5 choices with optional timer (5/10/15/30 s). Respects stack range
 - **Spot Check** (`src/pages/spot-check/`): Visual deck inspection training with three variants — missing card, swapped cards, or moved card. Uses an interactive card spread. Respects stack range
 - **ACAAN** (`src/pages/acaan/`): Any Card At Any Number calculator with instant feedback. Always uses full deck
 - **Distance Number** (`src/pages/distance/`): Drill the offset between two cards in the stack — the math behind Pit Hartling's Quartets routines (_In Order to Amaze_). Two sub-modes (compute, apply) and two conventions (cyclic 1..N-1, signed shortest). Respects stack range; needs at least 6 cards in range

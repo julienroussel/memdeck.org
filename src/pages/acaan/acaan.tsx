@@ -77,7 +77,7 @@ export const Acaan = () => {
     handleCutDepthChange,
     handleCheckAnswer,
     handleKeyDown,
-  } = useCutDepthInput(submitAnswer);
+  } = useCutDepthInput(submitAnswer, scenario);
 
   return (
     <div className="fullMantineContainerHeight">

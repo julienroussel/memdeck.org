@@ -162,6 +162,7 @@ export const useDistanceGame = (
     createTimeoutAction,
     dispatch,
     onTimeout: handleTimeout,
+    roundKey: state.card,
     timeRemaining: state.timeRemaining,
     timerSettings,
   });

@@ -371,6 +371,8 @@ describe("gameReducer", () => {
     const next = gameReducer(initial, { type: "WRONG_ANSWER" });
     expect(next.fails).toBe(1);
     expect(next.successes).toBe(0);
+    // Same object, so the game timer's roundKey does not restart the tick.
+    expect(next.card).toBe(initial.card);
     if (next.display === "compute" && initial.display === "compute") {
       expect(next.expectedDistance).toBe(initial.expectedDistance);
     }

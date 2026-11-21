@@ -1,24 +1,90 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { DECK_SIZE } from "../../constants";
+import { mnemonica } from "../../types/stacks/mnemonica";
+import type { AcaanScenario } from "../../utils/acaan-scenario";
+import { generateAcaanScenario } from "../../utils/acaan-scenario";
 import { useCutDepthInput } from "./use-cut-depth-input";
 
 // Cast intentional: only `key` and `preventDefault` are needed by the handler under test
 const createKeyboardEvent = (key: string) =>
   ({ key, preventDefault: vi.fn() }) as unknown as React.KeyboardEvent;
 
+const SCENARIO = generateAcaanScenario(mnemonica.order);
+
 describe("useCutDepthInput", () => {
+  describe("scenario change", () => {
+    it("drops input typed for the previous scenario", () => {
+      const submitAnswer = vi.fn();
+      const { result, rerender } = renderHook(
+        ({ scenario }: { scenario: AcaanScenario }) =>
+          useCutDepthInput(submitAnswer, scenario),
+        { initialProps: { scenario: SCENARIO } }
+      );
+      act(() => {
+        result.current.handleCutDepthChange(2);
+      });
+
+      rerender({ scenario: generateAcaanScenario(mnemonica.order) });
+
+      expect(result.current.cutDepth).toBe("");
+    });
+
+    it("accepts and submits input typed for the new scenario", () => {
+      const submitAnswer = vi.fn();
+      const { result, rerender } = renderHook(
+        ({ scenario }: { scenario: AcaanScenario }) =>
+          useCutDepthInput(submitAnswer, scenario),
+        { initialProps: { scenario: SCENARIO } }
+      );
+      act(() => {
+        result.current.handleCutDepthChange(2);
+      });
+      rerender({ scenario: generateAcaanScenario(mnemonica.order) });
+
+      act(() => {
+        result.current.handleCutDepthChange(3);
+      });
+      expect(result.current.cutDepth).toBe(3);
+      act(() => {
+        result.current.handleCheckAnswer();
+      });
+
+      expect(submitAnswer).toHaveBeenCalledWith(3);
+    });
+
+    it("keeps input while the scenario is unchanged", () => {
+      const submitAnswer = vi.fn();
+      const { result, rerender } = renderHook(
+        ({ scenario }: { scenario: AcaanScenario }) =>
+          useCutDepthInput(submitAnswer, scenario),
+        { initialProps: { scenario: SCENARIO } }
+      );
+      act(() => {
+        result.current.handleCutDepthChange(2);
+      });
+
+      rerender({ scenario: SCENARIO });
+
+      expect(result.current.cutDepth).toBe(2);
+    });
+  });
+
   describe("initial state", () => {
     it("returns cutDepth as empty string", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       expect(result.current.cutDepth).toBe("");
     });
 
     it("returns maxCutDepth as DECK_SIZE - 1", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       expect(result.current.maxCutDepth).toBe(DECK_SIZE - 1);
     });
@@ -27,7 +93,9 @@ describe("useCutDepthInput", () => {
   describe("handleCutDepthChange", () => {
     it("sets cutDepth to a numeric value when given a number", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(25);
@@ -38,7 +106,9 @@ describe("useCutDepthInput", () => {
 
     it("sets cutDepth to a numeric value when given a numeric string", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange("10");
@@ -49,7 +119,9 @@ describe("useCutDepthInput", () => {
 
     it("clears cutDepth to empty string when given an empty string", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(25);
@@ -64,7 +136,9 @@ describe("useCutDepthInput", () => {
 
     it("sets cutDepth to 0 when given 0", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(0);
@@ -75,7 +149,9 @@ describe("useCutDepthInput", () => {
 
     it("sets cutDepth to 0 when given the string '0'", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange("0");
@@ -86,7 +162,9 @@ describe("useCutDepthInput", () => {
 
     it("sets cutDepth to NaN when given a non-numeric string", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange("abc");
@@ -99,7 +177,9 @@ describe("useCutDepthInput", () => {
   describe("handleCheckAnswer", () => {
     it("calls submitAnswer with the current cutDepth when valid", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(15);
@@ -114,7 +194,9 @@ describe("useCutDepthInput", () => {
 
     it("resets cutDepth to empty string after submitting", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(15);
@@ -129,7 +211,9 @@ describe("useCutDepthInput", () => {
 
     it("does not call submitAnswer on second consecutive check after reset", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(15);
@@ -148,7 +232,9 @@ describe("useCutDepthInput", () => {
 
     it("calls submitAnswer with 0 when cutDepth is 0", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(0);
@@ -163,7 +249,9 @@ describe("useCutDepthInput", () => {
 
     it("calls submitAnswer with DECK_SIZE - 1 when cutDepth is at max", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(DECK_SIZE - 1);
@@ -178,7 +266,9 @@ describe("useCutDepthInput", () => {
 
     it("does nothing when cutDepth is empty string", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCheckAnswer();
@@ -190,7 +280,9 @@ describe("useCutDepthInput", () => {
 
     it("does not call submitAnswer for negative cutDepth", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(-1);
@@ -206,7 +298,9 @@ describe("useCutDepthInput", () => {
 
     it("does not call submitAnswer for cutDepth greater than max", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(DECK_SIZE);
@@ -221,7 +315,9 @@ describe("useCutDepthInput", () => {
 
     it("does not call submitAnswer for non-integer cutDepth", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(3.5);
@@ -237,7 +333,9 @@ describe("useCutDepthInput", () => {
 
     it("does not call submitAnswer when cutDepth is NaN", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange("abc");
@@ -253,7 +351,9 @@ describe("useCutDepthInput", () => {
 
     it("does not reset cutDepth when validation fails", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(DECK_SIZE);
@@ -270,7 +370,9 @@ describe("useCutDepthInput", () => {
   describe("handleKeyDown", () => {
     it("calls preventDefault and submitAnswer on Enter key when cutDepth is valid", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(20);
@@ -288,7 +390,9 @@ describe("useCutDepthInput", () => {
 
     it("resets cutDepth after Enter key triggers submission", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(20);
@@ -303,7 +407,9 @@ describe("useCutDepthInput", () => {
 
     it("does nothing on Enter key when cutDepth is empty", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       const event = createKeyboardEvent("Enter");
 
@@ -317,7 +423,9 @@ describe("useCutDepthInput", () => {
 
     it("does nothing on Enter key when cutDepth is invalid", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(DECK_SIZE);
@@ -336,7 +444,9 @@ describe("useCutDepthInput", () => {
 
     it("does nothing on non-Enter keys when cutDepth is set", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(20);
@@ -352,7 +462,9 @@ describe("useCutDepthInput", () => {
 
     it("does nothing on Tab key", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(10);
@@ -367,7 +479,9 @@ describe("useCutDepthInput", () => {
 
     it("does nothing on Space key", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       act(() => {
         result.current.handleCutDepthChange(10);
@@ -382,7 +496,9 @@ describe("useCutDepthInput", () => {
 
     it("does nothing on non-Enter key when cutDepth is empty", () => {
       const submitAnswer = vi.fn();
-      const { result } = renderHook(() => useCutDepthInput(submitAnswer));
+      const { result } = renderHook(() =>
+        useCutDepthInput(submitAnswer, SCENARIO)
+      );
 
       const event = createKeyboardEvent("Escape");
 

@@ -107,6 +107,7 @@ export const useAcaanGame = (
     createTimeoutAction,
     dispatch,
     onTimeout: handleTimeout,
+    roundKey: state.scenario,
     timeRemaining: state.timeRemaining,
     timerSettings,
   });

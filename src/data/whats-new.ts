@@ -30,6 +30,29 @@ export type WhatsNewEntry = {
 export const WHATS_NEW_ENTRIES: readonly WhatsNewEntry[] = [
   {
     body: {
+      de: "Wenn dir dein Stack in Fleisch und Blut übergegangen ist und sich zehn Sekunden wie ein fauler Nachmittag anfühlen.",
+      en: "For when your stack is second nature and ten seconds feels like a lazy afternoon.",
+      es: "Para cuando tu stack ya es una segunda naturaleza y diez segundos te parecen una tarde de siesta.",
+      fr: "Pour quand votre stack est devenu une seconde nature et que dix secondes ressemblent à un après-midi de sieste.",
+      it: "Per quando il tuo stack è una seconda natura e dieci secondi sembrano un pomeriggio di ozio.",
+      nl: "Voor als je stack een tweede natuur is en tien seconden voelen als een luie middag.",
+      pt: "Para quando o seu stack já é uma segunda natureza e dez segundos parecem uma tarde preguiçosa.",
+    },
+    id: "five-second-timer",
+    releasedAt: "2026-11-21T12:00:00Z",
+    title: {
+      de: "5-Sekunden-Timer",
+      en: "5-second timer",
+      es: "Temporizador de 5 segundos",
+      fr: "Chrono de 5 secondes",
+      it: "Timer da 5 secondi",
+      nl: "Timer van 5 seconden",
+      pt: "Temporizador de 5 segundos",
+    },
+    type: "feature",
+  },
+  {
+    body: {
       de: "Sieh dir aktuelle Updates auf einen Blick an, mit einem „Neu“-Badge im Menü, sobald es Neuigkeiten gibt.",
       en: 'See recent updates at a glance, with a "New" badge in the menu when there\'s something fresh.',
       es: "Mira las últimas actualizaciones de un vistazo, con una insignia «Nuevo» en el menú cuando hay novedades.",

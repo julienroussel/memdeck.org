@@ -12,17 +12,7 @@ import {
   handleLocalDbWriteFailed,
   reportLocalDbCorruption,
 } from "../utils/localstorage-telemetry";
-
-/**
- * Allowed timer durations as a runtime set, kept in sync with the
- * `TimerDuration` literal union via `satisfies`. If `TimerDuration` ever
- * gains or drops a value, this tuple must be updated or the type-check fails.
- */
-const TIMER_DURATION_VALUES = [
-  10, 15, 30,
-] as const satisfies readonly TimerDuration[];
-
-const TIMER_DURATIONS: ReadonlySet<number> = new Set(TIMER_DURATION_VALUES);
+import { isValidDuration } from "../utils/timer";
 
 const DEFAULT_TIMER_SETTINGS: TimerSettings = {
   duration: 15,
@@ -30,7 +20,7 @@ const DEFAULT_TIMER_SETTINGS: TimerSettings = {
 };
 
 const isTimerDuration = (value: unknown): value is TimerDuration =>
-  typeof value === "number" && TIMER_DURATIONS.has(value);
+  typeof value === "number" && isValidDuration(value);
 
 export const isTimerSettings = (value: unknown): value is TimerSettings =>
   typeof value === "object" &&

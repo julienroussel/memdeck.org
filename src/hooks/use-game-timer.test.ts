@@ -91,7 +91,10 @@ type HookProps = {
   duration: TimerDuration;
   timeRemaining: number;
   onTimeout?: () => void;
+  roundKey?: object;
 };
+
+const DEFAULT_ROUND = { round: 1 };
 
 describe("useGameTimer hook effects", () => {
   const mockDispatch = vi.fn();
@@ -100,11 +103,18 @@ describe("useGameTimer hook effects", () => {
 
   const renderTimerHook = (props: HookProps) =>
     renderHook(
-      ({ enabled, duration, timeRemaining, onTimeout }: HookProps) =>
+      ({
+        enabled,
+        duration,
+        timeRemaining,
+        onTimeout,
+        roundKey = DEFAULT_ROUND,
+      }: HookProps) =>
         useGameTimer({
           createTimeoutAction: mockCreateTimeoutAction,
           dispatch: mockDispatch,
           onTimeout,
+          roundKey,
           timeRemaining,
           timerSettings: { duration, enabled },
         }),
@@ -164,6 +174,83 @@ describe("useGameTimer hook effects", () => {
   });
 
   describe("timer tick effect", () => {
+    it("restarts the tick when the duration changes to the time already left", () => {
+      const { rerender } = renderTimerHook({
+        duration: 15,
+        enabled: true,
+        timeRemaining: 10,
+      });
+      mockDispatch.mockClear();
+
+      act(() => {
+        vi.advanceTimersByTime(900);
+      });
+      rerender({ duration: 10, enabled: true, timeRemaining: 10 });
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+      expect(mockDispatch).not.toHaveBeenCalledWith({ type: "TICK" });
+
+      act(() => {
+        vi.advanceTimersByTime(900);
+      });
+      expect(mockDispatch).toHaveBeenCalledWith({ type: "TICK" });
+    });
+
+    it("keeps the pending tick when re-rendered with the same round", () => {
+      const round = { round: 1 };
+      const { rerender } = renderTimerHook({
+        duration: 5,
+        enabled: true,
+        roundKey: round,
+        timeRemaining: 5,
+      });
+      mockDispatch.mockClear();
+
+      act(() => {
+        vi.advanceTimersByTime(900);
+      });
+      rerender({
+        duration: 5,
+        enabled: true,
+        roundKey: round,
+        timeRemaining: 5,
+      });
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+      expect(mockDispatch).toHaveBeenCalledWith({ type: "TICK" });
+    });
+
+    it("restarts the tick when a new round starts before the first tick", () => {
+      const { rerender } = renderTimerHook({
+        duration: 5,
+        enabled: true,
+        roundKey: { round: 1 },
+        timeRemaining: 5,
+      });
+      mockDispatch.mockClear();
+
+      act(() => {
+        vi.advanceTimersByTime(900);
+      });
+      rerender({
+        duration: 5,
+        enabled: true,
+        roundKey: { round: 2 },
+        timeRemaining: 5,
+      });
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+      expect(mockDispatch).not.toHaveBeenCalledWith({ type: "TICK" });
+
+      act(() => {
+        vi.advanceTimersByTime(900);
+      });
+      expect(mockDispatch).toHaveBeenCalledWith({ type: "TICK" });
+    });
+
     it("dispatches TICK after 1 second when timer is enabled and time remaining is positive", () => {
       renderTimerHook({ duration: 30, enabled: true, timeRemaining: 30 });
       mockDispatch.mockClear();
@@ -342,6 +429,7 @@ describe("useGameTimer hook effects", () => {
           createTimeoutAction: () => ({ type: "TIMEOUT" as const }),
           dispatch: orderedDispatch,
           onTimeout: orderedOnTimeout,
+          roundKey: DEFAULT_ROUND,
           timeRemaining: 0,
           timerSettings: { duration: 30, enabled: true },
         })

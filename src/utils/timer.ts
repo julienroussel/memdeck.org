@@ -1,4 +1,5 @@
 import type { TimerDuration } from "../types/timer";
+import { VALID_DURATIONS } from "../types/timer";
 import { includes } from "./includes";
 
 /**
@@ -11,12 +12,19 @@ export const calculateTimerProgress = (
 ): number => (timerDuration > 0 ? (timeRemaining / timerDuration) * 100 : 0);
 
 /**
- * Returns a color string based on time remaining for timer display.
+ * Returns a color string based on time remaining for timer display, first match wins:
+ * Blue: the full duration remains, so a short timer does not start in warning
  * Red: <= 3 seconds (critical)
  * Yellow: <= 5 seconds (warning)
- * Blue: > 5 seconds (normal)
+ * Blue: otherwise (normal)
  */
-export const getTimerColor = (timeRemaining: number): string => {
+export const getTimerColor = (
+  timeRemaining: number,
+  timerDuration: number
+): string => {
+  if (timerDuration > 0 && timeRemaining >= timerDuration) {
+    return "blue";
+  }
   if (timeRemaining <= 3) {
     return "red";
   }
@@ -25,9 +33,6 @@ export const getTimerColor = (timeRemaining: number): string => {
   }
   return "blue";
 };
-
-/** Valid timer duration options */
-export const VALID_DURATIONS: readonly TimerDuration[] = [10, 15, 30];
 
 /** Timer duration options formatted for SegmentedControl */
 export const TIMER_DURATION_OPTIONS: { label: string; value: string }[] =

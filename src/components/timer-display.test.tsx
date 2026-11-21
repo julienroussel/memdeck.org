@@ -160,6 +160,15 @@ describe("TimerDisplay", () => {
       expect(liveRegion?.textContent).toBe("");
     });
 
+    it("does not announce the 5-second warning on a 5-second timer", () => {
+      const { container } = render(
+        <TimerDisplay timeRemaining={5} timerDuration={5} />
+      );
+
+      const liveRegion = container.querySelector('[aria-live="assertive"]');
+      expect(liveRegion?.textContent).toBe("");
+    });
+
     it("does not announce when time remaining is 0", () => {
       const { container } = render(
         <TimerDisplay timeRemaining={0} timerDuration={30} />
