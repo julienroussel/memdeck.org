@@ -12,6 +12,7 @@ import { test } from "./fixtures/test-setup";
 const SETTINGS_PATTERN = /settings/iu;
 const CUT_DEPTH_PATTERN = /cut depth/iu;
 const CHECK_PATTERN = /check/iu;
+const REVEAL_PATTERN = /reveal answer/iu;
 const TIMED_MODE_PATTERN = /timed mode/iu;
 const START_SESSION_PATTERN = /start \d+ question session/iu;
 const STOP_PATTERN = /stop/iu;
@@ -169,6 +170,19 @@ test.describe("ACAAN Training", () => {
 
     // Button should now be enabled
     await expect(checkButton).toBeEnabled();
+  });
+
+  test("should clear typed cut depth when the answer is revealed", async ({
+    page,
+  }) => {
+    const cutDepthInput = page.getByLabel(CUT_DEPTH_PATTERN);
+    const checkButton = page.getByRole("button", { name: CHECK_PATTERN });
+
+    await cutDepthInput.fill("12");
+    await page.getByRole("button", { name: REVEAL_PATTERN }).click();
+
+    await expect(cutDepthInput).toHaveValue("");
+    await expect(checkButton).toBeDisabled();
   });
 
   test("should accept cut depth input and submit answer", async ({ page }) => {
