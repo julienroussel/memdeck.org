@@ -180,20 +180,20 @@ importers:
   .:
     dependencies:
       '@mantine/core':
-        specifier: 9.8.1
-        version: 9.8.1(@mantine/hooks@9.8.1(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: 9.8.2
+        version: 9.8.2(@mantine/hooks@9.8.2(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@mantine/hooks':
-        specifier: 9.8.1
-        version: 9.8.1(react@19.3.1)
+        specifier: 9.8.2
+        version: 9.8.2(react@19.3.1)
       '@mantine/notifications':
-        specifier: 9.8.1
-        version: 9.8.1(@mantine/core@9.8.1(@mantine/hooks@9.8.1(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@mantine/hooks@9.8.1(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: 9.8.2
+        version: 9.8.2(@mantine/core@9.8.2(@mantine/hooks@9.8.2(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@mantine/hooks@9.8.2(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@tabler/icons-react':
         specifier: 3.52.0
         version: 3.52.0(react@19.3.1)
       i18next:
-        specifier: 27.2.1
-        version: 27.2.1(typescript@7.0.2)
+        specifier: 27.2.2
+        version: 27.2.2(typescript@7.0.2)
       react:
         specifier: 19.3.1
         version: 19.3.1
@@ -208,7 +208,7 @@ importers:
         version: 3.0.1
       react-i18next:
         specifier: 18.0.3
-        version: 18.0.3(@types/react@19.3.0)(i18next@27.2.1(typescript@7.0.2))(react@19.3.1)(typescript@7.0.2)
+        version: 18.0.3(@types/react@19.3.0)(i18next@27.2.2(typescript@7.0.2))(react@19.3.1)(typescript@7.0.2)
       react-router:
         specifier: 8.5.2
         version: 8.5.2(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -256,8 +256,8 @@ importers:
         specifier: 21.0.4
         version: 21.0.4
       knip:
-        specifier: 6.46.1
-        version: 6.46.1
+        specifier: 6.47.0
+        version: 6.47.0
       lefthook:
         specifier: 2.2.2
         version: 2.2.2
@@ -1295,28 +1295,28 @@ packages:
     resolution: {integrity: sha512-+hiBITsPkxtMnHJLuL7K6I3DPzanfsfPoBobj24ThdcB/eqgkuqjyXU6PmujObPofx1fWNxMJFq2LdHabzgDAA==}
     engines: {node: '>=22.19.0'}
 
-  '@mantine/core@9.8.1':
-    resolution: {integrity: sha512-+ayBTxun7MslJL6x4qaylVy6TyHu3o68+PH22gt70eJSHgy0CHYR/c2q+BYxS8WvORuc4f5mr0xFbi0vzlgHug==}
+  '@mantine/core@9.8.2':
+    resolution: {integrity: sha512-PEBlIr5A80Indc8mIp+JcMzmmtv2YioubzXsLossk4cDhgm3YX2DBFQi/hQknmOaU6wt9h8l4T8s4gh6WPM21Q==}
     peerDependencies:
-      '@mantine/hooks': 9.8.1
+      '@mantine/hooks': 9.8.2
       react: ^19.2.0
       react-dom: ^19.2.0
 
-  '@mantine/hooks@9.8.1':
-    resolution: {integrity: sha512-aAbY3zcqrS/n+wbMnKBXMiF5TJ7HZ06sH455Cf4ZkWRXko9Td2FYSe9aONCzXFaW62XqaWHBICyeIsAmUds3uA==}
+  '@mantine/hooks@9.8.2':
+    resolution: {integrity: sha512-BZa+6fLEvAxaos2qInPZfNzq0k1WSIIkHA3CdD4quozJhmp7Kt1KE05YAkVPNrPisCx3c5YgmkRqtu9NcRegCw==}
     peerDependencies:
       react: ^19.2.0
 
-  '@mantine/notifications@9.8.1':
-    resolution: {integrity: sha512-lqi9+HfXMbMKzEsAIUkWRFw2rURzgVMv8//oCyq0rhy27X6NjSMMlzvwsjbSazT/+WugDIYLJ8khZ+JMW1gkMQ==}
+  '@mantine/notifications@9.8.2':
+    resolution: {integrity: sha512-kKhT1jEl6sadOvB7efMJZuWfSRiyCDrAzWw0u4oaCKfOlAgrSo8wooIQ9gIgWct6jejdzIUK8ovBOVeLLx/dnA==}
     peerDependencies:
-      '@mantine/core': 9.8.1
-      '@mantine/hooks': 9.8.1
+      '@mantine/core': 9.8.2
+      '@mantine/hooks': 9.8.2
       react: ^19.2.0
       react-dom: ^19.2.0
 
-  '@mantine/store@9.8.1':
-    resolution: {integrity: sha512-Wb5+6i6m3GdNgOjX1IbDPYrP76v9y4zThRoKDWH9Es+qY2c6gT2NpH7n10/zYgNPL8ipB6H6gGUPhLurs1o4kg==}
+  '@mantine/store@9.8.2':
+    resolution: {integrity: sha512-22kVzhs231cpcXdsKcQlRrmpzkbEMdJ7C+YKOVUBk5sUiP6bSAu4XY4Avj23Yjxy949G7Y4X4eAVSzjPgSUURA==}
     peerDependencies:
       react: ^19.2.0
 
@@ -3171,8 +3171,8 @@ packages:
     resolution: {integrity: sha512-eKCa6bwnJhvxj14kZk5NCPc6Hb6BdsU9DZcOnmQKSnO1VKrfV0zCvtttPZUsBvjmNDn8rpcJfpwSYnHBjc95MQ==}
     engines: {node: '>=18.18.0'}
 
-  i18next@27.2.1:
-    resolution: {integrity: sha512-dNYOxb2d+zjmn/vlvx99XribYwtJ/WcIfVY3d61QkOKAiJ1Kgt7Ow+mBq8v7YUC/K3dCr9dDDEjheKbRycWGdA==}
+  i18next@27.2.2:
+    resolution: {integrity: sha512-1/AJgz/bpE/YL6tqekQlZAzDhkmrUBbgU8+Xon/Lwv6c5WdYuyFZ9mb86OVfR2C2XujUDT7Rz23Ydaq4l981lA==}
     engines: {node: '>=22'}
     peerDependencies:
       typescript: ^5 || ^6 || ^7
@@ -3467,8 +3467,8 @@ packages:
     resolution: {integrity: sha512-p/nXbhSEcu3pZRdkW1OfJhpsVtW1gd4Wa1fnQc9YLiTfAjn0312eMKimbdIQzuZl9aa9xUGaRlP9T/CJE/ditQ==}
     engines: {node: '>=0.10.0'}
 
-  knip@6.46.1:
-    resolution: {integrity: sha512-5/ajqjZfmuv8O74+McrKBOSArKG6tsUgy6yJird36VZh9HiUq75qY4U39uqf9wjchEUOLrStuOZpFP057CZFRw==}
+  knip@6.47.0:
+    resolution: {integrity: sha512-nYmQnk0YqDXIJrYViJz88c8xw3tBDkpuAmofo58EkVPnKr6DnRKYtf6oIqcGVHZvXDE+gtmFuYx277/QsWng+A==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
@@ -6129,10 +6129,10 @@ snapshots:
       - webpack
       - yauzl
 
-  '@mantine/core@9.8.1(@mantine/hooks@9.8.1(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@mantine/core@9.8.2(@mantine/hooks@9.8.2(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@floating-ui/react': 0.27.20(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      '@mantine/hooks': 9.8.1(react@19.3.1)
+      '@mantine/hooks': 9.8.2(react@19.3.1)
       clsx: 2.1.1
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
@@ -6142,20 +6142,20 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@mantine/hooks@9.8.1(react@19.3.1)':
+  '@mantine/hooks@9.8.2(react@19.3.1)':
     dependencies:
       react: 19.3.1
 
-  '@mantine/notifications@9.8.1(@mantine/core@9.8.1(@mantine/hooks@9.8.1(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@mantine/hooks@9.8.1(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@mantine/notifications@9.8.2(@mantine/core@9.8.2(@mantine/hooks@9.8.2(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@mantine/hooks@9.8.2(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
-      '@mantine/core': 9.8.1(@mantine/hooks@9.8.1(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      '@mantine/hooks': 9.8.1(react@19.3.1)
-      '@mantine/store': 9.8.1(react@19.3.1)
+      '@mantine/core': 9.8.2(@mantine/hooks@9.8.2(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@mantine/hooks': 9.8.2(react@19.3.1)
+      '@mantine/store': 9.8.2(react@19.3.1)
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
       react-transition-group: 4.4.5(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
 
-  '@mantine/store@9.8.1(react@19.3.1)':
+  '@mantine/store@9.8.2(react@19.3.1)':
     dependencies:
       react: 19.3.1
 
@@ -7791,7 +7791,7 @@ snapshots:
 
   human-signals@8.0.1: {}
 
-  i18next@27.2.1(typescript@7.0.2):
+  i18next@27.2.2(typescript@7.0.2):
     optionalDependencies:
       typescript: 7.0.2
 
@@ -8062,7 +8062,7 @@ snapshots:
 
   jsonpointer@5.0.1: {}
 
-  knip@6.46.1:
+  knip@6.47.0:
     dependencies:
       formatly: 0.11.4
       get-tsconfig: 4.14.3
@@ -8733,10 +8733,10 @@ snapshots:
 
   react-ga4@3.0.1: {}
 
-  react-i18next@18.0.3(@types/react@19.3.0)(i18next@27.2.1(typescript@7.0.2))(react@19.3.1)(typescript@7.0.2):
+  react-i18next@18.0.3(@types/react@19.3.0)(i18next@27.2.2(typescript@7.0.2))(react@19.3.1)(typescript@7.0.2):
     dependencies:
       html-parse-stringify: 4.0.1
-      i18next: 27.2.1(typescript@7.0.2)
+      i18next: 27.2.2(typescript@7.0.2)
       react: 19.3.1
     optionalDependencies:
       '@types/react': 19.3.0
