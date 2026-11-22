@@ -144,6 +144,7 @@ describe("analytics", () => {
       eventBus.emit.SESSION_STARTED({
         config: { totalQuestions: 20, type: "structured" },
         mode: "flashcard",
+        rangeSize: 52,
       });
 
       expect(mockEvent).toHaveBeenCalledWith({
@@ -153,10 +154,25 @@ describe("analytics", () => {
       });
     });
 
+    it("tracks SESSION_STARTED with the range for a session longer than it", () => {
+      eventBus.emit.SESSION_STARTED({
+        config: { totalQuestions: 30, type: "structured" },
+        mode: "flashcard",
+        rangeSize: 17,
+      });
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        action: "Started",
+        category: "Session",
+        label: "flashcard (30q, range 17)",
+      });
+    });
+
     it("tracks SESSION_STARTED for open session via event bus", () => {
       eventBus.emit.SESSION_STARTED({
         config: { type: "open" },
         mode: "acaan",
+        rangeSize: 52,
       });
 
       expect(mockEvent).toHaveBeenCalledWith({
@@ -899,10 +915,14 @@ describe("analytics", () => {
 
   describe("trackSessionStarted", () => {
     it("sends session started event for structured session", () => {
-      analytics.trackSessionStarted("flashcard", {
-        totalQuestions: 10,
-        type: "structured",
-      });
+      analytics.trackSessionStarted(
+        "flashcard",
+        {
+          totalQuestions: 10,
+          type: "structured",
+        },
+        52
+      );
 
       expect(mockEvent).toHaveBeenCalledWith({
         action: "Started",
@@ -912,12 +932,40 @@ describe("analytics", () => {
     });
 
     it("sends session started event for open session", () => {
-      analytics.trackSessionStarted("acaan", { type: "open" });
+      analytics.trackSessionStarted("acaan", { type: "open" }, 52);
 
       expect(mockEvent).toHaveBeenCalledWith({
         action: "Started",
         category: "Session",
         label: "acaan (open)",
+      });
+    });
+
+    it("names the range when the session is longer than it", () => {
+      analytics.trackSessionStarted(
+        "flashcard",
+        { totalQuestions: 30, type: "structured" },
+        17
+      );
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        action: "Started",
+        category: "Session",
+        label: "flashcard (30q, range 17)",
+      });
+    });
+
+    it("keeps the plain label when the session is as long as the range", () => {
+      analytics.trackSessionStarted(
+        "flashcard",
+        { totalQuestions: 17, type: "structured" },
+        17
+      );
+
+      expect(mockEvent).toHaveBeenCalledWith({
+        action: "Started",
+        category: "Session",
+        label: "flashcard (17q)",
       });
     });
   });
@@ -1196,10 +1244,14 @@ describe("analytics", () => {
     });
 
     it("does not track session started", () => {
-      analytics.trackSessionStarted("flashcard", {
-        totalQuestions: 10,
-        type: "structured",
-      });
+      analytics.trackSessionStarted(
+        "flashcard",
+        {
+          totalQuestions: 10,
+          type: "structured",
+        },
+        52
+      );
 
       expect(mockEvent).not.toHaveBeenCalled();
     });

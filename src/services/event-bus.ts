@@ -23,7 +23,11 @@ type AnalyticsEvents = {
   DISTANCE_ANSWER: { correct: boolean; stackName: string };
   DISTANCE_MODE_CHANGED: { mode: DistanceMode };
   DISTANCE_CONVENTION_CHANGED: { convention: DistanceConvention };
-  SESSION_STARTED: { mode: TrainingMode; config: SessionConfig };
+  SESSION_STARTED: {
+    mode: TrainingMode;
+    config: SessionConfig;
+    rangeSize: number;
+  };
   SESSION_COMPLETED: {
     mode: TrainingMode;
     accuracy: number;

@@ -39,13 +39,21 @@ const trackWebVital = ({ id, name, value }: Metric) => {
   });
 };
 
+// A session longer than its stack range names the range, so it stays apart
+// from the same length on a wider range; every other label is unchanged. The
+// range is the one at session start: a mid-session change is not re-sent.
 const formatSessionLabel = (
   mode: TrainingMode,
-  config: SessionConfig
-): string =>
-  config.type === "structured"
-    ? `${mode} (${config.totalQuestions}q)`
-    : `${mode} (open)`;
+  config: SessionConfig,
+  rangeSize: number
+): string => {
+  if (config.type === "open") {
+    return `${mode} (open)`;
+  }
+  return config.totalQuestions > rangeSize
+    ? `${mode} (${config.totalQuestions}q, range ${rangeSize})`
+    : `${mode} (${config.totalQuestions}q)`;
+};
 
 // Wrap a subscriber so an exception inside it surfaces through trackError
 // without aborting iteration over the remaining listeners (eventBus already
@@ -136,8 +144,8 @@ const subscribeToEvents = () => {
   );
 
   eventBus.subscribe.SESSION_STARTED(
-    safeListener("SESSION_STARTED", ({ mode, config }) => {
-      analytics.trackSessionStarted(mode, config);
+    safeListener("SESSION_STARTED", ({ mode, config, rangeSize }) => {
+      analytics.trackSessionStarted(mode, config, rangeSize);
     })
   );
 
@@ -374,14 +382,18 @@ export const analytics = {
     });
   },
 
-  trackSessionStarted: (mode: TrainingMode, config: SessionConfig) => {
+  trackSessionStarted: (
+    mode: TrainingMode,
+    config: SessionConfig,
+    rangeSize: number
+  ) => {
     if (!isEnabled()) {
       return;
     }
     ReactGA.event({
       action: "Started",
       category: "Session",
-      label: formatSessionLabel(mode, config),
+      label: formatSessionLabel(mode, config, rangeSize),
     });
   },
 
