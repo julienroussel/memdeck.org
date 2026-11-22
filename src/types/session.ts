@@ -3,7 +3,7 @@ import type { DistanceConvention, DistanceMode } from "./distance";
 import type { FlashcardMode } from "./flashcard";
 import type { SpotCheckMode } from "./spot-check";
 import type { StackLimits } from "./stack-limits";
-import type { StackKey } from "./stacks";
+import type { DeckPosition, StackKey } from "./stacks";
 
 /** Training mode identifier (extensible for future modes) */
 export const TRAINING_MODES = [
@@ -39,7 +39,12 @@ export type ActiveSessionBase = {
 
 /** Runtime state of an active session */
 export type ActiveSession =
-  | (ActiveSessionBase & { mode: "flashcard"; flashcardMode: FlashcardMode })
+  | (ActiveSessionBase & {
+      mode: "flashcard";
+      flashcardMode: FlashcardMode;
+      /** The Flashcard focus list in effect, which replaces `stackLimits` while set. */
+      focusPositions?: readonly DeckPosition[];
+    })
   | (ActiveSessionBase & { mode: "acaan" })
   | (ActiveSessionBase & { mode: "spotcheck"; spotCheckMode: SpotCheckMode })
   | (ActiveSessionBase & {
@@ -71,7 +76,13 @@ type SessionRecordBase = {
 
 /** Persisted session record (immutable snapshot) */
 export type SessionRecord =
-  | (SessionRecordBase & { mode: "flashcard"; flashcardMode?: FlashcardMode })
+  | (SessionRecordBase & {
+      mode: "flashcard";
+      flashcardMode?: FlashcardMode;
+      // Brand erased for the same reason as `stackLimits`. Set instead of
+      // `stackLimits` when the session trained a focus list.
+      focusPositions?: readonly number[];
+    })
   | (SessionRecordBase & { mode: "acaan" })
   | (SessionRecordBase & {
       mode: "spotcheck";

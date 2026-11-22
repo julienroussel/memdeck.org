@@ -137,6 +137,49 @@ describe("isSessionRecord", () => {
     expect(isSessionRecordArray(arr)).toBe(true);
   });
 
+  it("returns true for a Flashcard record with a focus list", () => {
+    expect(
+      isSessionRecord(makeRecord({ focusPositions: [3, 17, 25, 40, 52] }))
+    ).toBe(true);
+  });
+
+  it("returns true for a Flashcard record with a focus list shorter than today's minimum", () => {
+    expect(isSessionRecord(makeRecord({ focusPositions: [3, 17] }))).toBe(true);
+  });
+
+  it("returns false for a Flashcard record with both a focus list and a range", () => {
+    const badRecord = {
+      ...makeRecord(),
+      focusPositions: [3, 17, 25, 40, 52],
+      stackLimits: { end: 13, start: 1 },
+    };
+    expect(isSessionRecord(badRecord)).toBe(false);
+  });
+
+  it.each([
+    ["empty", []],
+    ["unsorted", [17, 3, 25, 40, 52]],
+    ["outside the deck", [3, 17, 25, 40, 53]],
+    ["not an array", "3,17,25,40,52"],
+    ["null", null],
+  ])("returns false for a Flashcard focus list that is %s", (_label, value) => {
+    expect(isSessionRecord({ ...makeRecord(), focusPositions: value })).toBe(
+      false
+    );
+  });
+
+  it.each(["acaan", "distance", "spotcheck"] as const)(
+    "returns false for a %s record carrying a focus list",
+    (mode) => {
+      const badRecord = {
+        ...makeRecord(),
+        focusPositions: [1, 2, 3, 4, 5],
+        mode,
+      };
+      expect(isSessionRecord(badRecord)).toBe(false);
+    }
+  );
+
   it("returns true when stackLimits is a valid object", () => {
     const record = { ...makeRecord(), stackLimits: { end: 20, start: 1 } };
     expect(isSessionRecord(record)).toBe(true);

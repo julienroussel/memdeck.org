@@ -12,6 +12,7 @@ import type {
   SessionRecord,
   SessionSummary,
 } from "../types/session";
+import { isRecordedFocusPositions } from "./focus-positions";
 import { dispatchKeyChange, probeStoredValue } from "./localstorage";
 import { clearLastSaveFailedBreadcrumbForSession } from "./session-breadcrumbs";
 import { calculateAccuracy } from "./session-formatting";
@@ -43,12 +44,23 @@ export const buildSessionRecord = (session: ActiveSession): SessionRecord => {
   };
 
   switch (session.mode) {
-    case "flashcard":
+    case "flashcard": {
+      // A focus list replaces the range, and `isSessionRecord` refuses a
+      // record carrying both or a list it would not accept (empty or out of
+      // order), so such a list counts as none and the range is never written
+      // beside a list. One refused record would make the whole history
+      // unreadable.
+      const focusPositions = isRecordedFocusPositions(session.focusPositions)
+        ? session.focusPositions
+        : undefined;
       return {
         ...baseRecord,
         flashcardMode: session.flashcardMode,
+        focusPositions,
         mode: "flashcard" as const,
+        stackLimits: focusPositions ? undefined : session.stackLimits,
       };
+    }
     case "spotcheck":
       return {
         ...baseRecord,

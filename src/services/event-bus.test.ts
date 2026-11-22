@@ -84,6 +84,7 @@ describe("eventBus", () => {
 
       eventBus.emit.SESSION_STARTED({
         config: { totalQuestions: 10, type: "structured" },
+        focused: false,
         mode: "flashcard",
         rangeSize: 52,
       });
@@ -91,6 +92,7 @@ describe("eventBus", () => {
       expect(listener).toHaveBeenCalledOnce();
       expect(listener).toHaveBeenCalledWith({
         config: { totalQuestions: 10, type: "structured" },
+        focused: false,
         mode: "flashcard",
         rangeSize: 52,
       });

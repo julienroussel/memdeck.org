@@ -173,7 +173,20 @@
     "timesUp": "Tempo scaduto!",
     "movingToNext": "Passaggio alla carta successiva.",
     "revealTitle": "Risposta",
-    "answerCorrect": "Corretto"
+    "answerCorrect": "Corretto",
+    "focusLabel": "Posizioni mirate",
+    "focusDescription": "Allena solo queste posizioni, al posto dell'intervallo dello stack.",
+    "focusPlaceholder": "23, 24, 28-31, 42",
+    "focusApply": "Applica",
+    "focusClear": "Cancella",
+    "focusErrorInvalidToken": "«{{token}}» non è una posizione né un intervallo come 28-31.",
+    "focusErrorOutOfRange": "{{token}} non rientra nelle posizioni da 1 a {{max}}.",
+    "focusErrorReversedRange": "{{token}} è invertito. Prova con {{fixed}}.",
+    "focusErrorDuplicate": "{{position}} compare due volte.",
+    "focusErrorTooFew": "Inserisci almeno {{min}} posizioni.",
+    "focusActive_one": "{{count}} posizione mirata",
+    "focusActive_many": "{{count}} posizioni mirate",
+    "focusActive_other": "{{count}} posizioni mirate"
   },
   "acaan": {
     "pageTitle": "Allenamento ACAAN",

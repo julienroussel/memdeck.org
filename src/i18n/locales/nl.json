@@ -173,7 +173,19 @@
     "timesUp": "Tijd is om!",
     "movingToNext": "Door naar de volgende kaart.",
     "revealTitle": "Antwoord",
-    "answerCorrect": "Goed"
+    "answerCorrect": "Goed",
+    "focusLabel": "Focusposities",
+    "focusDescription": "Train alleen deze posities, in plaats van het stack-bereik.",
+    "focusPlaceholder": "23, 24, 28-31, 42",
+    "focusApply": "Toepassen",
+    "focusClear": "Wissen",
+    "focusErrorInvalidToken": "\"{{token}}\" is geen positie of bereik zoals 28-31.",
+    "focusErrorOutOfRange": "{{token}} valt buiten de posities 1 tot en met {{max}}.",
+    "focusErrorReversedRange": "{{token}} staat verkeerd om. Probeer {{fixed}}.",
+    "focusErrorDuplicate": "{{position}} staat twee keer in de lijst.",
+    "focusErrorTooFew": "Vul minstens {{min}} posities in.",
+    "focusActive_one": "Focus: {{count}} positie",
+    "focusActive_other": "Focus: {{count}} posities"
   },
   "acaan": {
     "pageTitle": "ACAAN Training",

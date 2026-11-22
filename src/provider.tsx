@@ -57,9 +57,13 @@ const cssVariablesResolver: CSSVariablesResolver = () => ({
   dark: {
     // Mantine's dark-2 default is 4.04:1 on dark-7 and 3.53:1 on dark-6.
     "--mantine-color-dimmed": "#999999",
+    // Input error text and invalid values: red-8 is 3.01:1 on dark-6, red-5 4.89:1.
+    "--mantine-color-error": "#ff6b6b",
   },
   light: {
     "--mantine-color-dimmed": "#495057",
+    // Input error text and invalid values: red-6 is 3.28:1 on white, red-9 5.46:1.
+    "--mantine-color-error": "#c92a2a",
     // Mantine's defaults for these fall below 4.5:1 for normal-size text: the
     // light variant draws shade 9 on shade 1, and filled orange or c="orange"
     // resolve to shade 8. Light scheme only, so dark-scheme pairs are unchanged.

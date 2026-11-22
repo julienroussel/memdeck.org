@@ -10,7 +10,6 @@ import type { FlashcardMode, NeighborDirection } from "../../types/flashcard";
 import type { GameScore } from "../../types/game";
 import type { PlayingCard } from "../../types/playingcard";
 import type { AnswerOutcome } from "../../types/session";
-import type { StackLimits } from "../../types/stack-limits";
 import type {
   PlayingCardPosition,
   Stack,
@@ -23,10 +22,12 @@ import type { AdvancePayload } from "./flashcard-game-reducer";
 import {
   createInitialState,
   gameReducer,
-  generateNeighborCardAndChoices,
-  generateNewCardAndChoices,
+  generatePoolCardAndChoices,
+  generatePoolNeighborCardAndChoices,
   isCorrectAnswer,
 } from "./flashcard-game-reducer";
+import type { FlashcardPool } from "./flashcard-pool";
+import { isSamePool } from "./flashcard-pool";
 import { getRandomDisplayMode } from "./utils";
 
 // --- Hook ---
@@ -56,7 +57,7 @@ export const useFlashcardGame = (
   mode: FlashcardMode,
   neighborDirection: NeighborDirection,
   timerSettings: TimerSettings,
-  limits: StackLimits,
+  pool: FlashcardPool,
   options?: UseFlashcardGameOptions
 ): UseFlashcardGameResult => {
   const { t } = useTranslation();
@@ -75,15 +76,15 @@ export const useFlashcardGame = (
   const neighborDirectionRef = useRef(neighborDirection);
   neighborDirectionRef.current = neighborDirection;
 
-  const limitsRef = useRef(limits);
-  limitsRef.current = limits;
+  const poolRef = useRef(pool);
+  poolRef.current = pool;
 
   const [state, dispatch] = useReducer(
     gameReducer,
     {
-      limits,
       mode,
       neighborDirection,
+      pool,
       stackOrder,
       timerDuration: timerSettings.duration,
     },
@@ -92,54 +93,54 @@ export const useFlashcardGame = (
       timerDuration,
       mode: m,
       neighborDirection: nd,
-      limits: l,
+      pool: p,
     }) =>
       m === "neighbor"
         ? createInitialState({
             flashcardMode: m,
-            limits: l,
             neighborDirection: nd,
+            pool: p,
             stackOrder: so,
             timerDuration,
           })
         : createInitialState({
             flashcardMode: m,
-            limits: l,
+            pool: p,
             stackOrder: so,
             timerDuration,
           })
   );
 
-  // Reset game synchronously when stack, mode, direction, or limits change.
+  // Reset game synchronously when stack, mode, direction, or pool change.
   // This uses React's "store previous props" pattern to avoid the flicker
   // caused by useEffect (which fires after render, committing an intermediate
   // state with stale choices to the DOM).
   const prevStackOrderRef = useRef(stackOrder);
   const prevModeRef = useRef(mode);
   const prevDirectionRef = useRef(neighborDirection);
-  const prevLimitsRef = useRef(limits);
+  const prevPoolRef = useRef(pool);
 
   const stackChanged = prevStackOrderRef.current !== stackOrder;
   const modeChanged = prevModeRef.current !== mode;
   const directionChanged = prevDirectionRef.current !== neighborDirection;
-  const limitsChanged =
-    prevLimitsRef.current.start !== limits.start ||
-    prevLimitsRef.current.end !== limits.end;
+  // Compared by content: a navbar range change while a focus list is set
+  // leaves the pool, and so the round, unchanged.
+  const poolChanged = !isSamePool(prevPoolRef.current, pool);
 
   // Note: timerSettings.duration is intentionally excluded from change detection.
   // Duration changes are handled by useGameTimer via the RESET_TIMER action.
-  if (stackChanged || modeChanged || directionChanged || limitsChanged) {
+  if (stackChanged || modeChanged || directionChanged || poolChanged) {
     prevStackOrderRef.current = stackOrder;
     prevModeRef.current = mode;
     prevDirectionRef.current = neighborDirection;
-    prevLimitsRef.current = limits;
+    prevPoolRef.current = pool;
     dispatch(
       mode === "neighbor"
         ? {
             payload: {
               flashcardMode: mode,
-              limits,
               neighborDirection,
+              pool,
               stackOrder,
               timerDuration: timerSettings.duration,
             },
@@ -148,7 +149,7 @@ export const useFlashcardGame = (
         : {
             payload: {
               flashcardMode: mode,
-              limits,
+              pool,
               stackOrder,
               timerDuration: timerSettings.duration,
             },
@@ -165,10 +166,10 @@ export const useFlashcardGame = (
 
   const generateNextRound = useCallback((): AdvancePayload => {
     if (modeRef.current === "neighbor") {
-      const result = generateNeighborCardAndChoices(
+      const result = generatePoolNeighborCardAndChoices(
         stackOrderRef.current,
         neighborDirectionRef.current,
-        limitsRef.current
+        poolRef.current
       );
       return {
         newAnswerCard: result.answerCard,
@@ -178,9 +179,9 @@ export const useFlashcardGame = (
         newResolvedDirection: result.resolvedDirection,
       };
     }
-    const { card: newCard, choices: newChoices } = generateNewCardAndChoices(
+    const { card: newCard, choices: newChoices } = generatePoolCardAndChoices(
       stackOrderRef.current,
-      limitsRef.current
+      poolRef.current
     );
     const newDisplay =
       modeRef.current === "bothmodes"

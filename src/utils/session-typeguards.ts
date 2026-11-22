@@ -11,6 +11,7 @@ import type {
 import { TRAINING_MODES } from "../types/session";
 import { isSpotCheckMode } from "../types/spot-check";
 import { stacks } from "../types/stacks";
+import { isRecordedFocusPositions } from "./focus-positions";
 import { includes } from "./includes";
 
 const VALID_STACK_KEYS: ReadonlySet<string> = new Set(Object.keys(stacks));
@@ -152,13 +153,19 @@ export const isSessionRecord = (value: unknown): value is SessionRecord => {
 const FOREIGN_MODE_FIELDS = {
   acaan: [
     "flashcardMode",
+    "focusPositions",
     "spotCheckMode",
     "distanceMode",
     "distanceConvention",
   ],
-  distance: ["flashcardMode", "spotCheckMode"],
+  distance: ["flashcardMode", "focusPositions", "spotCheckMode"],
   flashcard: ["spotCheckMode", "distanceMode", "distanceConvention"],
-  spotcheck: ["flashcardMode", "distanceMode", "distanceConvention"],
+  spotcheck: [
+    "flashcardMode",
+    "focusPositions",
+    "distanceMode",
+    "distanceConvention",
+  ],
 } as const satisfies Record<TrainingMode, readonly string[]>;
 
 // A foreign-mode field is treated as "absent" only when the key is missing
@@ -180,6 +187,15 @@ const validatePerModeFields = (value: Record<string, unknown>): boolean => {
     case "flashcard":
       return (
         isOptionalEnumField(value, "flashcardMode", isFlashcardMode) &&
+        isOptionalEnumField(
+          value,
+          "focusPositions",
+          isRecordedFocusPositions
+        ) &&
+        // A focus list replaces the range, so a record never carries both.
+        !(
+          value.focusPositions !== undefined && value.stackLimits !== undefined
+        ) &&
         hasNoForeignModeFields(value, "flashcard")
       );
     case "acaan":

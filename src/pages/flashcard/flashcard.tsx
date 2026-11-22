@@ -10,7 +10,6 @@ import { useCardImagePreload } from "../../hooks/use-card-image-preload";
 import { useDocumentMeta } from "../../hooks/use-document-meta";
 import { useRequiredStack } from "../../hooks/use-selected-stack";
 import { useSession } from "../../hooks/use-session";
-import { useStackLimits } from "../../hooks/use-stack-limits";
 import {
   tryHandler,
   useSuggestionDeepLink,
@@ -19,7 +18,9 @@ import { isFlashcardMode } from "../../types/flashcard";
 import { cardItems, numberItems } from "../../types/typeguards";
 import { FlashcardActiveRound } from "./flashcard-active-round";
 import { FlashcardSettingsContent } from "./flashcard-settings-content";
+import { getFlashcardSubtitle } from "./flashcard-subtitle";
 import { useFlashcardGame } from "./use-flashcard-game";
+import { useFlashcardPool } from "./use-flashcard-pool";
 import { useFlashcardSettings } from "./use-flashcard-settings";
 
 const breadcrumbSchema = buildBreadcrumbSchema("Flashcard", ROUTES.flashcard);
@@ -48,7 +49,8 @@ export const Flashcard = () => {
     tryHandlers: [tryHandler(isFlashcardMode, handleModeChange)],
   });
 
-  const { limits, rangeSize } = useStackLimits(stackKey);
+  const { pool, poolSize, focusPositions, setFocusPositions, sessionScope } =
+    useFlashcardPool(stackKey);
 
   const {
     status,
@@ -60,10 +62,10 @@ export const Flashcard = () => {
     dismissSummary,
   } = useSession({
     autoStart: !deepLinkPending,
+    ...sessionScope,
     flashcardMode: mode,
     mode: "flashcard",
     stackKey,
-    stackLimits: limits,
     timed: timerSettings.enabled,
   });
 
@@ -85,7 +87,7 @@ export const Flashcard = () => {
     mode,
     neighborDirection,
     timerSettings,
-    limits,
+    pool,
     { onAnswer: handleAnswer }
   );
 
@@ -113,26 +115,24 @@ export const Flashcard = () => {
             activeSession={activeSession}
             onStartSession={startSession}
             onStopSession={stopSession}
-            rangeSize={rangeSize}
+            rangeSize={poolSize}
             score={score}
             sessionTooltip={t("session.startSessionTooltip")}
             settingsContent={
               <FlashcardSettingsContent
+                focusPositions={focusPositions}
                 mode={mode}
                 neighborDirection={neighborDirection}
                 onDirectionChange={handleDirectionChange}
                 onDurationChange={setTimerDuration}
+                onFocusPositionsChange={setFocusPositions}
                 onModeChange={handleModeChange}
                 onTimerEnabledChange={handleTimerEnabledChange}
                 timerSettings={timerSettings}
               />
             }
             settingsTooltip={t("flashcard.settingsAriaLabel")}
-            subtitle={
-              mode === "neighbor"
-                ? t("flashcard.activeModeNeighbor")
-                : t("flashcard.activeModePosition")
-            }
+            subtitle={getFlashcardSubtitle(t, mode, pool)}
             title={t("flashcard.title")}
           />
           <Text c="dimmed" mb="xs" size="sm">

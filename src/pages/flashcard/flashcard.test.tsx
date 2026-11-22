@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { FOCUS_POSITIONS_LSK } from "../../constants";
 import { render } from "../../test-utils";
 import type { FlashcardMode, NeighborDirection } from "../../types/flashcard";
 import type { PlayingCardPosition } from "../../types/stacks";
@@ -114,7 +115,11 @@ vi.mock("../../hooks/use-suggestion-deep-link", () => ({
   useSuggestionDeepLink: () => mockDeepLinkPending,
 }));
 
-type CapturedSessionOpts = { autoStart: boolean };
+type CapturedSessionOpts = {
+  autoStart: boolean;
+  focusPositions?: readonly number[];
+  stackLimits?: unknown;
+};
 let capturedSessionOpts: CapturedSessionOpts[] = [];
 
 vi.mock("../../hooks/use-session", () => ({
@@ -148,9 +153,15 @@ vi.mock("./flashcard-active-round", () => ({
   },
 }));
 
+type CapturedHeaderProps = { rangeSize?: number; subtitle?: unknown };
+let capturedHeaderProps: CapturedHeaderProps[] = [];
+
 // Stub the heavy children so the test only exercises the Flashcard page logic.
 vi.mock("../../components/training-header", () => ({
-  TrainingHeader: () => null,
+  TrainingHeader: (props: CapturedHeaderProps) => {
+    capturedHeaderProps.push(props);
+    return null;
+  },
 }));
 vi.mock("../../components/session-summary-modal", () => ({
   SessionSummaryModal: () => null,
@@ -177,6 +188,7 @@ const lastRoundProps = (): CapturedRoundProps => {
 
 beforeEach(() => {
   capturedRoundProps = [];
+  capturedHeaderProps = [];
   capturedSessionOpts = [];
   mockDeepLinkPending = false;
   mockUseFlashcardSettings.mockReturnValue(settingsResult("neighbor", "after"));
@@ -185,6 +197,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.clearAllMocks();
+  localStorage.clear();
 });
 
 describe("Flashcard — neighbor mode answer card", () => {
@@ -243,5 +256,31 @@ describe("Flashcard — session auto-start vs deep link", () => {
     for (const opts of capturedSessionOpts) {
       expect(opts.autoStart).toBe(true);
     }
+  });
+});
+
+describe("Flashcard — focus list", () => {
+  const focusList = [23, 24, 28, 29, 30, 31, 42];
+
+  it("trains the stack's focus list in place of the range and says so", async () => {
+    mockUseFlashcardSettings.mockReturnValue(
+      settingsResult("cardonly", "after")
+    );
+    mockUseStackLimits.mockReturnValue(limitsResult(1, 13));
+    localStorage.setItem(
+      `${FOCUS_POSITIONS_LSK}-mnemonica`,
+      JSON.stringify(focusList)
+    );
+    const { Flashcard } = await import("./flashcard");
+    render(<Flashcard />);
+
+    expect(focusList).toContain(lastRoundProps().card.index);
+    const header = capturedHeaderProps.at(-1);
+    expect(header?.rangeSize).toBe(7);
+    expect(header?.subtitle).toBe("Position mode · Focus: 7 positions");
+    expect(capturedSessionOpts.at(-1)).toMatchObject({
+      focusPositions: focusList,
+    });
+    expect(capturedSessionOpts.at(-1)).not.toHaveProperty("stackLimits");
   });
 });

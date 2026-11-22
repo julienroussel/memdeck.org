@@ -173,7 +173,20 @@
     "timesUp": "Temps écoulé !",
     "movingToNext": "Passage à la carte suivante.",
     "revealTitle": "Réponse",
-    "answerCorrect": "Correct !"
+    "answerCorrect": "Correct !",
+    "focusLabel": "Positions ciblées",
+    "focusDescription": "Entraînez-vous uniquement sur ces positions, plutôt que sur la plage du stack.",
+    "focusPlaceholder": "23, 24, 28-31, 42",
+    "focusApply": "Appliquer",
+    "focusClear": "Effacer",
+    "focusErrorInvalidToken": "« {{token}} » n'est ni une position ni une plage comme 28-31.",
+    "focusErrorOutOfRange": "{{token}} est en dehors des positions 1 à {{max}}.",
+    "focusErrorReversedRange": "{{token}} est à l'envers. Essayez {{fixed}}.",
+    "focusErrorDuplicate": "{{position}} figure deux fois dans la liste.",
+    "focusErrorTooFew": "Indiquez au moins {{min}} positions.",
+    "focusActive_one": "{{count}} position ciblée",
+    "focusActive_many": "{{count}} positions ciblées",
+    "focusActive_other": "{{count}} positions ciblées"
   },
   "acaan": {
     "pageTitle": "Entraînement ACAAN",

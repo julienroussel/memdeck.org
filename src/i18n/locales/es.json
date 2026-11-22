@@ -173,7 +173,20 @@
     "timesUp": "¡Se acabó el tiempo!",
     "movingToNext": "Pasando a la siguiente carta.",
     "revealTitle": "Respuesta",
-    "answerCorrect": "Correcto"
+    "answerCorrect": "Correcto",
+    "focusLabel": "Posiciones a repasar",
+    "focusDescription": "Practica solo estas posiciones, en lugar del rango del stack.",
+    "focusPlaceholder": "23, 24, 28-31, 42",
+    "focusApply": "Aplicar",
+    "focusClear": "Borrar",
+    "focusErrorInvalidToken": "«{{token}}» no es una posición ni un rango como 28-31.",
+    "focusErrorOutOfRange": "{{token}} está fuera de las posiciones 1 a {{max}}.",
+    "focusErrorReversedRange": "{{token}} está al revés. Prueba con {{fixed}}.",
+    "focusErrorDuplicate": "{{position}} aparece dos veces.",
+    "focusErrorTooFew": "Introduce al menos {{min}} posiciones.",
+    "focusActive_one": "Repaso: {{count}} posición",
+    "focusActive_many": "Repaso: {{count}} posiciones",
+    "focusActive_other": "Repaso: {{count}} posiciones"
   },
   "acaan": {
     "pageTitle": "Entrenamiento ACAAN",
