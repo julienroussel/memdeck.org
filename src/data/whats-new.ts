@@ -30,6 +30,29 @@ export type WhatsNewEntry = {
 export const WHATS_NEW_ENTRIES: readonly WhatsNewEntry[] = [
   {
     body: {
+      de: "Sitzungen mit 10, 20, 30 und 52 Fragen stehen jetzt bei jedem Stack-Bereich zur Wahl, dazu eine mit so vielen Fragen, wie dein Bereich Karten hat.",
+      en: "Sessions of 10, 20, 30, and 52 questions now show up whatever your stack range, plus one the size of your range.",
+      es: "Las sesiones de 10, 20, 30 y 52 preguntas aparecen ahora sea cual sea el rango de tu stack, además de una del tamaño de tu rango.",
+      fr: "Les sessions de 10, 20, 30 et 52 questions sont désormais proposées quelle que soit la plage de votre stack, ainsi qu'une session d'autant de questions que de cartes dans votre plage.",
+      it: "Le sessioni da 10, 20, 30 e 52 domande sono ora disponibili qualunque sia l'intervallo del tuo stack, più una con tante domande quante carte ha il tuo intervallo.",
+      nl: "Sessies van 10, 20, 30 en 52 vragen zijn nu bij elk stack-bereik beschikbaar, plus één met evenveel vragen als je bereik kaarten telt.",
+      pt: "As sessões de 10, 20, 30 e 52 perguntas aparecem agora seja qual for o intervalo do seu stack, além de uma do tamanho do seu intervalo.",
+    },
+    id: "session-lengths-any-range",
+    releasedAt: "2026-11-22T10:20:00Z",
+    title: {
+      de: "Längere Sitzungen bei kleinem Stack-Bereich",
+      en: "Longer sessions on a short range",
+      es: "Sesiones más largas con un rango corto",
+      fr: "Sessions plus longues sur une plage réduite",
+      it: "Sessioni più lunghe con un intervallo ridotto",
+      nl: "Langere sessies bij een klein bereik",
+      pt: "Sessões mais longas com um intervalo reduzido",
+    },
+    type: "feature",
+  },
+  {
+    body: {
       de: "Wenn dir dein Stack in Fleisch und Blut übergegangen ist und sich zehn Sekunden wie ein fauler Nachmittag anfühlen.",
       en: "For when your stack is second nature and ten seconds feels like a lazy afternoon.",
       es: "Para cuando tu stack ya es una segunda naturaleza y diez segundos te parecen una tarde de siesta.",
