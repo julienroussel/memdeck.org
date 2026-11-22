@@ -20,6 +20,7 @@ import type {
 } from "../types/session";
 import type { SpotCheckMode } from "../types/spot-check";
 import type { StackLimits } from "../types/stack-limits";
+import { DEFAULT_STACK_LIMITS, getRangeSize } from "../types/stack-limits";
 import type { StackKey } from "../types/stacks";
 import { reportSessionPersistenceFailed } from "../utils/localstorage-telemetry";
 import {
@@ -45,6 +46,11 @@ import { useSessionAutoSave } from "./use-session-auto-save";
 import { useSessionRecording } from "./use-session-recording";
 
 export type { SessionPhase } from "../types/session";
+
+// A mode without a stack range (ACAAN) trains on the full deck. Extracted to
+// keep startSession under the cognitive-complexity ceiling.
+const rangeSizeOf = (limits: StackLimits | undefined): number =>
+  getRangeSize(limits ?? DEFAULT_STACK_LIMITS);
 
 // Surface a write failure when auto-saving the previous session: the prior
 // session is dropped either way (the new one replaces it), so a silent failure
@@ -485,7 +491,11 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
         session = { ...baseSession, mode: "acaan" as const };
       }
       setStatus({ phase: "active", session });
-      eventBus.emit.SESSION_STARTED({ config, mode });
+      eventBus.emit.SESSION_STARTED({
+        config,
+        mode,
+        rangeSize: rangeSizeOf(stackLimitsRef.current),
+      });
     },
     [
       mode,

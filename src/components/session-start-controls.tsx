@@ -1,6 +1,7 @@
 import { Button, Group, Text } from "@mantine/core";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { DECK_SIZE } from "../constants";
 import type { SessionConfig } from "../types/session";
 import { SESSION_PRESETS } from "../types/session";
 
@@ -16,19 +17,16 @@ export const SessionStartControls = ({
   rangeSize,
 }: SessionStartControlsProps) => {
   const { t } = useTranslation();
-  const effectiveRange = Math.max(1, rangeSize ?? 52);
+  const effectiveRange = Math.max(1, rangeSize ?? DECK_SIZE);
 
+  // Every preset stays on offer whatever the range: each question is drawn at
+  // random from the range, so a session can be longer than the range itself.
   const visiblePresets = useMemo(() => {
-    const presets: number[] = SESSION_PRESETS.filter(
-      (p) => p <= effectiveRange
-    );
-    if (effectiveRange < 52 && !presets.includes(effectiveRange)) {
+    const presets: number[] = [...SESSION_PRESETS];
+    if (effectiveRange < DECK_SIZE && !presets.includes(effectiveRange)) {
       presets.push(effectiveRange);
     }
-    if (presets.length === 0) {
-      presets.push(effectiveRange);
-    }
-    return presets;
+    return presets.sort((a, b) => a - b);
   }, [effectiveRange]);
 
   const handlePresetClick = useCallback(

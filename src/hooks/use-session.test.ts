@@ -264,6 +264,7 @@ describe("useSession hook", () => {
     expect(mockEventBusEmit.SESSION_STARTED).toHaveBeenCalledWith({
       config: { type: "open" },
       mode: "flashcard",
+      rangeSize: 52,
     });
   });
 
@@ -782,6 +783,31 @@ describe("useSession hook", () => {
     expect(mockEventBusEmit.SESSION_STARTED).toHaveBeenCalledWith({
       config: { totalQuestions: 10, type: "structured" },
       mode: "distance",
+      rangeSize: 52,
+    });
+  });
+
+  it("emits SESSION_STARTED with the size of the stack range current at start", () => {
+    const { result, rerender } = renderHook(
+      ({ stackLimits }: { stackLimits: StackLimits }) =>
+        useSession({ mode: "flashcard", stackKey: "mnemonica", stackLimits }),
+      { initialProps: { stackLimits: DEFAULT_STACK_LIMITS } }
+    );
+    rerender({
+      stackLimits: {
+        end: createDeckPosition(21),
+        start: createDeckPosition(5),
+      },
+    });
+
+    act(() => {
+      result.current.startSession({ totalQuestions: 30, type: "structured" });
+    });
+
+    expect(mockEventBusEmit.SESSION_STARTED).toHaveBeenCalledWith({
+      config: { totalQuestions: 30, type: "structured" },
+      mode: "flashcard",
+      rangeSize: 17,
     });
   });
 
