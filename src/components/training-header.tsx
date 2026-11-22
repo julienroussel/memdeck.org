@@ -80,6 +80,7 @@ export const TrainingHeader = ({
             <Score fails={score.fails} successes={score.successes} />
           )}
           <Popover
+            arrowPosition="center"
             onClose={closeSession}
             opened={sessionOpened}
             position="bottom-end"
@@ -102,7 +103,8 @@ export const TrainingHeader = ({
                 </ActionIcon>
               </Popover.Target>
             </Tooltip>
-            <Popover.Dropdown>
+            {/* Capped to the viewport so the presets wrap on narrow phones. */}
+            <Popover.Dropdown maw="calc(100vw - 2rem)">
               <SessionStartControls
                 onAfterStart={closeSession}
                 onStart={onStartSession}

@@ -10,59 +10,69 @@ const getPresetButton = (value: number) =>
     name: `Start ${value} question session`,
   });
 
-const queryPresetButton = (value: number) =>
-  screen.queryByRole("button", {
-    name: `Start ${value} question session`,
-  });
+const getPresetLabels = () =>
+  screen.getAllByRole("button").map((button) => button.textContent);
 
 describe("SessionStartControls", () => {
-  it("shows all standard presets when rangeSize is 52", () => {
+  it("shows exactly the standard presets when rangeSize is 52", () => {
     render(<SessionStartControls onStart={vi.fn()} rangeSize={52} />);
+
+    expect(getPresetLabels()).toEqual(["10", "20", "30", "52"]);
+  });
+
+  it("keeps the presets above the rangeSize", () => {
+    render(<SessionStartControls onStart={vi.fn()} rangeSize={20} />);
 
     for (const preset of SESSION_PRESETS) {
       expect(getPresetButton(preset)).toBeInTheDocument();
     }
   });
 
-  it("filters presets that exceed the rangeSize", () => {
-    render(<SessionStartControls onStart={vi.fn()} rangeSize={20} />);
+  it("adds rangeSize in sorted order when it does not match a standard preset", () => {
+    render(<SessionStartControls onStart={vi.fn()} rangeSize={17} />);
 
-    expect(getPresetButton(10)).toBeInTheDocument();
-    expect(queryPresetButton(30)).not.toBeInTheDocument();
-    expect(queryPresetButton(52)).not.toBeInTheDocument();
+    expect(getPresetLabels()).toEqual(["10", "17", "20", "30", "52"]);
   });
 
-  it("appends rangeSize as a custom preset when it does not match a standard preset", () => {
-    render(<SessionStartControls onStart={vi.fn()} rangeSize={15} />);
+  it.each([10, 20, 30])(
+    "does not duplicate a rangeSize of %i, which matches a standard preset",
+    (rangeSize) => {
+      render(<SessionStartControls onStart={vi.fn()} rangeSize={rangeSize} />);
 
-    // 10 from SESSION_PRESETS fits, plus 15 appended
-    expect(getPresetButton(10)).toBeInTheDocument();
-    expect(getPresetButton(15)).toBeInTheDocument();
+      expect(getPresetLabels()).toEqual(["10", "20", "30", "52"]);
+    }
+  );
+
+  it("adds a rangeSize between 30 and 52 just before 52", () => {
+    render(<SessionStartControls onStart={vi.fn()} rangeSize={40} />);
+
+    expect(getPresetLabels()).toEqual(["10", "20", "30", "40", "52"]);
   });
 
-  it("does not duplicate rangeSize when it matches a standard preset", () => {
-    render(<SessionStartControls onStart={vi.fn()} rangeSize={10} />);
-
-    const buttons = screen.getAllByRole("button", {
-      name: "Start 10 question session",
-    });
-    expect(buttons).toHaveLength(1);
-  });
-
-  it("shows rangeSize as the only preset when it is smaller than the smallest standard preset", () => {
+  it("puts rangeSize first when it is smaller than the smallest standard preset", () => {
     render(<SessionStartControls onStart={vi.fn()} rangeSize={6} />);
 
-    const buttons = screen.getAllByRole("button");
-    expect(buttons).toHaveLength(1);
-    expect(buttons[0]).toHaveTextContent("6");
+    expect(getPresetLabels()).toEqual(["6", "10", "20", "30", "52"]);
   });
 
   it("defaults to 52 when rangeSize is not provided", () => {
     render(<SessionStartControls onStart={vi.fn()} />);
 
-    for (const preset of SESSION_PRESETS) {
-      expect(getPresetButton(preset)).toBeInTheDocument();
-    }
+    expect(getPresetLabels()).toEqual(["10", "20", "30", "52"]);
+  });
+
+  it("starts a session longer than the range when a preset above it is clicked", async () => {
+    const user = userEvent.setup();
+    const handleStart = vi.fn();
+
+    render(<SessionStartControls onStart={handleStart} rangeSize={17} />);
+
+    await user.click(getPresetButton(30));
+
+    expect(handleStart).toHaveBeenCalledWith({
+      totalQuestions: 30,
+      type: "structured",
+    });
   });
 
   it("calls onStart with a structured config when a preset is clicked", async () => {
@@ -81,9 +91,8 @@ describe("SessionStartControls", () => {
 
   it("treats rangeSize of 0 as 1", () => {
     render(<SessionStartControls onStart={vi.fn()} rangeSize={0} />);
-    const buttons = screen.getAllByRole("button");
-    expect(buttons).toHaveLength(1);
-    expect(buttons[0]).toHaveTextContent("1");
+
+    expect(getPresetLabels()).toEqual(["1", "10", "20", "30", "52"]);
   });
 
   it("calls onAfterStart after onStart when provided", async () => {
