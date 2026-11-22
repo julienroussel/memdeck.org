@@ -498,4 +498,60 @@ test.describe("Flashcard Training", () => {
     // Card spread should be visible
     await expect(page.locator(".cardSpreadCard")).not.toHaveCount(0);
   });
+
+  test("trains only the focus positions while a list is set", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+    await page
+      .getByRole("radiogroup", { name: "Position mode variant" })
+      .getByText("Card")
+      .click();
+
+    const field = page.getByRole("textbox", { name: "Focus positions" });
+    await field.fill("31-28");
+    await field.press("Enter");
+    await expect(
+      page.getByText("31-28 runs backwards. Try 28-31.")
+    ).toBeVisible();
+
+    await field.fill("14, 10-13");
+    await field.press("Enter");
+    await expect(field).toHaveValue("10-14");
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+
+    await expect(
+      page.getByText("Position mode · Focus: 5 positions")
+    ).toBeVisible();
+    // Card-only shows a card and offers positions: all five come from the list.
+    // Scoped to the spread, since the prompt also renders its hidden position.
+    const numberChoices = page
+      .locator(".cardSpreadCard")
+      .getByTestId("number-card-value");
+    await expect(numberChoices).toHaveCount(5);
+    const offered = (await numberChoices.allTextContents())
+      .map((text) => Number.parseInt(text, 10))
+      .sort((a, b) => a - b);
+    expect(offered).toEqual([10, 11, 12, 13, 14]);
+
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByText("Position mode · Focus: 5 positions")
+    ).toBeVisible();
+    const stored = await page.evaluate((): unknown => {
+      const value = localStorage.getItem(
+        "memdeck-app-focus-positions-mnemonica"
+      );
+      return value ? JSON.parse(value) : null;
+    });
+    expect(stored).toEqual([10, 11, 12, 13, 14]);
+
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+    await page.getByRole("button", { name: "Clear" }).click();
+    await page.getByRole("button", { name: "Flashcard settings" }).click();
+    await expect(
+      page.getByText("Position mode", { exact: true })
+    ).toBeVisible();
+  });
 });

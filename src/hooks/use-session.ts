@@ -20,8 +20,7 @@ import type {
 } from "../types/session";
 import type { SpotCheckMode } from "../types/spot-check";
 import type { StackLimits } from "../types/stack-limits";
-import { DEFAULT_STACK_LIMITS, getRangeSize } from "../types/stack-limits";
-import type { StackKey } from "../types/stacks";
+import type { DeckPosition, StackKey } from "../types/stacks";
 import { reportSessionPersistenceFailed } from "../utils/localstorage-telemetry";
 import {
   clearLastSaveFailedBreadcrumb,
@@ -42,15 +41,12 @@ import {
   deriveActiveSession,
   meetsMinimumSaveThreshold,
 } from "../utils/session-phase";
+import type { SessionScope } from "../utils/session-scope";
+import { getScopeSize, hasScope, withScope } from "../utils/session-scope";
 import { useSessionAutoSave } from "./use-session-auto-save";
 import { useSessionRecording } from "./use-session-recording";
 
 export type { SessionPhase } from "../types/session";
-
-// A mode without a stack range (ACAAN) trains on the full deck. Extracted to
-// keep startSession under the cognitive-complexity ceiling.
-const rangeSizeOf = (limits: StackLimits | undefined): number =>
-  getRangeSize(limits ?? DEFAULT_STACK_LIMITS);
 
 // Surface a write failure when auto-saving the previous session: the prior
 // session is dropped either way (the new one replaces it), so a silent failure
@@ -81,25 +77,38 @@ const reportPriorSessionFinalizeFailure = (
 type UseSessionOptionsBase = {
   stackKey: StackKey;
   autoStart?: boolean;
-  stackLimits?: StackLimits;
   timed?: boolean;
 };
 
+type RangeOption = { stackLimits?: StackLimits; focusPositions?: undefined };
+
 type UseSessionOptions =
+  // Flashcard takes the stack range or, while one is set, its focus list.
   | (UseSessionOptionsBase & {
       mode: "flashcard";
       flashcardMode?: FlashcardMode;
-    })
-  | (UseSessionOptionsBase & { mode: "acaan" })
-  | (UseSessionOptionsBase & {
-      mode: "spotcheck";
-      spotCheckMode?: SpotCheckMode;
-    })
-  | (UseSessionOptionsBase & {
-      mode: "distance";
-      distanceMode?: DistanceMode;
-      distanceConvention?: DistanceConvention;
-    });
+    } & (
+        | RangeOption
+        | { focusPositions: readonly DeckPosition[]; stackLimits?: undefined }
+      ))
+  | (UseSessionOptionsBase & RangeOption & { mode: "acaan" })
+  | (UseSessionOptionsBase &
+      RangeOption & {
+        mode: "spotcheck";
+        spotCheckMode?: SpotCheckMode;
+      })
+  | (UseSessionOptionsBase &
+      RangeOption & {
+        mode: "distance";
+        distanceMode?: DistanceMode;
+        distanceConvention?: DistanceConvention;
+      });
+
+const toScope = (
+  focusPositions: readonly DeckPosition[] | undefined,
+  stackLimits: StackLimits | undefined
+): SessionScope =>
+  focusPositions?.length ? { focusPositions } : { stackLimits };
 
 type UseSessionResult = {
   status: SessionPhase;
@@ -153,11 +162,13 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
     tRef.current = t;
   }, [t]);
   const { mode, stackKey, autoStart = false, timed = false } = options;
-  const { stackLimits } = options;
-  const stackLimitsRef = useRef(stackLimits);
+  const { stackLimits, focusPositions } = options;
+  const scopeRef = useRef(toScope(focusPositions, stackLimits));
+  const stackKeyRef = useRef(stackKey);
   useLayoutEffect(() => {
-    stackLimitsRef.current = stackLimits;
-  }, [stackLimits]);
+    scopeRef.current = toScope(focusPositions, stackLimits);
+    stackKeyRef.current = stackKey;
+  }, [focusPositions, stackLimits, stackKey]);
   const flashcardMode =
     options.mode === "flashcard" ? options.flashcardMode : undefined;
   const spotCheckMode =
@@ -180,7 +191,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
   // failed save leaves the older one, whose delta then covers the gap.
   const checkpointsRef = useRef<Map<string, SessionCheckpoint>>(new Map());
   // Tracks session ids the auto-finalize effect has already requested
-  // finalization for, so unrelated status changes (e.g. a limits-merge
+  // finalization for, so unrelated status changes (e.g. a scope-merge
   // re-render after the threshold has been crossed) don't re-fire. The
   // persistence layer additionally dedupes via finalizedIdsRef.
   const requestedFinalizationIdsRef = useRef<Set<string>>(new Set());
@@ -254,57 +265,56 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
    * (stack-change). Mutates the ref outside any setState updater (see F4)
    * and forces a render via `triggerFlush` so the flush effect picks it up.
    *
-   * Snapshots the latest `stackLimits` at queue time so the persisted record
-   * reflects the range in effect when finalization was requested, regardless
-   * of whether the limits-merge effect below has run yet on this render.
-   * This makes the queueing invariant local — callers don't have to depend
-   * on effect-ordering to get the right snapshot. The limits-merge effect
-   * still patches the queued ref for the post-queue change case.
+   * Snapshots the latest scope (`stackLimits`, or Flashcard's focus list) at
+   * queue time so the persisted record reflects the scope in effect when
+   * finalization was requested, regardless of whether the scope-merge effect
+   * below has run yet on this render. This makes the queueing invariant
+   * local — callers don't have to depend on effect-ordering to get the right
+   * snapshot. The scope-merge effect still patches the queued ref for the
+   * post-queue change case. A session of another stack (the stack-change
+   * auto-save) keeps its own scope: `withScope` leaves it unchanged.
    */
   const requestFinalization = useCallback(
     (session: ActiveSession) => {
-      pendingFinalizationRef.current = {
-        ...session,
-        stackLimits: stackLimitsRef.current,
-      };
+      pendingFinalizationRef.current = withScope(
+        session,
+        stackKeyRef.current,
+        scopeRef.current
+      );
       triggerFlush();
     },
     [triggerFlush]
   );
 
-  // If the user changes the stack range mid-session, the in-memory game
-  // reducer resets to the new range but the active session's stackLimits
-  // snapshot is stale — recorded answers would be persisted under the
-  // original range. Re-snapshot when limits change so the persisted record
-  // describes the range in effect when it ends.
+  // If the user changes the stack range (or Flashcard's focus list)
+  // mid-session, the in-memory game reducer resets to the new pool but the
+  // active session's snapshot is stale — recorded answers would be persisted
+  // under the original scope. Re-snapshot when the scope changes so the
+  // persisted record describes the scope in effect when it ends.
   //
   // This effect MUST run before the finalization-flush effect below: when a
-  // limits change happens in the same render as a stopSession() call, the
+  // scope change happens in the same render as a stopSession() call, the
   // queued pendingFinalizationRef is what the flush effect persists. This
   // effect patches that ref FIRST so the persisted record reflects the new
-  // limits.
+  // scope. A stack switch changes the scope too, but the session then
+  // belongs to the previous stack and keeps its own (see `hasScope`).
   useEffect(() => {
     if (statusRef.current.phase !== "active") {
       return;
     }
-    const current = statusRef.current.session.stackLimits;
-    const same =
-      current === stackLimits ||
-      (current !== undefined &&
-        stackLimits !== undefined &&
-        current.start === stackLimits.start &&
-        current.end === stackLimits.end);
-    if (same) {
+    const scope = toScope(focusPositions, stackLimits);
+    if (hasScope(statusRef.current.session, stackKey, scope)) {
       return;
     }
     // If a stop / auto-complete already queued this session for finalization,
     // patch the queued reference too — otherwise the persisted record carries
-    // pre-update limits.
+    // the pre-update scope.
     if (pendingFinalizationRef.current !== null) {
-      pendingFinalizationRef.current = {
-        ...pendingFinalizationRef.current,
-        stackLimits,
-      };
+      pendingFinalizationRef.current = withScope(
+        pendingFinalizationRef.current,
+        stackKey,
+        scope
+      );
     }
     setStatus((prev) => {
       if (prev.phase !== "active") {
@@ -312,10 +322,10 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
       }
       return {
         phase: "active",
-        session: { ...prev.session, stackLimits },
+        session: withScope(prev.session, stackKey, scope),
       };
     });
-  }, [stackLimits]);
+  }, [focusPositions, stackLimits, stackKey]);
 
   // Flush effect — depends on `flushTick`, which every queueing path
   // (`requestFinalization`, etc.) bumps via `triggerFlush`. The effect picks
@@ -461,7 +471,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
         id: crypto.randomUUID(),
         questionsCompleted: 0,
         stackKey,
-        stackLimits: stackLimitsRef.current,
+        stackLimits: scopeRef.current.stackLimits,
         startedAt: new Date().toISOString(),
         successes: 0,
         timed,
@@ -472,6 +482,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
         session = {
           ...baseSession,
           flashcardMode: flashcardMode ?? "bothmodes",
+          focusPositions: scopeRef.current.focusPositions,
           mode: "flashcard" as const,
         };
       } else if (mode === "spotcheck") {
@@ -493,8 +504,9 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
       setStatus({ phase: "active", session });
       eventBus.emit.SESSION_STARTED({
         config,
+        focused: scopeRef.current.focusPositions !== undefined,
         mode,
-        rangeSize: rangeSizeOf(stackLimitsRef.current),
+        rangeSize: getScopeSize(scopeRef.current),
       });
     },
     [
@@ -506,7 +518,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
       distanceConvention,
       timed,
       tryFinalizeSession,
-    ] // stackLimits removed, accessed via ref
+    ] // stackLimits and focusPositions removed, accessed via scopeRef
   );
 
   const { recordCorrect, recordIncorrect, recordQuestionAdvanced } =
@@ -518,7 +530,7 @@ export const useSession = (options: UseSessionOptions): UseSessionResult => {
   // Driven by the COMMITTED status so increments queued by recordCorrect /
   // recordIncorrect that ran in the same event handler as
   // recordQuestionAdvanced are reflected in the persisted record. The dedupe
-  // ref keys on session.id so unrelated status changes (e.g. a limits-merge
+  // ref keys on session.id so unrelated status changes (e.g. a scope-merge
   // re-render) don't re-fire after the threshold has already been requested;
   // the persistence layer additionally dedupes via finalizedIdsRef.
   useEffect(() => {

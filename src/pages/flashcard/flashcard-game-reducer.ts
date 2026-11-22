@@ -1,3 +1,4 @@
+import { DEFAULT_CHOICES_COUNT } from "../../constants";
 import { timerReducerCases } from "../../hooks/use-game-timer";
 import type { FlashcardMode, NeighborDirection } from "../../types/flashcard";
 import type { PlayingCard } from "../../types/playingcard";
@@ -5,8 +6,12 @@ import type { BaseResetGameAction } from "../../types/reset-game-action";
 import { shuffle } from "../../types/shuffle";
 import type { StackLimits } from "../../types/stack-limits";
 import { DEFAULT_STACK_LIMITS } from "../../types/stack-limits";
-import type { PlayingCardPosition, Stack } from "../../types/stacks";
-import { getRandomPlayingCard } from "../../types/stacks";
+import type {
+  DeckPosition,
+  PlayingCardPosition,
+  Stack,
+} from "../../types/stacks";
+import { getCardAt, getRandomPlayingCard } from "../../types/stacks";
 import { isPlayingCard } from "../../types/typeguards";
 import {
   generateNeighborChoices,
@@ -14,12 +19,14 @@ import {
 } from "../../utils/card-selection";
 import type { ResolvedDirection } from "../../utils/neighbor";
 import { getNeighborCard, resolveDirection } from "../../utils/neighbor";
+import type { FlashcardPool } from "./flashcard-pool";
+import { DEFAULT_FLASHCARD_POOL } from "./flashcard-pool";
 import type { DisplayMode } from "./utils";
 
 // --- Types ---
 
 type InitialStateConfig = BaseResetGameAction & {
-  limits?: StackLimits;
+  pool?: FlashcardPool;
 } & (
     | { flashcardMode: "neighbor"; neighborDirection: NeighborDirection }
     | { flashcardMode?: Exclude<FlashcardMode, "neighbor"> }
@@ -86,17 +93,19 @@ export const generateNewCardAndChoices = (
   return { card: newCard, choices: newChoices };
 };
 
-export const generateNeighborCardAndChoices = (
-  stackOrder: Stack,
-  direction: NeighborDirection,
-  limits: StackLimits
-): {
+type NeighborRound = {
   card: PlayingCardPosition;
   answerCard: PlayingCardPosition;
   choices: PlayingCardPosition[];
   resolvedDirection: ResolvedDirection;
-} => {
-  const questionCard = getRandomPlayingCard(stackOrder, limits);
+};
+
+const buildNeighborRound = (
+  stackOrder: Stack,
+  direction: NeighborDirection,
+  questionCard: PlayingCardPosition,
+  limits: StackLimits
+): NeighborRound => {
   const resolved = resolveDirection(direction);
   const answerCard = getNeighborCard(
     stackOrder,
@@ -115,6 +124,89 @@ export const generateNeighborCardAndChoices = (
   };
 };
 
+export const generateNeighborCardAndChoices = (
+  stackOrder: Stack,
+  direction: NeighborDirection,
+  limits: StackLimits
+): NeighborRound =>
+  buildNeighborRound(
+    stackOrder,
+    direction,
+    getRandomPlayingCard(stackOrder, limits),
+    limits
+  );
+
+const toCardPosition = (
+  stackOrder: Stack,
+  index: DeckPosition
+): PlayingCardPosition => ({ card: getCardAt(stackOrder, index - 1), index });
+
+const pickRandomPosition = (
+  positions: readonly DeckPosition[]
+): DeckPosition => {
+  const position = positions[Math.floor(Math.random() * positions.length)];
+  if (position === undefined) {
+    throw new Error("Cannot draw from an empty focus list");
+  }
+  return position;
+};
+
+/**
+ * Draws the prompt and every distractor from the focus list. Distractors from
+ * the full deck would leave the answer as the only listed position among the
+ * choices: in card-only rounds, whose choices are the positions the user
+ * typed, that gives the answer away.
+ */
+export const generateFocusCardAndChoices = (
+  stackOrder: Stack,
+  positions: readonly DeckPosition[]
+): { card: PlayingCardPosition; choices: PlayingCardPosition[] } => {
+  const drawn = shuffle([...positions])
+    .slice(0, DEFAULT_CHOICES_COUNT)
+    .map((position) => toCardPosition(stackOrder, position));
+  const [card] = drawn;
+  if (card === undefined) {
+    throw new Error("Cannot draw from an empty focus list");
+  }
+  return { card, choices: shuffle(drawn) };
+};
+
+/**
+ * Draws the question card from the focus list; the answer is its real
+ * neighbour in the stack, wrapping at the ends of the full deck, and the
+ * distractors come from the full deck. Distractors from the list would leave
+ * the answer, usually outside the list, as the odd one out, and wrapping
+ * inside the list would make neighbours of positions that are not.
+ */
+export const generateFocusNeighborCardAndChoices = (
+  stackOrder: Stack,
+  direction: NeighborDirection,
+  positions: readonly DeckPosition[]
+): NeighborRound =>
+  buildNeighborRound(
+    stackOrder,
+    direction,
+    toCardPosition(stackOrder, pickRandomPosition(positions)),
+    DEFAULT_STACK_LIMITS
+  );
+
+export const generatePoolCardAndChoices = (
+  stackOrder: Stack,
+  pool: FlashcardPool
+): { card: PlayingCardPosition; choices: PlayingCardPosition[] } =>
+  pool.kind === "focus"
+    ? generateFocusCardAndChoices(stackOrder, pool.positions)
+    : generateNewCardAndChoices(stackOrder, pool.limits);
+
+export const generatePoolNeighborCardAndChoices = (
+  stackOrder: Stack,
+  direction: NeighborDirection,
+  pool: FlashcardPool
+): NeighborRound =>
+  pool.kind === "focus"
+    ? generateFocusNeighborCardAndChoices(stackOrder, direction, pool.positions)
+    : generateNeighborCardAndChoices(stackOrder, direction, pool.limits);
+
 export const isCorrectAnswer = (
   item: PlayingCard | number,
   card: PlayingCardPosition
@@ -124,13 +216,13 @@ export const isCorrectAnswer = (
     : item === card.index;
 
 export const createInitialState = (config: InitialStateConfig): GameState => {
-  const { stackOrder, timerDuration, limits = DEFAULT_STACK_LIMITS } = config;
+  const { stackOrder, timerDuration, pool = DEFAULT_FLASHCARD_POOL } = config;
   if (config.flashcardMode === "neighbor") {
     const { card, answerCard, choices, resolvedDirection } =
-      generateNeighborCardAndChoices(
+      generatePoolNeighborCardAndChoices(
         stackOrder,
         config.neighborDirection,
-        limits
+        pool
       );
     return {
       answerCard,
@@ -144,7 +236,7 @@ export const createInitialState = (config: InitialStateConfig): GameState => {
       timerDuration,
     };
   }
-  const { card, choices } = generateNewCardAndChoices(stackOrder, limits);
+  const { card, choices } = generatePoolCardAndChoices(stackOrder, pool);
   return {
     answerCard: card,
     card,

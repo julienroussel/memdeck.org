@@ -42,11 +42,19 @@ const trackWebVital = ({ id, name, value }: Metric) => {
 // A session longer than its stack range names the range, so it stays apart
 // from the same length on a wider range; every other label is unchanged. The
 // range is the one at session start: a mid-session change is not re-sent.
+// A Flashcard focus-list session always names the list's size, so it never
+// aggregates with a range session of the same length or range size.
 const formatSessionLabel = (
   mode: TrainingMode,
   config: SessionConfig,
-  rangeSize: number
+  rangeSize: number,
+  focused: boolean
 ): string => {
+  if (focused) {
+    const length =
+      config.type === "open" ? "open" : `${config.totalQuestions}q`;
+    return `${mode} (${length}, focus ${rangeSize})`;
+  }
   if (config.type === "open") {
     return `${mode} (open)`;
   }
@@ -144,8 +152,8 @@ const subscribeToEvents = () => {
   );
 
   eventBus.subscribe.SESSION_STARTED(
-    safeListener("SESSION_STARTED", ({ mode, config, rangeSize }) => {
-      analytics.trackSessionStarted(mode, config, rangeSize);
+    safeListener("SESSION_STARTED", ({ mode, config, rangeSize, focused }) => {
+      analytics.trackSessionStarted(mode, config, rangeSize, focused);
     })
   );
 
@@ -385,7 +393,8 @@ export const analytics = {
   trackSessionStarted: (
     mode: TrainingMode,
     config: SessionConfig,
-    rangeSize: number
+    rangeSize: number,
+    focused: boolean
   ) => {
     if (!isEnabled()) {
       return;
@@ -393,7 +402,7 @@ export const analytics = {
     ReactGA.event({
       action: "Started",
       category: "Session",
-      label: formatSessionLabel(mode, config, rangeSize),
+      label: formatSessionLabel(mode, config, rangeSize, focused),
     });
   },
 

@@ -111,6 +111,12 @@ export const STACK_LIMITS_LSK = "memdeck-app-stack-limits";
 export const MIN_FLASHCARD_RANGE = 6;
 export const MIN_SPOT_CHECK_RANGE = 10;
 export const MIN_DISTANCE_RANGE = 6;
+/**
+ * Prefix of the per-stack Flashcard focus-position keys
+ * (`memdeck-app-focus-positions-mnemonica`). One key per stack, so a corrupt
+ * list resets only that stack's list on the next write.
+ */
+export const FOCUS_POSITIONS_LSK = "memdeck-app-focus-positions";
 export const RANGE_PRESETS = [13, 26, 39, 52] as const;
 
 /** Canonical route format — leading + trailing slash, so consumers (sitemap, internal links) never trip a 301 redirect. */

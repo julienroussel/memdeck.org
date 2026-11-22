@@ -173,7 +173,19 @@
     "timesUp": "Zeit abgelaufen!",
     "movingToNext": "Weiter zur nächsten Karte.",
     "revealTitle": "Antwort",
-    "answerCorrect": "Richtig"
+    "answerCorrect": "Richtig",
+    "focusLabel": "Fokus-Positionen",
+    "focusDescription": "Trainiere nur diese Positionen statt des Stack-Bereichs.",
+    "focusPlaceholder": "23, 24, 28-31, 42",
+    "focusApply": "Übernehmen",
+    "focusClear": "Löschen",
+    "focusErrorInvalidToken": "„{{token}}“ ist weder eine Position noch ein Bereich wie 28-31.",
+    "focusErrorOutOfRange": "{{token}} liegt außerhalb der Positionen 1 bis {{max}}.",
+    "focusErrorReversedRange": "{{token}} ist verkehrt herum. Versuch es mit {{fixed}}.",
+    "focusErrorDuplicate": "{{position}} steht doppelt in der Liste.",
+    "focusErrorTooFew": "Gib mindestens {{min}} Positionen ein.",
+    "focusActive_one": "Fokus: {{count}} Position",
+    "focusActive_other": "Fokus: {{count}} Positionen"
   },
   "acaan": {
     "pageTitle": "ACAAN-Training",

@@ -173,7 +173,19 @@
     "timesUp": "Time's up!",
     "movingToNext": "Moving to the next card.",
     "revealTitle": "Answer",
-    "answerCorrect": "Correct"
+    "answerCorrect": "Correct",
+    "focusLabel": "Focus positions",
+    "focusDescription": "Train only these positions, in place of the stack range.",
+    "focusPlaceholder": "23, 24, 28-31, 42",
+    "focusApply": "Apply",
+    "focusClear": "Clear",
+    "focusErrorInvalidToken": "\"{{token}}\" isn't a position or a range like 28-31.",
+    "focusErrorOutOfRange": "{{token}} is outside positions 1 to {{max}}.",
+    "focusErrorReversedRange": "{{token}} runs backwards. Try {{fixed}}.",
+    "focusErrorDuplicate": "{{position}} is listed twice.",
+    "focusErrorTooFew": "Enter at least {{min}} positions.",
+    "focusActive_one": "Focus: {{count}} position",
+    "focusActive_other": "Focus: {{count}} positions"
   },
   "distance": {
     "pageTitle": "Distance Number Training",

@@ -42,6 +42,13 @@ export type StackValue = (typeof stacks)[StackKey];
 /** A 1-based position in a 52-card deck (1-52), branded to prevent arbitrary numbers */
 export type DeckPosition = number & { readonly __brand: "DeckPosition" };
 
+/** Whether a value is an integer position in a 52-card deck (1-52). */
+export const isDeckPosition = (value: unknown): value is DeckPosition =>
+  typeof value === "number" &&
+  Number.isInteger(value) &&
+  value >= 1 &&
+  value <= DECK_SIZE;
+
 /**
  * Creates a validated DeckPosition from a number.
  * Throws if the number is not an integer in the range 1-52.
@@ -51,12 +58,10 @@ export type DeckPosition = number & { readonly __brand: "DeckPosition" };
  * @throws {Error} If n is not an integer or is outside the 1-52 range
  */
 export const createDeckPosition = (n: number): DeckPosition => {
-  if (!Number.isInteger(n) || n < 1 || n > DECK_SIZE) {
+  if (!isDeckPosition(n)) {
     throw new Error(`Invalid deck position: ${n}. Must be integer 1-52.`);
   }
-  // Branded type boundary: value is validated above; cast is the only way to
-  // construct a branded type from a plain number in TypeScript.
-  return n as DeckPosition;
+  return n;
 };
 
 /**

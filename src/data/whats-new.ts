@@ -30,6 +30,29 @@ export type WhatsNewEntry = {
 export const WHATS_NEW_ENTRIES: readonly WhatsNewEntry[] = [
   {
     body: {
+      de: "Trainiere nur die Positionen, die dir Mühe machen: Trag sie in den Flashcard-Einstellungen ein, zum Beispiel 23, 24, 28-31, 42.",
+      en: "Train only the positions you keep missing: list them in Flashcard settings, like 23, 24, 28-31, 42.",
+      es: "Practica solo las posiciones que se te resisten: escríbelas en la configuración de Flashcard, por ejemplo, 23, 24, 28-31, 42.",
+      fr: "Entraînez-vous uniquement sur les positions qui vous résistent : indiquez-les dans les paramètres de Flashcard, par exemple 23, 24, 28-31, 42.",
+      it: "Allena solo le posizioni che ti sfuggono: elencale nelle impostazioni di Flashcard, ad esempio 23, 24, 28-31, 42.",
+      nl: "Train alleen de posities die je steeds fout hebt: vul ze in bij de Flashcard-instellingen, bijvoorbeeld 23, 24, 28-31, 42.",
+      pt: "Treine apenas as posições que lhe escapam: indique-as nas definições do Flashcard, por exemplo 23, 24, 28-31, 42.",
+    },
+    id: "flashcard-focus-positions",
+    releasedAt: "2026-11-22T12:30:00Z",
+    title: {
+      de: "Fokus-Positionen in Flashcard",
+      en: "Focus positions in Flashcard",
+      es: "Posiciones a repasar en Flashcard",
+      fr: "Positions ciblées dans Flashcard",
+      it: "Posizioni mirate in Flashcard",
+      nl: "Focusposities in Flashcard",
+      pt: "Posições em foco no Flashcard",
+    },
+    type: "feature",
+  },
+  {
+    body: {
       de: "Sitzungen mit 10, 20, 30 und 52 Fragen stehen jetzt bei jedem Stack-Bereich zur Wahl, dazu eine mit so vielen Fragen, wie dein Bereich Karten hat.",
       en: "Sessions of 10, 20, 30, and 52 questions now show up whatever your stack range, plus one the size of your range.",
       es: "Las sesiones de 10, 20, 30 y 52 preguntas aparecen ahora sea cual sea el rango de tu stack, además de una del tamaño de tu rango.",

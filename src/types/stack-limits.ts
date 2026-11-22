@@ -18,6 +18,17 @@ export const DEFAULT_STACK_LIMITS: StackLimits = {
 export const getRangeSize = (limits: StackLimits): number =>
   limits.end - limits.start + 1;
 
+/** Compares two optional ranges by content. */
+export const isSameLimits = (
+  a: StackLimits | undefined,
+  b: StackLimits | undefined
+): boolean =>
+  a === b ||
+  (a !== undefined &&
+    b !== undefined &&
+    a.start === b.start &&
+    a.end === b.end);
+
 export const isFullDeck = (limits: StackLimits): boolean =>
   limits.start === 1 && limits.end === DECK_SIZE;
 

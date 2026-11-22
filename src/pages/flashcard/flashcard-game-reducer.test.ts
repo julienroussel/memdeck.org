@@ -9,10 +9,13 @@ import type { GameState } from "./flashcard-game-reducer";
 import {
   createInitialState,
   gameReducer,
+  generateFocusCardAndChoices,
+  generateFocusNeighborCardAndChoices,
   generateNeighborCardAndChoices,
   generateNewCardAndChoices,
   isCorrectAnswer,
 } from "./flashcard-game-reducer";
+import type { FlashcardPool } from "./flashcard-pool";
 
 const stackOrder = mnemonica.order;
 
@@ -426,7 +429,7 @@ describe("createInitialState", () => {
     };
     for (let i = 0; i < 20; i += 1) {
       const state = createInitialState({
-        limits: partialRange,
+        pool: { kind: "range", limits: partialRange },
         stackOrder,
         timerDuration: 30,
       });
@@ -966,7 +969,11 @@ describe("gameReducer", () => {
       const state = makeState({ fails: 5, successes: 10 });
       for (let i = 0; i < 20; i += 1) {
         const next = gameReducer(state, {
-          payload: { limits: partialRange, stackOrder, timerDuration: 30 },
+          payload: {
+            pool: { kind: "range", limits: partialRange },
+            stackOrder,
+            timerDuration: 30,
+          },
           type: "RESET_GAME",
         });
         expect(next.card.index).toBeGreaterThanOrEqual(5);
@@ -977,5 +984,140 @@ describe("gameReducer", () => {
         }
       }
     });
+  });
+});
+
+describe("focus list", () => {
+  const focusList = [23, 24, 28, 29, 30, 31, 42].map(createDeckPosition);
+  const fiveList = [3, 17, 25, 40, 52].map(createDeckPosition);
+  const focusPool: FlashcardPool = { kind: "focus", positions: focusList };
+  const ROUNDS = 50;
+
+  it("draws the prompt and every choice from the list", () => {
+    for (let i = 0; i < ROUNDS; i += 1) {
+      const { card, choices } = generateFocusCardAndChoices(
+        stackOrder,
+        focusList
+      );
+      expect(focusList).toContain(card.index);
+      expect(stackOrder[card.index - 1]).toBe(card.card);
+      expect(choices).toHaveLength(5);
+      expect(choices).toContainEqual(card);
+      for (const choice of choices) {
+        expect(focusList).toContain(choice.index);
+      }
+      expect(new Set(choices.map((c) => c.index)).size).toBe(5);
+    }
+  });
+
+  it("offers all five positions of a five-position list as the choices", () => {
+    const { choices } = generateFocusCardAndChoices(stackOrder, fiveList);
+    expect(choices.map((c) => c.index).sort((a, b) => a - b)).toEqual(fiveList);
+  });
+
+  it("draws a neighbor question from the list and answers with its real neighbour", () => {
+    for (let i = 0; i < ROUNDS; i += 1) {
+      const round = generateFocusNeighborCardAndChoices(
+        stackOrder,
+        "after",
+        focusList
+      );
+      expect(focusList).toContain(round.card.index);
+      expect(round.answerCard.index).toBe(round.card.index + 1);
+      expect(round.choices).toContainEqual(round.answerCard);
+      expect(round.choices.map((c) => c.index)).not.toContain(round.card.index);
+      expect(round.choices).toHaveLength(5);
+    }
+  });
+
+  it("draws Neighbor distractors from the full deck, not the list or its span", () => {
+    // The list spans 23 to 42, and its neighbours reach 43: a distractor
+    // outside 23-43 can only come from the full deck.
+    let outsideSpan = 0;
+    for (let i = 0; i < ROUNDS; i += 1) {
+      const round = generateFocusNeighborCardAndChoices(
+        stackOrder,
+        "after",
+        focusList
+      );
+      for (const choice of round.choices) {
+        if (
+          choice !== round.answerCard &&
+          (choice.index < 23 || choice.index > 43)
+        ) {
+          outsideSpan += 1;
+        }
+      }
+    }
+    expect(outsideSpan).toBeGreaterThan(0);
+  });
+
+  it("wraps a neighbor answer at the ends of the full deck, not the list", () => {
+    const after = generateFocusNeighborCardAndChoices(stackOrder, "after", [
+      createDeckPosition(52),
+    ]);
+    expect(after.answerCard.index).toBe(1);
+    const before = generateFocusNeighborCardAndChoices(stackOrder, "before", [
+      createDeckPosition(1),
+    ]);
+    expect(before.answerCard.index).toBe(52);
+  });
+
+  it("gives five choices in Neighbor mode with a five-position list", () => {
+    for (let i = 0; i < ROUNDS; i += 1) {
+      const round = generateFocusNeighborCardAndChoices(
+        stackOrder,
+        "random",
+        fiveList
+      );
+      expect(fiveList).toContain(round.card.index);
+      expect(round.choices).toHaveLength(5);
+      expect(round.choices).toContainEqual(round.answerCard);
+    }
+  });
+
+  it.each(["cardonly", "numberonly", "bothmodes"] as const)(
+    "starts a %s game on the list",
+    (flashcardMode) => {
+      const state = createInitialState({
+        flashcardMode,
+        pool: focusPool,
+        stackOrder,
+        timerDuration: 30,
+      });
+      expect(focusList).toContain(state.card.index);
+      expect(state.answerCard).toBe(state.card);
+      for (const choice of state.choices) {
+        expect(focusList).toContain(choice.index);
+      }
+    }
+  );
+
+  it("starts a Neighbor game with its question on the list", () => {
+    const state = createInitialState({
+      flashcardMode: "neighbor",
+      neighborDirection: "before",
+      pool: focusPool,
+      stackOrder,
+      timerDuration: 30,
+    });
+    expect(focusList).toContain(state.card.index);
+    expect(state.answerCard.index).toBe(state.card.index - 1);
+  });
+
+  it("moves a running game onto the list on RESET_GAME", () => {
+    const next = gameReducer(makeState({ successes: 3 }), {
+      payload: { pool: focusPool, stackOrder, timerDuration: 30 },
+      type: "RESET_GAME",
+    });
+    expect(next.successes).toBe(0);
+    expect(focusList).toContain(next.card.index);
+  });
+
+  it("throws on an empty list rather than drawing outside it", () => {
+    expect(() => generateFocusCardAndChoices(stackOrder, [])).toThrow();
+    expect(() =>
+      generateFocusNeighborCardAndChoices(stackOrder, "after", [])
+    ).toThrow();
   });
 });

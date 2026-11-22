@@ -27,7 +27,7 @@ import type {
 } from "../types/session";
 import type { StackLimits } from "../types/stack-limits";
 import { DEFAULT_STACK_LIMITS } from "../types/stack-limits";
-import type { StackKey } from "../types/stacks";
+import type { DeckPosition, StackKey } from "../types/stacks";
 import { createDeckPosition } from "../types/stacks";
 import type { SessionCheckpoint } from "../utils/session-persistence";
 // Imported via the `use-session` re-export — pins the public type surface of
@@ -263,6 +263,7 @@ describe("useSession hook", () => {
     expect(result.current.activeSession).not.toBeNull();
     expect(mockEventBusEmit.SESSION_STARTED).toHaveBeenCalledWith({
       config: { type: "open" },
+      focused: false,
       mode: "flashcard",
       rangeSize: 52,
     });
@@ -573,10 +574,11 @@ describe("useSession hook", () => {
 
     const { result, rerender } = renderHook(
       (props: SessionRenderProps) =>
-        useSession({
-          mode: props.mode ?? "flashcard",
-          stackKey: props.stackKey ?? "mnemonica",
-        }),
+        useSession(
+          props.mode === "acaan"
+            ? { mode: "acaan", stackKey: props.stackKey ?? "mnemonica" }
+            : { mode: "flashcard", stackKey: props.stackKey ?? "mnemonica" }
+        ),
       { initialProps: {} }
     );
 
@@ -782,6 +784,7 @@ describe("useSession hook", () => {
 
     expect(mockEventBusEmit.SESSION_STARTED).toHaveBeenCalledWith({
       config: { totalQuestions: 10, type: "structured" },
+      focused: false,
       mode: "distance",
       rangeSize: 52,
     });
@@ -806,6 +809,7 @@ describe("useSession hook", () => {
 
     expect(mockEventBusEmit.SESSION_STARTED).toHaveBeenCalledWith({
       config: { totalQuestions: 30, type: "structured" },
+      focused: false,
       mode: "flashcard",
       rangeSize: 17,
     });
@@ -941,6 +945,187 @@ describe("useSession hook", () => {
     const { calls } = mockBuildSessionRecord.mock;
     const finalizedSession = calls.at(-1)?.[0];
     expect(finalizedSession?.stackLimits).toEqual(limitsB);
+  });
+
+  // -----------------------------------------------------------------------
+  // Flashcard focus list (replaces the stack range while set)
+  // -----------------------------------------------------------------------
+
+  describe("focus positions", () => {
+    const focusList = [23, 24, 28, 29, 30, 31, 42].map(createDeckPosition);
+    type ScopeProps = { stackKey?: StackKey } & (
+      | { focusPositions: readonly DeckPosition[]; stackLimits?: undefined }
+      | { stackLimits?: StackLimits; focusPositions?: undefined }
+    );
+    const renderFlashcardSession = (initialProps: ScopeProps) =>
+      renderHook(
+        ({ stackKey = "mnemonica", ...scope }: ScopeProps) =>
+          useSession({ ...scope, mode: "flashcard", stackKey }),
+        { initialProps }
+      );
+
+    it("records the focus list instead of a range and reports its size at start", () => {
+      const { result } = renderFlashcardSession({ focusPositions: focusList });
+
+      act(() => {
+        result.current.startSession({ totalQuestions: 7, type: "structured" });
+      });
+
+      const session = result.current.activeSession;
+      expect(session?.mode).toBe("flashcard");
+      if (session?.mode === "flashcard") {
+        expect(session.focusPositions).toEqual(focusList);
+      }
+      expect(session?.stackLimits).toBeUndefined();
+      expect(mockEventBusEmit.SESSION_STARTED).toHaveBeenCalledWith({
+        config: { totalQuestions: 7, type: "structured" },
+        focused: true,
+        mode: "flashcard",
+        rangeSize: 7,
+      });
+    });
+
+    it("treats an empty focus list as no focus", () => {
+      const { result } = renderFlashcardSession({ focusPositions: [] });
+
+      act(() => {
+        result.current.startSession({ type: "open" });
+      });
+
+      const session = result.current.activeSession;
+      expect(session?.mode).toBe("flashcard");
+      if (session?.mode === "flashcard") {
+        expect(session.focusPositions).toBeUndefined();
+      }
+      expect(mockEventBusEmit.SESSION_STARTED).toHaveBeenCalledWith({
+        config: { type: "open" },
+        focused: false,
+        mode: "flashcard",
+        rangeSize: 52,
+      });
+    });
+
+    it("re-snapshots when a focus list replaces the range mid-session", () => {
+      const { result, rerender } = renderFlashcardSession({
+        stackLimits: DEFAULT_STACK_LIMITS,
+      });
+      act(() => {
+        result.current.startSession({ type: "open" });
+      });
+
+      rerender({ focusPositions: focusList, stackLimits: undefined });
+
+      expect(result.current.activeSession).toMatchObject({
+        focusPositions: focusList,
+        mode: "flashcard",
+        stackLimits: undefined,
+      });
+    });
+
+    it("re-snapshots when one focus list replaces another mid-session", () => {
+      const otherList = [2, 3, 4, 5, 6, 7, 8].map(createDeckPosition);
+      const { result, rerender } = renderFlashcardSession({
+        focusPositions: focusList,
+      });
+      act(() => {
+        result.current.startSession({ type: "open" });
+      });
+      for (let i = 0; i < 3; i += 1) {
+        act(() => {
+          result.current.handleAnswer({
+            correct: true,
+            questionAdvanced: true,
+          });
+        });
+      }
+
+      rerender({ focusPositions: otherList });
+      expect(result.current.activeSession).toMatchObject({
+        focusPositions: otherList,
+      });
+      act(() => {
+        result.current.stopSession();
+      });
+
+      expect(mockBuildSessionRecord.mock.calls.at(-1)?.[0]).toMatchObject({
+        focusPositions: otherList,
+      });
+    });
+
+    it("saves a session with its own stack's list when the stack changes", () => {
+      const aronsonRange: StackLimits = {
+        end: createDeckPosition(13),
+        start: createDeckPosition(1),
+      };
+      const { result, rerender } = renderFlashcardSession({
+        focusPositions: focusList,
+      });
+      act(() => {
+        result.current.startSession({ type: "open" });
+      });
+      for (let i = 0; i < 3; i += 1) {
+        act(() => {
+          result.current.handleAnswer({
+            correct: true,
+            questionAdvanced: true,
+          });
+        });
+      }
+
+      act(() => {
+        rerender({ stackKey: "aronson", stackLimits: aronsonRange });
+      });
+
+      expect(mockBuildSessionRecord.mock.calls.at(-1)?.[0]).toMatchObject({
+        focusPositions: focusList,
+        stackKey: "mnemonica",
+        stackLimits: undefined,
+      });
+    });
+
+    it("does not re-snapshot when an equal focus list arrives as a new array", () => {
+      const { result, rerender } = renderFlashcardSession({
+        focusPositions: focusList,
+      });
+      act(() => {
+        result.current.startSession({ type: "open" });
+      });
+      const sessionBefore = result.current.activeSession;
+
+      rerender({ focusPositions: [...focusList] });
+
+      expect(result.current.activeSession).toBe(sessionBefore);
+    });
+
+    it("persists the range again when the focus list is cleared before Stop", () => {
+      const { result, rerender } = renderFlashcardSession({
+        focusPositions: focusList,
+      });
+      act(() => {
+        result.current.startSession({ type: "open" });
+      });
+      for (let i = 0; i < 3; i += 1) {
+        act(() => {
+          result.current.handleAnswer({
+            correct: true,
+            questionAdvanced: true,
+          });
+        });
+      }
+
+      act(() => {
+        result.current.stopSession();
+        rerender({ stackLimits: DEFAULT_STACK_LIMITS });
+      });
+
+      const finalizedSession = mockBuildSessionRecord.mock.calls.at(-1)?.[0];
+      expect(finalizedSession?.stackLimits).toEqual(DEFAULT_STACK_LIMITS);
+      expect(
+        finalizedSession?.mode === "flashcard"
+          ? finalizedSession.focusPositions
+          : "not flashcard"
+      ).toBeUndefined();
+    });
   });
 
   // -----------------------------------------------------------------------

@@ -22,7 +22,11 @@ import {
   computeSessionSummary,
   finalizeSession,
 } from "./session-persistence";
-import { isAllTimeStats, isSessionRecordArray } from "./session-typeguards";
+import {
+  isAllTimeStats,
+  isSessionRecord,
+  isSessionRecordArray,
+} from "./session-typeguards";
 
 const { storage, mockLocalStorage } = createMockLocalStorage();
 
@@ -113,6 +117,62 @@ describe("buildSessionRecord", () => {
     const session = makeSession({ stackLimits: testStackLimits });
     const record = buildSessionRecord(session);
     expect(record.stackLimits).toEqual({ end: 20, start: 5 });
+  });
+
+  it("stores a Flashcard focus list as plain numbers that read back as a valid record", () => {
+    const focusPositions = [3, 17, 25, 40, 52].map(createDeckPosition);
+    const session = makeActiveSession({ focusPositions, mode: "flashcard" });
+    const record = buildSessionRecord(session);
+
+    expect(record.mode === "flashcard" && record.focusPositions).toEqual([
+      3, 17, 25, 40, 52,
+    ]);
+    expect(record.stackLimits).toBeUndefined();
+    const roundTripped: unknown = JSON.parse(JSON.stringify(record));
+    expect(isSessionRecord(roundTripped)).toBe(true);
+  });
+
+  it("never writes a range beside a focus list", () => {
+    const record = buildSessionRecord(
+      makeActiveSession({
+        focusPositions: [3, 17, 25, 40, 52].map(createDeckPosition),
+        stackLimits: testStackLimits,
+      })
+    );
+    expect(record.stackLimits).toBeUndefined();
+    expect(isSessionRecord(JSON.parse(JSON.stringify(record)))).toBe(true);
+  });
+
+  it("treats an empty focus list as none and keeps the range", () => {
+    const record = buildSessionRecord(
+      makeActiveSession({ focusPositions: [], stackLimits: testStackLimits })
+    );
+    expect(record.stackLimits).toEqual({ end: 20, start: 5 });
+    expect(
+      record.mode === "flashcard" && record.focusPositions
+    ).toBeUndefined();
+    expect(isSessionRecord(JSON.parse(JSON.stringify(record)))).toBe(true);
+  });
+
+  it("treats an out-of-order focus list as none, so the history stays readable", () => {
+    const record = buildSessionRecord(
+      makeActiveSession({
+        focusPositions: [5, 3, 17, 25, 40].map(createDeckPosition),
+        stackLimits: testStackLimits,
+      })
+    );
+    expect(record.stackLimits).toEqual({ end: 20, start: 5 });
+    expect(
+      record.mode === "flashcard" && record.focusPositions
+    ).toBeUndefined();
+    expect(isSessionRecord(JSON.parse(JSON.stringify(record)))).toBe(true);
+  });
+
+  it("omits focusPositions from a Flashcard record trained on the range", () => {
+    const record = buildSessionRecord(makeActiveSession());
+    expect(JSON.parse(JSON.stringify(record))).not.toHaveProperty(
+      "focusPositions"
+    );
   });
 
   it("leaves stackLimits undefined when not present on the active session", () => {

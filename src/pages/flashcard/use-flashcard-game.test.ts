@@ -1,12 +1,19 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AnswerOutcome } from "../../types/session";
+import type { StackLimits } from "../../types/stack-limits";
 import { DEFAULT_STACK_LIMITS } from "../../types/stack-limits";
 import type { Stack } from "../../types/stacks";
 import { createDeckPosition, stacks } from "../../types/stacks";
 import type { TimerSettings } from "../../types/timer";
 import { formatCardName } from "../../utils/card-formatting";
+import type { FlashcardPool } from "./flashcard-pool";
 import { useFlashcardGame } from "./use-flashcard-game";
+
+const rangePool = (limits: StackLimits): FlashcardPool => ({
+  kind: "range",
+  limits,
+});
 
 const INDEX_ANSWER_PATTERN = /^\d+$/u;
 
@@ -75,7 +82,7 @@ describe("useFlashcardGame hook", () => {
           "bothmodes",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -106,7 +113,7 @@ describe("useFlashcardGame hook", () => {
           "bothmodes",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -137,7 +144,7 @@ describe("useFlashcardGame hook", () => {
           "bothmodes",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -158,7 +165,7 @@ describe("useFlashcardGame hook", () => {
           "bothmodes",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -190,7 +197,7 @@ describe("useFlashcardGame hook", () => {
           "bothmodes",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS,
+          rangePool(DEFAULT_STACK_LIMITS),
           { onAnswer }
         )
       );
@@ -213,7 +220,7 @@ describe("useFlashcardGame hook", () => {
           "bothmodes",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -235,7 +242,7 @@ describe("useFlashcardGame hook", () => {
           "bothmodes",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -260,7 +267,7 @@ describe("useFlashcardGame hook", () => {
           "bothmodes",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -285,7 +292,7 @@ describe("useFlashcardGame hook", () => {
           "bothmodes",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -316,7 +323,7 @@ describe("useFlashcardGame hook", () => {
           "numberonly",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -338,7 +345,7 @@ describe("useFlashcardGame hook", () => {
           "cardonly",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -371,7 +378,7 @@ describe("useFlashcardGame hook", () => {
           "bothmodes",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -402,7 +409,7 @@ describe("useFlashcardGame hook", () => {
           "cardonly",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -417,7 +424,7 @@ describe("useFlashcardGame hook", () => {
           "numberonly",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -433,7 +440,7 @@ describe("useFlashcardGame hook", () => {
           "bothmodes",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -451,7 +458,7 @@ describe("useFlashcardGame hook", () => {
           "bothmodes",
           "random",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -479,7 +486,7 @@ describe("useFlashcardGame hook", () => {
           "cardonly",
           "random",
           defaultTimerSettings,
-          limits
+          rangePool(limits)
         )
       );
 
@@ -504,7 +511,7 @@ describe("useFlashcardGame hook", () => {
           "cardonly",
           "random",
           defaultTimerSettings,
-          limits
+          rangePool(limits)
         )
       );
 
@@ -548,7 +555,7 @@ describe("useFlashcardGame hook", () => {
             "cardonly",
             "random",
             defaultTimerSettings,
-            limits
+            rangePool(limits)
           ),
         { initialProps: { limits: initialLimits } }
       );
@@ -584,7 +591,7 @@ describe("useFlashcardGame hook", () => {
             "cardonly",
             "random",
             defaultTimerSettings,
-            limits
+            rangePool(limits)
           ),
         { initialProps: { limits: initialLimits } }
       );
@@ -606,7 +613,7 @@ describe("useFlashcardGame hook", () => {
           "neighbor",
           "before",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -621,7 +628,7 @@ describe("useFlashcardGame hook", () => {
           "cardonly",
           "before",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -636,7 +643,7 @@ describe("useFlashcardGame hook", () => {
           "neighbor",
           "before",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -652,7 +659,7 @@ describe("useFlashcardGame hook", () => {
           "neighbor",
           "after",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -667,7 +674,7 @@ describe("useFlashcardGame hook", () => {
           "neighbor",
           "before",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -711,7 +718,7 @@ describe("useFlashcardGame hook", () => {
           "neighbor",
           "before",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -759,7 +766,7 @@ describe("useFlashcardGame hook", () => {
           "neighbor",
           "random",
           defaultTimerSettings,
-          limits
+          rangePool(limits)
         )
       );
 
@@ -779,7 +786,7 @@ describe("useFlashcardGame hook", () => {
           "neighbor",
           "before",
           defaultTimerSettings,
-          DEFAULT_STACK_LIMITS
+          rangePool(DEFAULT_STACK_LIMITS)
         )
       );
 
@@ -809,7 +816,7 @@ describe("useFlashcardGame hook", () => {
             "cardonly",
             "random",
             defaultTimerSettings,
-            DEFAULT_STACK_LIMITS
+            rangePool(DEFAULT_STACK_LIMITS)
           ),
         { initialProps }
       );
@@ -825,6 +832,150 @@ describe("useFlashcardGame hook", () => {
       expect(result.current.score).toEqual({ fails: 0, successes: 0 });
       const { index, card } = result.current.card;
       expect(stacks.aronson.order[index - 1]).toBe(card);
+    });
+  });
+
+  describe("with a focus list", () => {
+    const focusList = [23, 24, 28, 29, 30, 31, 42].map(createDeckPosition);
+    const focusPool: FlashcardPool = { kind: "focus", positions: focusList };
+
+    it.each(["cardonly", "numberonly", "bothmodes"] as const)(
+      "keeps %s rounds on the list after an answer",
+      (mode) => {
+        const { result } = renderHook(() =>
+          useFlashcardGame(
+            testStack,
+            "Mnemonica",
+            mode,
+            "random",
+            defaultTimerSettings,
+            focusPool
+          )
+        );
+        for (let round = 0; round < 10; round += 1) {
+          expect(focusList).toContain(result.current.card.index);
+          for (const choice of result.current.choices) {
+            expect(focusList).toContain(choice.index);
+          }
+          act(() => {
+            result.current.submitAnswer(result.current.card.card);
+          });
+        }
+        expect(result.current.score.successes).toBe(10);
+      }
+    );
+
+    it("asks Neighbor questions about listed cards", () => {
+      const { result } = renderHook(() =>
+        useFlashcardGame(
+          testStack,
+          "Mnemonica",
+          "neighbor",
+          "after",
+          defaultTimerSettings,
+          focusPool
+        )
+      );
+      for (let round = 0; round < 10; round += 1) {
+        expect(focusList).toContain(result.current.card.index);
+        expect(result.current.answerCard.index).toBe(
+          result.current.card.index + 1
+        );
+        act(() => {
+          result.current.revealAnswer();
+        });
+      }
+    });
+
+    it("resets onto the list when a focus list replaces the range", () => {
+      const { result, rerender } = renderHook(
+        ({ pool }: { pool: FlashcardPool }) =>
+          useFlashcardGame(
+            testStack,
+            "Mnemonica",
+            "cardonly",
+            "random",
+            defaultTimerSettings,
+            pool
+          ),
+        { initialProps: { pool: rangePool(DEFAULT_STACK_LIMITS) } }
+      );
+      act(() => {
+        result.current.submitAnswer(result.current.card.card);
+      });
+      expect(result.current.score.successes).toBe(1);
+
+      rerender({ pool: focusPool });
+
+      expect(result.current.score).toEqual({ fails: 0, successes: 0 });
+      expect(focusList).toContain(result.current.card.index);
+    });
+
+    it.each([
+      ["the range", rangePool(DEFAULT_STACK_LIMITS)],
+      [
+        "another list",
+        {
+          kind: "focus",
+          positions: [1, 2, 3, 4, 5].map(createDeckPosition),
+        } satisfies FlashcardPool,
+      ],
+    ])(
+      "resets when the list gives way to %s",
+      (_label, nextPool: FlashcardPool) => {
+        // Props typed explicitly: inferred from `focusPool`, they would be
+        // narrowed to its focus variant and refuse the range pool.
+        const { result, rerender } = renderHook<
+          ReturnType<typeof useFlashcardGame>,
+          { pool: FlashcardPool }
+        >(
+          ({ pool }) =>
+            useFlashcardGame(
+              testStack,
+              "Mnemonica",
+              "cardonly",
+              "random",
+              defaultTimerSettings,
+              pool
+            ),
+          { initialProps: { pool: focusPool } }
+        );
+        act(() => {
+          result.current.submitAnswer(result.current.card.card);
+        });
+        expect(result.current.score.successes).toBe(1);
+
+        rerender({ pool: nextPool });
+
+        expect(result.current.score).toEqual({ fails: 0, successes: 0 });
+        if (nextPool.kind === "focus") {
+          expect(nextPool.positions).toContain(result.current.card.index);
+        }
+      }
+    );
+
+    it("keeps the round when an equal list arrives as a new array", () => {
+      const { result, rerender } = renderHook(
+        ({ pool }: { pool: FlashcardPool }) =>
+          useFlashcardGame(
+            testStack,
+            "Mnemonica",
+            "cardonly",
+            "random",
+            defaultTimerSettings,
+            pool
+          ),
+        { initialProps: { pool: focusPool } }
+      );
+      act(() => {
+        result.current.submitAnswer(result.current.card.card);
+      });
+      const cardBefore = result.current.card;
+
+      rerender({ pool: { kind: "focus", positions: [...focusList] } });
+
+      expect(result.current.score.successes).toBe(1);
+      expect(result.current.card).toBe(cardBefore);
     });
   });
 });

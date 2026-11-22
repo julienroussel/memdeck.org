@@ -26,7 +26,10 @@ type AnalyticsEvents = {
   SESSION_STARTED: {
     mode: TrainingMode;
     config: SessionConfig;
+    /** Number of positions the questions are drawn from (52 without a range): the focus list's size when `focused`. */
     rangeSize: number;
+    /** A Flashcard focus list replaced the stack range. */
+    focused: boolean;
   };
   SESSION_COMPLETED: {
     mode: TrainingMode;
