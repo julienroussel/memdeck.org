@@ -18,6 +18,9 @@ import { Score } from "./score";
 import { SessionBanner } from "./session-banner";
 import { SessionStartControls } from "./session-start-controls";
 
+// Caps both dropdowns to the viewport, so their content wraps on narrow phones.
+const DROPDOWN_MAX_WIDTH = "calc(100vw - 2rem)";
+
 type TrainingHeaderProps = {
   title: ReactNode;
   subtitle?: ReactNode;
@@ -79,9 +82,12 @@ export const TrainingHeader = ({
           {structuredSession === null && (
             <Score fails={score.fails} successes={score.successes} />
           )}
+          {/* Controlled popovers: Mantine reports Escape and outside clicks through onDismiss
+              (and onChange); onClose fires only once `opened` is already false, so it cannot
+              close the dropdown. */}
           <Popover
             arrowPosition="center"
-            onClose={closeSession}
+            onDismiss={closeSession}
             opened={sessionOpened}
             position="bottom-end"
             returnFocus
@@ -103,8 +109,7 @@ export const TrainingHeader = ({
                 </ActionIcon>
               </Popover.Target>
             </Tooltip>
-            {/* Capped to the viewport so the presets wrap on narrow phones. */}
-            <Popover.Dropdown maw="calc(100vw - 2rem)">
+            <Popover.Dropdown maw={DROPDOWN_MAX_WIDTH}>
               <SessionStartControls
                 onAfterStart={closeSession}
                 onStart={onStartSession}
@@ -112,8 +117,11 @@ export const TrainingHeader = ({
               />
             </Popover.Dropdown>
           </Popover>
+          {/* Kept mounted so a closed dropdown keeps what was typed but not applied, such as
+              a focus list. */}
           <Popover
-            onClose={closeSettings}
+            keepMounted
+            onDismiss={closeSettings}
             opened={settingsOpened}
             position="bottom-end"
             returnFocus
@@ -135,7 +143,9 @@ export const TrainingHeader = ({
                 </ActionIcon>
               </Popover.Target>
             </Tooltip>
-            <Popover.Dropdown>{settingsContent}</Popover.Dropdown>
+            <Popover.Dropdown maw={DROPDOWN_MAX_WIDTH}>
+              {settingsContent}
+            </Popover.Dropdown>
           </Popover>
         </Group>
       </Group>

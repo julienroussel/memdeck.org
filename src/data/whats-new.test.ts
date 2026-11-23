@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import { SUPPORTED_LANGUAGES } from "../i18n/supported-languages";
 import { WHATS_NEW_ENTRIES } from "./whats-new";
 
+const ISO_INSTANT_RE =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})$/u;
+
 describe("WHATS_NEW_ENTRIES", () => {
   it("has unique ids", () => {
     const ids = WHATS_NEW_ENTRIES.map((entry) => entry.id);
@@ -15,6 +18,13 @@ describe("WHATS_NEW_ENTRIES", () => {
   it("has a valid, parseable releasedAt for every entry", () => {
     for (const entry of WHATS_NEW_ENTRIES) {
       expect(Number.isNaN(Date.parse(entry.releasedAt))).toBe(false);
+    }
+  });
+
+  it("gives every releasedAt as an ISO instant with Z or an offset", () => {
+    // Without one, the instant depends on the time zone of whoever reads it.
+    for (const entry of WHATS_NEW_ENTRIES) {
+      expect(entry.releasedAt).toMatch(ISO_INSTANT_RE);
     }
   });
 

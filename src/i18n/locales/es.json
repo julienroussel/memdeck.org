@@ -520,7 +520,7 @@
       "numberOnlyItem": "<bold>Solo número</bold> — se muestra un número de posición, recuerda la carta",
       "bothItem": "<bold>Ambos</bold> — alterna aleatoriamente entre los dos",
       "neighborItem": "<bold>Vecino</bold> — se muestra una carta con una flecha de dirección, elige la carta adyacente en el stack",
-      "settings": "Pulsa el icono de engranaje para cambiar entre los modos Posición y Vecino y ajustar el temporizador. Usa el icono de diana para iniciar una sesión estructurada de 10, 20, 30 o 52 cartas, o practica libremente sin sesión.",
+      "settings": "Pulsa el icono de engranaje para cambiar entre los modos Posición y Vecino y ajustar el temporizador. Usa el icono de diana para iniciar una sesión estructurada, o practica libremente sin sesión.",
       "link": "Ir al entrenamiento Flashcard"
     },
     "acaanTraining": {

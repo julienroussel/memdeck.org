@@ -520,7 +520,7 @@
       "numberOnlyItem": "<bold>Numéro uniquement</bold> — un numéro de position est montré, retrouvez la carte",
       "bothItem": "<bold>Les deux</bold> — alterne aléatoirement entre les deux",
       "neighborItem": "<bold>Voisin</bold> — on vous montre une carte avec une flèche de direction, choisissez la carte adjacente dans le stack",
-      "settings": "Appuyez sur l'icône d'engrenage pour basculer entre les modes Position et Voisin et ajuster les paramètres du chronomètre. Utilisez l'icône de cible pour démarrer une session structurée de 10, 20, 30 ou 52 cartes, ou pratiquez librement sans session.",
+      "settings": "Appuyez sur l'icône d'engrenage pour basculer entre les modes Position et Voisin et ajuster les paramètres du chronomètre. Utilisez l'icône de cible pour démarrer une session structurée, ou pratiquez librement sans session.",
       "link": "Aller à l'entraînement Flashcard"
     },
     "acaanTraining": {

@@ -1,4 +1,4 @@
-import { Divider, Radio, Stack, Text } from "@mantine/core";
+import { Divider, Radio, Stack, VisuallyHidden } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { TimerSettingsControl } from "../../components/timer-settings-control";
 import type { SpotCheckMode } from "../../types/spot-check";
@@ -33,19 +33,19 @@ export const SpotCheckSettingsContent = ({
 
   return (
     <Stack gap="md" p="xs">
+      {/* A hidden label names the radiogroup: Mantine sets it as the group's aria-labelledby,
+          while an aria-label on Radio.Group lands on the wrapper. labelProps makes it a block,
+          so Mantine's inline-block label adds no line of height above the radios. */}
       <Radio.Group
-        aria-label={t("spotCheck.modeAriaLabel")}
+        label={<VisuallyHidden>{t("spotCheck.modeAriaLabel")}</VisuallyHidden>}
+        labelProps={{ display: "block" }}
         onChange={handleModeChange}
         value={mode}
       >
         <Stack gap="xs">
           {SPOT_CHECK_MODE_OPTIONS.map((opt) => (
             <Radio
-              description={
-                <Text c="dimmed" size="xs">
-                  {t(opt.descriptionKey)}
-                </Text>
-              }
+              description={t(opt.descriptionKey)}
               key={opt.value}
               label={t(opt.labelKey)}
               value={opt.value}
