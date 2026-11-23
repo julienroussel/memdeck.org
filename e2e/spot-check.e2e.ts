@@ -1,5 +1,7 @@
+import type { Page } from "@playwright/test";
 import { expect } from "@playwright/test";
-import { SPOT_CHECK_MODE_LSK } from "../src/constants";
+import { SPOT_CHECK_MODE_LSK, STACK_LIMITS_LSK } from "../src/constants";
+import type { StackLimitsRecord } from "../src/types/stack-limits";
 import {
   CORRECT_ANSWERS_PATTERN,
   INCORRECT_ANSWERS_PATTERN,
@@ -8,6 +10,31 @@ import { readCount } from "./fixtures/read-count";
 import { test } from "./fixtures/test-setup";
 
 const SWAPPED_CARDS_PATTERN = /swapped cards/iu;
+const START_PRESET_PATTERN = /^Start \d+ question session$/u;
+
+// Narrows Mnemonica to positions 1-17, so the session popover adds a 17
+// preset to the four fixed ones.
+const setSeventeenCardRange = async (page: Page): Promise<void> => {
+  await page.evaluate(
+    ([key, value]) => {
+      window.localStorage.setItem(key, value);
+    },
+    [
+      STACK_LIMITS_LSK,
+      JSON.stringify({
+        mnemonica: { end: 17, start: 1 },
+      } satisfies StackLimitsRecord),
+    ] as const
+  );
+  await page.reload();
+  await page.waitForLoadState("networkidle");
+};
+
+const hasHorizontalOverflow = (page: Page): Promise<boolean> =>
+  page.evaluate(() => {
+    const el = document.documentElement;
+    return el.scrollWidth > el.clientWidth;
+  });
 
 test.describe("Spot Check Training", () => {
   test.beforeEach(async ({ page }) => {
@@ -52,7 +79,10 @@ test.describe("Spot Check Training", () => {
 
     // Mode-specific instruction text (missing variant — pinned via localStorage
     // in beforeEach). The exact i18n key is `spotCheck.identifyMissing`.
-    await expect(page.getByText("Tap next to the gap")).toBeVisible();
+    // Exact: the settings dropdown stays mounted, and its hidden mode description contains it.
+    await expect(
+      page.getByText("Tap next to the gap", { exact: true })
+    ).toBeVisible();
 
     // Card spread renders for the puzzle.
     await expect(page.locator(".cardSpreadCard").first()).toBeVisible();
@@ -153,5 +183,39 @@ test.describe("Spot Check Training", () => {
 
     // Instruction text should switch to the swapped variant.
     await expect(page.getByText("Tap either swapped card")).toBeVisible();
+  });
+
+  test("offers every session preset plus the range size on a 17-card range", async ({
+    page,
+  }) => {
+    await setSeventeenCardRange(page);
+
+    await page.getByRole("button", { name: "Start a session" }).click();
+
+    await expect(
+      page
+        .getByRole("dialog")
+        .getByRole("button", { name: START_PRESET_PATTERN })
+    ).toHaveText(["10", "17", "20", "30", "52"]);
+  });
+
+  test("opens the session and settings popovers without horizontal overflow at 320 px", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ height: 640, width: 320 });
+    await setSeventeenCardRange(page);
+
+    await page.getByRole("button", { name: "Start a session" }).click();
+    await expect(
+      page.getByRole("button", { name: "Start 52 question session" })
+    ).toBeVisible();
+    expect(await hasHorizontalOverflow(page)).toBe(false);
+
+    await page.keyboard.press("Escape");
+    await page.getByRole("button", { name: "Spot Check settings" }).click();
+    await expect(
+      page.getByRole("radio", { name: SWAPPED_CARDS_PATTERN })
+    ).toBeVisible();
+    expect(await hasHorizontalOverflow(page)).toBe(false);
   });
 });

@@ -236,7 +236,7 @@ All user-facing English text must follow these principles:
 - **Action words**: Prefer "recall" over "guess" in training contexts — users are building recall, not guessing. Use "pick" or "tap" for UI instructions.
 - **Capitalization**: "GitHub" (not "Github"). Product names and proper nouns use their official casing.
 - **Punctuation**: End all descriptions and sentences with periods. Use em dashes (—) for asides, not hyphens. Use the Oxford comma.
-- **Compound adjectives**: Hyphenate before nouns ("52-card preset", "tap-based UI").
+- **Compound adjectives**: Hyphenate before nouns ("52-card deck", "tap-based UI").
 - **Keep it tight**: Prefer short, punchy sentences. Cut filler words. If a description can be one sentence, don't make it two.
 - **Consistency**: When multiple items share a parallel structure (e.g., mode descriptions), keep the sentence pattern and verb tense consistent across all of them.
 

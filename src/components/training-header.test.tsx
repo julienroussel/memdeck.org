@@ -107,15 +107,19 @@ describe("TrainingHeader", () => {
   });
 
   it("opens settings popover when settings button is clicked", async () => {
+    stubLayoutRects();
     const user = userEvent.setup();
 
     render(<TrainingHeader {...defaultProps} />);
 
-    await user.click(
-      screen.getByRole("button", { name: "Flashcard settings" })
-    );
+    const trigger = screen.getByRole("button", { name: "Flashcard settings" });
+    // The content stays mounted while closed, so check it is shown, not just present.
+    expect(screen.getByTestId("settings-content")).not.toBeVisible();
 
-    expect(screen.getByTestId("settings-content")).toBeInTheDocument();
+    await user.click(trigger);
+
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByTestId("settings-content")).toBeVisible();
   });
 
   it("opens session popover with start controls when session button is clicked", async () => {
@@ -196,6 +200,87 @@ describe("TrainingHeader", () => {
     await waitFor(() => {
       expect(document.activeElement).toBe(trigger);
     });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("closes the session dropdown on Escape", async () => {
+    stubLayoutRects();
+    const user = userEvent.setup();
+    render(<TrainingHeader {...defaultProps} />);
+
+    const trigger = screen.getByRole("button", { name: "Start a session" });
+    await user.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+    await user.keyboard("{Escape}");
+
+    await waitFor(() => {
+      expect(trigger).toHaveAttribute("aria-expanded", "false");
+    });
+  });
+
+  it("closes the settings dropdown on a second click on its trigger", async () => {
+    stubLayoutRects();
+    const user = userEvent.setup();
+    render(<TrainingHeader {...defaultProps} />);
+
+    const trigger = screen.getByRole("button", { name: "Flashcard settings" });
+    await user.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await user.click(trigger);
+
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("closes the session dropdown when the settings trigger opens its own", async () => {
+    stubLayoutRects();
+    const user = userEvent.setup();
+    render(<TrainingHeader {...defaultProps} />);
+
+    const session = screen.getByRole("button", { name: "Start a session" });
+    const settings = screen.getByRole("button", { name: "Flashcard settings" });
+    await user.click(session);
+    await user.click(settings);
+
+    await waitFor(() => {
+      expect(session).toHaveAttribute("aria-expanded", "false");
+    });
+    expect(settings).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("keeps the settings content mounted while the dropdown is closed", async () => {
+    stubLayoutRects();
+    const user = userEvent.setup();
+    render(
+      <TrainingHeader
+        {...defaultProps}
+        settingsContent={<input aria-label="Draft" defaultValue="" />}
+      />
+    );
+
+    const trigger = screen.getByRole("button", { name: "Flashcard settings" });
+    await user.click(trigger);
+    await user.type(screen.getByRole("textbox", { name: "Draft" }), "1, 2");
+    await user.keyboard("{Escape}");
+    await user.click(trigger);
+
+    expect(screen.getByRole("textbox", { name: "Draft" })).toHaveValue("1, 2");
+  });
+
+  it("closes the settings dropdown on a click outside it", async () => {
+    stubLayoutRects();
+    const user = userEvent.setup();
+    render(<TrainingHeader {...defaultProps} />);
+
+    const trigger = screen.getByRole("button", { name: "Flashcard settings" });
+    await user.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+    await user.click(screen.getByRole("heading", { name: "Flashcard" }));
+
+    await waitFor(() => {
+      expect(trigger).toHaveAttribute("aria-expanded", "false");
+    });
   });
 
   it("returns focus to the session trigger after a preset starts a session", async () => {
@@ -208,9 +293,12 @@ describe("TrainingHeader", () => {
     trigger.focus();
     await user.keyboard("{Enter}");
 
-    const dialog = screen.getByRole("dialog", { hidden: true });
+    // The settings dropdown stays mounted, so pick the session one by the id the trigger controls.
+    const dialog = screen
+      .getAllByRole("dialog", { hidden: true })
+      .find((element) => element.id === trigger.getAttribute("aria-controls"));
     await waitFor(() => {
-      expect(dialog.contains(document.activeElement)).toBe(true);
+      expect(dialog?.contains(document.activeElement)).toBe(true);
     });
 
     await user.keyboard("{Enter}");

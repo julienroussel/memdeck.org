@@ -520,7 +520,7 @@
       "numberOnlyItem": "<bold>Solo numero</bold> — viene mostrato un numero di posizione, ricorda la carta",
       "bothItem": "<bold>Entrambe</bold> — alterna casualmente tra le due",
       "neighborItem": "<bold>Vicino</bold> — viene mostrata una carta con una freccia di direzione, scegli la carta adiacente nello stack",
-      "settings": "Tocca l'icona dell'ingranaggio per passare tra le modalità Posizione e Vicino e regolare le impostazioni del timer. Usa l'icona del bersaglio per iniziare una sessione strutturata da 10, 20, 30 o 52 carte, o pratica liberamente senza sessione.",
+      "settings": "Tocca l'icona dell'ingranaggio per passare tra le modalità Posizione e Vicino e regolare le impostazioni del timer. Usa l'icona del bersaglio per iniziare una sessione strutturata, oppure allenati liberamente senza avviare una sessione.",
       "link": "Vai all'allenamento Flashcard"
     },
     "acaanTraining": {

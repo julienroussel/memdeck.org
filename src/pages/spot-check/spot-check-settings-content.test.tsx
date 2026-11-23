@@ -28,7 +28,9 @@ describe("SpotCheckSettingsContent", () => {
   it("renders a radio group for spot check mode selection", () => {
     render(<SpotCheckSettingsContent {...defaultProps} />);
 
-    expect(screen.getByRole("radiogroup")).toBeInTheDocument();
+    expect(
+      screen.getByRole("radiogroup", { name: "Spot check mode" })
+    ).toBeInTheDocument();
   });
 
   it("renders the TimerSettingsControl with timed mode switch", () => {
@@ -57,6 +59,29 @@ describe("SpotCheckSettingsContent", () => {
     expect(
       screen.getByRole("radio", { name: MOVED_PATTERN })
     ).toBeInTheDocument();
+  });
+
+  it("describes each mode without nesting a paragraph in a paragraph", () => {
+    const { container } = render(
+      <SpotCheckSettingsContent {...defaultProps} />
+    );
+
+    expect(
+      screen.getByRole("radio", { name: MISSING_PATTERN })
+    ).toHaveAccessibleDescription(
+      "One card is removed from the deck. Tap next to the gap to spot it."
+    );
+    expect(
+      screen.getByRole("radio", { name: SWAPPED_PATTERN })
+    ).toHaveAccessibleDescription(
+      "Two cards swap positions. Tap either misplaced card."
+    );
+    expect(
+      screen.getByRole("radio", { name: MOVED_PATTERN })
+    ).toHaveAccessibleDescription(
+      "One card is moved to a wrong position. Find the moved card."
+    );
+    expect(container.querySelector("p p")).toBeNull();
   });
 
   it("selects the mode matching the mode prop", () => {
